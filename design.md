@@ -16,7 +16,7 @@ The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
 
 ### Analysis
 
-After the initial instrumentation, some general statistics analyses can be built. The goal is to make those general enough to be useful for different use-cases, e.g.:
+After the initial instrumentation, some general statistics analyses can be built. The targeted analysis tools are pandas and Jupyter. The goal is to make those general enough to be useful for different use-cases, e.g.:
 
 * Callback duration (mean, stdev, etc.)
 * 
