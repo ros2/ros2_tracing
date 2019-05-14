@@ -33,4 +33,4 @@ This might include converting existing `tracetools` scripts to more flexible Pyt
 
 ### ROS 1/2 compatibility
 
-Finally, we could look into making the instrumentation work on both ROS 1 and ROS 2, through a common interface (or other abstraction).
+Finally, we could look into making analyses work on both ROS 1 and ROS 2, through a common instrumentation interface (or other abstraction).
