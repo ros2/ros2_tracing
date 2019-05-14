@@ -18,9 +18,13 @@ The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
 
 After the initial instrumentation, some general statistics analyses can be built. The targeted analysis tools are pandas and Jupyter. The goal is to make analyses general enough to be useful for different use-cases, e.g.:
 
-* Callback duration (mean, stdev, etc.)
-* 
-* 
+* Callback duration
+* Time between callbacks (between two callback starts and/or a callback end and a start)
+* Message age (as the difference between processing time and message timestamp)
+* Message size
+* Execution time/proportion accross a process' nodes/components
+
+with mean, stdev, etc.
 
 Generic tracepoints should also be provided for ROS 2 user code, which could then be applied to a user-provided model for higher-level behaviour statistics.
 
