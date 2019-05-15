@@ -14,17 +14,22 @@ This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever 
 
 The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
 
-### Analysis
+### Analysis & visualization
 
-After the initial instrumentation, some general statistics analyses can be built. The targeted analysis tools are pandas and Jupyter. The goal is to make analyses general enough to be useful for different use-cases, e.g.:
+After the initial instrumentation, some general statistics analyses can be built. The targeted analysis & visualization tools are pandas and Jupyter. The goal is to make analyses general enough to be useful for different use-cases, e.g.:
 
 * Callback duration
 * Time between callbacks (between two callback starts and/or a callback end and a start)
 * Message age (as the difference between processing time and message timestamp)
 * Message size
+* Memory usage
 * Execution time/proportion accross a process' nodes/components
+* Interruptions (noting that these may be more useful as time-based metrics instead of overall statistics):
+    * scheduling events during a callback
+    * delay between the moment a thread becomes ready and when it's actually scheduled
+    * CPU cycles
 
-with mean, stdev, etc.
+with mean, stdev, etc. when applicable.
 
 Generic tracepoints should also be provided for ROS 2 user code, which could then be applied to a user-provided model for higher-level behaviour statistics.
 
