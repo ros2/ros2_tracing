@@ -1,0 +1,10 @@
+#include <stdint.h>
+
+TRACEPOINT_EVENT(
+    ros2,
+    rcl_init,
+    TP_ARGS(
+    ),
+    TP_FIELDS(
+    )
+)
