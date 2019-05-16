@@ -23,6 +23,21 @@ bool ros_trace_compile_status();
  */
 void ros_trace_rcl_init();
 
+/**
+ * tp: rcl_node_init
+ */
+void ros_trace_rcl_node_init(const char * node_name, const char * namespace);
+
+/**
+ * tp: rcl_publisher_init
+ */
+void ros_trace_rcl_publisher_init(const char * node_name, const char * namespace);
+
+/**
+ * tp: rcl_subscription_init
+ */
+void ros_trace_rcl_subscription_init(const char * node_name, const char * topic_name);
+
 #ifdef __cplusplus
 }
 #endif

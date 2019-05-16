@@ -8,3 +8,42 @@ TRACEPOINT_EVENT(
     TP_FIELDS(
     )
 )
+
+TRACEPOINT_EVENT(
+    ros2,
+    rcl_node_init,
+    TP_ARGS(
+        const char*, node_name_arg,
+        const char*, namespace_arg
+    ),
+    TP_FIELDS(
+        ctf_string(node_name, node_name_arg)
+        ctf_string(namespace, namespace_arg)
+    )
+)
+
+TRACEPOINT_EVENT(
+    ros2,
+    rcl_publisher_init,
+    TP_ARGS(
+        const char*, node_name_arg,
+        const char*, namespace_arg
+    ),
+    TP_FIELDS(
+        ctf_string(node_name, node_name_arg)
+        ctf_string(namespace, namespace_arg)
+    )
+)
+
+TRACEPOINT_EVENT(
+    ros2,
+    rcl_subscription_init,
+    TP_ARGS(
+        const char*, node_name_arg,
+        const char*, topic_name_arg
+    ),
+    TP_FIELDS(
+        ctf_string(node_name, node_name_arg)
+        ctf_string(topic_name, topic_name_arg)
+    )
+)
