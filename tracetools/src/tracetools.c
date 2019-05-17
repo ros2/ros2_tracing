@@ -3,7 +3,7 @@
 #ifdef WITH_LTTNG
 #include "tp_call.h"
 #define CONDITIONAL_TP(...) \
-  tracepoint(__VA_ARGS__);
+  tracepoint(__VA_ARGS__)
 #else
   #define CONDITIONAL_TP(...)
 #endif
