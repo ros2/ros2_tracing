@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 #define TRACEPOINT(event_name, ...) \
-    (ros_trace_##event_name)(__VA_ARGS__)
+  (ros_trace_##event_name)(__VA_ARGS__)
 
 #ifdef __cplusplus
 extern "C"
@@ -22,71 +22,71 @@ bool ros_trace_compile_status();
  * tp: rcl_init
  */
 void TRACEPOINT(
-    rcl_init,
-    const void * context);
+  rcl_init,
+  const void * context);
 
 /**
  * tp: rcl_node_init
  */
 void TRACEPOINT(
-    rcl_node_init,
-    const char * node_name,
-    const char * node_namespace,
-    const void * rmw_handle);
+  rcl_node_init,
+  const char * node_name,
+  const char * node_namespace,
+  const void * rmw_handle);
 
 /**
  * tp: rcl_publisher_init
  */
 void TRACEPOINT(
-    rcl_publisher_init,
-    const char * node_name,
-    const char * node_namespace);
+  rcl_publisher_init,
+  const char * node_name,
+  const char * node_namespace);
 
 /**
  * tp: rcl_subscription_init
  */
 void TRACEPOINT(
-    rcl_subscription_init,
-    const void * subscription_handle,
-    const char * node_name,
-    const char * topic_name);
+  rcl_subscription_init,
+  const void * subscription_handle,
+  const char * node_name,
+  const char * topic_name);
 
 /**
  * tp: rclcpp_subscription_callback_added
  */
 void TRACEPOINT(
-    rclcpp_subscription_callback_added,
-    const void * subscription_handle,
-    const void * callback);
+  rclcpp_subscription_callback_added,
+  const void * subscription_handle,
+  const void * callback);
 
 /**
  * tp: rclcpp_subscription_callback_start
  */
 void TRACEPOINT(
-    rclcpp_subscription_callback_start,
-    const void * callback,
-    const bool is_intra_process);
+  rclcpp_subscription_callback_start,
+  const void * callback,
+  const bool is_intra_process);
 
 /**
  * tp: rclcpp_subscription_callback_end
  */
 void TRACEPOINT(
-    rclcpp_subscription_callback_end,
-    const void * callback);
+  rclcpp_subscription_callback_end,
+  const void * callback);
 
 /**
  * tp: rclcpp_service_callback_start
  */
 void TRACEPOINT(
-    rclcpp_service_callback_start,
-    const void * callback);
+  rclcpp_service_callback_start,
+  const void * callback);
 
 /**
  * tp: rclcpp_service_callback_end
  */
 void TRACEPOINT(
-    rclcpp_service_callback_end,
-    const void * callback);
+  rclcpp_service_callback_end,
+  const void * callback);
 
 #ifdef __cplusplus
 }
