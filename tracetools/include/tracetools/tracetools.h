@@ -21,42 +21,61 @@ bool ros_trace_compile_status();
 /**
  * tp: rcl_init
  */
-void ros_trace_rcl_init();
+void TRACEPOINT(rcl_init);
 
 /**
  * tp: rcl_node_init
  */
-void ros_trace_rcl_node_init(const char * node_name, const char * node_namespace, const void * rmw_handle);
+void TRACEPOINT(
+    rcl_node_init,
+    const char * node_name,
+    const char * node_namespace,
+    const void * rmw_handle);
 
 /**
  * tp: rcl_publisher_init
  */
-void ros_trace_rcl_publisher_init(const char * node_name, const char * node_namespace);
+void TRACEPOINT(
+    rcl_publisher_init,
+    const char * node_name,
+    const char * node_namespace);
 
 /**
  * tp: rcl_subscription_init
  */
-void ros_trace_rcl_subscription_init(const char * node_name, const char * topic_name);
+void TRACEPOINT(
+    rcl_subscription_init,
+    const char * node_name,
+    const char * topic_name);
 
 /**
  * tp: rclcpp_subscription_callback_start
  */
-void ros_trace_rclcpp_subscription_callback_start(const void * callback, const bool is_intra_process);
+void TRACEPOINT(
+    rclcpp_subscription_callback_start,
+    const void * callback,
+    const bool is_intra_process);
 
 /**
  * tp: rclcpp_subscription_callback_end
  */
-void ros_trace_rclcpp_subscription_callback_end(const void * callback);
+void TRACEPOINT(
+    rclcpp_subscription_callback_end,
+    const void * callback);
 
 /**
  * tp: rclcpp_service_callback_start
  */
-void ros_trace_rclcpp_service_callback_start(const void * callback);
+void TRACEPOINT(
+    rclcpp_service_callback_start,
+    const void * callback);
 
 /**
  * tp: rclcpp_service_callback_end
  */
-void ros_trace_rclcpp_service_callback_end(const void * callback);
+void TRACEPOINT(
+    rclcpp_service_callback_end,
+    const void * callback);
 
 #ifdef __cplusplus
 }

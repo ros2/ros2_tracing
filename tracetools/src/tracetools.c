@@ -2,6 +2,10 @@
 
 #ifdef WITH_LTTNG
 #include "tp_call.h"
+#define CONDITIONAL_TP(...) \
+  tracepoint(__VA_ARGS__);
+#else
+  #define CONDITIONAL_TP(...)
 #endif
 
 
@@ -14,58 +18,61 @@ bool ros_trace_compile_status()
 #endif
 }
 
-void ros_trace_rcl_init()
+void TRACEPOINT(rcl_init)
 {
-#ifdef WITH_LTTNG
-  tracepoint(ros2, rcl_init);
-#endif
+  CONDITIONAL_TP(ros2, rcl_init);
 }
 
-void ros_trace_rcl_node_init(const char * node_name, const char * node_namespace, const void * rmw_handle)
+void TRACEPOINT(
+  rcl_node_init,
+  const char * node_name,
+  const char * node_namespace,
+  const void * rmw_handle)
 {
-#ifdef WITH_LTTNG
-  tracepoint(ros2, rcl_node_init, node_name, node_namespace, rmw_handle);
-#endif
+  CONDITIONAL_TP(ros2, rcl_node_init, node_name, node_namespace, rmw_handle);
 }
 
-void ros_trace_rcl_publisher_init(const char * node_name, const char * node_namespace)
+void TRACEPOINT(
+  rcl_publisher_init,
+  const char * node_name,
+  const char * node_namespace)
 {
-#ifdef WITH_LTTNG
-  tracepoint(ros2, rcl_publisher_init, node_name, node_namespace);
-#endif
+  CONDITIONAL_TP(ros2, rcl_publisher_init, node_name, node_namespace);
 }
 
-void ros_trace_rcl_subscription_init(const char * node_name, const char * topic_name)
+void TRACEPOINT(
+  rcl_subscription_init,
+  const char * node_name,
+  const char * topic_name)
 {
-#ifdef WITH_LTTNG
-  tracepoint(ros2, rcl_subscription_init, node_name, topic_name);
-#endif
+  CONDITIONAL_TP(ros2, rcl_subscription_init, node_name, topic_name);
 }
 
-void ros_trace_rclcpp_subscription_callback_start(const void * callback, const bool is_intra_process)
+void TRACEPOINT(
+  rclcpp_subscription_callback_start,
+  const void * callback,
+  const bool is_intra_process)
 {
-#ifdef WITH_LTTNG
-  tracepoint(ros2, rclcpp_subscription_callback_start, callback, (is_intra_process ? 1 : 0));
-#endif
+  CONDITIONAL_TP(ros2, rclcpp_subscription_callback_start, callback, (is_intra_process ? 1 : 0));
 }
 
-void ros_trace_rclcpp_subscription_callback_end(const void * callback)
+void TRACEPOINT(
+  rclcpp_subscription_callback_end,
+  const void * callback)
 {
-#ifdef WITH_LTTNG
-  tracepoint(ros2, rclcpp_subscription_callback_end, callback);
-#endif
+  CONDITIONAL_TP(ros2, rclcpp_subscription_callback_end, callback);
 }
 
-void ros_trace_rclcpp_service_callback_start(const void * callback)
+void TRACEPOINT(
+  rclcpp_service_callback_start,
+  const void * callback)
 {
-#ifdef WITH_LTTNG
-  tracepoint(ros2, rclcpp_service_callback_start, callback);
-#endif
+  CONDITIONAL_TP(ros2, rclcpp_service_callback_start, callback);
 }
 
-void ros_trace_rclcpp_service_callback_end(const void * callback)
+void TRACEPOINT(
+  rclcpp_service_callback_end,
+  const void * callback)
 {
-#ifdef WITH_LTTNG
-  tracepoint(ros2, rclcpp_service_callback_end, callback);
-#endif
+  CONDITIONAL_TP(ros2, rclcpp_service_callback_end, callback);
 }
