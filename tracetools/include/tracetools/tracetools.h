@@ -21,7 +21,9 @@ bool ros_trace_compile_status();
 /**
  * tp: rcl_init
  */
-void TRACEPOINT(rcl_init);
+void TRACEPOINT(
+    rcl_init,
+    const void * context);
 
 /**
  * tp: rcl_node_init

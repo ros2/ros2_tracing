@@ -4,8 +4,10 @@ TRACEPOINT_EVENT(
     ros2,
     rcl_init,
     TP_ARGS(
+        const void*, context_arg
     ),
     TP_FIELDS(
+        ctf_integer_hex(const void*, context, context_arg)
     )
 )
 
