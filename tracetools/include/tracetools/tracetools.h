@@ -39,14 +39,14 @@ void ros_trace_rcl_publisher_init(const char * node_name, const char * node_name
 void ros_trace_rcl_subscription_init(const char * node_name, const char * topic_name);
 
 /**
- * tp: rclcpp_callback_start
+ * tp: rclcpp_subscription_callback_start
  */
-void ros_trace_rclcpp_callback_start(const void * callback, const bool is_intra_process);
+void ros_trace_rclcpp_subscription_callback_start(const void * callback, const bool is_intra_process);
 
 /**
- * tp: rclcpp_callback_end
+ * tp: rclcpp_subscription_callback_end
  */
-void ros_trace_rclcpp_callback_end(const void * callback);
+void ros_trace_rclcpp_subscription_callback_end(const void * callback);
 
 #ifdef __cplusplus
 }

@@ -52,7 +52,7 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
     ros2,
-    rclcpp_callback_start,
+    rclcpp_subscription_callback_start,
     TP_ARGS(
         const void*, callback_arg,
         int, is_intra_process_arg
@@ -65,7 +65,7 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
     ros2,
-    rclcpp_callback_end,
+    rclcpp_subscription_callback_end,
     TP_ARGS(
         const void*, callback_arg
     ),

@@ -42,16 +42,16 @@ void ros_trace_rcl_subscription_init(const char * node_name, const char * topic_
 #endif
 }
 
-void ros_trace_rclcpp_callback_start(const void * callback, const bool is_intra_process)
+void ros_trace_rclcpp_subscription_callback_start(const void * callback, const bool is_intra_process)
 {
 #ifdef WITH_LTTNG
-  tracepoint(ros2, rclcpp_callback_start, callback, (is_intra_process ? 1 : 0));
+  tracepoint(ros2, rclcpp_subscription_callback_start, callback, (is_intra_process ? 1 : 0));
 #endif
 }
 
-void ros_trace_rclcpp_callback_end(const void * callback)
+void ros_trace_rclcpp_subscription_callback_end(const void * callback)
 {
 #ifdef WITH_LTTNG
-  tracepoint(ros2, rclcpp_callback_end, callback);
+  tracepoint(ros2, rclcpp_subscription_callback_end, callback);
 #endif
 }
