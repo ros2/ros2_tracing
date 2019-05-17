@@ -6,6 +6,7 @@ for event in \
   ros2:rcl_node_init \
   ros2:rcl_publisher_init \
   ros2:rcl_subscription_init \
+  ros2:rclcpp_subscription_callback_added \
   ros2:rclcpp_subscription_callback_start \
   ros2:rclcpp_subscription_callback_end
 do
