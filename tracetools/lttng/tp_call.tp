@@ -14,11 +14,13 @@ TRACEPOINT_EVENT(
     rcl_node_init,
     TP_ARGS(
         const char*, node_name_arg,
-        const char*, namespace_arg
+        const char*, namespace_arg,
+        const void*, rmw_handle_arg
     ),
     TP_FIELDS(
         ctf_string(node_name, node_name_arg)
         ctf_string(namespace, namespace_arg)
+        ctf_integer_hex(const void*, rmw_handle, rmw_handle_arg)
     )
 )
 

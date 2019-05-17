@@ -26,12 +26,12 @@ void ros_trace_rcl_init();
 /**
  * tp: rcl_node_init
  */
-void ros_trace_rcl_node_init(const char * node_name, const char * namespace);
+void ros_trace_rcl_node_init(const char * node_name, const char * node_namespace, const void * rmw_handle);
 
 /**
  * tp: rcl_publisher_init
  */
-void ros_trace_rcl_publisher_init(const char * node_name, const char * namespace);
+void ros_trace_rcl_publisher_init(const char * node_name, const char * node_namespace);
 
 /**
  * tp: rcl_subscription_init
