@@ -48,6 +48,16 @@ void ros_trace_rclcpp_subscription_callback_start(const void * callback, const b
  */
 void ros_trace_rclcpp_subscription_callback_end(const void * callback);
 
+/**
+ * tp: rclcpp_service_callback_start
+ */
+void ros_trace_rclcpp_service_callback_start(const void * callback);
+
+/**
+ * tp: rclcpp_service_callback_end
+ */
+void ros_trace_rclcpp_service_callback_end(const void * callback);
+
 #ifdef __cplusplus
 }
 #endif

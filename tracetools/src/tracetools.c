@@ -55,3 +55,17 @@ void ros_trace_rclcpp_subscription_callback_end(const void * callback)
   tracepoint(ros2, rclcpp_subscription_callback_end, callback);
 #endif
 }
+
+void ros_trace_rclcpp_service_callback_start(const void * callback)
+{
+#ifdef WITH_LTTNG
+  tracepoint(ros2, rclcpp_service_callback_start, callback);
+#endif
+}
+
+void ros_trace_rclcpp_service_callback_end(const void * callback)
+{
+#ifdef WITH_LTTNG
+  tracepoint(ros2, rclcpp_service_callback_end, callback);
+#endif
+}
