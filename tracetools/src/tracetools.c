@@ -27,28 +27,32 @@ void TRACEPOINT(
 
 void TRACEPOINT(
   rcl_node_init,
+  const void * node_handle,
+  const void * rmw_handle,
   const char * node_name,
-  const char * node_namespace,
-  const void * rmw_handle)
+  const char * node_namespace)
 {
-  CONDITIONAL_TP(ros2, rcl_node_init, node_name, node_namespace, rmw_handle);
+  CONDITIONAL_TP(ros2, rcl_node_init, node_handle, rmw_handle, node_name, node_namespace);
 }
 
 void TRACEPOINT(
   rcl_publisher_init,
-  const char * node_name,
-  const char * node_namespace)
+  const void * node_handle,
+  const void * rmw_handle,
+  const void * publisher_handle,
+  const char * topic_name)
 {
-  CONDITIONAL_TP(ros2, rcl_publisher_init, node_name, node_namespace);
+  CONDITIONAL_TP(ros2, rcl_publisher_init, node_handle, rmw_handle, publisher_handle, topic_name);
 }
 
 void TRACEPOINT(
   rcl_subscription_init,
+  const void * node_handle,
+  const void * rmw_handle,
   const void * subscription_handle,
-  const char * node_name,
   const char * topic_name)
 {
-  CONDITIONAL_TP(ros2, rcl_subscription_init, subscription_handle, node_name, topic_name);
+  CONDITIONAL_TP(ros2, rcl_subscription_init, node_handle, rmw_handle, subscription_handle, topic_name);
 }
 
 void TRACEPOINT(
@@ -76,19 +80,20 @@ void TRACEPOINT(
 
 void TRACEPOINT(
   rcl_service_init,
-  const void * service,
-  const void * node,
+  const void * node_handle,
+  const void * rmw_handle,
+  const void * service_handle,
   const char * service_name)
 {
-  CONDITIONAL_TP(ros2, rcl_service_init, service, node, service_name);
+  CONDITIONAL_TP(ros2, rcl_service_init, node_handle, rmw_handle, service_handle, service_name);
 }
 
 void TRACEPOINT(
   rclcpp_service_callback_added,
-  const void * service,
+  const void * service_handle,
   const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_service_callback_added, service, callback);
+  CONDITIONAL_TP(ros2, rclcpp_service_callback_added, service_handle, callback);
 }
 
 void TRACEPOINT(
