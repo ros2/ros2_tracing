@@ -75,6 +75,23 @@ void TRACEPOINT(
   const void * callback);
 
 /**
+ * tp: rcl_service_init
+ */
+void TRACEPOINT(
+  rcl_service_init,
+  const void * service,
+  const void * node,
+  const char * service_name);
+
+/**
+ * tp: rclcpp_service_callback_added
+ */
+void TRACEPOINT(
+  rclcpp_service_callback_added,
+  const void * service,
+  const void * callback);
+
+/**
  * tp: rclcpp_service_callback_start
  */
 void TRACEPOINT(

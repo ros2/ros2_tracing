@@ -75,6 +75,23 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
+  rcl_service_init,
+  const void * service,
+  const void * node,
+  const char * service_name)
+{
+  CONDITIONAL_TP(ros2, rcl_service_init, service, node, service_name);
+}
+
+void TRACEPOINT(
+  rclcpp_service_callback_added,
+  const void * service,
+  const void * callback)
+{
+  CONDITIONAL_TP(ros2, rclcpp_service_callback_added, service, callback);
+}
+
+void TRACEPOINT(
   rclcpp_service_callback_start,
   const void * callback)
 {

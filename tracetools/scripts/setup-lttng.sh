@@ -8,7 +8,11 @@ for event in \
   ros2:rcl_subscription_init \
   ros2:rclcpp_subscription_callback_added \
   ros2:rclcpp_subscription_callback_start \
-  ros2:rclcpp_subscription_callback_end
+  ros2:rclcpp_subscription_callback_end \
+  ros2:rcl_service_init \
+  ros2:rclcpp_service_callback_added \
+  ros2:rclcpp_service_callback_start \
+  ros2:rclcpp_service_callback_end
 do
 	lttng enable-event -c ros2 -u $event
 done

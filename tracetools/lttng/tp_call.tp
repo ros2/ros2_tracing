@@ -93,6 +93,34 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
     ros2,
+    rcl_service_init,
+    TP_ARGS(
+        const void*, service_arg,
+        const void*, node_arg,
+        const char*, service_name_arg
+    ),
+    TP_FIELDS(
+        ctf_integer_hex(const void*, service, service_arg)
+        ctf_integer_hex(const void*, node, node_arg)
+        ctf_string(service_name, service_name_arg)
+    )
+)
+
+TRACEPOINT_EVENT(
+    ros2,
+    rclcpp_service_callback_added,
+    TP_ARGS(
+        const void*, service_arg,
+        const void*, callback_arg
+    ),
+    TP_FIELDS(
+        ctf_integer_hex(const void*, service, service_arg)
+        ctf_integer_hex(const void*, callback, callback_arg)
+    )
+)
+
+TRACEPOINT_EVENT(
+    ros2,
     rclcpp_service_callback_start,
     TP_ARGS(
         const void*, callback_arg
