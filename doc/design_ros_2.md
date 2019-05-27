@@ -41,7 +41,7 @@ sequenceDiagram
     rcl->>tracetools: TP(rcl_init, &context)
 ```
 
-### Note/component creation
+### Node/component creation
 
 In ROS 2, a process can contain multiple nodes. These are sometimes referred to as "components."
 
