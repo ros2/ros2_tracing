@@ -25,12 +25,14 @@ sequenceDiagram
     participant process
     participant rclcpp
     participant rcl
+    participant rmw
     participant tracetools
 
     process->>rclcpp: rclcpp::init()
     Note over rclcpp: allocates <div></div> rclcpp::Context object
     rclcpp->>rcl: rcl_init(out context)
     Note over rcl: validates & processes context object
+    rcl->>rmw: rmw_init(out rmw_context_t)
 
     rcl->>tracetools: TP(rcl_init, &context)
 ```
@@ -55,12 +57,12 @@ sequenceDiagram
     Note over rmw: (implementation)
 
     process->>Component: Component()
-    Component->>rclcpp: : Node()
+    Component->>rclcpp: : Node(node_name, namespace)
     Note over rclcpp: allocates rcl_node_t handle
     rclcpp->>rcl: rcl_node_init(out rcl_node_t, node_name, namespace)
     Note over rcl: validates node name/namespace
     Note over rcl: populates rcl_note_t
-    rcl->>rmw: rmw_create_node() : rmw_node_t
+    rcl->>rmw: rmw_create_node(node_name, local_namespace) : rmw_node_t
     Note over rmw: creates rmw_node_t handle
 
     rcl->>tracetools: TP(rcl_node_init, rcl_node_t *, rmw_node_t *, node_name, namespace)
