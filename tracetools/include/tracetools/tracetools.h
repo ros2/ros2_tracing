@@ -43,7 +43,8 @@ void TRACEPOINT(
   const void * node_handle,
   const void * rmw_handle,
   const void * publisher_handle,
-  const char * topic_name);
+  const char * topic_name,
+  const size_t depth);
 
 /**
  * tp: rcl_subscription_init
