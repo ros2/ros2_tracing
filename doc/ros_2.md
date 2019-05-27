@@ -32,7 +32,7 @@ sequenceDiagram
     rclcpp->>rcl: rcl_init(out context)
     Note over rcl: validates & processes context object
 
-    rcl->>tracetools: TP(rcl_init, context)
+    rcl->>tracetools: TP(rcl_init, &context)
 ```
 
 ### Note/component creation
@@ -63,7 +63,7 @@ sequenceDiagram
     rcl->>rmw: rmw_create_node() : rmw_node_t
     Note over rmw: creates rmw_node_t handle
 
-    rcl->>tracetools: TP(rcl_node_init, &rcl_node_t, &rmw_node_t, node_name, namespace)
+    rcl->>tracetools: TP(rcl_node_init, rcl_node_t *, rmw_node_t *, node_name, namespace)
 ```
 
 ### Publisher creation
@@ -89,7 +89,7 @@ sequenceDiagram
     rcl->>rmw: rmw_create_publisher(rmw_node_t, topic_name) : rmw_publisher_t
     Note over rmw: creates rmw_publisher_t handle
 
-    rcl->>tracetools: TP(rcl_publisher_init, &rcl_node_t, &rmw_node_t, &rcl_publisher_t, topic_name)
+    rcl->>tracetools: TP(rcl_publisher_init, rcl_node_t *, rmw_node_t *, rcl_publisher_t *, topic_name)
 
     opt is intra process
         rclcpp->>rcl: rcl_publisher_init(...)
@@ -121,11 +121,13 @@ sequenceDiagram
     rcl->>rmw: rmw_create_subscription(rmw_node_t, topic_name) : rmw_subscription_t
     Note over rmw: creates rmw_subscription_t handle
 
-    rcl->>tracetools: TP(rcl_subscription_init, &rcl_node_t, &rmw_node_t, &rcl_subscription_t, topic_name)
+    rcl->>tracetools: TP(rcl_subscription_init, rcl_node_t *, rmw_node_t *, rcl_subscription_t *, topic_name)
 
     opt is intra process
         rclcpp->>rcl: rcl_subscription_init(...)
     end
+
+    rclcpp->>tracetools: TP(rclcpp_subscription_callback_added, rcl_subscription_t *, &any_callback)
 ```
 
 ### Executors
@@ -174,7 +176,7 @@ sequenceDiagram
 
     Note over Executor: execute_subscription()
     Executor->>Subscription: create_message(): std::shared_ptr<void>
-    Executor->>rcl: rcl_take*(rcl_subscription_t, &msg) : ret
+    Executor->>rcl: rcl_take*(rcl_subscription_t, out msg) : ret
     rcl->>rmw: rmw_take_with_info(rmw_subscription_t, out msg, out taken)
     Note over rmw: copies available message to msg if there is one
     opt RCL_RET_OK == ret
@@ -200,6 +202,7 @@ sequenceDiagram
     participant Component
     participant Publisher
     participant rcl
+    participant rmw
     participant tracetools
 
     Note over Component: creates a msg
