@@ -134,7 +134,7 @@ sequenceDiagram
     rcl->>rmw: rmw_create_subscription(rmw_node_t, topic_name, qos_options) : rmw_subscription_t
     Note over rmw: creates rmw_subscription_t handle
 
-    rcl->>tracetools: TP(rcl_subscription_init, rcl_node_t *, rmw_node_t *, rcl_subscription_t *, topic_name)
+    rcl->>tracetools: TP(rcl_subscription_init, rcl_node_t *, rmw_node_t *, rcl_subscription_t *, topic_name, depth)
 
     opt use_intra_process
         rclcpp->>Subscription: setup_intra_process()
