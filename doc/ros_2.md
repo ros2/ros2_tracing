@@ -187,3 +187,24 @@ sequenceDiagram
     end
     Executor->>Subscription: return_message(msg)
 ```
+
+### Message publishing
+
+To publish a message, an object is first allocated and then populated by the `Component` (or equivalent). Then, the message is sent to the `Publisher` through `publish()`. This then passes that on to `rcl`, which itself passes it to `rmw`.
+
+TODO add inter- vs. intra-process execution flow
+TODO talk about IntraProcessManager stuff?
+
+```mermaid
+sequenceDiagram
+    participant Component
+    participant Publisher
+    participant rcl
+    participant tracetools
+
+    Note over Component: creates a msg
+    Component->>Publisher: publish(msg)
+    Note over Publisher: ...
+    Publisher->>rcl: rcl_publish(rcl_publisher_t, msg)
+    rcl->>rmw: rmw_publisher(rmw_publisher, msg)
+```
