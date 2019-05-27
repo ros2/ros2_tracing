@@ -10,7 +10,7 @@ However, `rcl` is obviously fairly basic, and still does leave a fair amount of 
 
 This means that some instrumentation work might have to be re-done for every client library that we want to trace. We cannot simply instrument `rcl`, nor can we only instrument the base `rmw` interface if we want to dig into that.
 
-This document will mainly discuss `rcl` and `rclcpp`, but `rclpy` should eventually be added and supported.
+This document will (for now) mainly discuss `rcl` and `rclcpp`, but `rclpy` should eventually be added and supported.
 
 ## Flow description
 
@@ -25,11 +25,14 @@ sequenceDiagram
     participant process
     participant rclcpp
     participant rcl
+    participant tracetools
 
     process->>rclcpp: rclcpp::init()
     Note over rclcpp: allocates <div></div> rclcpp::Context object
-    rclcpp->>rcl: rcl_init()
+    rclcpp->>rcl: rcl_init(out context)
     Note over rcl: validates & processes context object
+
+    rcl->>tracetools: TP(rcl_init, context)
 ```
 
 ### Note/component creation
@@ -38,7 +41,7 @@ In ROS 2, a process can contain multiple nodes. These are sometimes referred to 
 
 These components are instanciated by the containing process. They are usually classes that extend `rclcpp::Node`, so that the node initialization work is done by the parent constructor.
 
-This parent constructor will allocate its own `rcl_node_t` handle and call `rcl_node_init()`, which will validate the node name/namespace. `rcl` will also call `rmw_create_node()` the node's `rmw` handle (`rmw_node_t`) to be used later by publishers and subscriptions.
+This parent constructor will allocate its own `rcl_node_t` handle and call `rcl_node_init()`, which will validate the node name/namespace. `rcl` will also call `rmw_create_node()` to get the node's `rmw` handle (`rmw_node_t`). This will be used later by publishers and subscriptions.
 
 ```mermaid
 sequenceDiagram
@@ -47,15 +50,20 @@ sequenceDiagram
     participant rclcpp
     participant rcl
     participant rmw
+    participant tracetools
+
+    Note over rmw: (implementation)
 
     process->>Component: Component()
     Component->>rclcpp: : Node()
     Note over rclcpp: allocates rcl_node_t handle
-    rclcpp->>rcl: rcl_node_init()
-    Note over rcl: checks node name/namespace
+    rclcpp->>rcl: rcl_node_init(out rcl_node_t, node_name, namespace)
+    Note over rcl: validates node name/namespace
     Note over rcl: populates rcl_note_t
-    rcl->>rmw: rmw_create_node()
+    rcl->>rmw: rmw_create_node() : rmw_node_t
     Note over rmw: creates rmw_node_t handle
+
+    rcl->>tracetools: TP(rcl_node_init, &rcl_node_t, &rmw_node_t, node_name, namespace)
 ```
 
 ### Publisher creation
@@ -70,16 +78,21 @@ sequenceDiagram
     participant rclcpp
     participant rcl
     participant rmw
+    participant tracetools
+
+    Note over rmw: (implementation)
 
     Component->>rclcpp: create_publisher()
     Note over rclcpp: allocates rcl_publisher_t handle
-    rclcpp->>rcl: rcl_publisher_init()
+    rclcpp->>rcl: rcl_publisher_init(out rcl_publisher_t, rcl_node_t, topic_name)
     Note over rcl: populates rcl_publisher_t
-    rcl->>rmw: rmw_create_publisher()
+    rcl->>rmw: rmw_create_publisher(rmw_node_t, topic_name) : rmw_publisher_t
     Note over rmw: creates rmw_publisher_t handle
 
+    rcl->>tracetools: TP(rcl_publisher_init, &rcl_node_t, &rmw_node_t, &rcl_publisher_t, topic_name)
+
     opt is intra process
-        rclcpp->>rcl: rcl_publisher_init()
+        rclcpp->>rcl: rcl_publisher_init(...)
     end
 ```
 
@@ -97,16 +110,21 @@ sequenceDiagram
     participant rclcpp
     participant rcl
     participant rmw
+    participant tracetools
+
+    Note over rmw: (implementation)
 
     Component->>rclcpp: create_subscription()
     Note over rclcpp: allocates rcl_subscription_t handle
-    rclcpp->>rcl: rcl_subscription_init()
+    rclcpp->>rcl: rcl_subscription_init(out rcl_subscription_t, rcl_node_t, topic_name)
     Note over rcl: populates rcl_subscription_t
-    rcl->>rmw: rmw_create_subscription()
-    Note over rmw: creates rmw_publisher_t handle
+    rcl->>rmw: rmw_create_subscription(rmw_node_t, topic_name) : rmw_subscription_t
+    Note over rmw: creates rmw_subscription_t handle
+
+    rcl->>tracetools: TP(rcl_subscription_init, &rcl_node_t, &rmw_node_t, &rcl_subscription_t, topic_name)
 
     opt is intra process
-        rclcpp->>rcl: rcl_subscription_init()
+        rclcpp->>rcl: rcl_subscription_init(...)
     end
 ```
 
@@ -122,12 +140,15 @@ After all the components have been added, `Executor::spin()` is called. `SingleT
 sequenceDiagram
     participant process
     participant Executor
+    participant tracetools
 
     process->>Executor: Executor()
     Note over process: instanciates components
     process->>Executor: add_node(component)
     process->>Executor: spin()
     loop until shutdown
+        Executor->>tracetools: TP(?)
+
         Note over Executor: get_next_executable()
         Note over Executor: execute_any_executable()
         Note over Executor: execute_*()
@@ -136,9 +157,11 @@ sequenceDiagram
 
 ### Subscription callbacks
 
-For subscriptions, callbacks are wrapped by an `rclcpp::AnySubscriptionCallback` object, which is registered when creating the `rclcpp::Subscription` object. Subscriptions are handled in the `rclcpp` layer.
+Subscriptions are handled in the `rclcpp` layer. Callbacks are wrapped by an `rclcpp::AnySubscriptionCallback` object, which is registered when creating the `rclcpp::Subscription` object.
 
-In `execute_*subscription()`, the `Executor` allocates a message and calls `rcl_take()`. If that is successful, it then passes that on to the subscription through `rclcpp::SubscriptionBase::handle_message()`. Finally, this calls `dispatch()` on the `rclcpp::AnySubscriptionCallback` object, which calls the actual `std::function` with the right signature.
+In `execute_*subscription()`, the `Executor` asks the `Subscription` to allocate a message though `Subscription::create_message()`. It then calls `rcl_take*()`. If that is successful, it then passes that on to the subscription through `rclcpp::SubscriptionBase::handle_message()`. This checks if it's the right type of subscription (i.e. inter vs. intra process), then it calls `dispatch()` on the `rclcpp::AnySubscriptionCallback` object with the message (cast to the actual type). This calls the actual `std::function` with the right signature.
+
+Finally, it returns the message object through `Subscription::return_message()`.
 
 ```mermaid
 sequenceDiagram
@@ -146,10 +169,21 @@ sequenceDiagram
     participant Subscription
     participant AnySubscriptionCallback
     participant rcl
+    participant rmw
+    participant tracetools
 
     Note over Executor: execute_subscription()
-    Executor->>rcl: rcl_take()
-    Executor->>Subscription: handle_message()
-    Subscription->>AnySubscriptionCallback: dispatch()
-    Note over AnySubscriptionCallback: std::function::operator(...)
+    Executor->>Subscription: create_message(): std::shared_ptr<void>
+    Executor->>rcl: rcl_take*(rcl_subscription_t, &msg) : ret
+    rcl->>rmw: rmw_take_with_info(rmw_subscription_t, out msg, out taken)
+    Note over rmw: copies available message to msg if there is one
+    opt RCL_RET_OK == ret
+        Executor->>Subscription: handle_message(msg)
+        Note over Subscription: makes sure it's the right type (intra/inter process), then casts the message to its actual type
+        Subscription->>AnySubscriptionCallback: dispatch(msg)
+        AnySubscriptionCallback->>tracetools: TP(rclcpp_subscription_callback_start, this, is_intra_process)
+        Note over AnySubscriptionCallback: std::function::operator(...)
+        AnySubscriptionCallback->>tracetools: TP(rclcpp_subscription_callback_end, this)
+    end
+    Executor->>Subscription: return_message(msg)
 ```
