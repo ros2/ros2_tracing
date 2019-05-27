@@ -76,23 +76,27 @@ If intra-process publishing/subscription is enabled, it will be set up after cre
 sequenceDiagram
     participant Component
     participant rclcpp
+    participant Publisher
     participant rcl
     participant rmw
     participant tracetools
 
     Note over rmw: (implementation)
 
-    Component->>rclcpp: create_publisher()
-    Note over rclcpp: allocates rcl_publisher_t handle
-    rclcpp->>rcl: rcl_publisher_init(out rcl_publisher_t, rcl_node_t, topic_name)
+    Component->>rclcpp: create_publisher(topic_name, options, use_intra_process)
+    Note over rclcpp: (...)
+    rclcpp->>Publisher: Publisher(topic_name, options)
+    Note over Publisher: allocates rcl_publisher_t handle
+    Publisher->>rcl: rcl_publisher_init(out rcl_publisher_t, rcl_node_t, topic_name, options)
     Note over rcl: populates rcl_publisher_t
-    rcl->>rmw: rmw_create_publisher(rmw_node_t, topic_name) : rmw_publisher_t
+    rcl->>rmw: rmw_create_publisher(rmw_node_t, topic_name, qos_options) : rmw_publisher_t
     Note over rmw: creates rmw_publisher_t handle
 
-    rcl->>tracetools: TP(rcl_publisher_init, rcl_node_t *, rmw_node_t *, rcl_publisher_t *, topic_name)
+    rcl->>tracetools: TP(rcl_publisher_init, rcl_node_t *, rmw_node_t *, rcl_publisher_t *, topic_name, depth)
 
-    opt is intra process
-        rclcpp->>rcl: rcl_publisher_init(...)
+    opt use_intra_process
+        rclcpp->>Publisher: setup_intra_process()
+        Publisher->>rcl: rcl_publisher_init(...)
     end
 ```
 
@@ -102,29 +106,33 @@ Subscription creation is done in a very similar manner.
 
 The componenent calls `create_publisher()`, which ends up creating an `rclcpp::Subscription` object which extends `rclcpp::SubscriptionBase`. The latter allocates an `rcl_subscription_t` handle, fetches its `rcl_node_t` handle, and calls `rcl_subscription_init()` in its constructor. `rcl` does topic name expansion/remapping/validation. It creates an `rmw_subscription_t` handle by calling `rmw_create_subscription()` of the given `rmw` implementation and associates it with the node's `rmw_node_t` handle and the subscription's `rcl_subscription_t` handle.
 
-If intra-process publishing/subscription is enabled, it will be set up after creating the subscription object, through a call to `Subscription::setup_intra_process()`, which calls `rcl_subscription_init()`.
+If intra-process publishing/subscription is enabled, it will be set up after creating the subscription object, through a call to `Subscription::setup_intra_process()`, which calls `rcl_subscription_init()`. This is very similar to a normal (inter-process) subscription, but it sets some flags for later.
 
 ```mermaid
 sequenceDiagram
     participant Component
     participant rclcpp
+    participant Subscription
     participant rcl
     participant rmw
     participant tracetools
 
     Note over rmw: (implementation)
 
-    Component->>rclcpp: create_subscription()
-    Note over rclcpp: allocates rcl_subscription_t handle
-    rclcpp->>rcl: rcl_subscription_init(out rcl_subscription_t, rcl_node_t, topic_name)
+    Component->>rclcpp: create_subscription(topic_name, callback, options, use_intra_process)
+    Note over rclcpp: (...)
+    rclcpp->>Subscription: Subscription(topic_name, callback, options)
+    Note over Subscription: allocates rcl_subscription_t handle
+    Subscription->>rcl: rcl_subscription_init(out rcl_subscription_t, rcl_node_t, topic_name, options)
     Note over rcl: populates rcl_subscription_t
-    rcl->>rmw: rmw_create_subscription(rmw_node_t, topic_name) : rmw_subscription_t
+    rcl->>rmw: rmw_create_subscription(rmw_node_t, topic_name, qos_options) : rmw_subscription_t
     Note over rmw: creates rmw_subscription_t handle
 
     rcl->>tracetools: TP(rcl_subscription_init, rcl_node_t *, rmw_node_t *, rcl_subscription_t *, topic_name)
 
-    opt is intra process
-        rclcpp->>rcl: rcl_subscription_init(...)
+    opt use_intra_process
+        rclcpp->>Subscription: setup_intra_process()
+        Subscription->>rcl: rcl_subscription_init(...)
     end
 
     rclcpp->>tracetools: TP(rclcpp_subscription_callback_added, rcl_subscription_t *, &any_callback)
