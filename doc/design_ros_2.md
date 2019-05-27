@@ -16,7 +16,7 @@ This document will (for now) mainly discuss `rcl` and `rclcpp`, but `rclpy` shou
 
 ### Process creation
 
-In the call to `rclcpp::init(argc, argv)`, an `rclcpp::Context` object is created and CLI arguments are parsed. Much of the work is actually done by `rcl` through a call to `rcl_init()`.
+In the call to `rclcpp::init()`, a process-specific `rclcpp::Context` object is fetched and CLI arguments are parsed. Much of the work is actually done by `rcl` through a call to `rcl_init()`. This call processes the `rcl_context_t` handle, which is wrapped by the `Context` object. Also, inside this call, `rcl` calls `rmw_init()` to process the `rmw` context (`rmw_context_t`) as well. This `rmw` handle is itself part of the `rcl_context_t` handle.
 
 This has to be done once per process, and usually at the very beginning. The components that are then instanciated share this context.
 
@@ -24,15 +24,19 @@ This has to be done once per process, and usually at the very beginning. The com
 sequenceDiagram
     participant process
     participant rclcpp
+    participant Context
     participant rcl
     participant rmw
     participant tracetools
 
-    process->>rclcpp: rclcpp::init()
-    Note over rclcpp: allocates rclcpp::Context object
-    rclcpp->>rcl: rcl_init(out context)
-    Note over rcl: validates & processes context object
+    process->>rclcpp: rclcpp::init(argc, argv)
+    Note over rclcpp: fetches process-specific Context object
+    rclcpp->>Context: init(argc, argv)
+    Note over Context: allocates rcl_context_t handle
+    Context->>rcl: rcl_init(out rcl_context_t)
+    Note over rcl: validates & processes rcl_context_t handle
     rcl->>rmw: rmw_init(out rmw_context_t)
+    Note over rmw: validates & processes rmw_context_t handle
 
     rcl->>tracetools: TP(rcl_init, &context)
 ```
