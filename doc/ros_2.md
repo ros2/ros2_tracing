@@ -1,6 +1,6 @@
 # ROS 2 design notes for instrumentation
 
-The goal is to document ROS 2's design/architecture in order to properly design the instrumentation for it.
+The goal is to document ROS 2's design/architecture through descriptions of the main execution flows in order to properly design the instrumentation for it.
 
 ## Notes on client libraries
 
