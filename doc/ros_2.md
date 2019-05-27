@@ -189,7 +189,7 @@ sequenceDiagram
     Note over rmw: copies available message to msg if there is one
     opt RCL_RET_OK == ret
         Executor->>Subscription: handle_message(msg)
-        Note over Subscription: casts msgs to its actual type
+        Note over Subscription: casts msg to its actual type
         Subscription->>AnySubscriptionCallback: dispatch(typed_msg)
         AnySubscriptionCallback->>tracetools: TP(rclcpp_subscription_callback_start, this, is_intra_process)
         Note over AnySubscriptionCallback: std::function::operator(...)
