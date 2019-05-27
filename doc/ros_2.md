@@ -43,13 +43,13 @@ This parent constructor will allocate its own `rcl_node_t` handle and call `rcl_
 ```mermaid
 sequenceDiagram
     participant process
-    participant component
+    participant Component
     participant rclcpp
     participant rcl
     participant rmw
 
-    process->>component: Component()
-    component->>rclcpp: : Node()
+    process->>Component: Component()
+    Component->>rclcpp: : Node()
     Note over rclcpp: allocates rcl_node_t handle
     rclcpp->>rcl: rcl_node_init()
     Note over rcl: checks node name/namespace
@@ -66,13 +66,12 @@ If intra-process publishing/subscription is enabled, it will be set up after cre
 
 ```mermaid
 sequenceDiagram
-    participant component
+    participant Component
     participant rclcpp
     participant rcl
     participant rmw
 
-    component->>rclcpp: create_publisher()
-    Note over rclcpp: through a lot of interfaces
+    Component->>rclcpp: create_publisher()
     Note over rclcpp: allocates rcl_publisher_t handle
     rclcpp->>rcl: rcl_publisher_init()
     Note over rcl: populates rcl_publisher_t
@@ -94,12 +93,12 @@ If intra-process publishing/subscription is enabled, it will be set up after cre
 
 ```mermaid
 sequenceDiagram
-    participant component
+    participant Component
     participant rclcpp
     participant rcl
     participant rmw
 
-    component->>rclcpp: create_subscription()
+    Component->>rclcpp: create_subscription()
     Note over rclcpp: allocates rcl_subscription_t handle
     rclcpp->>rcl: rcl_subscription_init()
     Note over rcl: populates rcl_subscription_t
@@ -111,7 +110,7 @@ sequenceDiagram
     end
 ```
 
-### Executors and callbacks
+### Executors
 
 An `rclcpp::executor::Executor` object is created for a given process. It can be a `SingleThreadedExecutor` or a `MultiThreadedExecutor`.
 
@@ -119,31 +118,38 @@ Components are instanciated, usually as a `shared_ptr` through `std::make_shared
 
 After all the components have been added, `Executor::spin()` is called. `SingleThreadedExecutor::spin()` simply loops forever until the process' context isn't valid anymore. It fetches the next `rclcpp::AnyExecutable` (e.g. subscription, timer, service, client), and calls `Executor::execute_any_executable()` with it. This then calls the relevant `execute*()` method (e.g. `execute_timer()`, `execute_subscription()`, `execute_intra_process_subscription()`, `execute_service()`, `execute_client()`).
 
+```mermaid
+sequenceDiagram
+    participant process
+    participant Executor
+
+    process->>Executor: Executor()
+    Note over process: instanciates components
+    process->>Executor: add_node(component)
+    process->>Executor: spin()
+    loop until shutdown
+        Note over Executor: get_next_executable()
+        Note over Executor: execute_any_executable()
+        Note over Executor: execute_*()
+    end
+```
+
+### Subscription callbacks
+
 For subscriptions, callbacks are wrapped by an `rclcpp::AnySubscriptionCallback` object, which is registered when creating the `rclcpp::Subscription` object. Subscriptions are handled in the `rclcpp` layer.
 
 In `execute_*subscription()`, the `Executor` allocates a message and calls `rcl_take()`. If that is successful, it then passes that on to the subscription through `rclcpp::SubscriptionBase::handle_message()`. Finally, this calls `dispatch()` on the `rclcpp::AnySubscriptionCallback` object, which calls the actual `std::function` with the right signature.
 
-<!-- TODO sequenceDiagram -->
-
 ```mermaid
 sequenceDiagram
-    participant process
-    participant executor
-    participant subscription
-    participant anycallback
+    participant Executor
+    participant Subscription
+    participant AnySubscriptionCallback
     participant rcl
 
-    process->>executor: Executor()
-    Note over process: instanciates components
-    process->>executor: add_node(component)
-    process->>executor: spin()
-    loop until shutdown
-        Note over executor: get_next_executable()
-        Note over executor: execute_any_executable()
-        Note over executor: execute_subscription()
-        executor->>rcl: rcl_take()
-        executor->>subscription: handle_message()
-        subscription->>anycallback: dispatch()
-        Note over anycallback: std::function::operator(...)
-    end
+    Note over Executor: execute_subscription()
+    Executor->>rcl: rcl_take()
+    Executor->>Subscription: handle_message()
+    Subscription->>AnySubscriptionCallback: dispatch()
+    Note over AnySubscriptionCallback: std::function::operator(...)
 ```
