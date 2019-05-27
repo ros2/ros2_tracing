@@ -29,7 +29,7 @@ sequenceDiagram
     participant tracetools
 
     process->>rclcpp: rclcpp::init()
-    Note over rclcpp: allocates <div></div> rclcpp::Context object
+    Note over rclcpp: allocates rclcpp::Context object
     rclcpp->>rcl: rcl_init(out context)
     Note over rcl: validates & processes context object
     rcl->>rmw: rmw_init(out rmw_context_t)
