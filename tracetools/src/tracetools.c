@@ -51,9 +51,10 @@ void TRACEPOINT(
   const void * node_handle,
   const void * rmw_handle,
   const void * subscription_handle,
-  const char * topic_name)
+  const char * topic_name,
+  const size_t depth)
 {
-  CONDITIONAL_TP(ros2, rcl_subscription_init, node_handle, rmw_handle, subscription_handle, topic_name);
+  CONDITIONAL_TP(ros2, rcl_subscription_init, node_handle, rmw_handle, subscription_handle, topic_name, depth);
 }
 
 void TRACEPOINT(
