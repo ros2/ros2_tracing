@@ -38,7 +38,7 @@ sequenceDiagram
     rcl->>rmw: rmw_init(out rmw_context_t)
     Note over rmw: validates & processes rmw_context_t handle
 
-    rcl-->>tracetools: TP(rcl_init, &context)
+    rcl-->>tracetools: TP(rcl_init, rcl_context_t *)
 ```
 
 ### Node/component creation
