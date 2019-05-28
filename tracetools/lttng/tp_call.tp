@@ -219,3 +219,16 @@ TRACEPOINT_EVENT(
         ctf_integer_hex(const void *, callback, callback_arg)
     )
 )
+
+TRACEPOINT_EVENT(
+    ros2,
+    rclcpp_callback_register,
+    TP_ARGS(
+        const void *, handle_arg,
+        const char *, callback_arg
+    ),
+    TP_FIELDS(
+        ctf_integer_hex(const void *, handle, handle_arg)
+        ctf_string(callback, callback_arg)
+    )
+)

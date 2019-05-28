@@ -152,6 +152,14 @@ void TRACEPOINT(
   rclcpp_timer_callback_end,
   const void * callback);
 
+/**
+ * tp: rclcpp_callback_register
+ */
+void TRACEPOINT(
+  rclcpp_callback_register,
+  const void * handle,
+  const void * callback);
+
 #ifdef __cplusplus
 }
 #endif
