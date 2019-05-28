@@ -112,6 +112,36 @@ void TRACEPOINT(
   rclcpp_service_callback_end,
   const void * callback);
 
+/**
+ * tp: rcl_timer_init
+ */
+void TRACEPOINT(
+  rcl_timer_init,
+  const void * timer_handle,
+  long period);
+
+/**
+ * tp: rclcpp_timer_callback_added
+ */
+void TRACEPOINT(
+  rclcpp_timer_callback_added,
+  const void * timer_handle,
+  const void * callback);
+
+/**
+ * tp: rclcpp_timer_callback_start
+ */
+void TRACEPOINT(
+  rclcpp_timer_callback_start,
+  const void * callback);
+
+/**
+ * tp: rclcpp_timer_callback_end
+ */
+void TRACEPOINT(
+  rclcpp_timer_callback_end,
+  const void * callback);
+
 #ifdef __cplusplus
 }
 #endif

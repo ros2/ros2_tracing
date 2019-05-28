@@ -111,3 +111,33 @@ void TRACEPOINT(
 {
   CONDITIONAL_TP(ros2, rclcpp_service_callback_end, callback);
 }
+
+void TRACEPOINT(
+  rcl_timer_init,
+  const void * timer_handle,
+  long period)
+{
+  CONDITIONAL_TP(ros2, rcl_timer_init, timer_handle, period);
+}
+
+void TRACEPOINT(
+  rclcpp_timer_callback_added,
+  const void * timer_handle,
+  const void * callback)
+{
+  CONDITIONAL_TP(ros2, rclcpp_timer_callback_added, timer_handle, callback);
+}
+
+void TRACEPOINT(
+  rclcpp_timer_callback_start,
+  const void * callback)
+{
+  CONDITIONAL_TP(ros2, rclcpp_timer_callback_start, callback);
+}
+
+void TRACEPOINT(
+  rclcpp_timer_callback_end,
+  const void * callback)
+{
+  CONDITIONAL_TP(ros2, rclcpp_timer_callback_end, callback);
+}

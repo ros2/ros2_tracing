@@ -154,3 +154,51 @@ TRACEPOINT_EVENT(
         ctf_integer_hex(const void *, callback, callback_arg)
     )
 )
+
+TRACEPOINT_EVENT(
+    ros2,
+    rcl_timer_init,
+    TP_ARGS(
+        const void *, timer_handle_arg,
+        long, period_arg
+    ),
+    TP_FIELDS(
+        ctf_integer_hex(const void *, timer_handle, timer_handle_arg)
+        ctf_integer(long, period, period_arg)
+    )
+)
+
+TRACEPOINT_EVENT(
+    ros2,
+    rclcpp_timer_callback_added,
+    TP_ARGS(
+        const void *, timer_handle_arg,
+        const void *, callback_arg
+    ),
+    TP_FIELDS(
+        ctf_integer_hex(const void *, timer_handle, timer_handle_arg)
+        ctf_integer_hex(const void *, callback, callback_arg)
+    )
+)
+
+TRACEPOINT_EVENT(
+    ros2,
+    rclcpp_timer_callback_start,
+    TP_ARGS(
+        const void *, callback_arg
+    ),
+    TP_FIELDS(
+        ctf_integer_hex(const void *, callback, callback_arg)
+    )
+)
+
+TRACEPOINT_EVENT(
+    ros2,
+    rclcpp_timer_callback_end,
+    TP_ARGS(
+        const void *, callback_arg
+    ),
+    TP_FIELDS(
+        ctf_integer_hex(const void *, callback, callback_arg)
+    )
+)
