@@ -41,8 +41,8 @@ void TRACEPOINT(
 void TRACEPOINT(
   rcl_publisher_init,
   const void * node_handle,
-  const void * rmw_handle,
   const void * publisher_handle,
+  const void * rmw_publisher_handle,
   const char * topic_name,
   const size_t depth);
 
@@ -52,8 +52,8 @@ void TRACEPOINT(
 void TRACEPOINT(
   rcl_subscription_init,
   const void * node_handle,
-  const void * rmw_handle,
   const void * subscription_handle,
+  const void * rmw_subscription_handle,
   const char * topic_name,
   const size_t depth);
 
@@ -86,8 +86,8 @@ void TRACEPOINT(
 void TRACEPOINT(
   rcl_service_init,
   const void * node_handle,
-  const void * rmw_handle,
   const void * service_handle,
+  const void * rmw_service_handle,
   const char * service_name);
 
 /**

@@ -50,23 +50,23 @@ void TRACEPOINT(
 void TRACEPOINT(
   rcl_publisher_init,
   const void * node_handle,
-  const void * rmw_handle,
   const void * publisher_handle,
+  const void * rmw_publisher_handle,
   const char * topic_name,
   const size_t depth)
 {
-  CONDITIONAL_TP(ros2, rcl_publisher_init, node_handle, rmw_handle, publisher_handle, topic_name, depth);
+  CONDITIONAL_TP(ros2, rcl_publisher_init, node_handle, publisher_handle, rmw_publisher_handle, topic_name, depth);
 }
 
 void TRACEPOINT(
   rcl_subscription_init,
   const void * node_handle,
-  const void * rmw_handle,
   const void * subscription_handle,
+  const void * rmw_subscription_handle,
   const char * topic_name,
   const size_t depth)
 {
-  CONDITIONAL_TP(ros2, rcl_subscription_init, node_handle, rmw_handle, subscription_handle, topic_name, depth);
+  CONDITIONAL_TP(ros2, rcl_subscription_init, node_handle, subscription_handle, rmw_subscription_handle, topic_name, depth);
 }
 
 void TRACEPOINT(
@@ -95,11 +95,11 @@ void TRACEPOINT(
 void TRACEPOINT(
   rcl_service_init,
   const void * node_handle,
-  const void * rmw_handle,
   const void * service_handle,
+  const void * rmw_service_handle,
   const char * service_name)
 {
-  CONDITIONAL_TP(ros2, rcl_service_init, node_handle, rmw_handle, service_handle, service_name);
+  CONDITIONAL_TP(ros2, rcl_service_init, node_handle, service_handle, rmw_service_handle, service_name);
 }
 
 void TRACEPOINT(
