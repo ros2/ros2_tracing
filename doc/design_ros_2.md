@@ -29,6 +29,8 @@ sequenceDiagram
     participant rmw
     participant tracetools
 
+    Note over rmw: (implementation)
+
     process->>rclcpp: rclcpp::init(argc, argv)
     Note over rclcpp: fetches process-specific Context object
     rclcpp->>Context: init(argc, argv)
@@ -188,6 +190,8 @@ sequenceDiagram
     participant rmw
     participant tracetools
 
+    Note over rmw: (implementation)
+
     Note over Executor: execute_subscription()
     Executor->>Subscription: create_message(): std::shared_ptr<void>
     Executor->>rcl: rcl_take*(rcl_subscription_t, out msg) : ret
@@ -219,11 +223,13 @@ sequenceDiagram
     participant rmw
     participant tracetools
 
+    Note over rmw: (implementation)
+
     Note over Component: creates a msg
     Component->>Publisher: publish(msg)
     Note over Publisher: ...
     Publisher->>rcl: rcl_publish(rcl_publisher_t, msg)
-    rcl->>rmw: rmw_publisher(rmw_publisher, msg)
+    rcl->>rmw: rmw_publish(rmw_publisher_t, msg)
 ```
 
 ### Service creation
