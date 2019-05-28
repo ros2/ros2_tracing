@@ -202,7 +202,7 @@ sequenceDiagram
         Note over Subscription: casts msg to its actual type
         Subscription->>AnySubscriptionCallback: dispatch(typed_msg)
         AnySubscriptionCallback-->>tracetools: TP(rclcpp_subscription_callback_start, this, is_intra_process)
-        Note over AnySubscriptionCallback: std::function::operator(...)
+        Note over AnySubscriptionCallback: std::function(...)
         AnySubscriptionCallback-->>tracetools: TP(rclcpp_subscription_callback_end, this)
     end
     Executor->>Subscription: return_message(msg)
