@@ -280,7 +280,7 @@ sequenceDiagram
     Note over rmw: (implementation)
 
     Note over Executor: execute_service()
-    Noter over Executor: allocates request header and request
+    Note over Executor: allocates request header and request
     Executor->>rcl: rcl_take_request(rcl_service, out request_header, out request) : ret
     rcl->>rmw: rmw_take_request(rmw_service_t, out request_header, out request, out taken)
     opt RCL_RET_OK == ret
