@@ -300,4 +300,48 @@ sequenceDiagram
 
 ### Timer creation
 
+Timer creation is similar to subscription creation. The `Component` calls `create_service()` which ends up creating a `rclcpp::WallTimer`. In its constructor, it creates a `rclcpp::Clock` object, which (for a `WallTimer`) is simply a nanosecond clock. It then allocates a `rcl_timer_t` handle, then calls `rcl_timer_init()`. This processes the handle and validates the period.
+
+Note that `rcl_timer_init()` can take a callback as a parameter, but right now that feature is not used anywhere (`nullptr` is given), and callbacks are instead handled in the `rclcpp` layer.
+
+```mermaid
+sequenceDiagram
+    participant Component
+    participant Node
+    participant WallTimer
+    participant rcl
+    participant tracetools
+
+    Component->>Node: create_wall_timer(period, callback)
+    Node->>WallTimer: WallTimer(period, callback, Context)
+    Note over WallTimer: creates a Clock object
+    Note over WallTimer: allocates a rcl_timer_t handle
+    WallTimer->>rcl: rcl_timer_init(out rcl_timer_t, Clock, rcl_context_t, period)
+    Note over rcl: validates and processes rcl_timer_t handle
+    rcl-->>tracetools: TP(rcl_timer_init, rcl_timer_t *, period)
+    WallTimer-->>tracetools: TP(rclcpp_timer_callback_added, rcl_timer_t *, &callback)
+```
+
 ### Timer callbacks
+
+Timer callbacks are similar to susbcription callbacks. In `execute_timer()`, the `Executor` calls `execute_callback()` on the `WallTimer`. The timer then calls `rcl_timer_call()` with its `rcl_timer_t` handle and checks if the callback should be called.
+
+If it that is the case, then the timer will call the actual `std::function`. Depending on the `std::function` that was given when creating the timer, it will either call the callback without any parameters or it will pass a reference of itself.
+
+```mermaid
+sequenceDiagram
+    participant Executor
+    participant WallTimer
+    participant rcl
+    participant tracetools
+
+    Note over Executor: execute_timer()
+    Executor->>WallTimer: execute_callback()
+    WallTimer->>rcl: rcl_timer_call(rcl_timer_t) : ret
+    Note over rcl: validates and updates timer
+    opt RCL_RET_TIMER_CANCELED != ret && RCL_RET_OK == ret
+        WallTimer-->>tracetools: TP(rclcpp_timer_callback_start, this)
+        Note over WallTimer: std::function(...)
+        WallTimer-->>tracetools: TP(rclcpp_timer_callback_end, this)
+    end
+```
