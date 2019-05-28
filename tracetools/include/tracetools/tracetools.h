@@ -113,6 +113,16 @@ void TRACEPOINT(
   const void * callback);
 
 /**
+ * tp: rcl_client_init
+ */
+void TRACEPOINT(
+  rcl_client_init,
+  const void * node_handle,
+  const void * client_handle,
+  const void * rmw_client_handle,
+  const char * service_name);
+
+/**
  * tp: rcl_timer_init
  */
 void TRACEPOINT(

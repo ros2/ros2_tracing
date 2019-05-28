@@ -113,6 +113,16 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
+  rcl_client_init,
+  const void * node_handle,
+  const void * client_handle,
+  const void * rmw_client_handle,
+  const char * service_name)
+{
+  CONDITIONAL_TP(ros2, rcl_client_init, node_handle, client_handle, rmw_client_handle, service_name);
+}
+
+void TRACEPOINT(
   rcl_timer_init,
   const void * timer_handle,
   long period)
