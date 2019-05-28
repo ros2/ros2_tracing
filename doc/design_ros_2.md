@@ -177,7 +177,7 @@ sequenceDiagram
 
 Subscriptions are handled in the `rclcpp` layer. Callbacks are wrapped by an `rclcpp::AnySubscriptionCallback` object, which is registered when creating the `rclcpp::Subscription` object.
 
-In `execute_*subscription()`, the `Executor` asks the `Subscription` to allocate a message though `Subscription::create_message()`. It then calls `rcl_take*()`. If that is successful, it then passes that on to the subscription through `rclcpp::SubscriptionBase::handle_message()`. This checks if it's the right type of subscription (i.e. inter vs. intra process), then it calls `dispatch()` on the `rclcpp::AnySubscriptionCallback` object with the message (cast to the actual type). This calls the actual `std::function` with the right signature.
+In `execute_*subscription()`, the `Executor` asks the `Subscription` to allocate a message though `Subscription::create_message()`. It then calls `rcl_take*()`, which calls `rmw_take_with_info()`. If that is successful, the `Executor` then passes that on to the subscription through `rclcpp::SubscriptionBase::handle_message()`. This checks if it's the right type of subscription (i.e. inter vs. intra process), then it calls `dispatch()` on the `rclcpp::AnySubscriptionCallback` object with the message (cast to the actual type). This calls the actual `std::function` with the right signature.
 
 Finally, it returns the message object through `Subscription::return_message()`.
 
@@ -235,8 +235,69 @@ sequenceDiagram
 
 ### Service creation
 
-### Timer creation
+Service server creation is similar to subscription creation. The `Component` calls `create_service()` which ends up creating a `rclcpp::Service`. In its constructor, it allocates a `rcl_service_t` handle, then calls `rcl_service_init()`. This processes the handle and validates the service name. It calls `rmw_create_service()` to get the corresponding `rmw_service_t` handle.
+
+```mermaid
+sequenceDiagram
+    participant Component
+    participant rclcpp
+    participant Service
+    participant rcl
+    participant rmw
+    participant tracetools
+
+    Note over rmw: (implementation)
+
+    Component->>rclcpp: create_service(service_name, callback)
+    Note over rclcpp: (...)
+    rclcpp->>Service: Service(rcl_node_t, service_name, callback, options)
+    Note over Service: allocates a rcl_service_t handle
+    Service->>rcl: rcl_service_init(out rcl_service_t, rcl_node_t, service_name, options)
+    Note over rcl: validates & processes service handle
+    rcl->>rmw: rmw_create_service(rmw_node_t, service_name, qos_options) : rmw_service_t
+    Note over rmw: creates rmw_service_t handle
+    rcl-->>tracetools: TP(rcl_service_init, rcl_node_t *, rmw_node_t *, rcl_service_t *, service_name)
+    Service->>tracetools: TP(rclcpp_service_callback_added, rcl_service_t *, &any_callback)
+```
 
 ### Service callbacks
+
+Service callbacks are similar to subscription callbacks. In `execute_service()`, the `Executor` allocates request header and request objects. It then calls `rcl_take_request()` and passes them along with the service handle.
+
+`rcl` calls `rmw_take_request()`. If those are successful, then the `Executor` calls `handle_request()` on the `Service`. This casts the request to its actual type, allocates a response object, and calls `dispatch()` on its `AnyServiceCallback` object, which calls the actual `std::function` with the right signature.
+
+For the service response, `Service` calls `rcl_send_response()` which calls `rmw_send_response()`.
+
+```mermaid
+sequenceDiagram
+    participant Executor
+    participant Service
+    participant AnyServiceCallback
+    participant rcl
+    participant rmw
+    participant tracetools
+
+    Note over rmw: (implementation)
+
+    Note over Executor: execute_service()
+    Noter over Executor: allocates request header and request
+    Executor->>rcl: rcl_take_request(rcl_service, out request_header, out request) : ret
+    rcl->>rmw: rmw_take_request(rmw_service_t, out request_header, out request, out taken)
+    opt RCL_RET_OK == ret
+        Executor->>Service: handle_request(request_header, request)
+        Note over Service: casts request to its actual type
+        Note over Service: allocates a response object
+        Service->>AnyServiceCallback: dispatch(request_header, typed_request, response)
+        AnyServiceCallback-->>tracetools: TP(rclcpp_service_callback_start, this)
+        Note over AnyServiceCallback: std::function(...)
+        AnyServiceCallback-->>tracetools: TP(rclcpp_service_callback_end, this)
+        Service->>rcl: rcl_send_response(rcl_service_t, request_header, response)
+        rcl->>rmw: rmw_send_response(rmw_service_t, request_header, response)
+    end
+```
+
+### Client creation
+
+### Timer creation
 
 ### Timer callbacks
