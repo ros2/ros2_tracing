@@ -12,12 +12,16 @@
 
 const char * get_symbol(const void * function_ptr) {
 #if defined(WITH_LTTNG) && !defined(_WIN32)
-	char** symbols = backtrace_symbols(&function_ptr, 1);
-	const char * result = symbols[0];
-	free(symbols);
-	return result;
+  // If it's actually a lambda
+  if (NULL == function_ptr) {
+    return "";
+  }
+  char ** symbols = backtrace_symbols(&function_ptr, 1);
+  const char * result = symbols[0];
+  free(symbols);
+  return result;
 #else
-	return "";
+  return "";
 #endif
 }
 
@@ -166,8 +170,8 @@ void TRACEPOINT(
 
 void TRACEPOINT(
   rclcpp_callback_register,
-  const void * handle,
-  const void * callback)
+  const void * callback,
+  const void * function_target)
 {
-  CONDITIONAL_TP(ros2, rclcpp_callback_register, handle, get_symbol(callback));
+  CONDITIONAL_TP(ros2, rclcpp_callback_register, callback, get_symbol(function_target));
 }
