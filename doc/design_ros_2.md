@@ -257,7 +257,7 @@ sequenceDiagram
     rcl->>rmw: rmw_create_service(rmw_node_t, service_name, qos_options) : rmw_service_t
     Note over rmw: creates rmw_service_t handle
     rcl-->>tracetools: TP(rcl_service_init, rcl_node_t *, rmw_node_t *, rcl_service_t *, service_name)
-    Service->>tracetools: TP(rclcpp_service_callback_added, rcl_service_t *, &any_callback)
+    Service-->>tracetools: TP(rclcpp_service_callback_added, rcl_service_t *, &any_callback)
 ```
 
 ### Service callbacks
