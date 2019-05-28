@@ -230,6 +230,7 @@ sequenceDiagram
     Note over Publisher: ...
     Publisher->>rcl: rcl_publish(rcl_publisher_t, msg)
     rcl->>rmw: rmw_publish(rmw_publisher_t, msg)
+    rmw-->>tracetools: TP(?)
 ```
 
 ### Service creation
