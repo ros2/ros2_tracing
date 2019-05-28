@@ -100,7 +100,7 @@ sequenceDiagram
     rcl->>rmw: rmw_create_publisher(rmw_node_t, topic_name, qos_options) : rmw_publisher_t
     Note over rmw: creates rmw_publisher_t handle
 
-    rcl-->>tracetools: TP(rcl_publisher_init, rcl_node_t *, rmw_node_t *, rcl_publisher_t *, topic_name, depth)
+    rcl-->>tracetools: TP(rcl_publisher_init, rcl_node_t *, rcl_publisher_t *, rmw_publisher_t *, topic_name, depth)
 
     opt use_intra_process
         rclcpp->>Publisher: setup_intra_process()
@@ -136,7 +136,7 @@ sequenceDiagram
     rcl->>rmw: rmw_create_subscription(rmw_node_t, topic_name, qos_options) : rmw_subscription_t
     Note over rmw: creates rmw_subscription_t handle
 
-    rcl-->>tracetools: TP(rcl_subscription_init, rcl_node_t *, rmw_node_t *, rcl_subscription_t *, topic_name, depth)
+    rcl-->>tracetools: TP(rcl_subscription_init, rcl_node_t *, rcl_subscription_t *, rmw_subscription_t *, topic_name, depth)
 
     opt use_intra_process
         rclcpp->>Subscription: setup_intra_process()
@@ -256,7 +256,7 @@ sequenceDiagram
     Note over rcl: validates & processes service handle
     rcl->>rmw: rmw_create_service(rmw_node_t, service_name, qos_options) : rmw_service_t
     Note over rmw: creates rmw_service_t handle
-    rcl-->>tracetools: TP(rcl_service_init, rcl_node_t *, rmw_node_t *, rcl_service_t *, service_name)
+    rcl-->>tracetools: TP(rcl_service_init, rcl_node_t *, rcl_service_t *, rmw_service_t *, service_name)
     Service-->>tracetools: TP(rclcpp_service_callback_added, rcl_service_t *, &any_callback)
 ```
 
