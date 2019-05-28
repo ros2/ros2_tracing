@@ -38,7 +38,7 @@ sequenceDiagram
     rcl->>rmw: rmw_init(out rmw_context_t)
     Note over rmw: validates & processes rmw_context_t handle
 
-    rcl->>tracetools: TP(rcl_init, &context)
+    rcl-->>tracetools: TP(rcl_init, &context)
 ```
 
 ### Node/component creation
@@ -69,7 +69,7 @@ sequenceDiagram
     rcl->>rmw: rmw_create_node(node_name, local_namespace) : rmw_node_t
     Note over rmw: creates rmw_node_t handle
 
-    rcl->>tracetools: TP(rcl_node_init, rcl_node_t *, rmw_node_t *, node_name, namespace)
+    rcl-->>tracetools: TP(rcl_node_init, rcl_node_t *, rmw_node_t *, node_name, namespace)
 ```
 
 ### Publisher creation
@@ -98,7 +98,7 @@ sequenceDiagram
     rcl->>rmw: rmw_create_publisher(rmw_node_t, topic_name, qos_options) : rmw_publisher_t
     Note over rmw: creates rmw_publisher_t handle
 
-    rcl->>tracetools: TP(rcl_publisher_init, rcl_node_t *, rmw_node_t *, rcl_publisher_t *, topic_name, depth)
+    rcl-->>tracetools: TP(rcl_publisher_init, rcl_node_t *, rmw_node_t *, rcl_publisher_t *, topic_name, depth)
 
     opt use_intra_process
         rclcpp->>Publisher: setup_intra_process()
@@ -134,14 +134,14 @@ sequenceDiagram
     rcl->>rmw: rmw_create_subscription(rmw_node_t, topic_name, qos_options) : rmw_subscription_t
     Note over rmw: creates rmw_subscription_t handle
 
-    rcl->>tracetools: TP(rcl_subscription_init, rcl_node_t *, rmw_node_t *, rcl_subscription_t *, topic_name, depth)
+    rcl-->>tracetools: TP(rcl_subscription_init, rcl_node_t *, rmw_node_t *, rcl_subscription_t *, topic_name, depth)
 
     opt use_intra_process
         rclcpp->>Subscription: setup_intra_process()
         Subscription->>rcl: rcl_subscription_init(...)
     end
 
-    rclcpp->>tracetools: TP(rclcpp_subscription_callback_added, rcl_subscription_t *, &any_callback)
+    rclcpp-->>tracetools: TP(rclcpp_subscription_callback_added, rcl_subscription_t *, &any_callback)
 ```
 
 ### Executors
@@ -163,7 +163,7 @@ sequenceDiagram
     process->>Executor: add_node(component)
     process->>Executor: spin()
     loop until shutdown
-        Executor->>tracetools: TP(?)
+        Executor-->>tracetools: TP(?)
 
         Note over Executor: get_next_executable()
         Note over Executor: execute_any_executable()
@@ -197,9 +197,9 @@ sequenceDiagram
         Executor->>Subscription: handle_message(msg)
         Note over Subscription: casts msg to its actual type
         Subscription->>AnySubscriptionCallback: dispatch(typed_msg)
-        AnySubscriptionCallback->>tracetools: TP(rclcpp_subscription_callback_start, this, is_intra_process)
+        AnySubscriptionCallback-->>tracetools: TP(rclcpp_subscription_callback_start, this, is_intra_process)
         Note over AnySubscriptionCallback: std::function::operator(...)
-        AnySubscriptionCallback->>tracetools: TP(rclcpp_subscription_callback_end, this)
+        AnySubscriptionCallback-->>tracetools: TP(rclcpp_subscription_callback_end, this)
     end
     Executor->>Subscription: return_message(msg)
 ```
