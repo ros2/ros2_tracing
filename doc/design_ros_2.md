@@ -298,6 +298,29 @@ sequenceDiagram
 
 ### Client creation
 
+Client creation is similar to publisher creation. The `Component` calls `create_client()` which ends up creating a `rclcpp::Client`. In its constructor, it allocates a `rcl_client_t` handle, then calls `rcl_client_init()`. This validates and processes the handle. It also calls `rmw_create_client()` which creates the `rmw_client_t` handle.
+
+```mermaid
+sequenceDiagram
+    participant Component
+    participant Node
+    participant Client
+    participant rcl
+    participant rmw
+    participant tracetools
+
+    Component->>Node: create_client(service_name, options)
+    Node->>Client: Client(service_name, options)
+    Note over Client: allocates a rcl_client_t handle
+    Client->>rcl: rcl_client_init(out rcl_client_t, rcl_node_t, service_name, options)
+    Note over rcl: validates and processes rcl_client_t handle
+    rcl->>rmw: rmw_create_client(rmw_node_t, service_name, qos_options) : rmw_client_t
+    Note over rmw: creates rmw_client_t handle
+    rcl-->>tracetools: TP(rcl_client_init, rcl_node_t *, rcl_client_t *, rmw_client_t *, service_name)
+```
+
+### Client request
+
 ### Timer creation
 
 Timer creation is similar to subscription creation. The `Component` calls `create_service()` which ends up creating a `rclcpp::WallTimer`. In its constructor, it creates a `rclcpp::Clock` object, which (for a `WallTimer`) is simply a nanosecond clock. It then allocates a `rcl_timer_t` handle, then calls `rcl_timer_init()`. This processes the handle and validates the period.
