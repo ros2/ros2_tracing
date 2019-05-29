@@ -12,15 +12,15 @@ Provide low-overhead tools and resources for robotics software development based
 
 Instrumentation should be built around the main uses of ROS 2, and should include relevant information.
 
-1. In general
+1. Overall
     1. When creating a publisher/subscriber/service/client/etc., appropriate references should be kept in order to correlate with other tracepoints related to the same instance.
-1. Publisher & subscription
+1. Publishers & subscriptions
     1. When creating a publisher/subscription, the effective topic name should be included (i.e. including namespace and after remapping).
     2. When publishing a message, some sort of message identifier should be included in the tracepoint so it can be tracked through DDS up to the subscriber's side.
 3. Callbacks (subscription, service, client, timer)
     1. Callback function symbol should be included, whenever possible.
     2. Information about callback execution (e.g. start & end) should be available.
-4. Timer
+4. Timers
     1. Information about the period should be available.
 5. Executors
     1. Information about spin cycles & periods should be available.
