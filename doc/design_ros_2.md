@@ -10,7 +10,7 @@ Provide low-overhead tools and resources for robotics software development based
 
 ### Requirements: instrumentation
 
-Instrumentation should be built around the main uses of ROS 2, and should include relevant information.
+Instrumentation should be built around the main uses of ROS 2, and should include relevant information:
 
 1. Overall
     1. When creating a publisher/subscriber/service/client/etc., appropriate references should be kept in order to correlate with other tracepoints related to the same instance.
