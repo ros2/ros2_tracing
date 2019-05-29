@@ -35,7 +35,7 @@ This might include converting existing `tracetools` scripts to more flexible Pyt
 
 ## Instrumentation design
 
-The goal is to document ROS 2's design/architecture through descriptions of the main execution flows in order to properly design the instrumentation for it.
+The goal is to document ROS 2's design/architecture through descriptions of the main execution flows. The instrumentation can then be designed around that.
 
 ### Flow description
 
