@@ -4,17 +4,11 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
 
 ## Overview
 
-This general effort will be split into a few distinct steps.
+### Goal
 
-### Instrumentation
+Provide low-overhead tools and resources for robotics software development based on ROS 2.
 
-The first goal is to statically instrument ROS 2, aiming for it to be in the ROS 2 E-turtle release (Nov 2019).
-
-This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever applicable. This step may not include instrumenting DDS implementations, and thus may be limited to the layer right before `rmw`.
-
-The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
-
-### Analysis & visualization
+### Desired results: analysis & visualization
 
 After the initial instrumentation, some general statistics analyses can be built. The targeted analysis & visualization tools are pandas and Jupyter. The goal is to make analyses general enough to be useful for different use-cases, e.g.:
 
@@ -39,23 +33,9 @@ To make tracing ROS 2 more accessible and easier to adopt, we can put effort int
 
 This might include converting existing `tracetools` scripts to more flexible Python scripts, and then plugging that into the launch system.
 
-### ROS 1/2 compatibility
-
-Finally, we could look into making analyses work on both ROS 1 and ROS 2, through a common instrumentation interface (or other abstraction).
-
 ## Instrumentation design
 
 The goal is to document ROS 2's design/architecture through descriptions of the main execution flows in order to properly design the instrumentation for it.
-
-### Notes on client libraries
-
-ROS 2 has changed the way it deals with client libraries. It offers a base ROS client library (`rcl`) written in C. This client library is the base for any language-specific implementation, such as `rclcpp` and `rclpy`.
-
-However, `rcl` is obviously fairly basic, and still does leave a fair amount of implementation work up to the client libraries. For example, callbacks are not at all handled in `rcl`, and are left to the client library implementations.
-
-This means that some instrumentation work might have to be re-done for every client library that we want to trace. We cannot simply instrument `rcl`, nor can we only instrument the base `rmw` interface if we want to dig into that.
-
-This document will (for now) mainly discuss `rcl` and `rclcpp`, but `rclpy` should eventually be added and supported.
 
 ### Flow description
 
@@ -463,3 +443,27 @@ sequenceDiagram
         WallTimer-->>tracetools: TP(rclcpp_timer_callback_end, this)
     end
 ```
+
+## Implementation notes
+
+### Instrumentation
+
+The first goal is to statically instrument ROS 2, aiming for it to be in the ROS 2 E-turtle release (Nov 2019).
+
+This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever applicable. This step may not include instrumenting DDS implementations, and thus may be limited to the layer right before `rmw`.
+
+The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
+
+### Notes on client libraries
+
+ROS offer a client library (`rcl`) written in C as the base for any language-specific implementation, such as `rclcpp` and `rclpy`.
+
+However, `rcl` is obviously fairly basic, and still does leave a fair amount of implementation work up to the client libraries. For example, callbacks are not handled in `rcl`, and are left to the client library implementations.
+
+This means that some instrumentation work will have to be re-done for every client library that we want to trace. We cannot simply instrument `rcl`, nor can we only instrument the base `rmw` interface if we want to dig into that.
+
+This effort should first focus on `rcl` and `rclcpp` , but `rclpy` should eventually be added and supported.
+
+### ROS 1/2 compatibility
+
+We could look into making analyses work on both ROS 1 and ROS 2, through a common instrumentation interface (or other abstraction).
