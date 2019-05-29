@@ -2,7 +2,7 @@
 
 Design document for ROS 2 tracing, instrumentation, and analysis effort.
 
-## Overview
+## Goals and requirements
 
 ### Goal
 
@@ -10,11 +10,26 @@ Provide low-overhead tools and resources for robotics software development based
 
 ### Requirements: instrumentation
 
-TODO
+Instrumentation should be built around the main uses of ROS 2, and should include relevant information.
+
+1. In general
+    1. When creating a publisher/subscriber/service/client/etc., appropriate references should be kept in order to correlate with other tracepoints related to the same instance.
+1. Publisher & subscription
+    1. When creating a publisher/subscription, the effective topic name should be included (i.e. including namespace and after remapping).
+    2. When publishing a message, some sort of message identifier should be included in the tracepoint so it can be tracked through DDS up to the subscriber's side.
+3. Callbacks (subscription, service, client, timer)
+    1. Callback function symbol should be included, whenever possible.
+    2. Information about callback execution (e.g. start & end) should be available.
+4. Timer
+    1. Information about the period should be available.
+5. Executors
+    1. Information about spin cycles & periods should be available.
+6. Others
+    1. Provide generic tracepoints for user code.
 
 ### Requirements: analysis & visualization
 
-Analyses should be general enough to be useful for different use-cases, e.g.:
+Analyses process trace data. They should be general enough to be useful for different use-cases, e.g.:
 
 * Callback duration
 * Time between callbacks (between two callback starts and/or a callback end and a start)
@@ -29,7 +44,7 @@ Analyses should be general enough to be useful for different use-cases, e.g.:
 
 with mean, stdev, etc. when applicable.
 
-Generic tracepoints should also be provided for ROS 2 user code, which could then be applied to a user-provided model for higher-level behaviour statistics and visualization.
+Generic tracepoints for ROS 2 user code could be applied to a user-provided model for higher-level behaviour statistics and visualization.
 
 ### Tools/accessibility
 
