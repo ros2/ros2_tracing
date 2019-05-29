@@ -321,6 +321,52 @@ sequenceDiagram
 
 ### Client request
 
+A client request has multiple steps. The `Component` (or the owner of the `Client`) first creates a request object. It then calls `Client::async_send_request()` with the request. It can also provide a callback, but it's optional. The `Client` passes that on to `rcl` by calling `rcl_send_request()`. `rcl` generates a sequence number and assigns it to the request, then calls `rmw_send_request()`. Once this is done, the `Client` puts this sequence number in an internal map along with the created promise and future objects, and the callback (which might simply be empty).
+
+At this point, the `Client` could simply let its callback be called. It can also use the future object returned by `async_send_request()`, and call `rclcpp::spin_until_future_complete()`. This waits until the future object is ready, or until timeout, and returns.
+
+If this last call was successful, then the `Component` can get the result and do something with it.
+
+```mermaid
+sequenceDiagram
+    participant Component
+    participant Executor
+    participant Client
+    participant rclcpp
+    participant rcl
+    participant rmw
+    participant tracetools
+
+    Note over Component: creates request
+    Component->>Client: async_send_request(request[, callback]) : result_future
+    Client->>rcl: rcl_send_request(rcl_client_t, request, out sequence_number)
+    Note over rcl: assigns sequence_number
+    rcl-->>tracetools: TP?(rcl_send_request, rcl_client_t *, sequence_number)
+    rcl->>rmw: rmw_send_request(rmw_client_t, request, sequence_number)
+    Note over Client: puts sequence_number in a map with promise+callback+future
+
+    Component->>rclcpp: spin_until_future_complete(result_future) : result_status
+
+    Note over Executor: execute_client()
+    Note over Executor: creates request_header and response objects
+    Executor->>rcl: rcl_take_response(rcl_client_t, out request_header, out response) : ret
+    rcl-->>tracetools: TP?()
+    rcl->>rmw: rmw_take_response(rmw_client_t, out request_header, out response, out taken)
+    opt RCL_RET_OK == ret
+        Executor->>Client: handle_response(request_header, response)
+        Note over Client: gets sequence_number from request_header
+        Client-->>tracetools: TP?()
+        Note over Client: gets promise+callback+future from its map
+        Note over Client: callback(future)
+    end
+
+    rclcpp->>Component: ready or timeout
+    opt SUCCESS == result_status
+        Note over Component: result_future.get() : result
+        Note over Component: do something with result
+    end
+```
+
 ### Timer creation
 
 Timer creation is similar to subscription creation. The `Component` calls `create_service()` which ends up creating a `rclcpp::WallTimer`. In its constructor, it creates a `rclcpp::Clock` object, which (for a `WallTimer`) is simply a nanosecond clock. It then allocates a `rcl_timer_t` handle, then calls `rcl_timer_init()`. This processes the handle and validates the period.
