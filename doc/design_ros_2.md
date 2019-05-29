@@ -1,8 +1,53 @@
-# ROS 2 design notes for instrumentation
+# ROS 2 tracing
+
+Design document for ROS 2 tracing, instrumentation, and analysis effort.
+
+## Overview
+
+This general effort will be split into a few distinct steps.
+
+### Instrumentation
+
+The first goal is to statically instrument ROS 2, aiming for it to be in the ROS 2 E-turtle release (Nov 2019).
+
+This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever applicable. This step may not include instrumenting DDS implementations, and thus may be limited to the layer right before `rmw`.
+
+The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
+
+### Analysis & visualization
+
+After the initial instrumentation, some general statistics analyses can be built. The targeted analysis & visualization tools are pandas and Jupyter. The goal is to make analyses general enough to be useful for different use-cases, e.g.:
+
+* Callback duration
+* Time between callbacks (between two callback starts and/or a callback end and a start)
+* Message age (as the difference between processing time and message timestamp)
+* Message size
+* Memory usage
+* Execution time/proportion accross a process' nodes/components
+* Interruptions (noting that these may be more useful as time-based metrics instead of overall statistics):
+    * scheduling events during a callback
+    * delay between the moment a thread becomes ready and when it's actually scheduled
+    * CPU cycles
+
+with mean, stdev, etc. when applicable.
+
+Generic tracepoints should also be provided for ROS 2 user code, which could then be applied to a user-provided model for higher-level behaviour statistics.
+
+### Tools/accessibility
+
+To make tracing ROS 2 more accessible and easier to adopt, we can put effort into integrating LTTng session setup & recording into the ROS 2 launch system.
+
+This might include converting existing `tracetools` scripts to more flexible Python scripts, and then plugging that into the launch system.
+
+### ROS 1/2 compatibility
+
+Finally, we could look into making analyses work on both ROS 1 and ROS 2, through a common instrumentation interface (or other abstraction).
+
+## Instrumentation design
 
 The goal is to document ROS 2's design/architecture through descriptions of the main execution flows in order to properly design the instrumentation for it.
 
-## Notes on client libraries
+### Notes on client libraries
 
 ROS 2 has changed the way it deals with client libraries. It offers a base ROS client library (`rcl`) written in C. This client library is the base for any language-specific implementation, such as `rclcpp` and `rclpy`.
 
@@ -12,9 +57,9 @@ This means that some instrumentation work might have to be re-done for every cli
 
 This document will (for now) mainly discuss `rcl` and `rclcpp`, but `rclpy` should eventually be added and supported.
 
-## Flow description
+### Flow description
 
-### Process creation
+#### Process creation
 
 In the call to `rclcpp::init()`, a process-specific `rclcpp::Context` object is fetched and CLI arguments are parsed. Much of the work is actually done by `rcl` through a call to `rcl_init()`. This call processes the `rcl_context_t` handle, which is wrapped by the `Context` object. Also, inside this call, `rcl` calls `rmw_init()` to process the `rmw` context (`rmw_context_t`) as well. This `rmw` handle is itself part of the `rcl_context_t` handle.
 
@@ -43,7 +88,7 @@ sequenceDiagram
     rcl-->>tracetools: TP(rcl_init, rcl_context_t *)
 ```
 
-### Node/component creation
+#### Node/component creation
 
 In ROS 2, a process can contain multiple nodes. These are sometimes referred to as "components."
 
@@ -74,7 +119,7 @@ sequenceDiagram
     rcl-->>tracetools: TP(rcl_node_init, rcl_node_t *, rmw_node_t *, node_name, namespace)
 ```
 
-### Publisher creation
+#### Publisher creation
 
 The component calls `create_publisher()`, a `rclcpp::Node` method for convenience. That ends up creating an `rclcpp::Publisher` object which extends `rclcpp::PublisherBase`. The latter allocates an `rcl_publisher_t` handle, fetches the corresponding `rcl_node_t` handle, and calls `rcl_publisher_init()` in its constructor. `rcl` does topic name expansion/remapping/validation. It creates an `rmw_publisher_t` handle by calling `rmw_create_publisher()` of the given `rmw` implementation and associates with the node's `rmw_node_t` handle and the publisher's `rcl_publisher_t` handle.
 
@@ -108,7 +153,7 @@ sequenceDiagram
     end
 ```
 
-### Subscription creation
+#### Subscription creation
 
 Subscription creation is done in a very similar manner.
 
@@ -146,7 +191,7 @@ sequenceDiagram
     rclcpp-->>tracetools: TP(rclcpp_subscription_callback_added, rcl_subscription_t *, &any_callback)
 ```
 
-### Executors
+#### Executors
 
 An `rclcpp::executor::Executor` object is created for a given process. It can be a `SingleThreadedExecutor` or a `MultiThreadedExecutor`.
 
@@ -173,7 +218,7 @@ sequenceDiagram
     end
 ```
 
-### Subscription callbacks
+#### Subscription callbacks
 
 Subscriptions are handled in the `rclcpp` layer. Callbacks are wrapped by an `rclcpp::AnySubscriptionCallback` object, which is registered when creating the `rclcpp::Subscription` object.
 
@@ -208,7 +253,7 @@ sequenceDiagram
     Executor->>Subscription: return_message(msg)
 ```
 
-### Message publishing
+#### Message publishing
 
 To publish a message, an object is first allocated and then populated by the `Component` (or equivalent). Then, the message is sent to the `Publisher` through `publish()`. This then passes that on to `rcl`, which itself passes it to `rmw`.
 
@@ -233,7 +278,7 @@ sequenceDiagram
     rmw-->>tracetools: TP(?)
 ```
 
-### Service creation
+#### Service creation
 
 Service server creation is similar to subscription creation. The `Component` calls `create_service()` which ends up creating a `rclcpp::Service`. In its constructor, it allocates a `rcl_service_t` handle, then calls `rcl_service_init()`. This processes the handle and validates the service name. It calls `rmw_create_service()` to get the corresponding `rmw_service_t` handle.
 
@@ -260,7 +305,7 @@ sequenceDiagram
     Service-->>tracetools: TP(rclcpp_service_callback_added, rcl_service_t *, &any_callback)
 ```
 
-### Service callbacks
+#### Service callbacks
 
 Service callbacks are similar to subscription callbacks. In `execute_service()`, the `Executor` allocates request header and request objects. It then calls `rcl_take_request()` and passes them along with the service handle.
 
@@ -296,7 +341,7 @@ sequenceDiagram
     end
 ```
 
-### Client creation
+#### Client creation
 
 Client creation is similar to publisher creation. The `Component` calls `create_client()` which ends up creating a `rclcpp::Client`. In its constructor, it allocates a `rcl_client_t` handle, then calls `rcl_client_init()`. This validates and processes the handle. It also calls `rmw_create_client()` which creates the `rmw_client_t` handle.
 
@@ -321,7 +366,7 @@ sequenceDiagram
     rcl-->>tracetools: TP(rcl_client_init, rcl_node_t *, rcl_client_t *, rmw_client_t *, service_name)
 ```
 
-### Client request
+#### Client request
 
 A client request has multiple steps. The `Component` (or the owner of the `Client`) first creates a request object. It then calls `Client::async_send_request()` with the request. It can also provide a callback, but it's optional. The `Client` passes that on to `rcl` by calling `rcl_send_request()`. `rcl` generates a sequence number and assigns it to the request, then calls `rmw_send_request()`. Once this is done, the `Client` puts this sequence number in an internal map along with the created promise and future objects, and the callback (which might simply be empty).
 
@@ -371,7 +416,7 @@ sequenceDiagram
     end
 ```
 
-### Timer creation
+#### Timer creation
 
 Timer creation is similar to subscription creation. The `Component` calls `create_service()` which ends up creating a `rclcpp::WallTimer`. In its constructor, it creates a `rclcpp::Clock` object, which (for a `WallTimer`) is simply a nanosecond clock. It then allocates a `rcl_timer_t` handle, then calls `rcl_timer_init()`. This processes the handle and validates the period.
 
@@ -395,7 +440,7 @@ sequenceDiagram
     WallTimer-->>tracetools: TP(rclcpp_timer_callback_added, rcl_timer_t *, &callback)
 ```
 
-### Timer callbacks
+#### Timer callbacks
 
 Timer callbacks are similar to susbcription callbacks. In `execute_timer()`, the `Executor` calls `execute_callback()` on the `WallTimer`. The timer then calls `rcl_timer_call()` with its `rcl_timer_t` handle and checks if the callback should be called.
 
