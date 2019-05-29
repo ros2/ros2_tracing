@@ -8,9 +8,13 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
 
 Provide low-overhead tools and resources for robotics software development based on ROS 2.
 
-### Desired results: analysis & visualization
+### Requirements: instrumentation
 
-After the initial instrumentation, some general statistics analyses can be built. The targeted analysis & visualization tools are pandas and Jupyter. The goal is to make analyses general enough to be useful for different use-cases, e.g.:
+TODO
+
+### Requirements: analysis & visualization
+
+Analyses should be general enough to be useful for different use-cases, e.g.:
 
 * Callback duration
 * Time between callbacks (between two callback starts and/or a callback end and a start)
@@ -25,7 +29,7 @@ After the initial instrumentation, some general statistics analyses can be built
 
 with mean, stdev, etc. when applicable.
 
-Generic tracepoints should also be provided for ROS 2 user code, which could then be applied to a user-provided model for higher-level behaviour statistics.
+Generic tracepoints should also be provided for ROS 2 user code, which could then be applied to a user-provided model for higher-level behaviour statistics and visualization.
 
 ### Tools/accessibility
 
@@ -452,7 +456,11 @@ The first goal is to statically instrument ROS 2, aiming for it to be in the ROS
 
 This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever applicable. This step may not include instrumenting DDS implementations, and thus may be limited to the layer right before `rmw`.
 
+### Targeted tools/dependencies
+
 The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
+
+The targeted analysis & visualization tools are pandas and Jupyter.
 
 ### Notes on client libraries
 
