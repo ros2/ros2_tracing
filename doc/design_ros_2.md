@@ -309,6 +309,8 @@ sequenceDiagram
     participant rmw
     participant tracetools
 
+    Note over rmw: (implementation)
+
     Component->>Node: create_client(service_name, options)
     Node->>Client: Client(service_name, options)
     Note over Client: allocates a rcl_client_t handle
@@ -336,6 +338,8 @@ sequenceDiagram
     participant rcl
     participant rmw
     participant tracetools
+
+    Note over rmw: (implementation)
 
     Note over Component: creates request
     Component->>Client: async_send_request(request[, callback]) : result_future
