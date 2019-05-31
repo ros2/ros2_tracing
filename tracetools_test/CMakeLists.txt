@@ -23,8 +23,17 @@ if(BUILD_TESTING)
     rclcpp
     std_msgs
   )
+  add_executable(test_subscription
+    test/test_subscription.cpp
+  )
+  ament_target_dependencies(test_subscription
+    rclcpp
+    std_msgs
+  )
+
   install(TARGETS
     test_publisher
+    test_subscription
     DESTINATION lib/${PROJECT_NAME}
   )
 
@@ -33,6 +42,7 @@ if(BUILD_TESTING)
   # Run each test in its own pytest invocation
   set(_tracetools_test_pytest_tests
     test/test_publisher.py
+    test/test_subscription.py
   )
 
   foreach(_test_path ${_tracetools_test_pytest_tests})

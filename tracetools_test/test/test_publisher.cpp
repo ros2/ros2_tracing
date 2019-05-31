@@ -5,7 +5,7 @@
 class PubNode : public rclcpp::Node
 {
 public:
-    PubNode() : Node("pub_node")
+    PubNode(rclcpp::NodeOptions options) : Node("pub_node", options)
     {
         pub_ = this->create_publisher<std_msgs::msg::String>(
             "the_topic",
@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     rclcpp::init(argc, argv);
 
     rclcpp::executors::SingleThreadedExecutor exec;
-    auto pub_node = std::make_shared<PubNode>();
+    auto pub_node = std::make_shared<PubNode>(rclcpp::NodeOptions());
     exec.add_node(pub_node);
 
     printf("spinning once\n");
