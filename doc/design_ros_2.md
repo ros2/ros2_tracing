@@ -463,19 +463,33 @@ sequenceDiagram
     end
 ```
 
-## Implementation notes
-
-### Instrumentation
-
-The first goal is to statically instrument ROS 2, aiming for it to be in the ROS 2 E-turtle release (Nov 2019).
-
-This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever applicable. This step may not include instrumenting DDS implementations, and thus may be limited to the layer right before `rmw`.
+## Design & implementation notes
 
 ### Targeted tools/dependencies
 
-The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
+The targeted tools or dependencies are:
 
-The targeted analysis & visualization tools are pandas and Jupyter.
+* LTTng for tracing
+* pandas and Jupyter for analysis & visualization
+
+### Design
+
+The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1. The suggested setup is:
+
+* a tracing package (e.g. `tracetools`) wraps calls to LTTng
+* ROS 2 is instrumented with calls to the tracing package, therefore it becomes a dependency and ships with the core stack
+* by default, the tracing package's functions are empty -- they do not do anything
+* if users wants to enable tracing, they need to
+    * install LTTng
+    * compile the tracing package from source, setting the right compile flag(s)
+    * overlay it on top of their ROS 2 installation
+* use other package(s) for analysis and visualization
+
+### Timeline
+
+The first goal is to statically instrument ROS 2, aiming for it to be in the ROS 2 E-turtle release (Nov 2019).
+
+This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever applicable. This step may not include instrumenting DDS implementations, and thus may be limited to the layer(s) right before `rmw`.
 
 ### Notes on client libraries
 
