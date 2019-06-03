@@ -15,7 +15,7 @@ from tracetools_trace.tools.lttng import (
     lttng_destroy,
 )
 
-def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, package_name, node_executable):
+def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, package_name, node_names):
     """
     Run a node while tracing
     :param base_path (str): the base path where to put the trace directory
@@ -23,7 +23,7 @@ def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, pac
     :param ros_events (list(str)): the list of ROS UST events to enable
     :param kernel_events (list(str)): the list of kernel events to enable
     :param package_name (str): the name of the package to use
-    :param node_executable (str): the name of the node to execute
+    :param node_names (list(str)): the names of the nodes to execute
     """
     session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
     full_path = f'{base_path}/{session_name}'
@@ -32,10 +32,13 @@ def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, pac
     lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
     lttng_start(session_name)
 
-    ld = LaunchDescription([
-        launch_ros.actions.Node(
-            package=package_name, node_executable=node_executable, output='screen'),
-    ])
+    nodes = []
+    for node_name in node_names:
+        n = launch_ros.actions.Node(package=package_name,
+                                    node_executable=node_name,
+                                    output='screen')
+        nodes.append(n)
+    ld = LaunchDescription(nodes)
     ls = LaunchService()
     ls.include_launch_description(get_default_launch_description())
     ls.include_launch_description(ld)

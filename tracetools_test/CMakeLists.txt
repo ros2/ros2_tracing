@@ -30,10 +30,26 @@ if(BUILD_TESTING)
     rclcpp
     std_msgs
   )
+  add_executable(test_ping
+    src/test_ping.cpp
+  )
+  ament_target_dependencies(test_ping
+    rclcpp
+    std_msgs
+  )
+  add_executable(test_pong
+    src/test_pong.cpp
+  )
+  ament_target_dependencies(test_pong
+    rclcpp
+    std_msgs
+  )
 
   install(TARGETS
     test_publisher
     test_subscription
+    test_ping
+    test_pong
     DESTINATION lib/${PROJECT_NAME}
   )
 

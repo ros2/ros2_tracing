@@ -16,7 +16,7 @@ class TestPublisher(unittest.TestCase):
     def test_creation(self):
         session_name_prefix = 'session-test-publisher-creation'
         base_path = '/tmp'
-        test_node = 'test_publisher'
+        test_node = ['test_publisher']
 
         exit_code, full_path = run_and_trace(base_path, session_name_prefix, publisher_creation_events, None, PKG, test_node)
         self.assertEqual(exit_code, 0)
