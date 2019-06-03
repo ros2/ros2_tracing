@@ -58,6 +58,20 @@ if(BUILD_TESTING)
     rclcpp
     std_srvs
   )
+  add_executable(test_service_ping
+    src/test_service_ping.cpp
+  )
+  ament_target_dependencies(test_service_ping
+    rclcpp
+    std_srvs
+  )
+  add_executable(test_service_pong
+    src/test_service_pong.cpp
+  )
+  ament_target_dependencies(test_service_pong
+    rclcpp
+    std_srvs
+  )
 
   install(TARGETS
     test_publisher
@@ -66,6 +80,8 @@ if(BUILD_TESTING)
     test_pong
     test_timer
     test_service
+    test_service_ping
+    test_service_pong
     DESTINATION lib/${PROJECT_NAME}
   )
 
@@ -79,6 +95,7 @@ if(BUILD_TESTING)
     test/test_subscription_callback.py
     test/test_timer.py
     test/test_service.py
+    test/test_service_callback.py
   )
 
   foreach(_test_path ${_tracetools_test_pytest_tests})
