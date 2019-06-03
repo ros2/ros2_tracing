@@ -13,6 +13,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
 # Tests
 if(BUILD_TESTING)
@@ -51,6 +52,13 @@ if(BUILD_TESTING)
     rclcpp
     std_msgs
   )
+  add_executable(test_service
+    src/test_service.cpp
+  )
+  ament_target_dependencies(test_service
+    rclcpp
+    std_srvs
+  )
 
   install(TARGETS
     test_publisher
@@ -58,6 +66,7 @@ if(BUILD_TESTING)
     test_ping
     test_pong
     test_timer
+    test_service
     DESTINATION lib/${PROJECT_NAME}
   )
 
@@ -70,6 +79,7 @@ if(BUILD_TESTING)
     test/test_subscription.py
     test/test_subscription_callback.py
     test/test_timer.py
+    test/test_service.py
   )
 
   foreach(_test_path ${_tracetools_test_pytest_tests})
