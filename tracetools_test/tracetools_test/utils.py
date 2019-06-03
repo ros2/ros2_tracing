@@ -15,7 +15,7 @@ from tracetools_trace.tools.lttng import (
     lttng_destroy,
 )
 
-def run_and_trace(session_name_prefix, base_path, ros_events, kernel_events, package_name, node_executable):
+def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, package_name, node_executable):
     session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
     full_path = f'{base_path}/{session_name}'
     print(f'trace directory: {full_path}')

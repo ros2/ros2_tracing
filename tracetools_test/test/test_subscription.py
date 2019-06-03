@@ -19,7 +19,7 @@ class TestSubscription(unittest.TestCase):
         base_path = '/tmp'
         test_node = 'test_subscription'
 
-        exit_code, full_path = run_and_trace(session_name_prefix, base_path, subscription_creation_events, None, PKG, test_node)
+        exit_code, full_path = run_and_trace(base_path, session_name_prefix, subscription_creation_events, None, PKG, test_node)
         self.assertEqual(exit_code, 0)
 
         trace_events = get_trace_event_names(full_path)
