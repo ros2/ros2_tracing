@@ -44,12 +44,20 @@ if(BUILD_TESTING)
     rclcpp
     std_msgs
   )
+  add_executable(test_timer
+    src/test_timer.cpp
+  )
+  ament_target_dependencies(test_timer
+    rclcpp
+    std_msgs
+  )
 
   install(TARGETS
     test_publisher
     test_subscription
     test_ping
     test_pong
+    test_timer
     DESTINATION lib/${PROJECT_NAME}
   )
 
@@ -61,6 +69,7 @@ if(BUILD_TESTING)
     test/test_publisher.py
     test/test_subscription.py
     test/test_subscription_callback.py
+    test/test_timer.py
   )
 
   foreach(_test_path ${_tracetools_test_pytest_tests})
