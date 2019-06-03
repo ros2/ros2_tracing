@@ -60,6 +60,7 @@ if(BUILD_TESTING)
     test/test_node.py
     test/test_publisher.py
     test/test_subscription.py
+    test/test_subscription_callback.py
   )
 
   foreach(_test_path ${_tracetools_test_pytest_tests})
