@@ -50,7 +50,6 @@ if(BUILD_TESTING)
   )
   ament_target_dependencies(test_timer
     rclcpp
-    std_msgs
   )
   add_executable(test_service
     src/test_service.cpp
