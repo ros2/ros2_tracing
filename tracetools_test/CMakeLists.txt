@@ -17,14 +17,14 @@ find_package(std_msgs REQUIRED)
 # Tests
 if(BUILD_TESTING)
   add_executable(test_publisher
-    test/test_publisher.cpp
+    src/test_publisher.cpp
   )
   ament_target_dependencies(test_publisher
     rclcpp
     std_msgs
   )
   add_executable(test_subscription
-    test/test_subscription.cpp
+    src/test_subscription.cpp
   )
   ament_target_dependencies(test_subscription
     rclcpp
