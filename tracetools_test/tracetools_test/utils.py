@@ -16,6 +16,15 @@ from tracetools_trace.tools.lttng import (
 )
 
 def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, package_name, node_executable):
+    """
+    Run a node while tracing
+    :param base_path (str): the base path where to put the trace directory
+    :param session_name_prefix (str): the session name prefix for the trace directory
+    :param ros_events (list(str)): the list of ROS UST events to enable
+    :param kernel_events (list(str)): the list of kernel events to enable
+    :param package_name (str): the name of the package to use
+    :param node_executable (str): the name of the node to execute
+    """
     session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
     full_path = f'{base_path}/{session_name}'
     print(f'trace directory: {full_path}')
@@ -40,6 +49,10 @@ def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, pac
 
 
 def cleanup_trace(full_path):
+    """
+    Cleanup trace data
+    :param full_path (str): the full path to the main trace directory
+    """
     shutil.rmtree(full_path)
 
 
