@@ -2,7 +2,6 @@
 #include <chrono>
 
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp/rate.hpp"
 #include "std_msgs/msg/string.hpp"
 
 using namespace std::chrono_literals;
