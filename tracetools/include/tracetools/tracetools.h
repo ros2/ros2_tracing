@@ -158,7 +158,7 @@ void TRACEPOINT(
 void TRACEPOINT(
   rclcpp_callback_register,
   const void * callback,
-  const void * function_target);
+  const char * function_symbol);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,3 @@
-#include <execinfo.h>
 #include "tracetools/tracetools.h"
 
 #if defined(WITH_LTTNG) && !defined(_WIN32)
@@ -8,22 +7,6 @@
 #else
 # define CONDITIONAL_TP(...)
 #endif
-
-
-const char * get_symbol(const void * function_ptr) {
-#if defined(WITH_LTTNG) && !defined(_WIN32)
-  // If it's actually a lambda
-  if (NULL == function_ptr) {
-    return "";
-  }
-  char ** symbols = backtrace_symbols(&function_ptr, 1);
-  const char * result = symbols[0];
-  free(symbols);
-  return result;
-#else
-  return "";
-#endif
-}
 
 bool ros_trace_compile_status()
 {
@@ -171,7 +154,7 @@ void TRACEPOINT(
 void TRACEPOINT(
   rclcpp_callback_register,
   const void * callback,
-  const void * function_target)
+  const char * function_symbol)
 {
-  CONDITIONAL_TP(ros2, rclcpp_callback_register, callback, get_symbol(function_target));
+  CONDITIONAL_TP(ros2, rclcpp_callback_register, callback, function_symbol);
 }

@@ -42,6 +42,7 @@ include_directories(include)
 add_executable(${PROJECT_NAME}_status
   src/status.c
   src/tracetools.c
+  src/utils.cpp
 )
 target_link_libraries(${PROJECT_NAME}_status
   ${PROJECT_NAME}
@@ -57,6 +58,7 @@ install(TARGETS
 # Tracetools lib
 set(SOURCES
   src/tracetools.c
+  src/utils.cpp
 )
 if(TRACING_ENABLED)
   list(APPEND SOURCES ${LTTNG_GENERATED})
