@@ -1,23 +1,30 @@
 # Utils for tracetools_test
 
-import time
 import shutil
-import subprocess
+import time
+
 import babeltrace
 from launch import LaunchDescription
 from launch import LaunchService
 from launch_ros import get_default_launch_description
 import launch_ros.actions
 from tracetools_trace.tools.lttng import (
+    lttng_destroy,
     lttng_setup,
     lttng_start,
     lttng_stop,
-    lttng_destroy,
 )
 
-def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, package_name, node_names):
+
+def run_and_trace(base_path,
+                  session_name_prefix,
+                  ros_events,
+                  kernel_events,
+                  package_name,
+                  node_names):
     """
-    Run a node while tracing
+    Run a node while tracing.
+
     :param base_path (str): the base path where to put the trace directory
     :param session_name_prefix (str): the session name prefix for the trace directory
     :param ros_events (list(str)): the list of ROS UST events to enable
@@ -53,7 +60,8 @@ def run_and_trace(base_path, session_name_prefix, ros_events, kernel_events, pac
 
 def cleanup_trace(full_path):
     """
-    Cleanup trace data
+    Cleanup trace data.
+
     :param full_path (str): the full path to the main trace directory
     """
     shutil.rmtree(full_path)
@@ -61,7 +69,8 @@ def cleanup_trace(full_path):
 
 def get_trace_event_names(trace_directory):
     """
-    Get a set of event names in a trace
+    Get a set of event names in a trace.
+
     :param trace_directory (str): the path to the main/top trace directory
     :return: event names (set(str))
     """

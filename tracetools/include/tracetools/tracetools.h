@@ -1,12 +1,12 @@
-#ifndef __TRACETOOLS_TRACETOOLS_H_
-#define __TRACETOOLS_TRACETOOLS_H_
+#ifndef TRACETOOLS__TRACETOOLS_H_
+#define TRACETOOLS__TRACETOOLS_H_
 
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
 
 #define TRACEPOINT(event_name, ...) \
-  (ros_trace_##event_name)(__VA_ARGS__)
+  (ros_trace_ ## event_name)(__VA_ARGS__)
 
 #ifdef __cplusplus
 extern "C"
@@ -128,7 +128,7 @@ void TRACEPOINT(
 void TRACEPOINT(
   rcl_timer_init,
   const void * timer_handle,
-  long period);
+  int64_t period);
 
 /**
  * tp: rclcpp_timer_callback_added
@@ -164,4 +164,4 @@ void TRACEPOINT(
 }
 #endif
 
-#endif /* __TRACETOOLS_TRACETOOLS_H_ */
+#endif /* TRACETOOLS__TRACETOOLS_H_ */

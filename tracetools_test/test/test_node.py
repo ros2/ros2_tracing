@@ -1,8 +1,9 @@
 import unittest
+
 from tracetools_test.utils import (
+    cleanup_trace,
     get_trace_event_names,
     run_and_trace,
-    cleanup_trace,
 )
 
 BASE_PATH = '/tmp'
@@ -11,6 +12,7 @@ node_creation_events = [
     'ros2:rcl_init',
     'ros2:rcl_node_init',
 ]
+
 
 class TestNode(unittest.TestCase):
 

@@ -3,7 +3,7 @@
 #if defined(WITH_LTTNG) && !defined(_WIN32)
 # include "tp_call.h"
 # define CONDITIONAL_TP(...) \
-    tracepoint(__VA_ARGS__)
+  tracepoint(__VA_ARGS__)
 #else
 # define CONDITIONAL_TP(...)
 #endif
@@ -21,7 +21,10 @@ void TRACEPOINT(
   rcl_init,
   const void * context)
 {
-  CONDITIONAL_TP(ros2, rcl_init, context);
+  CONDITIONAL_TP(
+    ros2,
+    rcl_init,
+    context);
 }
 
 void TRACEPOINT(
@@ -31,7 +34,13 @@ void TRACEPOINT(
   const char * node_name,
   const char * node_namespace)
 {
-  CONDITIONAL_TP(ros2, rcl_node_init, node_handle, rmw_handle, node_name, node_namespace);
+  CONDITIONAL_TP(
+    ros2,
+    rcl_node_init,
+    node_handle,
+    rmw_handle,
+    node_name,
+    node_namespace);
 }
 
 void TRACEPOINT(
@@ -42,7 +51,14 @@ void TRACEPOINT(
   const char * topic_name,
   const size_t depth)
 {
-  CONDITIONAL_TP(ros2, rcl_publisher_init, node_handle, publisher_handle, rmw_publisher_handle, topic_name, depth);
+  CONDITIONAL_TP(
+    ros2,
+    rcl_publisher_init,
+    node_handle,
+    publisher_handle,
+    rmw_publisher_handle,
+    topic_name,
+    depth);
 }
 
 void TRACEPOINT(
@@ -53,15 +69,26 @@ void TRACEPOINT(
   const char * topic_name,
   const size_t depth)
 {
-  CONDITIONAL_TP(ros2, rcl_subscription_init, node_handle, subscription_handle, rmw_subscription_handle, topic_name, depth);
+  CONDITIONAL_TP(
+    ros2,
+    rcl_subscription_init,
+    node_handle,
+    subscription_handle,
+    rmw_subscription_handle,
+    topic_name,
+    depth);
 }
 
 void TRACEPOINT(
-    rclcpp_subscription_callback_added,
-    const void * subscription_handle,
-    const void * callback)
+  rclcpp_subscription_callback_added,
+  const void * subscription_handle,
+  const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_subscription_callback_added, subscription_handle, callback);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_subscription_callback_added,
+    subscription_handle,
+    callback);
 }
 
 void TRACEPOINT(
@@ -69,14 +96,21 @@ void TRACEPOINT(
   const void * callback,
   const bool is_intra_process)
 {
-  CONDITIONAL_TP(ros2, rclcpp_subscription_callback_start, callback, (is_intra_process ? 1 : 0));
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_subscription_callback_start,
+    callback,
+    (is_intra_process ? 1 : 0));
 }
 
 void TRACEPOINT(
   rclcpp_subscription_callback_end,
   const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_subscription_callback_end, callback);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_subscription_callback_end,
+    callback);
 }
 
 void TRACEPOINT(
@@ -86,7 +120,13 @@ void TRACEPOINT(
   const void * rmw_service_handle,
   const char * service_name)
 {
-  CONDITIONAL_TP(ros2, rcl_service_init, node_handle, service_handle, rmw_service_handle, service_name);
+  CONDITIONAL_TP(
+    ros2,
+    rcl_service_init,
+    node_handle,
+    service_handle,
+    rmw_service_handle,
+    service_name);
 }
 
 void TRACEPOINT(
@@ -94,21 +134,31 @@ void TRACEPOINT(
   const void * service_handle,
   const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_service_callback_added, service_handle, callback);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_service_callback_added,
+    service_handle,
+    callback);
 }
 
 void TRACEPOINT(
   rclcpp_service_callback_start,
   const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_service_callback_start, callback);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_service_callback_start,
+    callback);
 }
 
 void TRACEPOINT(
   rclcpp_service_callback_end,
   const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_service_callback_end, callback);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_service_callback_end,
+    callback);
 }
 
 void TRACEPOINT(
@@ -118,15 +168,25 @@ void TRACEPOINT(
   const void * rmw_client_handle,
   const char * service_name)
 {
-  CONDITIONAL_TP(ros2, rcl_client_init, node_handle, client_handle, rmw_client_handle, service_name);
+  CONDITIONAL_TP(
+    ros2,
+    rcl_client_init,
+    node_handle,
+    client_handle,
+    rmw_client_handle,
+    service_name);
 }
 
 void TRACEPOINT(
   rcl_timer_init,
   const void * timer_handle,
-  long period)
+  int64_t period)
 {
-  CONDITIONAL_TP(ros2, rcl_timer_init, timer_handle, period);
+  CONDITIONAL_TP(
+    ros2,
+    rcl_timer_init,
+    timer_handle,
+    period);
 }
 
 void TRACEPOINT(
@@ -134,21 +194,31 @@ void TRACEPOINT(
   const void * timer_handle,
   const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_timer_callback_added, timer_handle, callback);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_timer_callback_added,
+    timer_handle,
+    callback);
 }
 
 void TRACEPOINT(
   rclcpp_timer_callback_start,
   const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_timer_callback_start, callback);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_timer_callback_start,
+    callback);
 }
 
 void TRACEPOINT(
   rclcpp_timer_callback_end,
   const void * callback)
 {
-  CONDITIONAL_TP(ros2, rclcpp_timer_callback_end, callback);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_timer_callback_end,
+    callback);
 }
 
 void TRACEPOINT(
@@ -156,5 +226,9 @@ void TRACEPOINT(
   const void * callback,
   const char * function_symbol)
 {
-  CONDITIONAL_TP(ros2, rclcpp_callback_register, callback, function_symbol);
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_callback_register,
+    callback,
+    function_symbol);
 }

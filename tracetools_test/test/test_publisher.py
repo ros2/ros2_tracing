@@ -1,8 +1,9 @@
 import unittest
+
 from tracetools_test.utils import (
+    cleanup_trace,
     get_trace_event_names,
     run_and_trace,
-    cleanup_trace,
 )
 
 BASE_PATH = '/tmp'
@@ -10,6 +11,7 @@ PKG = 'tracetools_test'
 publisher_creation_events = [
     'ros2:rcl_publisher_init',
 ]
+
 
 class TestPublisher(unittest.TestCase):
 

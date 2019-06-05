@@ -21,13 +21,13 @@ endif()
 if(LTTNG_FOUND)
   # Generate necessary LTTng files
   # If successful, enable tracing
-  add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/src/tp_call.c
-    COMMAND lttng-gen-tp tp_call.tp -o ../src/tp_call.c -o ../src/tp_call.h
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/lttng
-    DEPENDS ${PROJECT_SOURCE_DIR}/lttng/tp_call.tp
+  add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/src/tp_call.c ${PROJECT_SOURCE_DIR}/include/tp_call.h
+    COMMAND lttng-gen-tp tp_call.tp -o tp_call.c -o ../include/tp_call.h
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src
+    DEPENDS ${PROJECT_SOURCE_DIR}/src/tp_call.tp
   )
   set(LTTNG_GENERATED
-    src/tp_call.h
+    include/tp_call.h
     src/tp_call.c
   )
   set(TRACING_ENABLED TRUE)

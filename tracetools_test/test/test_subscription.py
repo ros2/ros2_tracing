@@ -1,8 +1,9 @@
 import unittest
+
 from tracetools_test.utils import (
+    cleanup_trace,
     get_trace_event_names,
     run_and_trace,
-    cleanup_trace,
 )
 
 BASE_PATH = '/tmp'
@@ -11,6 +12,7 @@ subscription_creation_events = [
     'ros2:rcl_subscription_init',
     'ros2:rclcpp_subscription_callback_added',
 ]
+
 
 class TestSubscription(unittest.TestCase):
 

@@ -1,8 +1,9 @@
 import unittest
+
 from tracetools_test.utils import (
+    cleanup_trace,
     get_trace_event_names,
     run_and_trace,
-    cleanup_trace,
 )
 
 BASE_PATH = '/tmp'
@@ -11,6 +12,7 @@ service_creation_events = [
     'ros2:rcl_service_init',
     'ros2:rclcpp_service_callback_added',
 ]
+
 
 class TestService(unittest.TestCase):
 

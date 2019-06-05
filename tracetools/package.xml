@@ -5,9 +5,9 @@
   <version>0.0.1</version>
   <description>ROS 2 wrapper for instrumentation</description>
   <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
+  <license>APLv2</license>
   <author email="ingo.luetkebohle@de.bosch.com">Ingo Luetkebohle</author>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
-  <license>APLv2</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>pkg-config</buildtool_depend>
