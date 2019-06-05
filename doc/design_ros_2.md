@@ -4,9 +4,10 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
 
 ## Goals and requirements
 
-### Goal
+### Goals
 
-Provide low-overhead tools and resources for robotics software development based on ROS 2.
+1. Provide low-overhead tools and resources for robotics software development based on ROS 2.
+2. Make tracing easier to use with ROS.
 
 ### Requirements: instrumentation
 
