@@ -39,19 +39,19 @@ endif()
 include_directories(include)
 
 # Status checking tool
-add_executable(${PROJECT_NAME}_status
+add_executable(status
   src/status.c
   src/tracetools.c
   src/utils.cpp
 )
-target_link_libraries(${PROJECT_NAME}_status
+target_link_libraries(status
   ${PROJECT_NAME}
 )
-ament_target_dependencies(${PROJECT_NAME}_status
+ament_target_dependencies(status
   ${PROJECT_NAME}
 )
 install(TARGETS
-  ${PROJECT_NAME}_status
+  status
   DESTINATION lib/${PROJECT_NAME}
 )
 
