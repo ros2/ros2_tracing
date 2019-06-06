@@ -5,8 +5,8 @@
   <version>0.0.1</version>
   <description>Tools for setting up tracing sessions</description>
   <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
-  <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
   <license>GPLv3</license>
+  <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
   <!-- TODO consider adding python3-lttng to rosdep/python
     https://github.com/ros/rosdistro/blob/master/rosdep/python.yaml
