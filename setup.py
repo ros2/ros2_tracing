@@ -1,3 +1,4 @@
+from setuptools import find_packages
 from setuptools import setup
 
 package_name = 'tracetools_trace'
@@ -5,7 +6,7 @@ package_name = 'tracetools_trace'
 setup(
     name=package_name,
     version='0.1.0',
-    packages=[package_name],
+    packages=find_packages(exclude=['test']),
     data_files=[
         ('share/' + package_name, ['package.xml']),
     ],
@@ -17,4 +18,5 @@ setup(
             f'trace = {package_name}.trace:main',
         ],
     },
+    tests_require=['pytest'],
 )
