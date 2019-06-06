@@ -18,8 +18,6 @@ def lttng_setup(session_name, directory, ros_events=DEFAULT_EVENTS_ROS, kernel_e
     """
     ust_enabled = ros_events is not None and len(ros_events) > 0
     kernel_enabled = kernel_events is not None and len(kernel_events) > 0
-    print(f'UST tracing {f"enabled ({len(ros_events)} events)" if ust_enabled else "disabled"}')
-    print(f'kernel tracing {f"enabled ({len(kernel_events)} events)" if kernel_enabled else "disabled"}')
 
     # Domains
     if ust_enabled:
