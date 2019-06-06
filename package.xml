@@ -4,9 +4,8 @@
   <name>tracetools_trace</name>
   <version>0.1.0</version>
   <description>Tools for setting up tracing sessions</description>
-
-  <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
-  <author email="bedard.christophe@gmail.com">Christophe Bedard</author>
+  <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
+  <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
   <license>GPLv3</license>
 
   <!-- TODO consider adding python3-lttng to rosdep/python
