@@ -1,6 +1,6 @@
 # Lists of names (events, context)
 
-DEFAULT_EVENTS_KERNEL=[
+DEFAULT_EVENTS_KERNEL = [
     'block_rq_complete',
     'block_rq_insert',
     'block_rq_issue',
@@ -34,7 +34,7 @@ DEFAULT_EVENTS_KERNEL=[
     'timer_hrtimer_expire_exit',
 ]
 
-DEFAULT_EVENTS_ROS=[
+DEFAULT_EVENTS_ROS = [
     'ros2:rcl_init',
     'ros2:rcl_node_init',
     'ros2:rcl_publisher_init',
@@ -54,7 +54,7 @@ DEFAULT_EVENTS_ROS=[
     'ros2:rclcpp_callback_register',
 ]
 
-DEFAULT_CONTEXT=[
+DEFAULT_CONTEXT = [
     'procname',
     'perf:thread:instructions',
     'perf:thread:cycles',

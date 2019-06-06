@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 # Entrypoint/script to setup and start an LTTng tracing session
 
-import sys
-import time
 import argparse
+import time
+
 from tracetools_trace.tools.lttng import (
+    lttng_destroy,
     lttng_setup,
     lttng_start,
     lttng_stop,
-    lttng_destroy,
 )
 from tracetools_trace.tools.names import (
-    DEFAULT_EVENTS_ROS,
     DEFAULT_EVENTS_KERNEL,
+    DEFAULT_EVENTS_ROS,
 )
+
 
 def main():
     parser = argparse.ArgumentParser(description='Setup and launch an LTTng tracing session.')
@@ -24,9 +25,14 @@ def main():
                         default='/tmp',
                         help='path of the base directory for trace data (default: %(default)s)')
     parser.add_argument('--ust', '-u', nargs='*', dest='events_ust', default=DEFAULT_EVENTS_ROS,
-                        help='the ROS UST events to enable (default: all events) [to disable all UST events, provide this flag without any event name]')
-    parser.add_argument('--kernel', '-k', nargs='*', dest='events_kernel', default=DEFAULT_EVENTS_KERNEL,
-                        help='the kernel events to enable (default: all events) [to disable all UST events, provide this flag without any event name]')
+                        help='the ROS UST events to enable (default: all events) '
+                             '[to disable all UST events, '
+                             'provide this flag without any event name]')
+    parser.add_argument('--kernel', '-k', nargs='*', dest='events_kernel',
+                        default=DEFAULT_EVENTS_KERNEL,
+                        help='the kernel events to enable (default: all events) '
+                             '[to disable all UST events, '
+                             'provide this flag without any event name]')
     parser.add_argument('--list', '-l', dest='list', action='store_true',
                         help='display lists of enabled events (default: %(default)s)')
     args = parser.parse_args()
@@ -39,12 +45,18 @@ def main():
 
     ust_enabled = len(ros_events) > 0
     kernel_enabled = len(kernel_events) > 0
-    print(f'UST tracing {f"enabled ({len(ros_events)} events)" if ust_enabled else "disabled"}')
-    if args.list and ust_enabled:
-        print(f'\tevents: {ros_events}')
-    print(f'kernel tracing {f"enabled ({len(kernel_events)} events)" if kernel_enabled else "disabled"}')
-    if args.list and kernel_enabled:
-        print(f'\tevents: {kernel_events}')
+    if ust_enabled:
+        print(f'UST tracing enabled ({len(ros_events)} events)')
+        if args.list:
+            print(f'\tevents: {ros_events}')
+    else:
+        print('UST tracing disabled')
+    if kernel_enabled:
+        print(f'kernel tracing enabled ({len(kernel_events)} events)')
+        if args.list:
+            print(f'\tevents: {kernel_events}')
+    else:
+        print('kernel tracing disabled')
 
     lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
     print(f'writting tracing session to: {full_path}')
