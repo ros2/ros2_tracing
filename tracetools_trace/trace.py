@@ -26,8 +26,10 @@ def main():
     path = base_path + '/' + session_name
 
     lttng_setup(session_name, path)
+    print(f'writting tracing session to: {path}')
+
+    input('press enter to start...')
     lttng_start(session_name)
-    print(f'tracing session started: {path}')
 
     # TODO integrate this with launch + ROS shutdown
     input('press enter to stop...')
