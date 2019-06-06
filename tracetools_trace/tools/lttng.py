@@ -1,17 +1,16 @@
 # LTTng tracing interface
 
 import sys
+# Temporary workaround
+sys.path = ['/usr/local/lib/python3.6/site-packages'] + sys.path
 
-import lttng
+import lttng  # noqa: E402
 
-from .names import (
+from .names import (  # noqa: E402
     DEFAULT_CONTEXT,
     DEFAULT_EVENTS_KERNEL,
     DEFAULT_EVENTS_ROS,
 )
-
-# Temporary workaround
-sys.path = ['/usr/local/lib/python3.6/site-packages'] + sys.path
 
 
 def lttng_setup(session_name, full_path,
