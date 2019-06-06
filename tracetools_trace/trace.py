@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Entrypoint/script to setup and start an LTTng tracing session
-# TODO
 
 import sys
 import time
+import argparse
 from tracetools_trace.tools.lttng import (
     lttng_setup,
     lttng_start,
@@ -11,13 +11,20 @@ from tracetools_trace.tools.lttng import (
     lttng_destroy,
 )
 
-def main(argv=sys.argv):
-    if len(argv) != 3:
-        print("usage: session-name /path")
-        exit(1)
+def main():
+    parser = argparse.ArgumentParser(description='Setup and launch an LTTng tracing session.')
+    parser.add_argument('--session-name', '-s', dest='session_name',
+                        default=f'session-{time.strftime("%Y%m%d%H%M%S")}',
+                        help='the name of the tracing session (default: session-YYYYMMDDHHMMSS)')
+    parser.add_argument('--path', '-p', dest='path',
+                        default='/tmp',
+                        help='path of the base directory for trace data (default: %(default)s)')
+    args = parser.parse_args()
 
-    session_name = argv[1]
-    path = argv[2] + '/' + session_name
+    session_name = args.session_name
+    base_path = args.path
+    path = base_path + '/' + session_name
+
     lttng_setup(session_name, path)
     lttng_start(session_name)
     print(f'tracing session started: {path}')
