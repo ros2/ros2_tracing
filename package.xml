@@ -9,7 +9,9 @@
   <author email="bedard.christophe@gmail.com">Christophe Bedard</author>
   <license>GPLv3</license>
 
-  <!-- TODO add python3-lttng? -->
+  <!-- TODO consider adding python3-lttng to rosdep/python
+    https://github.com/ros/rosdistro/blob/master/rosdep/python.yaml
+  -->
 
   <export>
     <build_type>ament_python</build_type>
