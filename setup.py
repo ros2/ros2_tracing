@@ -23,5 +23,6 @@ setup(
             f'trace = {package_name}.trace:main',
         ],
     },
+    license='TODO',
     tests_require=['pytest'],
 )

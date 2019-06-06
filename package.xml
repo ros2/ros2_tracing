@@ -5,7 +5,7 @@
   <version>0.0.1</version>
   <description>Tools for setting up tracing sessions</description>
   <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
-  <license>GPLv3</license>
+  <license>TODO</license>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
   <!-- TODO consider adding python3-lttng to rosdep/python
