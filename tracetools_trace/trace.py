@@ -40,8 +40,6 @@ def main():
 
     input('press enter to start...')
     lttng_start(session_name)
-
-    # TODO integrate this with launch + ROS shutdown
     input('press enter to stop...')
 
     print('stopping & destroying tracing session')
