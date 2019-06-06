@@ -7,11 +7,11 @@ sys.path = ['/usr/local/lib/python3.6/site-packages'] + sys.path
 from lttng import *
 from .names import DEFAULT_EVENTS_ROS, DEFAULT_EVENTS_KERNEL, DEFAULT_CONTEXT
 
-def lttng_setup(session_name, directory, ros_events=DEFAULT_EVENTS_ROS, kernel_events=DEFAULT_EVENTS_KERNEL, context_names=DEFAULT_CONTEXT):
+def lttng_setup(session_name, full_path, ros_events=DEFAULT_EVENTS_ROS, kernel_events=DEFAULT_EVENTS_KERNEL, context_names=DEFAULT_CONTEXT):
     """
     Setup LTTng session, with events and context
     :param session_name (str): the name of the session
-    :param directory (str): the path of the main directory to write trace data to
+    :param full_path (str): the full path to the main directory to write trace data to
     :param ros_events (list(str)): list of ROS events to enable
     :param kernel_events (list(str)): list of kernel events to enable
     :param context_names (list(str)): list of context elements to enable
@@ -48,7 +48,7 @@ def lttng_setup(session_name, directory, ros_events=DEFAULT_EVENTS_ROS, kernel_e
         events_list_kernel = _create_events(kernel_events)
 
     # Session
-    _create_session(session_name, directory)
+    _create_session(session_name, full_path)
 
     # Handles, channels, events
     handle_ust = None
@@ -104,17 +104,17 @@ def _create_events(event_names_list):
         events_list.append(e)
     return events_list
 
-def _create_session(session_name, directory):
+def _create_session(session_name, full_path):
     """
-    Create session from name and directory path, and check for errors
+    Create session from name and full directory path, and check for errors
     """
-    result = create(session_name, directory)
+    result = create(session_name, full_path)
     LTTNG_ERR_EXIST_SESS = 28
     if result == -LTTNG_ERR_EXIST_SESS:
         # Sessions seem to persist, so if it already exists,
         # just destroy it and try again
         lttng_destroy(session_name)
-        result = create(session_name, directory)
+        result = create(session_name, full_path)
     if result < 0:
         raise RuntimeError(f'session creation failed: {strerror(result)}')
 

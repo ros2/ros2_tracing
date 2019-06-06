@@ -33,7 +33,7 @@ def main():
 
     session_name = args.session_name
     base_path = args.path
-    path = base_path + '/' + session_name
+    full_path = base_path + '/' + session_name
     ros_events = args.events_ust
     kernel_events = args.events_kernel
 
@@ -46,8 +46,8 @@ def main():
     if args.list and kernel_enabled:
         print(f'\tevents: {kernel_events}')
 
-    lttng_setup(session_name, path, ros_events=ros_events, kernel_events=kernel_events)
-    print(f'writting tracing session to: {path}')
+    lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
+    print(f'writting tracing session to: {full_path}')
 
     input('press enter to start...')
     lttng_start(session_name)
