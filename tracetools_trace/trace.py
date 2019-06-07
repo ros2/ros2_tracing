@@ -4,16 +4,8 @@
 import argparse
 import time
 
-from tracetools_trace.tools.lttng import (
-    lttng_destroy,
-    lttng_setup,
-    lttng_start,
-    lttng_stop,
-)
-from tracetools_trace.tools.names import (
-    DEFAULT_EVENTS_KERNEL,
-    DEFAULT_EVENTS_ROS,
-)
+from tracetools_trace.tools import lttng
+from tracetools_trace.tools import names
 
 
 def main():
@@ -24,12 +16,12 @@ def main():
     parser.add_argument('--path', '-p', dest='path',
                         default='/tmp',
                         help='path of the base directory for trace data (default: %(default)s)')
-    parser.add_argument('--ust', '-u', nargs='*', dest='events_ust', default=DEFAULT_EVENTS_ROS,
+    parser.add_argument('--ust', '-u', nargs='*', dest='events_ust', default=names.DEFAULT_EVENTS_ROS,
                         help='the ROS UST events to enable (default: all events) '
                              '[to disable all UST events, '
                              'provide this flag without any event name]')
     parser.add_argument('--kernel', '-k', nargs='*', dest='events_kernel',
-                        default=DEFAULT_EVENTS_KERNEL,
+                        default=names.DEFAULT_EVENTS_KERNEL,
                         help='the kernel events to enable (default: all events) '
                              '[to disable all UST events, '
                              'provide this flag without any event name]')
@@ -58,13 +50,13 @@ def main():
     else:
         print('kernel tracing disabled')
 
-    lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
+    lttng.lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
     print(f'writting tracing session to: {full_path}')
 
     input('press enter to start...')
-    lttng_start(session_name)
+    lttng.lttng_start(session_name)
     input('press enter to stop...')
 
     print('stopping & destroying tracing session')
-    lttng_stop(session_name)
-    lttng_destroy(session_name)
+    lttng.lttng_stop(session_name)
+    lttng.lttng_destroy(session_name)
