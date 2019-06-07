@@ -32,15 +32,15 @@ TRACEPOINT_EVENT(
   ros2,
   rcl_publisher_init,
   TP_ARGS(
-    const void *, node_handle_arg,
     const void *, publisher_handle_arg,
+    const void *, node_handle_arg,
     const void *, rmw_publisher_handle_arg,
     const char *, topic_name_arg,
     const size_t, depth_arg
   ),
   TP_FIELDS(
-    ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, publisher_handle, publisher_handle_arg)
+    ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, rmw_publisher_handle, rmw_publisher_handle_arg)
     ctf_string(topic_name, topic_name_arg)
     ctf_integer(const size_t, depth, depth_arg)
@@ -51,15 +51,15 @@ TRACEPOINT_EVENT(
   ros2,
   rcl_subscription_init,
   TP_ARGS(
-    const void *, node_handle_arg,
     const void *, subscription_handle_arg,
+    const void *, node_handle_arg,
     const void *, rmw_subscription_handle_arg,
     const char *, topic_name_arg,
     const size_t, depth_arg
   ),
   TP_FIELDS(
-    ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, subscription_handle, subscription_handle_arg)
+    ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, rmw_subscription_handle, rmw_subscription_handle_arg)
     ctf_string(topic_name, topic_name_arg)
     ctf_integer(const size_t, depth, depth_arg)
@@ -107,14 +107,14 @@ TRACEPOINT_EVENT(
   ros2,
   rcl_service_init,
   TP_ARGS(
-    const void *, node_handle_arg,
     const void *, service_handle_arg,
+    const void *, node_handle_arg,
     const void *, rmw_service_handle_arg,
     const char *, service_name_arg
   ),
   TP_FIELDS(
-    ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, service_handle, service_handle_arg)
+    ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, rmw_service_handle, rmw_service_handle_arg)
     ctf_string(service_name, service_name_arg)
   )
@@ -159,14 +159,14 @@ TRACEPOINT_EVENT(
   ros2,
   rcl_client_init,
   TP_ARGS(
-    const void *, node_handle_arg,
     const void *, client_handle_arg,
+    const void *, node_handle_arg,
     const void *, rmw_client_handle_arg,
     const char *, service_name_arg
   ),
   TP_FIELDS(
-    ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, client_handle, client_handle_arg)
+    ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, rmw_client_handle, rmw_client_handle_arg)
     ctf_string(service_name, service_name_arg)
   )
