@@ -23,7 +23,7 @@ bool ros_trace_compile_status();
  */
 void TRACEPOINT(
   rcl_init,
-  const void * context);
+  const void * context_handle);
 
 /**
  * tp: rcl_node_init

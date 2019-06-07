@@ -19,12 +19,12 @@ bool ros_trace_compile_status()
 
 void TRACEPOINT(
   rcl_init,
-  const void * context)
+  const void * context_handle)
 {
   CONDITIONAL_TP(
     ros2,
     rcl_init,
-    context);
+    context_handle);
 }
 
 void TRACEPOINT(
