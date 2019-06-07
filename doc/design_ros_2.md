@@ -486,6 +486,10 @@ The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
     * overlay it on top of their ROS 2 installation
 * use other package(s) for analysis and visualization
 
+## Architecture
+
+![](img/tracing_architecture.png)
+
 ### Timeline
 
 The first goal is to statically instrument ROS 2, aiming for it to be in the ROS 2 E-turtle release (Nov 2019).
