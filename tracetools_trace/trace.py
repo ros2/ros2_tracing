@@ -8,7 +8,7 @@ from tracetools_trace.tools import lttng
 from tracetools_trace.tools import names
 
 
-def main():
+def parse_args():
     parser = argparse.ArgumentParser(description='Setup and launch an LTTng tracing session.')
     parser.add_argument('--session-name', '-s', dest='session_name',
                         default=f'session-{time.strftime("%Y%m%d%H%M%S")}',
@@ -27,7 +27,11 @@ def main():
                              'provide this flag without any event name]')
     parser.add_argument('--list', '-l', dest='list', action='store_true',
                         help='display lists of enabled events (default: %(default)s)')
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
 
     session_name = args.session_name
     base_path = args.path
