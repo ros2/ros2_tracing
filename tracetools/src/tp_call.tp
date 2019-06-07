@@ -33,15 +33,15 @@ TRACEPOINT_EVENT(
   rcl_publisher_init,
   TP_ARGS(
     const void *, node_handle_arg,
-    const void *, rmw_handle_arg,
     const void *, publisher_handle_arg,
+    const void *, rmw_publisher_handle_arg,
     const char *, topic_name_arg,
     const size_t, depth_arg
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, node_handle, node_handle_arg)
-    ctf_integer_hex(const void *, rmw_handle, rmw_handle_arg)
     ctf_integer_hex(const void *, publisher_handle, publisher_handle_arg)
+    ctf_integer_hex(const void *, rmw_publisher_handle, rmw_publisher_handle_arg)
     ctf_string(topic_name, topic_name_arg)
     ctf_integer(const size_t, depth, depth_arg)
   )
