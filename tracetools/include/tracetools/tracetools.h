@@ -126,14 +126,6 @@ void TRACEPOINT(
   const bool is_intra_process);
 
 /**
- * tp: callback_start
- * (is_intra_process=false)
- */
-void TRACEPOINT(
-  callback_start,
-  const void * callback);
-
-/**
  * tp: callback_end
  */
 void TRACEPOINT(

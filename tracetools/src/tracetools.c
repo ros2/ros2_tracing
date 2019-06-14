@@ -184,17 +184,6 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
-  callback_start,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    ros2,
-    callback_start,
-    callback,
-    0);
-}
-
-void TRACEPOINT(
   callback_end,
   const void * callback)
 {
