@@ -246,9 +246,9 @@ sequenceDiagram
         Executor->>Subscription: handle_message(msg)
         Note over Subscription: casts msg to its actual type
         Subscription->>AnySubscriptionCallback: dispatch(typed_msg)
-        AnySubscriptionCallback-->>tracetools: TP(rclcpp_subscription_callback_start, this, is_intra_process)
+        AnySubscriptionCallback-->>tracetools: TP(callback_start, this, is_intra_process)
         Note over AnySubscriptionCallback: std::function(...)
-        AnySubscriptionCallback-->>tracetools: TP(rclcpp_subscription_callback_end, this)
+        AnySubscriptionCallback-->>tracetools: TP(callback_end, this)
     end
     Executor->>Subscription: return_message(msg)
 ```
@@ -333,9 +333,9 @@ sequenceDiagram
         Note over Service: casts request to its actual type
         Note over Service: allocates a response object
         Service->>AnyServiceCallback: dispatch(request_header, typed_request, response)
-        AnyServiceCallback-->>tracetools: TP(rclcpp_service_callback_start, this)
+        AnyServiceCallback-->>tracetools: TP(callback_start, this)
         Note over AnyServiceCallback: std::function(...)
-        AnyServiceCallback-->>tracetools: TP(rclcpp_service_callback_end, this)
+        AnyServiceCallback-->>tracetools: TP(callback_end, this)
         Service->>rcl: rcl_send_response(rcl_service_t, request_header, response)
         rcl->>rmw: rmw_send_response(rmw_service_t, request_header, response)
     end
@@ -458,9 +458,9 @@ sequenceDiagram
     WallTimer->>rcl: rcl_timer_call(rcl_timer_t) : ret
     Note over rcl: validates and updates timer
     opt RCL_RET_TIMER_CANCELED != ret && RCL_RET_OK == ret
-        WallTimer-->>tracetools: TP(rclcpp_timer_callback_start, this)
+        WallTimer-->>tracetools: TP(callback_start, &callback)
         Note over WallTimer: std::function(...)
-        WallTimer-->>tracetools: TP(rclcpp_timer_callback_end, this)
+        WallTimer-->>tracetools: TP(callback_end, &callback)
     end
 ```
 
