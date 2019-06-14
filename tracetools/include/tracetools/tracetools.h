@@ -66,21 +66,6 @@ void TRACEPOINT(
   const void * callback);
 
 /**
- * tp: rclcpp_subscription_callback_start
- */
-void TRACEPOINT(
-  rclcpp_subscription_callback_start,
-  const void * callback,
-  const bool is_intra_process);
-
-/**
- * tp: rclcpp_subscription_callback_end
- */
-void TRACEPOINT(
-  rclcpp_subscription_callback_end,
-  const void * callback);
-
-/**
  * tp: rcl_service_init
  */
 void TRACEPOINT(
@@ -96,20 +81,6 @@ void TRACEPOINT(
 void TRACEPOINT(
   rclcpp_service_callback_added,
   const void * service_handle,
-  const void * callback);
-
-/**
- * tp: rclcpp_service_callback_start
- */
-void TRACEPOINT(
-  rclcpp_service_callback_start,
-  const void * callback);
-
-/**
- * tp: rclcpp_service_callback_end
- */
-void TRACEPOINT(
-  rclcpp_service_callback_end,
   const void * callback);
 
 /**
@@ -139,26 +110,35 @@ void TRACEPOINT(
   const void * callback);
 
 /**
- * tp: rclcpp_timer_callback_start
- */
-void TRACEPOINT(
-  rclcpp_timer_callback_start,
-  const void * callback);
-
-/**
- * tp: rclcpp_timer_callback_end
- */
-void TRACEPOINT(
-  rclcpp_timer_callback_end,
-  const void * callback);
-
-/**
  * tp: rclcpp_callback_register
  */
 void TRACEPOINT(
   rclcpp_callback_register,
   const void * callback,
   const char * function_symbol);
+
+/**
+ * tp: callback_start
+ */
+void TRACEPOINT(
+  callback_start,
+  const void * callback,
+  const bool is_intra_process);
+
+/**
+ * tp: callback_start
+ * (is_intra_process=false)
+ */
+void TRACEPOINT(
+  callback_start,
+  const void * callback);
+
+/**
+ * tp: callback_end
+ */
+void TRACEPOINT(
+  callback_end,
+  const void * callback);
 
 #ifdef __cplusplus
 }

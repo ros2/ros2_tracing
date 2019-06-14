@@ -81,30 +81,6 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
   ros2,
-  rclcpp_subscription_callback_start,
-  TP_ARGS(
-    const void *, callback_arg,
-    int, is_intra_process_arg
-  ),
-  TP_FIELDS(
-    ctf_integer_hex(const void *, callback, callback_arg)
-    ctf_integer(int, is_intra_process, is_intra_process_arg)
-  )
-)
-
-TRACEPOINT_EVENT(
-  ros2,
-  rclcpp_subscription_callback_end,
-  TP_ARGS(
-    const void *, callback_arg
-  ),
-  TP_FIELDS(
-    ctf_integer_hex(const void *, callback, callback_arg)
-  )
-)
-
-TRACEPOINT_EVENT(
-  ros2,
   rcl_service_init,
   TP_ARGS(
     const void *, service_handle_arg,
@@ -129,28 +105,6 @@ TRACEPOINT_EVENT(
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, service_handle, service_handle_arg)
-    ctf_integer_hex(const void *, callback, callback_arg)
-  )
-)
-
-TRACEPOINT_EVENT(
-  ros2,
-  rclcpp_service_callback_start,
-  TP_ARGS(
-    const void *, callback_arg
-  ),
-  TP_FIELDS(
-    ctf_integer_hex(const void *, callback, callback_arg)
-  )
-)
-
-TRACEPOINT_EVENT(
-  ros2,
-  rclcpp_service_callback_end,
-  TP_ARGS(
-    const void *, callback_arg
-  ),
-  TP_FIELDS(
     ctf_integer_hex(const void *, callback, callback_arg)
   )
 )
@@ -200,28 +154,6 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
   ros2,
-  rclcpp_timer_callback_start,
-  TP_ARGS(
-    const void *, callback_arg
-  ),
-  TP_FIELDS(
-    ctf_integer_hex(const void *, callback, callback_arg)
-  )
-)
-
-TRACEPOINT_EVENT(
-  ros2,
-  rclcpp_timer_callback_end,
-  TP_ARGS(
-    const void *, callback_arg
-  ),
-  TP_FIELDS(
-    ctf_integer_hex(const void *, callback, callback_arg)
-  )
-)
-
-TRACEPOINT_EVENT(
-  ros2,
   rclcpp_callback_register,
   TP_ARGS(
     const void *, callback_arg,
@@ -230,5 +162,29 @@ TRACEPOINT_EVENT(
   TP_FIELDS(
     ctf_integer_hex(const void *, callback, callback_arg)
     ctf_string(symbol, symbol_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  ros2,
+  callback_start,
+  TP_ARGS(
+    const void *, callback_arg,
+    int, is_intra_process_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, callback, callback_arg)
+    ctf_integer(int, is_intra_process, is_intra_process_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  ros2,
+  callback_end,
+  TP_ARGS(
+    const void *, callback_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, callback, callback_arg)
   )
 )

@@ -92,28 +92,6 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
-  rclcpp_subscription_callback_start,
-  const void * callback,
-  const bool is_intra_process)
-{
-  CONDITIONAL_TP(
-    ros2,
-    rclcpp_subscription_callback_start,
-    callback,
-    (is_intra_process ? 1 : 0));
-}
-
-void TRACEPOINT(
-  rclcpp_subscription_callback_end,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    ros2,
-    rclcpp_subscription_callback_end,
-    callback);
-}
-
-void TRACEPOINT(
   rcl_service_init,
   const void * service_handle,
   const void * node_handle,
@@ -138,26 +116,6 @@ void TRACEPOINT(
     ros2,
     rclcpp_service_callback_added,
     service_handle,
-    callback);
-}
-
-void TRACEPOINT(
-  rclcpp_service_callback_start,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    ros2,
-    rclcpp_service_callback_start,
-    callback);
-}
-
-void TRACEPOINT(
-  rclcpp_service_callback_end,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    ros2,
-    rclcpp_service_callback_end,
     callback);
 }
 
@@ -202,26 +160,6 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
-  rclcpp_timer_callback_start,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    ros2,
-    rclcpp_timer_callback_start,
-    callback);
-}
-
-void TRACEPOINT(
-  rclcpp_timer_callback_end,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    ros2,
-    rclcpp_timer_callback_end,
-    callback);
-}
-
-void TRACEPOINT(
   rclcpp_callback_register,
   const void * callback,
   const char * function_symbol)
@@ -231,4 +169,37 @@ void TRACEPOINT(
     rclcpp_callback_register,
     callback,
     function_symbol);
+}
+
+void TRACEPOINT(
+  callback_start,
+  const void * callback,
+  const bool is_intra_process)
+{
+  CONDITIONAL_TP(
+    ros2,
+    callback_start,
+    callback,
+    (is_intra_process ? 1 : 0));
+}
+
+void TRACEPOINT(
+  callback_start,
+  const void * callback)
+{
+  CONDITIONAL_TP(
+    ros2,
+    callback_start,
+    callback,
+    0);
+}
+
+void TRACEPOINT(
+  callback_end,
+  const void * callback)
+{
+  CONDITIONAL_TP(
+    ros2,
+    callback_end,
+    callback);
 }
