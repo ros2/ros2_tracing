@@ -40,18 +40,14 @@ DEFAULT_EVENTS_ROS = [
     'ros2:rcl_publisher_init',
     'ros2:rcl_subscription_init',
     'ros2:rclcpp_subscription_callback_added',
-    'ros2:rclcpp_subscription_callback_start',
-    'ros2:rclcpp_subscription_callback_end',
     'ros2:rcl_service_init',
     'ros2:rclcpp_service_callback_added',
-    'ros2:rclcpp_service_callback_start',
-    'ros2:rclcpp_service_callback_end',
     'ros2:rcl_client_init',
     'ros2:rcl_timer_init',
     'ros2:rclcpp_timer_callback_added',
-    'ros2:rclcpp_timer_callback_start',
-    'ros2:rclcpp_timer_callback_end',
     'ros2:rclcpp_callback_register',
+    'ros2:callback_start',
+    'ros2:callback_end',
 ]
 
 DEFAULT_CONTEXT = [
