@@ -8,6 +8,7 @@ from launch.action import Action
 from launch.event import Event
 from launch.event_handlers import OnShutdown
 from launch.launch_context import LaunchContext
+from tracetools_trace.tools import lttng
 from tracetools_trace.tools import names
 
 
@@ -41,9 +42,15 @@ class Trace(Action):
         self._setup()
 
     def _setup(self):
-        # TODO
         print('setting up tracing!')
+        lttng.lttng_setup(
+            self.__session_name,
+            self.__path,
+            ros_events=self.__events_ust,
+            kernel_events=self.__events_kernel)
+        lttng.lttng_start(self.__session_name)
 
     def _destroy(self, event: Event, context: LaunchContext):
-        # TODO
         print('destroying tracing session!')
+        lttng.lttng_stop(self.__session_name)
+        lttng.lttng_destroy(self.__session_name)
