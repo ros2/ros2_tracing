@@ -24,7 +24,7 @@
   <test_depend>ament_lint_common</test_depend>
   <test_depend>launch_ros</test_depend>
   <test_depend>python3-pytest</test_depend>
-  <test_depend>tracetools_trace</test_depend>
+  <test_depend>tracetools</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
