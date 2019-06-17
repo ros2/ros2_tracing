@@ -2,7 +2,6 @@
 import os
 from typing import List
 from typing import Optional
-from typing import Text
 
 from launch.action import Action
 from launch.event import Event
