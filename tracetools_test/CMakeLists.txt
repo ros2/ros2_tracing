@@ -17,6 +17,7 @@ if(BUILD_TESTING)
   find_package(rclcpp REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(std_srvs REQUIRED)
+  find_package(tracetools REQUIRED)
 
   add_executable(test_publisher
     src/test_publisher.cpp

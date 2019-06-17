@@ -1,0 +1,26 @@
+image: ros:dashing-ros-base
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+before_script:
+  - apt update
+  - rosdep update
+  - rosdep install -y --from-paths . -i .
+  - ln -s src
+
+build:
+  script:
+    - colcon build
+    - colcon test
+  artifacts:
+    paths:
+      - install
+      
+build_enabled:
+  script:
+    - colcon build --cmake-args -DWITH_LTTNG=ON
+    - colcon test
+  artifacts:
+    paths:
+      - install
