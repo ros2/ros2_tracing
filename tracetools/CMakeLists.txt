@@ -99,3 +99,5 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+
+add_definitions("-D${PROJECT_NAME}_VERSION=\"${${PROJECT_NAME}_VERSION}\"")

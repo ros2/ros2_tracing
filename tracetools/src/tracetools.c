@@ -25,7 +25,7 @@ void TRACEPOINT(
     ros2,
     rcl_init,
     context_handle,
-    TRACETOOLS_VERSION);
+    tracetools_VERSION);
 }
 
 void TRACEPOINT(

@@ -8,8 +8,6 @@
 #define TRACEPOINT(event_name, ...) \
   (ros_trace_ ## event_name)(__VA_ARGS__)
 
-#define TRACETOOLS_VERSION "0.0.1"
-
 #ifdef __cplusplus
 extern "C"
 {
