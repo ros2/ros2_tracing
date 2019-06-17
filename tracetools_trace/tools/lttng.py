@@ -13,10 +13,12 @@ from .names import (  # noqa: E402
 )
 
 
-def lttng_setup(session_name, full_path,
-                ros_events=DEFAULT_EVENTS_ROS,
-                kernel_events=DEFAULT_EVENTS_KERNEL,
-                context_names=DEFAULT_CONTEXT):
+def lttng_setup(
+        session_name,
+        full_path,
+        ros_events=DEFAULT_EVENTS_ROS,
+        kernel_events=DEFAULT_EVENTS_KERNEL,
+        context_names=DEFAULT_CONTEXT):
     """
     Set up LTTng session, with events and context.
 
