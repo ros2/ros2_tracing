@@ -5,7 +5,7 @@
 #include <functional>
 
 template<typename T, typename ... U>
-size_t get_address(std::function<T(U...)> f)
+void * get_address(std::function<T(U...)> f)
 {
   typedef T (fnType)(U...);
   fnType ** fnPointer = f.template target<fnType *>();
@@ -13,7 +13,7 @@ size_t get_address(std::function<T(U...)> f)
   if (fnPointer == nullptr) {
     return 0;
   }
-  return (size_t)*fnPointer;
+  return (void *)*fnPointer;
 }
 
 const char * get_symbol(void * funptr);
