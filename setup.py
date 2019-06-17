@@ -1,3 +1,5 @@
+import glob
+
 from setuptools import find_packages
 from setuptools import setup
 
@@ -9,6 +11,7 @@ setup(
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', glob.glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     maintainer='Christophe Bedard',
