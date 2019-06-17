@@ -2,6 +2,7 @@
 # Entrypoint/script to setup and start an LTTng tracing session
 
 import argparse
+import os
 import time
 
 from tracetools_trace.tools import lttng
@@ -40,7 +41,7 @@ def main():
 
     session_name = args.session_name
     base_path = args.path
-    full_path = base_path + '/' + session_name
+    full_path = os.path.join(base_path, session_name)
     ros_events = args.events_ust
     kernel_events = args.events_kernel
 
