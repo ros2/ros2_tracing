@@ -20,12 +20,13 @@ class TestServiceCallback(unittest.TestCase):
         session_name_prefix = 'session-test-service-callback'
         test_nodes = ['test_service_ping', 'test_service_pong']
 
-        exit_code, full_path = run_and_trace(BASE_PATH,
-                                             session_name_prefix,
-                                             service_callback_events,
-                                             None,
-                                             PKG,
-                                             test_nodes)
+        exit_code, full_path = run_and_trace(
+            BASE_PATH,
+            session_name_prefix,
+            service_callback_events,
+            None,
+            PKG,
+            test_nodes)
         self.assertEqual(exit_code, 0)
 
         trace_events = get_trace_event_names(full_path)

@@ -19,12 +19,13 @@ class TestPublisher(unittest.TestCase):
         session_name_prefix = 'session-test-publisher-creation'
         test_node = ['test_publisher']
 
-        exit_code, full_path = run_and_trace(BASE_PATH,
-                                             session_name_prefix,
-                                             publisher_creation_events,
-                                             None,
-                                             PKG,
-                                             test_node)
+        exit_code, full_path = run_and_trace(
+            BASE_PATH,
+            session_name_prefix,
+            publisher_creation_events,
+            None,
+            PKG,
+            test_node)
         self.assertEqual(exit_code, 0)
 
         trace_events = get_trace_event_names(full_path)

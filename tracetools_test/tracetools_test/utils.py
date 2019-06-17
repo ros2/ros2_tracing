@@ -16,12 +16,13 @@ from tracetools_trace.tools.lttng import (
 )
 
 
-def run_and_trace(base_path,
-                  session_name_prefix,
-                  ros_events,
-                  kernel_events,
-                  package_name,
-                  node_names):
+def run_and_trace(
+        base_path,
+        session_name_prefix,
+        ros_events,
+        kernel_events,
+        package_name,
+        node_names):
     """
     Run a node while tracing.
 
@@ -41,9 +42,10 @@ def run_and_trace(base_path,
 
     nodes = []
     for node_name in node_names:
-        n = launch_ros.actions.Node(package=package_name,
-                                    node_executable=node_name,
-                                    output='screen')
+        n = launch_ros.actions.Node(
+            package=package_name,
+            node_executable=node_name,
+            output='screen')
         nodes.append(n)
     ld = LaunchDescription(nodes)
     ls = LaunchService()
