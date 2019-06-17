@@ -49,7 +49,7 @@ void TRACEPOINT(
   const void * node_handle,
   const void * rmw_publisher_handle,
   const char * topic_name,
-  const size_t depth)
+  const size_t queue_depth)
 {
   CONDITIONAL_TP(
     ros2,
@@ -58,7 +58,7 @@ void TRACEPOINT(
     node_handle,
     rmw_publisher_handle,
     topic_name,
-    depth);
+    queue_depth);
 }
 
 void TRACEPOINT(
@@ -67,7 +67,7 @@ void TRACEPOINT(
   const void * node_handle,
   const void * rmw_subscription_handle,
   const char * topic_name,
-  const size_t depth)
+  const size_t queue_depth)
 {
   CONDITIONAL_TP(
     ros2,
@@ -76,7 +76,7 @@ void TRACEPOINT(
     node_handle,
     rmw_subscription_handle,
     topic_name,
-    depth);
+    queue_depth);
 }
 
 void TRACEPOINT(

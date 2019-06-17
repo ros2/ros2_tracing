@@ -44,7 +44,7 @@ void TRACEPOINT(
   const void * node_handle,
   const void * rmw_publisher_handle,
   const char * topic_name,
-  const size_t depth);
+  const size_t queue_depth);
 
 /**
  * tp: rcl_subscription_init
@@ -55,7 +55,7 @@ void TRACEPOINT(
   const void * node_handle,
   const void * rmw_subscription_handle,
   const char * topic_name,
-  const size_t depth);
+  const size_t queue_depth);
 
 /**
  * tp: rclcpp_subscription_callback_added

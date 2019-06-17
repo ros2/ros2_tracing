@@ -36,14 +36,14 @@ TRACEPOINT_EVENT(
     const void *, node_handle_arg,
     const void *, rmw_publisher_handle_arg,
     const char *, topic_name_arg,
-    const size_t, depth_arg
+    const size_t, queue_depth_arg
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, publisher_handle, publisher_handle_arg)
     ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, rmw_publisher_handle, rmw_publisher_handle_arg)
     ctf_string(topic_name, topic_name_arg)
-    ctf_integer(const size_t, depth, depth_arg)
+    ctf_integer(const size_t, queue_depth, queue_depth_arg)
   )
 )
 
@@ -55,14 +55,14 @@ TRACEPOINT_EVENT(
     const void *, node_handle_arg,
     const void *, rmw_subscription_handle_arg,
     const char *, topic_name_arg,
-    const size_t, depth_arg
+    const size_t, queue_depth_arg
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, subscription_handle, subscription_handle_arg)
     ctf_integer_hex(const void *, node_handle, node_handle_arg)
     ctf_integer_hex(const void *, rmw_subscription_handle, rmw_subscription_handle_arg)
     ctf_string(topic_name, topic_name_arg)
-    ctf_integer(const size_t, depth, depth_arg)
+    ctf_integer(const size_t, queue_depth, queue_depth_arg)
   )
 )
 
