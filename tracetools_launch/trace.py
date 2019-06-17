@@ -24,7 +24,8 @@ class Trace(Action):
         base_path: str = '/tmp',
         events_ust: List[str] = names.DEFAULT_EVENTS_ROS,
         events_kernel: List[str] = names.DEFAULT_EVENTS_KERNEL,
-        **kwargs) -> None:
+        **kwargs
+    ) -> None:
         """Constructor."""
         super().__init__(**kwargs)
         self.__session_name = session_name
