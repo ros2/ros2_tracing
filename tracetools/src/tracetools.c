@@ -24,7 +24,8 @@ void TRACEPOINT(
   CONDITIONAL_TP(
     ros2,
     rcl_init,
-    context_handle);
+    context_handle,
+    TRACETOOLS_VERSION);
 }
 
 void TRACEPOINT(
