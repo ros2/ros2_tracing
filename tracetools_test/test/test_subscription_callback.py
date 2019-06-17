@@ -9,8 +9,8 @@ from tracetools_test.utils import (
 BASE_PATH = '/tmp'
 PKG = 'tracetools_test'
 subscription_callback_events = [
-    'ros2:rclcpp_subscription_callback_start',
-    'ros2:rclcpp_subscription_callback_end',
+    'ros2:callback_start',
+    'ros2:callback_end',
 ]
 
 

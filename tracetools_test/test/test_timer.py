@@ -11,8 +11,8 @@ PKG = 'tracetools_test'
 timer_events = [
     'ros2:rcl_timer_init',
     'ros2:rclcpp_timer_callback_added',
-    'ros2:rclcpp_timer_callback_start',
-    'ros2:rclcpp_timer_callback_end',
+    'ros2:callback_start',
+    'ros2:callback_end',
 ]
 
 
