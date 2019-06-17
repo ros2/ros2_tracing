@@ -25,6 +25,7 @@ const char * get_symbol(void * funptr)
   const char * demangled_val = (status == 0 ? demangled : info.dli_sname);
   return demangled_val != 0 ? demangled_val : SYMBOL_UNKNOWN;
 #else
+  (void)funptr;
   return SYMBOL_UNKNOWN;
 #endif
 }

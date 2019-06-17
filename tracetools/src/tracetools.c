@@ -17,6 +17,11 @@ bool ros_trace_compile_status()
 #endif
 }
 
+#ifndef _WIN32
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 void TRACEPOINT(
   rcl_init,
   const void * context_handle)
@@ -193,3 +198,7 @@ void TRACEPOINT(
     callback_end,
     callback);
 }
+
+#ifndef _WIN32
+# pragma GCC diagnostic pop
+#endif
