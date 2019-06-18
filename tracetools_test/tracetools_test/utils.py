@@ -14,6 +14,7 @@
 
 """Utils for tracetools_test."""
 
+import os
 import shutil
 import time
 
@@ -48,7 +49,7 @@ def run_and_trace(
     :param node_names (list(str)): the names of the nodes to execute
     """
     session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
-    full_path = f'{base_path}/{session_name}'
+    full_path = os.path.join(base_path, session_name)
     print(f'trace directory: {full_path}')
 
     lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
