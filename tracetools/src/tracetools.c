@@ -15,7 +15,7 @@
 #include "tracetools/tracetools.h"
 
 #if defined(WITH_LTTNG) && !defined(_WIN32)
-# include "tp_call.h"
+# include "tracetools/tp_call.h"
 # define CONDITIONAL_TP(...) \
   tracepoint(__VA_ARGS__)
 #else

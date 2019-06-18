@@ -12,10 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#undef TRACEPOINT_PROVIDER
+#define TRACEPOINT_PROVIDER ros2
+
+#undef TRACEPOINT_INCLUDE
+#define TRACEPOINT_INCLUDE "tracetools/tp_call.h"
+
+#if !defined(___INCLUDE_TP_CALL_H) || defined(TRACEPOINT_HEADER_MULTI_READ)
+#define ___INCLUDE_TP_CALL_H
+
+#include <lttng/tracepoint.h>
+
 #include <stdint.h>
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rcl_init,
   TP_ARGS(
     const void *, context_handle_arg,
@@ -28,7 +39,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rcl_node_init,
   TP_ARGS(
     const void *, node_handle_arg,
@@ -45,7 +56,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rcl_publisher_init,
   TP_ARGS(
     const void *, publisher_handle_arg,
@@ -64,7 +75,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rcl_subscription_init,
   TP_ARGS(
     const void *, subscription_handle_arg,
@@ -83,7 +94,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rclcpp_subscription_callback_added,
   TP_ARGS(
     const void *, subscription_handle_arg,
@@ -96,7 +107,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rcl_service_init,
   TP_ARGS(
     const void *, service_handle_arg,
@@ -113,7 +124,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rclcpp_service_callback_added,
   TP_ARGS(
     const void *, service_handle_arg,
@@ -126,7 +137,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rcl_client_init,
   TP_ARGS(
     const void *, client_handle_arg,
@@ -143,7 +154,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rcl_timer_init,
   TP_ARGS(
     const void *, timer_handle_arg,
@@ -156,7 +167,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rclcpp_timer_callback_added,
   TP_ARGS(
     const void *, timer_handle_arg,
@@ -169,7 +180,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   rclcpp_callback_register,
   TP_ARGS(
     const void *, callback_arg,
@@ -182,7 +193,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   callback_start,
   TP_ARGS(
     const void *, callback_arg,
@@ -195,7 +206,7 @@ TRACEPOINT_EVENT(
 )
 
 TRACEPOINT_EVENT(
-  ros2,
+  TRACEPOINT_PROVIDER,
   callback_end,
   TP_ARGS(
     const void *, callback_arg
@@ -204,3 +215,7 @@ TRACEPOINT_EVENT(
     ctf_integer_hex(const void *, callback, callback_arg)
   )
 )
+
+#endif /* ___INCLUDE_TP_CALL_H */
+
+#include <lttng/tracepoint-event.h>

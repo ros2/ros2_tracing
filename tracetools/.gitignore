@@ -1,5 +1,0 @@
-traces/
-
-# generated files (LTTng)
-tp_call.c
-tp_call.h
