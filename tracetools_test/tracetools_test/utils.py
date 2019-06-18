@@ -17,8 +17,8 @@
 import os
 import shutil
 import time
+from typing import Dict
 from typing import List
-from typing import Set
 from typing import Tuple
 
 import babeltrace
@@ -41,7 +41,7 @@ def run_and_trace(
         kernel_events: List[str],
         package_name: str,
         node_names: List[str]
-    ) -> Tuple[int, str]:
+) -> Tuple[int, str]:
     """
     Run a node while tracing.
 
@@ -55,7 +55,6 @@ def run_and_trace(
     """
     session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
     full_path = os.path.join(base_path, session_name)
-    print(f'trace directory: {full_path}')
 
     lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
     lttng_start(session_name)
@@ -89,19 +88,14 @@ def cleanup_trace(full_path: str) -> None:
     shutil.rmtree(full_path)
 
 
-def get_trace_event_names(trace_directory: str) -> Set[str]:
+def get_trace_events(trace_directory: str) -> List[Dict[str, str]]:
     """
-    Get a set of event names in a trace.
+    Get the events of a trace.
 
     :param trace_directory: the path to the main/top trace directory
-    :return: event names
+    :return: events
     """
     tc = babeltrace.TraceCollection()
     tc.add_traces_recursive(trace_directory, 'ctf')
 
-    event_names = set()
-
-    for event in tc.events:
-        event_names.add(event.name)
-
-    return event_names
+    return tc.events
