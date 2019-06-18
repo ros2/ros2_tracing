@@ -17,6 +17,8 @@
 import os
 import shutil
 import time
+from typing import List
+from typing import Set
 
 import babeltrace
 from launch import LaunchDescription
@@ -32,21 +34,22 @@ from tracetools_trace.tools.lttng import (
 
 
 def run_and_trace(
-        base_path,
-        session_name_prefix,
-        ros_events,
-        kernel_events,
-        package_name,
-        node_names):
+        base_path: str,
+        session_name_prefix: str,
+        ros_events: List[str],
+        kernel_events: List[str],
+        package_name: str,
+        node_names: List[str]
+    ) -> None:
     """
     Run a node while tracing.
 
-    :param base_path (str): the base path where to put the trace directory
-    :param session_name_prefix (str): the session name prefix for the trace directory
-    :param ros_events (list(str)): the list of ROS UST events to enable
-    :param kernel_events (list(str)): the list of kernel events to enable
-    :param package_name (str): the name of the package to use
-    :param node_names (list(str)): the names of the nodes to execute
+    :param base_path: the base path where to put the trace directory
+    :param session_name_prefix: the session name prefix for the trace directory
+    :param ros_events: the list of ROS UST events to enable
+    :param kernel_events: the list of kernel events to enable
+    :param package_name: the name of the package to use
+    :param node_names: the names of the nodes to execute
     """
     session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
     full_path = os.path.join(base_path, session_name)
@@ -75,21 +78,21 @@ def run_and_trace(
     return exit_code, full_path
 
 
-def cleanup_trace(full_path):
+def cleanup_trace(full_path: str) -> None:
     """
     Cleanup trace data.
 
-    :param full_path (str): the full path to the main trace directory
+    :param full_path: the full path to the main trace directory
     """
     shutil.rmtree(full_path)
 
 
-def get_trace_event_names(trace_directory):
+def get_trace_event_names(trace_directory: str) -> Set[str]:
     """
     Get a set of event names in a trace.
 
-    :param trace_directory (str): the path to the main/top trace directory
-    :return: event names (set(str))
+    :param trace_directory: the path to the main/top trace directory
+    :return: event names
     """
     tc = babeltrace.TraceCollection()
     tc.add_traces_recursive(trace_directory, 'ctf')
