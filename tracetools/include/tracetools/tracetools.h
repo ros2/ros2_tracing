@@ -150,4 +150,4 @@ void TRACEPOINT(
 }
 #endif
 
-#endif /* TRACETOOLS__TRACETOOLS_H_ */
+#endif  // TRACETOOLS__TRACETOOLS_H_

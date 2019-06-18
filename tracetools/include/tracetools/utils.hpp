@@ -27,7 +27,7 @@ void * get_address(std::function<T(U...)> f)
   if (fnPointer == nullptr) {
     return 0;
   }
-  return (void *)*fnPointer;
+  return reinterpret_cast<void *>(*fnPointer);
 }
 
 const char * get_symbol(void * funptr);

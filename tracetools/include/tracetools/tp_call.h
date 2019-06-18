@@ -18,8 +18,8 @@
 #undef TRACEPOINT_INCLUDE
 #define TRACEPOINT_INCLUDE "tracetools/tp_call.h"
 
-#if !defined(___INCLUDE_TP_CALL_H) || defined(TRACEPOINT_HEADER_MULTI_READ)
-#define ___INCLUDE_TP_CALL_H
+#if !defined(TRACETOOLS__TP_CALL_H_) || defined(TRACEPOINT_HEADER_MULTI_READ)
+#define TRACETOOLS__TP_CALL_H_
 
 #include <lttng/tracepoint.h>
 
@@ -216,6 +216,6 @@ TRACEPOINT_EVENT(
   )
 )
 
-#endif /* ___INCLUDE_TP_CALL_H */
+#endif  // TRACETOOLS__TP_CALL_H_
 
 #include <lttng/tracepoint-event.h>
