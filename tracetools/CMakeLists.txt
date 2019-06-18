@@ -59,7 +59,7 @@ endif()
 
 add_library(${PROJECT_NAME} ${SOURCES})
 if(TRACING_ENABLED)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC WITH_LTTNG)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC TRACETOOLS_LTTNG_ENABLED)
   target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES} -ldl)
 else()
   target_link_libraries(${PROJECT_NAME})

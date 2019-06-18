@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if defined(WITH_LTTNG) && !defined(_WIN32)
+#if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
 #include <dlfcn.h>
 #include <cxxabi.h>
 #endif
@@ -21,7 +21,7 @@
 const char * get_symbol(void * funptr)
 {
 #define SYMBOL_UNKNOWN "UNKNOWN"
-#if defined(WITH_LTTNG) && !defined(_WIN32)
+#if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
 #define SYMBOL_LAMBDA "[lambda]"
   if (funptr == 0) {
     return SYMBOL_LAMBDA;

@@ -14,7 +14,7 @@
 
 #include "tracetools/tracetools.h"
 
-#if defined(WITH_LTTNG) && !defined(_WIN32)
+#if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
 # include "tracetools/tp_call.h"
 # define CONDITIONAL_TP(...) \
   tracepoint(__VA_ARGS__)
@@ -24,7 +24,7 @@
 
 bool ros_trace_compile_status()
 {
-#if defined(WITH_LTTNG) && !defined(_WIN32)
+#if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
   return true;
 #else
   return false;
