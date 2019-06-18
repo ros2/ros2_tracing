@@ -12,14 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Provide fake header guard for cpplint
+#undef TRACETOOLS__TP_CALL_H_
+#ifndef TRACETOOLS__TP_CALL_H_
+#define TRACETOOLS__TP_CALL_H_
+
 #undef TRACEPOINT_PROVIDER
 #define TRACEPOINT_PROVIDER ros2
 
 #undef TRACEPOINT_INCLUDE
 #define TRACEPOINT_INCLUDE "tracetools/tp_call.h"
 
-#if !defined(TRACETOOLS__TP_CALL_H_) || defined(TRACEPOINT_HEADER_MULTI_READ)
-#define TRACETOOLS__TP_CALL_H_
+#if !defined(_TRACETOOLS__TP_CALL_H_) || defined(TRACEPOINT_HEADER_MULTI_READ)
+#define _TRACETOOLS__TP_CALL_H_
 
 #include <lttng/tracepoint.h>
 
@@ -216,6 +221,8 @@ TRACEPOINT_EVENT(
   )
 )
 
-#endif  // TRACETOOLS__TP_CALL_H_
+#endif  // _TRACETOOLS__TP_CALL_H_
 
 #include <lttng/tracepoint-event.h>
+
+#endif  // TRACETOOLS__TP_CALL_H_
