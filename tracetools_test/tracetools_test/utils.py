@@ -19,6 +19,7 @@ import shutil
 import time
 from typing import List
 from typing import Set
+from typing import Tuple
 
 import babeltrace
 from launch import LaunchDescription
@@ -40,7 +41,7 @@ def run_and_trace(
         kernel_events: List[str],
         package_name: str,
         node_names: List[str]
-    ) -> None:
+    ) -> Tuple[int, str]:
     """
     Run a node while tracing.
 
@@ -50,6 +51,7 @@ def run_and_trace(
     :param kernel_events: the list of kernel events to enable
     :param package_name: the name of the package to use
     :param node_names: the names of the nodes to execute
+    :return: exit code, full generated path
     """
     session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
     full_path = os.path.join(base_path, session_name)
