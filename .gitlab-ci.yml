@@ -16,9 +16,8 @@ build:
   artifacts:
     paths:
       - install
-      - build
     reports:
-      junit: build/**/Test.xml
+      junit: build/*/Testing/*/Test.xml
       
 build_enabled:
   script:
@@ -27,6 +26,5 @@ build_enabled:
   artifacts:
     paths:
       - install
-      - build
     reports:
-      junit: build/**/Test.xml
+      junit: build/*/Testing/*/Test.xml
