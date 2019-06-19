@@ -17,6 +17,9 @@ import unittest
 from tracetools_test.case import TraceTestCase
 
 
+VERSION_REGEX = r'^[0-9]\.[0-9]\.[0-9]$'
+
+
 class TestNode(TraceTestCase):
 
     def __init__(self, *args) -> None:
@@ -30,8 +33,31 @@ class TestNode(TraceTestCase):
             nodes=['test_publisher']
         )
 
-    def test_creation(self):
-        pass
+    def test_all(self):
+        # Check events order as set
+        self.assertEventsOrderSet(self._events_ros)
+
+        # Check fields
+        rcl_init_events = self.get_events_with_name('ros2:rcl_init')
+        for event in rcl_init_events:
+            self.assertValidHandle(event, 'context_handle')
+            # TODO actually compare to version fetched from the tracetools package?
+            version_field = self.get_field(event, 'version')
+            self.assertRegex(version_field, VERSION_REGEX, 'invalid version number')
+
+        rcl_node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        for event in rcl_node_init_events:
+            self.assertValidHandle(event, 'node_handle')
+            self.assertValidHandle(event, 'rmw_handle')
+            self.assertStringFieldNotEmpty(event, 'node_name')
+            self.assertStringFieldNotEmpty(event, 'namespace')
+        
+        # Check that the launched nodes have a corresponding rcl_node_init event
+        node_name_fields = [self.get_field(e, 'node_name') for e in rcl_node_init_events]
+        for node_name in self._nodes:
+            self.assertTrue(
+                node_name in node_name_fields,
+                f'cannot find node_init event for node name: {node_name} ({node_name_fields})')
 
 
 if __name__ == '__main__':
