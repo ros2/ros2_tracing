@@ -14,40 +14,49 @@
 
 import unittest
 
-from tracetools_test.utils import (
-    cleanup_trace,
-    get_trace_event_names,
-    run_and_trace,
-)
-
-BASE_PATH = '/tmp'
-PKG = 'tracetools_test'
-node_creation_events = [
-    'ros2:rcl_init',
-    'ros2:rcl_node_init',
-]
+from tracetools_test.case import TraceTestCase
 
 
-class TestNode(unittest.TestCase):
+VERSION_REGEX = r'^[0-9]\.[0-9]\.[0-9]$'
 
-    def test_creation(self):
-        session_name_prefix = 'session-test-node-creation'
-        test_node = ['test_publisher']
 
-        exit_code, full_path = run_and_trace(
-            BASE_PATH,
-            session_name_prefix,
-            node_creation_events,
-            None,
-            PKG,
-            test_node)
-        self.assertEqual(exit_code, 0)
+class TestNode(TraceTestCase):
 
-        trace_events = get_trace_event_names(full_path)
-        print(f'trace_events: {trace_events}')
-        self.assertSetEqual(set(node_creation_events), trace_events)
+    def __init__(self, *args) -> None:
+        super().__init__(
+            *args,
+            session_name_prefix='session-test-node-creation',
+            events_ros=[
+                'ros2:rcl_init',
+                'ros2:rcl_node_init',
+            ],
+            nodes=['test_publisher']
+        )
 
-        cleanup_trace(full_path)
+    def test_all(self):
+        # Check events order as set (e.g. init before node_init)
+        self.assertEventsOrderSet(self._events_ros)
+
+        # Check fields
+        rcl_init_events = self.get_events_with_name('ros2:rcl_init')
+        for event in rcl_init_events:
+            self.assertValidHandle(event, 'context_handle')
+            # TODO actually compare to version fetched from the tracetools package?
+            version_field = self.get_field(event, 'version')
+            self.assertRegex(version_field, VERSION_REGEX, 'invalid version number')
+
+        rcl_node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        for event in rcl_node_init_events:
+            self.assertValidHandle(event, ['node_handle', 'rmw_handle'])
+            self.assertStringFieldNotEmpty(event, 'node_name')
+            self.assertStringFieldNotEmpty(event, 'namespace')
+
+        # Check that the launched nodes have a corresponding rcl_node_init event
+        node_name_fields = [self.get_field(e, 'node_name') for e in rcl_node_init_events]
+        for node_name in self._nodes:
+            self.assertTrue(
+                node_name in node_name_fields,
+                f'cannot find node_init event for node name: {node_name} ({node_name_fields})')
 
 
 if __name__ == '__main__':

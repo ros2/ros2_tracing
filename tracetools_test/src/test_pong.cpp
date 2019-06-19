@@ -21,7 +21,7 @@ class PongNode : public rclcpp::Node
 {
 public:
   explicit PongNode(rclcpp::NodeOptions options)
-  : Node("pong_node", options)
+  : Node("test_pong", options)
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
       "ping",

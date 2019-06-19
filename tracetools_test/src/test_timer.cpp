@@ -23,7 +23,7 @@ class TimerNode : public rclcpp::Node
 {
 public:
   explicit TimerNode(rclcpp::NodeOptions options)
-  : Node("timer_node", options)
+  : Node("test_timer", options)
   {
     is_done_ = false;
     timer_ = this->create_wall_timer(

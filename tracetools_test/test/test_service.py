@@ -14,40 +14,68 @@
 
 import unittest
 
-from tracetools_test.utils import (
-    cleanup_trace,
-    get_trace_event_names,
-    run_and_trace,
-)
-
-BASE_PATH = '/tmp'
-PKG = 'tracetools_test'
-service_creation_events = [
-    'ros2:rcl_service_init',
-    'ros2:rclcpp_service_callback_added',
-]
+from tracetools_test.case import TraceTestCase
 
 
-class TestService(unittest.TestCase):
+class TestService(TraceTestCase):
 
-    def test_creation(self):
-        session_name_prefix = 'session-test-service-creation'
-        test_nodes = ['test_service']
+    def __init__(self, *args) -> None:
+        super().__init__(
+            *args,
+            session_name_prefix='session-test-service-creation',
+            events_ros=[
+                'ros2:rcl_node_init',
+                'ros2:rcl_service_init',
+                'ros2:rclcpp_service_callback_added',
+            ],
+            nodes=['test_service']
+        )
 
-        exit_code, full_path = run_and_trace(
-            BASE_PATH,
-            session_name_prefix,
-            service_creation_events,
+    def test_all(self):
+        # Check events order as set (e.g. service_init before callback_added)
+        self.assertEventsOrderSet(self._events_ros)
+
+        # Check fields
+        srv_init_events = self.get_events_with_name('ros2:rcl_service_init')
+        for event in srv_init_events:
+            self.assertValidHandle(event, ['service_handle', 'node_handle', 'rmw_service_handle'])
+            self.assertStringFieldNotEmpty(event, 'service_name')
+
+        callback_added_events = self.get_events_with_name('ros2:rclcpp_service_callback_added')
+        for event in callback_added_events:
+            self.assertValidHandle(event, ['service_handle', 'callback'])
+
+        # Check that the test service name exists
+        test_srv_init_events = self.get_events_with_procname('test_service', srv_init_events)
+        event_service_names = self.get_events_with_field_value(
+            'service_name',
+            '/the_service',
+            test_srv_init_events)
+        self.assertGreaterEqual(
+            len(event_service_names),
+            1,
+            'cannot find test service name')
+
+        # Check that the node handle matches the node_init event
+        node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        test_srv_node_init_events = self.get_events_with_procname(
+            'test_service',
+            node_init_events)
+        self.assertEqual(len(test_srv_node_init_events), 1, 'none or more than 1 node_init event')
+        test_srv_node_init_event = test_srv_node_init_events[0]
+        self.assertMatchingField(
+            test_srv_node_init_event,
+            'node_handle',
+            'ros2:rcl_service_init',
+            test_srv_init_events)
+
+        # Check that the service handles match
+        test_event_srv_init = event_service_names[0]
+        self.assertMatchingField(
+            test_event_srv_init,
+            'service_handle',
             None,
-            PKG,
-            test_nodes)
-        self.assertEqual(exit_code, 0)
-
-        trace_events = get_trace_event_names(full_path)
-        print(f'trace_events: {trace_events}')
-        self.assertSetEqual(set(service_creation_events), trace_events)
-
-        cleanup_trace(full_path)
+            callback_added_events)
 
 
 if __name__ == '__main__':

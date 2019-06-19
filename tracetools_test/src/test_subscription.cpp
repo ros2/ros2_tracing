@@ -21,7 +21,7 @@ class SubNode : public rclcpp::Node
 {
 public:
   explicit SubNode(rclcpp::NodeOptions options)
-  : Node("sub_node", options)
+  : Node("test_subscription", options)
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
       "the_topic",
