@@ -18,6 +18,7 @@ import time
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Union
 import unittest
 
 # from .utils import cleanup_trace
@@ -26,6 +27,7 @@ from .utils import get_event_name
 from .utils import get_event_names
 from .utils import get_event_timestamp
 from .utils import get_field
+from .utils import get_procname
 from .utils import get_trace_events
 from .utils import run_and_trace
 
@@ -113,21 +115,30 @@ class TraceTestCase(unittest.TestCase):
 
         :param names: the node names to look for
         """
-        procnames = [e['procname'] for e in self._events]
+        procnames = [get_procname(e) for e in self._events]
         for name in names:
             # Procnames have a max length of 15
             name_trimmed = name[:15]
             self.assertTrue(name_trimmed in procnames, 'node name not found in tracepoints')
 
-    def assertValidHandle(self, event: DictEvent, handle_field_name: str):
+    def assertValidHandle(self, event: DictEvent, handle_field_name: Union[str, List[str]]):
         """
-        Check that the handle associated to a field name is valid.
+        Check that the handle associated with a field name is valid.
 
         :param event: the event which has a handle field
-        :param handle_field_name: the field name of the handle to check
+        :param handle_field_name: the field name(s) of the handle to check
         """
-        handle_field = self.get_field(event, handle_field_name)
-        self.assertGreater(handle_field, 0, f'invalid handle: {handle_field_name}')
+        is_list = isinstance(handle_field_name, list)
+        handle_field_names = handle_field_name if is_list else [handle_field_name]
+        for field_name in handle_field_names:
+            handle_value = self.get_field(event, field_name)
+            self.assertIsInstance(handle_value, int, 'handle value not int')
+            self.assertGreater(handle_value, 0, f'invalid handle value: {field_name}')
+
+    def assertValidQueueDepth(self, event: DictEvent, queue_depth_field_name: str = 'queue_depth'):
+        queue_depth_value = self.get_field(event, 'queue_depth')
+        self.assertIsInstance(queue_depth_value, int, 'invalid queue depth type')
+        self.assertGreater(queue_depth_value, 0, 'invalid queue depth')
 
     def assertStringFieldNotEmpty(self, event: DictEvent, string_field_name: str):
         """
@@ -141,6 +152,67 @@ class TraceTestCase(unittest.TestCase):
 
     def assertEventAfterTimestamp(self, event: DictEvent, timestamp: int):
         self.assertGreater(get_event_timestamp(event), timestamp, 'event not after timestamp')
+
+    def assertEventOrder(self, first_event: DictEvent, second_event: DictEvent):
+        """
+        Check that the first event was generated before the second event.
+
+        :param first_event: the first event
+        :param second_event: the second event
+        """
+        self.assertTrue(self.are_events_ordered(first_event, second_event))
+
+    def assertMatchingField(
+        self,
+        initial_event: DictEvent,
+        field_name: str,
+        matching_event_name: str = None,
+        events: List[DictEvent] = None
+    ):
+        """
+        Check that the value of a field for a given event has a matching event that follows.
+
+        :param initial_event: the first event, which is the origin of the common field value
+        :param field_name: the name of the common field to check
+        :param matching_event_name: the name of the event to check (or None to check all)
+        :param events: the events to check (or None to check all in trace)
+        """
+        if events is None:
+            events = self._events
+        if matching_event_name is not None:
+            events = self.get_events_with_name(matching_event_name, events)
+        field_value = self.get_field(initial_event, field_name)
+        
+        # Get events with that handle
+        matches = self.get_events_with_field_value(
+            field_name,
+            field_value,
+            events)
+        # Check that there is at least one
+        self.assertGreaterEqual(
+            len(matches),
+            1,
+            f'no corresponding {field_name}')
+        # Check order
+        # Since matching pairs might repeat, we need to check
+        # that there is at least one match that comes after
+        matches_ordered = [e for e in matches if self.are_events_ordered(initial_event, e)]
+        self.assertGreaterEqual(
+            len(matches_ordered),
+            1,
+            'matching field event not after initial event')
+
+
+    def assertFieldEquals(self, event: DictEvent, field_name: str, value: Any):
+        """
+        Check the value of a field.
+
+        :param event: the event
+        :param field_name: the name of the field to check
+        :param value: to value to compare the field value to
+        """
+        actual_value = self.get_field(event, field_name)
+        self.assertEqual(actual_value, value, 'invalid field value')
 
     def get_field(self, event: DictEvent, field_name: str) -> Any:
         """
@@ -157,12 +229,73 @@ class TraceTestCase(unittest.TestCase):
             self.fail(str(e))
         else:
             return value
+        
+    def get_procname(self, event: DictEvent) -> str:
+        """
+        Get procname.
 
-    def get_events_with_name(self, event_name: str) -> List[DictEvent]:
+        :param event: the event
+        :return: the procname of the event
+        """
+        return get_procname(event)
+
+    def get_events_with_name(
+        self,
+        event_name: str,
+        events: List[DictEvent] = None
+    ) -> List[DictEvent]:
         """
         Get all events with the given name.
 
         :param event_name: the event name
+        :param events: the events to check (or None to check all events)
         :return: the list of events with the given name
         """
-        return [e for e in self._events if get_event_name(e) == event_name]
+        if events is None:
+            events = self._events
+        return [e for e in events if get_event_name(e) == event_name]
+
+    def get_events_with_procname(
+        self,
+        procname: str,
+        events: List[DictEvent] = None
+    ) -> List[DictEvent]:
+        """
+        Get all events with the given procname.
+
+        :param procname: the procname
+        :param events: the events to check (or None to check all events)
+        :return: the events with the given procname
+        """
+        if events is None:
+            events = self._events
+        return [e for e in events if self.get_procname(e) == procname[:15]]
+    
+    def get_events_with_field_value(
+        self,
+        field_name: str,
+        field_value: Any,
+        events: List[DictEvent] = None
+    ) -> List[DictEvent]:
+        """
+        Get all events with the given field:value
+
+        :param field_name: the name of the field to check
+        :param field_value: the value of the field to check
+        :param events: the events to check (or None to check all events)
+        :return: the events with the given field:value pair
+        """
+        if events is None:
+            events = self._events
+        return [e for e in events if get_field(e, field_name, None) == field_value]
+
+    def are_events_ordered(self, first_event: DictEvent, second_event: DictEvent):
+        """
+        Check that the first event was generated before the second event.
+
+        :param first_event: the first event
+        :param second_event: the second event
+        """
+        first_timestamp = get_event_timestamp(first_event)
+        second_timestamp = get_event_timestamp(second_event)
+        return first_timestamp < second_timestamp

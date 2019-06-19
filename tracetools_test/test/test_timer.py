@@ -33,7 +33,58 @@ class TestTimer(TraceTestCase):
         )
 
     def test_all(self):
-        pass
+        # Check events order as set (e.g. init, callback added, start, end)
+        self.assertEventsOrderSet(self._events_ros)
+
+        # Check fields
+        init_events = self.get_events_with_name('ros2:rcl_timer_init')
+        for event in init_events:
+            self.assertValidHandle(event, 'timer_handle')
+            period_value = self.get_field(event, 'period')
+            self.assertIsInstance(period_value, int)
+            self.assertGreaterEqual(period_value, 0, f'invalid period value: {period_value}')
+
+        callback_added_events = self.get_events_with_name('ros2:rclcpp_timer_callback_added')
+        for event in callback_added_events:
+            self.assertValidHandle(event, ['timer_handle', 'callback'])
+
+        start_events = self.get_events_with_name('ros2:callback_start')
+        for event in start_events:
+            self.assertValidHandle(event, 'callback')
+            is_intra_process_value = self.get_field(event, 'is_intra_process')
+            self.assertIsInstance(is_intra_process_value, int, 'is_intra_process not int')
+            # Should not be 1 for timer
+            self.assertEqual(
+                is_intra_process_value,
+                0,
+                f'invalid value for is_intra_process: {is_intra_process_value}')
+
+        end_events = self.get_events_with_name('ros2:callback_end')
+        for event in end_events:
+            self.assertValidHandle(event, 'callback')
+
+        # Find and check given timer period
+        test_timer_init_event = self.get_events_with_procname('test_timer', init_events)
+        self.assertEqual(len(test_timer_init_event), 1)
+        test_init_event = test_timer_init_event[0]
+        test_period = self.get_field(test_init_event, 'period')
+        self.assertIsInstance(test_period, int)
+        self.assertEqual(test_period, 1000000, f'invalid period: {test_period}')
+
+        # Check that the timer_init:callback_added pair exists and has a common timer handle
+        self.assertMatchingField(
+            test_init_event,
+            'timer_handle',
+            'ros2:rclcpp_timer_callback_added',
+            callback_added_events)
+
+        # Check that a callback start:end pair has a common callback handle
+        for start_event in start_events:
+            self.assertMatchingField(
+                start_event,
+                'callback',
+                None,
+                end_events)
 
 
 if __name__ == '__main__':

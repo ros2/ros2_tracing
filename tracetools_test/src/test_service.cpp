@@ -24,7 +24,7 @@ public:
   : Node("test_service", options)
   {
     srv_ = this->create_service<std_srvs::srv::Empty>(
-      "service",
+      "the_service",
       std::bind(
         &ServiceNode::service_callback,
         this,

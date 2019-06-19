@@ -34,7 +34,7 @@ class TestNode(TraceTestCase):
         )
 
     def test_all(self):
-        # Check events order as set
+        # Check events order as set (e.g. init before node_init)
         self.assertEventsOrderSet(self._events_ros)
 
         # Check fields
@@ -47,8 +47,7 @@ class TestNode(TraceTestCase):
 
         rcl_node_init_events = self.get_events_with_name('ros2:rcl_node_init')
         for event in rcl_node_init_events:
-            self.assertValidHandle(event, 'node_handle')
-            self.assertValidHandle(event, 'rmw_handle')
+            self.assertValidHandle(event, ['node_handle', 'rmw_handle'])
             self.assertStringFieldNotEmpty(event, 'node_name')
             self.assertStringFieldNotEmpty(event, 'namespace')
         

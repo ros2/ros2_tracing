@@ -30,8 +30,42 @@ class TestSubscriptionCallback(TraceTestCase):
             nodes=['test_ping', 'test_pong']
         )
 
-    def test_callback(self):
-        pass
+    def test_all(self):
+        # Check events order as set (e.g. start before end)
+        self.assertEventsOrderSet(self._events_ros)
+
+        # Check fields
+        start_events = self.get_events_with_name('ros2:callback_start')
+        for event in start_events:
+            self.assertValidHandle(event, 'callback')
+            is_intra_process_value = self.get_field(event, 'is_intra_process')
+            self.assertIsInstance(is_intra_process_value, int, 'is_intra_process not int')
+            self.assertTrue(
+                is_intra_process_value in [0, 1],
+                f'invalid value for is_intra_process: {is_intra_process_value}')
+
+        end_events = self.get_events_with_name('ros2:callback_end')
+        for event in end_events:
+            self.assertValidHandle(event, 'callback')
+
+        # Check that a start:end pair has a common callback handle
+        # Note: might be unstable if tracing is disabled too early
+        ping_events = self.get_events_with_procname('test_ping')
+        pong_events = self.get_events_with_procname('test_pong')
+        ping_events_start = self.get_events_with_name('ros2:callback_start', ping_events)
+        pong_events_start = self.get_events_with_name('ros2:callback_start', pong_events)
+        for ping_start in ping_events_start:
+            self.assertMatchingField(
+                ping_start,
+                'callback',
+                'ros2:callback_end',
+                ping_events)
+        for pong_start in pong_events_start:
+            self.assertMatchingField(
+                pong_start,
+                'callback',
+                'ros2:callback_end',
+                pong_events)
 
 
 if __name__ == '__main__':

@@ -24,13 +24,42 @@ class TestPublisher(TraceTestCase):
             *args,
             session_name_prefix='session-test-publisher-creation',
             events_ros=[
+                'ros2:rcl_node_init',
                 'ros2:rcl_publisher_init',
             ],
             nodes=['test_publisher']
         )
 
-    def test_creation(self):
-        pass
+    def test_all(self):
+        # Check events order as set (e.g. node_init before pub_init)
+        self.assertEventsOrderSet(self._events_ros)
+
+        # Check fields
+        pub_init_events = self.get_events_with_name('ros2:rcl_publisher_init')
+        for event in pub_init_events:
+            self.assertValidHandle(
+                event,
+                ['publisher_handle', 'node_handle', 'rmw_publisher_handle'])
+            self.assertValidQueueDepth(event, 'queue_depth')
+            self.assertStringFieldNotEmpty(event, 'topic_name')
+
+        # Check that the test topic name exists
+        test_pub_init_events = self.get_events_with_procname('test_publisher', pub_init_events)
+        event_topic_names = [self.get_field(e, 'topic_name') for e in test_pub_init_events]
+        self.assertTrue('/the_topic' in event_topic_names, 'cannot find test topic name')
+
+        # Check that the node handle matches with the node_init event
+        node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        test_pub_node_init_events = self.get_events_with_procname(
+            'test_publisher',
+            node_init_events)
+        self.assertEqual(len(test_pub_node_init_events), 1, 'none or more than 1 node_init event')
+        test_pub_node_init_event = test_pub_node_init_events[0]
+        self.assertMatchingField(
+            test_pub_node_init_event,
+            'node_handle',
+            None,
+            test_pub_init_events)
 
 
 if __name__ == '__main__':

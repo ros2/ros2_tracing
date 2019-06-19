@@ -143,8 +143,14 @@ def get_field(event: DictEvent, field_name: str, default=None, raise_if_not_foun
         raise AttributeError(f'event field "{field_name}" not found!')
     return field_value
 
+
 def get_event_name(event: DictEvent) -> str:
     return event['_name']
 
+
 def get_event_timestamp(event: DictEvent) -> int:
     return event['_timestamp']
+
+
+def get_procname(event: DictEvent) -> str:
+    return event['procname']
