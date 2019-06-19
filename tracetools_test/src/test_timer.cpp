@@ -19,15 +19,18 @@
 
 using namespace std::chrono_literals;
 
+#define NODE_NAME "test_timer"
+#define TIMER_PERIOD 1ms
+
 class TimerNode : public rclcpp::Node
 {
 public:
   explicit TimerNode(rclcpp::NodeOptions options)
-  : Node("test_timer", options)
+  : Node(NODE_NAME, options)
   {
     is_done_ = false;
     timer_ = this->create_wall_timer(
-      1ms,
+      TIMER_PERIOD,
       std::bind(&TimerNode::timer_callback, this));
   }
 
