@@ -16,12 +16,11 @@
 
 import time
 from typing import Any
-from typing import Dict
 from typing import List
 from typing import Union
 import unittest
 
-# from .utils import cleanup_trace
+from .utils import cleanup_trace
 from .utils import DictEvent
 from .utils import get_event_name
 from .utils import get_event_names
@@ -98,8 +97,7 @@ class TraceTestCase(unittest.TestCase):
         self.assertProcessNamesExist(self._nodes)
 
     def tearDown(self):
-        pass
-        # cleanup_trace(self._full_path)
+        cleanup_trace(self._full_path)
 
     def assertEventsOrderSet(self, event_names: List[str]):
         """
@@ -182,7 +180,7 @@ class TraceTestCase(unittest.TestCase):
         if matching_event_name is not None:
             events = self.get_events_with_name(matching_event_name, events)
         field_value = self.get_field(initial_event, field_name)
-        
+
         # Get events with that handle
         matches = self.get_events_with_field_value(
             field_name,
@@ -201,7 +199,6 @@ class TraceTestCase(unittest.TestCase):
             len(matches_ordered),
             1,
             'matching field event not after initial event')
-
 
     def assertFieldEquals(self, event: DictEvent, field_name: str, value: Any):
         """
@@ -229,7 +226,7 @@ class TraceTestCase(unittest.TestCase):
             self.fail(str(e))
         else:
             return value
-        
+
     def get_procname(self, event: DictEvent) -> str:
         """
         Get procname.
@@ -270,7 +267,7 @@ class TraceTestCase(unittest.TestCase):
         if events is None:
             events = self._events
         return [e for e in events if self.get_procname(e) == procname[:15]]
-    
+
     def get_events_with_field_value(
         self,
         field_name: str,
@@ -278,7 +275,7 @@ class TraceTestCase(unittest.TestCase):
         events: List[DictEvent] = None
     ) -> List[DictEvent]:
         """
-        Get all events with the given field:value
+        Get all events with the given field:value.
 
         :param field_name: the name of the field to check
         :param field_value: the value of the field to check

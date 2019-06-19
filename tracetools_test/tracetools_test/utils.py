@@ -88,7 +88,9 @@ def cleanup_trace(full_path: str) -> None:
     """
     shutil.rmtree(full_path)
 
+
 DictEvent = Dict[str, Any]
+
 
 def get_trace_events(trace_directory: str) -> List[DictEvent]:
     """

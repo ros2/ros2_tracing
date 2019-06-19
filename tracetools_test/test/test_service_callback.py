@@ -54,8 +54,14 @@ class TestServiceCallback(TraceTestCase):
         for node in self._nodes:
             test_start_events = self.get_events_with_procname(node, start_events)
             test_end_events = self.get_events_with_procname(node, end_events)
-            self.assertGreater(len(test_start_events), 0, f'no start_callback events for node: {node}')
-            self.assertGreater(len(test_end_events), 0, f'no end_callback events for node: {node}')
+            self.assertGreater(
+                len(test_start_events),
+                0,
+                f'no start_callback events for node: {node}')
+            self.assertGreater(
+                len(test_end_events),
+                0,
+                f'no end_callback events for node: {node}')
 
 
 if __name__ == '__main__':

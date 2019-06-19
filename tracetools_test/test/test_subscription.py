@@ -44,7 +44,8 @@ class TestSubscription(TraceTestCase):
             self.assertValidQueueDepth(event, 'queue_depth')
             self.assertStringFieldNotEmpty(event, 'topic_name')
 
-        callback_added_events = self.get_events_with_name('ros2:rclcpp_subscription_callback_added')
+        callback_added_events = self.get_events_with_name(
+            'ros2:rclcpp_subscription_callback_added')
         for event in callback_added_events:
             self.assertValidHandle(event, ['subscription_handle', 'callback'])
 

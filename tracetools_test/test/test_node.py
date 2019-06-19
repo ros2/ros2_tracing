@@ -50,7 +50,7 @@ class TestNode(TraceTestCase):
             self.assertValidHandle(event, ['node_handle', 'rmw_handle'])
             self.assertStringFieldNotEmpty(event, 'node_name')
             self.assertStringFieldNotEmpty(event, 'namespace')
-        
+
         # Check that the launched nodes have a corresponding rcl_node_init event
         node_name_fields = [self.get_field(e, 'node_name') for e in rcl_node_init_events]
         for node_name in self._nodes:
