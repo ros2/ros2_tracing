@@ -20,18 +20,22 @@
 
 using namespace std::chrono_literals;
 
+#define NODE_NAME "test_ping"
+#define SUB_TOPIC_NAME "pong"
+#define PUB_TOPIC_NAME "ping"
+
 class PingNode : public rclcpp::Node
 {
 public:
   explicit PingNode(rclcpp::NodeOptions options)
-  : Node("test_ping", options)
+  : Node(NODE_NAME, options)
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
-      "pong",
+      SUB_TOPIC_NAME,
       rclcpp::QoS(10),
       std::bind(&PingNode::callback, this, std::placeholders::_1));
     pub_ = this->create_publisher<std_msgs::msg::String>(
-      "ping",
+      PUB_TOPIC_NAME,
       rclcpp::QoS(10));
     timer_ = this->create_wall_timer(
       500ms,

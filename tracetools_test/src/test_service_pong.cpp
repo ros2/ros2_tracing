@@ -17,21 +17,25 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_srvs/srv/empty.hpp"
 
+#define NODE_NAME "test_service_pong"
+#define SERVICE_NAME "ping"
+#define CLIENT_NAME "pong"
+
 class PongNode : public rclcpp::Node
 {
 public:
   explicit PongNode(rclcpp::NodeOptions options)
-  : Node("test_service_pong", options)
+  : Node(NODE_NAME, options)
   {
     srv_ = this->create_service<std_srvs::srv::Empty>(
-      "ping",
+      SERVICE_NAME,
       std::bind(
         &PongNode::service_callback,
         this,
         std::placeholders::_1,
         std::placeholders::_2,
         std::placeholders::_3));
-    client_ = this->create_client<std_srvs::srv::Empty>("pong");
+    client_ = this->create_client<std_srvs::srv::Empty>(CLIENT_NAME);
   }
 
 private:

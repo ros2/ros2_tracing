@@ -17,14 +17,17 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
+#define NODE_NAME "test_subscription"
+#define TOPIC_NAME "the_topic"
+
 class SubNode : public rclcpp::Node
 {
 public:
   explicit SubNode(rclcpp::NodeOptions options)
-  : Node("test_subscription", options)
+  : Node(NODE_NAME, options)
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
-      "the_topic",
+      TOPIC_NAME,
       rclcpp::QoS(10),
       std::bind(&SubNode::callback, this, std::placeholders::_1));
   }

@@ -17,14 +17,17 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
+#define NODE_NAME "test_publisher"
+#define TOPIC_NAME "the_topic"
+
 class PubNode : public rclcpp::Node
 {
 public:
   explicit PubNode(rclcpp::NodeOptions options)
-  : Node("test_publisher", options)
+  : Node(NODE_NAME, options)
   {
     pub_ = this->create_publisher<std_msgs::msg::String>(
-      "the_topic",
+      TOPIC_NAME,
       rclcpp::QoS(10));
   }
 
