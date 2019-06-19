@@ -21,7 +21,7 @@ class PongNode : public rclcpp::Node
 {
 public:
   explicit PongNode(rclcpp::NodeOptions options)
-  : Node("pong_node", options)
+  : Node("test_service_pong", options)
   {
     srv_ = this->create_service<std_srvs::srv::Empty>(
       "ping",

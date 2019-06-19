@@ -21,7 +21,7 @@ class ServiceNode : public rclcpp::Node
 {
 public:
   explicit ServiceNode(rclcpp::NodeOptions options)
-  : Node("service_node", options)
+  : Node("test_service", options)
   {
     srv_ = this->create_service<std_srvs::srv::Empty>(
       "service",

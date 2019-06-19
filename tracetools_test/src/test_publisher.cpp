@@ -21,7 +21,7 @@ class PubNode : public rclcpp::Node
 {
 public:
   explicit PubNode(rclcpp::NodeOptions options)
-  : Node("pub_node", options)
+  : Node("test_publisher", options)
   {
     pub_ = this->create_publisher<std_msgs::msg::String>(
       "the_topic",
