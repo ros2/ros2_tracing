@@ -127,7 +127,6 @@ class TraceTestCase(unittest.TestCase):
         :param handle_field_name: the field name of the handle to check
         """
         handle_field = self.get_field(event, handle_field_name)
-        print(f'handle_field: {handle_field}')
         self.assertGreater(handle_field, 0, f'invalid handle: {handle_field_name}')
 
     def assertStringFieldNotEmpty(self, event: DictEvent, string_field_name: str):
