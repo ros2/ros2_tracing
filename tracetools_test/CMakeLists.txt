@@ -33,6 +33,13 @@ if(BUILD_TESTING)
     rclcpp
     std_msgs
   )
+  add_executable(test_intra
+    src/test_intra.cpp
+  )
+  ament_target_dependencies(test_intra
+    rclcpp
+    std_msgs
+  )
   add_executable(test_ping
     src/test_ping.cpp
   )
@@ -76,14 +83,15 @@ if(BUILD_TESTING)
   )
 
   install(TARGETS
-    test_publisher
-    test_subscription
+    test_intra
     test_ping
     test_pong
-    test_timer
+    test_publisher
     test_service
     test_service_ping
     test_service_pong
+    test_subscription
+    test_timer
     DESTINATION lib/${PROJECT_NAME}
   )
 
@@ -94,13 +102,14 @@ if(BUILD_TESTING)
 
   # Run each test in its own pytest invocation
   set(_tracetools_test_pytest_tests
+    test/test_intra.py
     test/test_node.py
     test/test_publisher.py
+    test/test_service.py
+    test/test_service_callback.py
     test/test_subscription.py
     test/test_subscription_callback.py
     test/test_timer.py
-    test/test_service.py
-    test/test_service_callback.py
   )
 
   foreach(_test_path ${_tracetools_test_pytest_tests})
