@@ -20,14 +20,18 @@
 
 using namespace std::chrono_literals;
 
+#define NODE_NAME "test_service_ping"
+#define SERVICE_NAME "pong"
+#define CLIENT_NAME "ping"
+
 class PingNode : public rclcpp::Node
 {
 public:
   explicit PingNode(rclcpp::NodeOptions options)
-  : Node("test_service_ping", options)
+  : Node(NODE_NAME, options)
   {
     srv_ = this->create_service<std_srvs::srv::Empty>(
-      "pong",
+      SERVICE_NAME,
       std::bind(
         &PingNode::service_callback,
         this,
@@ -35,7 +39,7 @@ public:
         std::placeholders::_2,
         std::placeholders::_3));
     client_ = this->create_client<std_srvs::srv::Empty>(
-      "ping");
+      CLIENT_NAME);
     timer_ = this->create_wall_timer(
       500ms,
       std::bind(&PingNode::timer_callback, this));

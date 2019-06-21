@@ -17,14 +17,17 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_srvs/srv/empty.hpp"
 
+#define NODE_NAME "test_service"
+#define SERVICE_NAME "the_service"
+
 class ServiceNode : public rclcpp::Node
 {
 public:
   explicit ServiceNode(rclcpp::NodeOptions options)
-  : Node("test_service", options)
+  : Node(NODE_NAME, options)
   {
     srv_ = this->create_service<std_srvs::srv::Empty>(
-      "the_service",
+      SERVICE_NAME,
       std::bind(
         &ServiceNode::service_callback,
         this,

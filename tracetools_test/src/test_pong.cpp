@@ -17,18 +17,22 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
+#define NODE_NAME "test_pong"
+#define SUB_TOPIC_NAME "ping"
+#define PUB_TOPIC_NAME "pong"
+
 class PongNode : public rclcpp::Node
 {
 public:
   explicit PongNode(rclcpp::NodeOptions options)
-  : Node("test_pong", options)
+  : Node(NODE_NAME, options)
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
-      "ping",
+      SUB_TOPIC_NAME,
       rclcpp::QoS(10),
       std::bind(&PongNode::callback, this, std::placeholders::_1));
     pub_ = this->create_publisher<std_msgs::msg::String>(
-      "pong",
+      PUB_TOPIC_NAME,
       rclcpp::QoS(10));
   }
 
