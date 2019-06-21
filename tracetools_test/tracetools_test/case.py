@@ -287,6 +287,24 @@ class TraceTestCase(unittest.TestCase):
             events = self._events
         return [e for e in events if get_field(e, field_name, None) == field_value]
 
+    def get_events_with_field_not_value(
+        self,
+        field_name: str,
+        field_value: Any,
+        events: List[DictEvent] = None
+    ) -> List[DictEvent]:
+        """
+        Get all events with the given field but not the value.
+
+        :param field_name: the name of the field to check
+        :param field_value: the value of the field to check
+        :param events: the events to check (or None to check all events)
+        :return: the events with the given field:value pair
+        """
+        if events is None:
+            events = self._events
+        return [e for e in events if get_field(e, field_name, None) != field_value]
+
     def are_events_ordered(self, first_event: DictEvent, second_event: DictEvent):
         """
         Check that the first event was generated before the second event.
