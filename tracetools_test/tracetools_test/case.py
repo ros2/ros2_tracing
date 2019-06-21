@@ -97,8 +97,7 @@ class TraceTestCase(unittest.TestCase):
         self.assertProcessNamesExist(self._nodes)
 
     def tearDown(self):
-        pass
-        # cleanup_trace(self._full_path)
+        cleanup_trace(self._full_path)
 
     def assertEventsOrderSet(self, event_names: List[str]):
         """

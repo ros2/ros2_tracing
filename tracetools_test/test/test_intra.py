@@ -67,7 +67,7 @@ class TestIntra(TraceTestCase):
             'subscription_handle',
             sub_handle_intra,
             self.get_events_with_name(
-            'ros2:rclcpp_subscription_callback_added'))
+                'ros2:rclcpp_subscription_callback_added'))
         self.assertEqual(
             len(callback_added_events),
             1,
