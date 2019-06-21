@@ -45,8 +45,22 @@ class TestPublisher(TraceTestCase):
 
         # Check that the test topic name exists
         test_pub_init_events = self.get_events_with_procname('test_publisher', pub_init_events)
-        event_topic_names = [self.get_field(e, 'topic_name') for e in test_pub_init_events]
-        self.assertTrue('/the_topic' in event_topic_names, 'cannot find test topic name')
+        test_pub_init_topic_events = self.get_events_with_field_value(
+            'topic_name',
+            '/the_topic',
+            test_pub_init_events)
+        self.assertEqual(
+            len(test_pub_init_topic_events),
+            1,
+            'none or more than 1 pub_init even for test topic')
+
+        # Check queue_depth value
+        test_pub_init_topic_event = test_pub_init_topic_events[0]
+        test_queue_depth = self.get_field(test_pub_init_topic_event, 'queue_depth')
+        self.assertEqual(
+            test_queue_depth,
+            10,
+            'pub_init event does not have expected queue depth value')
 
         # Check that the node handle matches with the node_init event
         node_init_events = self.get_events_with_name('ros2:rcl_node_init')

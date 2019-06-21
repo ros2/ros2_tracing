@@ -57,6 +57,13 @@ class TestSubscription(TraceTestCase):
         self.assertEqual(len(test_sub_init_events), 1, 'cannot find test topic name')
         test_sub_init_event = test_sub_init_events[0]
 
+        # Check queue_depth value
+        test_queue_depth = self.get_field(test_sub_init_event, 'queue_depth')
+        self.assertEqual(
+            test_queue_depth,
+            10,
+            'sub_init event does not have expected queue depth value')
+
         # Check that the node handle matches the node_init event
         node_init_events = self.get_events_with_name('ros2:rcl_node_init')
         test_sub_node_init_events = self.get_events_with_procname(

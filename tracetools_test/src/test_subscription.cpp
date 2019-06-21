@@ -19,6 +19,7 @@
 
 #define NODE_NAME "test_subscription"
 #define TOPIC_NAME "the_topic"
+#define QUEUE_DEPTH 10
 
 class SubNode : public rclcpp::Node
 {
@@ -28,7 +29,7 @@ public:
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
       TOPIC_NAME,
-      rclcpp::QoS(10),
+      rclcpp::QoS(QUEUE_DEPTH),
       std::bind(&SubNode::callback, this, std::placeholders::_1));
   }
 
