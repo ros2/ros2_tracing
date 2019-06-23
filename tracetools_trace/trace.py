@@ -60,13 +60,10 @@ def main():
     else:
         print('kernel tracing disabled')
 
-    lttng.lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
     print(f'writting tracing session to: {full_path}')
-
     input('press enter to start...')
-    lttng.lttng_start(session_name)
+    lttng.lttng_init(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
     input('press enter to stop...')
 
     print('stopping & destroying tracing session')
-    lttng.lttng_stop(session_name)
-    lttng.lttng_destroy(session_name)
+    lttng.lttng_fini(session_name)

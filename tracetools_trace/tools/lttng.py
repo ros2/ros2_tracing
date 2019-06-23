@@ -14,7 +14,37 @@ from .names import (  # noqa: E402
 )
 
 
-def lttng_setup(
+def lttng_init(
+    session_name: str,
+    full_path: str,
+    ros_events: List[str] = DEFAULT_EVENTS_ROS,
+    kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
+    context_names: List[str] = DEFAULT_CONTEXT
+) -> None:
+    """
+    Set up and start LTTng session.
+
+    :param session_name: the name of the session
+    :param full_path: the full path to the main directory to write trace data to
+    :param ros_events: list of ROS events to enable
+    :param kernel_events: list of kernel events to enable
+    :param context_names: list of context elements to enable
+    """
+    _lttng_setup(session_name, full_path, ros_events, kernel_events, context_names)
+    _lttng_start(session_name)
+
+
+def lttng_fini(session_name: str) -> None:
+    """
+    Stop and destroy LTTng session.
+
+    :param session_name: the name of the session
+    """
+    _lttng_stop(session_name)
+    _lttng_destroy(session_name)
+
+
+def _lttng_setup(
         session_name: str,
         full_path: str,
         ros_events: List[str] = DEFAULT_EVENTS_ROS,
@@ -82,7 +112,7 @@ def lttng_setup(
     _add_context(enabled_handles, context_list)
 
 
-def lttng_start(session_name: str) -> None:
+def _lttng_start(session_name: str) -> None:
     """
     Start LTTng session, and check for errors.
 
@@ -93,7 +123,7 @@ def lttng_start(session_name: str) -> None:
         raise RuntimeError(f'failed to start tracing: {lttng.strerror(result)}')
 
 
-def lttng_stop(session_name: str) -> None:
+def _lttng_stop(session_name: str) -> None:
     """
     Stop LTTng session, and check for errors.
 
@@ -104,7 +134,7 @@ def lttng_stop(session_name: str) -> None:
         raise RuntimeError(f'failed to stop tracing: {lttng.strerror(result)}')
 
 
-def lttng_destroy(session_name: str) -> None:
+def _lttng_destroy(session_name: str) -> None:
     """
     Destroy LTTng session, and check for errors.
 
