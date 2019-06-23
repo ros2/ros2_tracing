@@ -20,12 +20,13 @@ class Trace(Action):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         session_name: str,
         base_path: str = '/tmp',
         events_ust: List[str] = names.DEFAULT_EVENTS_ROS,
         events_kernel: List[str] = names.DEFAULT_EVENTS_KERNEL,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Constructor."""
         super().__init__(**kwargs)
@@ -36,9 +37,7 @@ class Trace(Action):
 
     def execute(self, context: LaunchContext) -> Optional[List[Action]]:
         # TODO make sure this is done as late as possible
-        context.register_event_handler(OnShutdown(
-            on_shutdown=self._destroy,
-        ))
+        context.register_event_handler(OnShutdown(on_shutdown=self._destroy))
         # TODO make sure this is done as early as possible
         self._setup()
 
@@ -57,8 +56,10 @@ class Trace(Action):
         lttng.lttng_destroy(self.__session_name)
 
     def __repr__(self):
-        return "Trace("\
-            f"session_name='{self.__session_name}', "\
-            f"path='{self.__path}', "\
-            f"num_events_ust={len(self.__events_ust)}, "\
+        return (
+            "Trace("
+            f"session_name='{self.__session_name}', "
+            f"path='{self.__path}', "
+            f"num_events_ust={len(self.__events_ust)}, "
             f"num_events_kernel={len(self.__events_kernel)})"
+        )
