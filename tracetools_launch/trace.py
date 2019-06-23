@@ -1,3 +1,4 @@
+"""Module for the Trace action."""
 
 import os
 from typing import List
