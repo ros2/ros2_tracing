@@ -4,6 +4,17 @@ import time
 from . import names
 
 
+class DefaultArgValueCompleter:
+    """Callable returning an arg's default value."""
+
+    def __init__(self, arg):
+        default = arg.default
+        self.list = default if isinstance(default, list) else [default]
+
+    def __call__(self, **kwargs):
+        return self.list
+
+
 def parse_args():
     """
     Parse args for tracing.
@@ -22,17 +33,19 @@ def add_arguments(parser):
         '--path', '-p', dest='path',
         default='/tmp',
         help='path of the base directory for trace data (default: %(default)s)')
-    parser.add_argument(
+    arg = parser.add_argument(
         '--ust', '-u', nargs='*', dest='events_ust', default=names.DEFAULT_EVENTS_ROS,
         help='the ROS UST events to enable (default: all events) '
             '[to disable all UST events, '
             'provide this flag without any event name]')
-    parser.add_argument(
+    arg.completer = DefaultArgValueCompleter(arg)
+    arg = parser.add_argument(
         '--kernel', '-k', nargs='*', dest='events_kernel',
         default=names.DEFAULT_EVENTS_KERNEL,
         help='the kernel events to enable (default: all events) '
             '[to disable all UST events, '
             'provide this flag without any event name]')
+    arg.completer = DefaultArgValueCompleter(arg)
     parser.add_argument(
         '--list', '-l', dest='list', action='store_true',
         help='display lists of enabled events (default: %(default)s)')
