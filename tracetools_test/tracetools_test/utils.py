@@ -27,12 +27,7 @@ from launch import LaunchDescription
 from launch import LaunchService
 from launch_ros import get_default_launch_description
 import launch_ros.actions
-from tracetools_trace.tools.lttng import (
-    lttng_destroy,
-    lttng_setup,
-    lttng_start,
-    lttng_stop,
-)
+from tracetools_trace.tools import lttng
 
 
 def run_and_trace(
@@ -57,8 +52,7 @@ def run_and_trace(
     session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
     full_path = os.path.join(base_path, session_name)
 
-    lttng_setup(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
-    lttng_start(session_name)
+    lttng.lttng_init(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
 
     nodes = []
     for node_name in node_names:
@@ -74,8 +68,7 @@ def run_and_trace(
 
     exit_code = ls.run()
 
-    lttng_stop(session_name)
-    lttng_destroy(session_name)
+    lttng.lttng_fini(session_name)
 
     return exit_code, full_path
 
