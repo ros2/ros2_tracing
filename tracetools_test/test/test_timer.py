@@ -51,13 +51,12 @@ class TestTimer(TraceTestCase):
         start_events = self.get_events_with_name('ros2:callback_start')
         for event in start_events:
             self.assertValidHandle(event, 'callback')
-            is_intra_process_value = self.get_field(event, 'is_intra_process')
-            self.assertIsInstance(is_intra_process_value, int, 'is_intra_process not int')
             # Should not be 1 for timer
             self.assertEqual(
-                is_intra_process_value,
+                event,
+                'is_intra_process',
                 0,
-                f'invalid value for is_intra_process: {is_intra_process_value}')
+                'invalid value for is_intra_process')
 
         end_events = self.get_events_with_name('ros2:callback_end')
         for event in end_events:
@@ -67,9 +66,7 @@ class TestTimer(TraceTestCase):
         test_timer_init_event = self.get_events_with_procname('test_timer', init_events)
         self.assertEqual(len(test_timer_init_event), 1)
         test_init_event = test_timer_init_event[0]
-        test_period = self.get_field(test_init_event, 'period')
-        self.assertIsInstance(test_period, int)
-        self.assertEqual(test_period, 1000000, f'invalid period: {test_period}')
+        self.assertFieldEquals(test_init_event, 'period', 1000000, 'invalid period')
 
         # Check that the timer_init:callback_added pair exists and has a common timer handle
         self.assertMatchingField(

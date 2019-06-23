@@ -61,7 +61,7 @@ class TestService(TraceTestCase):
         test_srv_node_init_events = self.get_events_with_procname(
             'test_service',
             node_init_events)
-        self.assertEqual(len(test_srv_node_init_events), 1, 'none or more than 1 node_init event')
+        self.assertNumEvents(test_srv_node_init_events, 1, 'none or more than 1 node_init event')
         test_srv_node_init_event = test_srv_node_init_events[0]
         self.assertMatchingField(
             test_srv_node_init_event,

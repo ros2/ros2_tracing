@@ -160,6 +160,14 @@ class TraceTestCase(unittest.TestCase):
         """
         self.assertTrue(self.are_events_ordered(first_event, second_event))
 
+    def assertNumEvents(
+        self,
+        events: List[DictEvent],
+        expected_number: int,
+        msg: str = 'wrong number of events'
+    ):
+        self.assertEqual(len(events), expected_number, msg)
+
     def assertMatchingField(
         self,
         initial_event: DictEvent,
@@ -200,16 +208,23 @@ class TraceTestCase(unittest.TestCase):
             1,
             'matching field event not after initial event')
 
-    def assertFieldEquals(self, event: DictEvent, field_name: str, value: Any):
+    def assertFieldEquals(
+        self,
+        event: DictEvent,
+        field_name: str,
+        value: Any,
+        msg: str = 'wrong field value'
+    ):
         """
         Check the value of a field.
 
         :param event: the event
         :param field_name: the name of the field to check
         :param value: to value to compare the field value to
+        :param msg: the message to display on failure
         """
         actual_value = self.get_field(event, field_name)
-        self.assertEqual(actual_value, value, 'invalid field value')
+        self.assertEqual(actual_value, value, msg)
 
     def get_field(self, event: DictEvent, field_name: str) -> Any:
         """

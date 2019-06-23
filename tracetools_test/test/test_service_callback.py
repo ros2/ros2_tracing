@@ -38,13 +38,12 @@ class TestServiceCallback(TraceTestCase):
         start_events = self.get_events_with_name('ros2:callback_start')
         for event in start_events:
             self.assertValidHandle(event, 'callback')
-            is_intra_process_value = self.get_field(event, 'is_intra_process')
-            self.assertIsInstance(is_intra_process_value, int, 'is_intra_process not int')
             # Should not be 1 for services (yet)
-            self.assertEqual(
-                is_intra_process_value,
+            self.assertFieldEquals(
+                event,
+                'is_intra_process',
                 0,
-                f'invalid value for is_intra_process: {is_intra_process_value}')
+                'invalid value for is_intra_process')
 
         end_events = self.get_events_with_name('ros2:callback_end')
         for event in end_events:
