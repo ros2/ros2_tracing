@@ -134,6 +134,12 @@ class TraceTestCase(unittest.TestCase):
             self.assertGreater(handle_value, 0, f'invalid handle value: {field_name}')
 
     def assertValidQueueDepth(self, event: DictEvent, queue_depth_field_name: str = 'queue_depth'):
+        """
+        Check that the queue depth value is valid.
+
+        :param event: the event with the queue depth field
+        :param queue_depth_field_name: the field name for queue depth
+        """
         queue_depth_value = self.get_field(event, 'queue_depth')
         self.assertIsInstance(queue_depth_value, int, 'invalid queue depth type')
         self.assertGreater(queue_depth_value, 0, 'invalid queue depth')
@@ -149,6 +155,12 @@ class TraceTestCase(unittest.TestCase):
         self.assertGreater(len(string_field), 0, 'empty string')
 
     def assertEventAfterTimestamp(self, event: DictEvent, timestamp: int):
+        """
+        Check that the event happens after the given timestamp.
+
+        :param event: the event to check
+        :param timestamp: the reference timestamp
+        """
         self.assertGreater(get_event_timestamp(event), timestamp, 'event not after timestamp')
 
     def assertEventOrder(self, first_event: DictEvent, second_event: DictEvent):
@@ -166,6 +178,13 @@ class TraceTestCase(unittest.TestCase):
         expected_number: int,
         msg: str = 'wrong number of events'
     ):
+        """
+        Check number of events.
+
+        :param events: the events to check
+        :param expected_number: the expected number of events
+        :param msg: the message to display on failure
+        """
         self.assertEqual(len(events), expected_number, msg)
 
     def assertMatchingField(
