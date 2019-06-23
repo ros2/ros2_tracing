@@ -48,7 +48,7 @@ class TraceTestCase(unittest.TestCase):
         nodes: List[str],
         base_path: str = '/tmp',
         events_kernel: List[str] = None,
-        package: str = 'tracetools_test'
+        package: str = 'tracetools_test',
     ) -> None:
         """Constructor."""
         print(f'methodName={args[0]}')
