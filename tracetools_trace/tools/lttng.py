@@ -1,6 +1,7 @@
 # LTTng tracing interface
 
 import sys
+
 # Temporary workaround
 sys.path = ['/usr/local/lib/python3.6/site-packages'] + sys.path
 from typing import List
@@ -15,12 +16,12 @@ from .names import (  # noqa: E402
 
 
 def lttng_setup(
-        session_name: str,
-        full_path: str,
-        ros_events: List[str] = DEFAULT_EVENTS_ROS,
-        kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
-        context_names: List[str] = DEFAULT_CONTEXT
-    ) -> None:
+    session_name: str,
+    full_path: str,
+    ros_events: List[str] = DEFAULT_EVENTS_ROS,
+    kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
+    context_names: List[str] = DEFAULT_CONTEXT,
+) -> None:
     """
     Set up LTTng session, with events and context.
 
@@ -41,7 +42,7 @@ def lttng_setup(
         channel_ust = lttng.Channel()
         channel_ust.name = 'ros2'
         channel_ust.attr.overwrite = 0
-        channel_ust.attr.subbuf_size = 2*4096
+        channel_ust.attr.subbuf_size = 2 * 4096
         channel_ust.attr.num_subbuf = 8
         channel_ust.attr.switch_timer_interval = 0
         channel_ust.attr.read_timer_interval = 200
@@ -54,7 +55,7 @@ def lttng_setup(
         channel_kernel = lttng.Channel()
         channel_kernel.name = 'kchan'
         channel_kernel.attr.overwrite = 0
-        channel_kernel.attr.subbuf_size = 8*4096
+        channel_kernel.attr.subbuf_size = 8 * 4096
         channel_kernel.attr.num_subbuf = 8
         channel_kernel.attr.switch_timer_interval = 0
         channel_kernel.attr.read_timer_interval = 200
@@ -178,10 +179,10 @@ def _enable_channel(handle: lttng.Handle, channel: lttng.Channel) -> None:
 
 
 def _enable_events(
-        handle: lttng.Handle,
-        events_list: List[lttng.Event],
-        channel_name: str
-    ) -> None:
+    handle: lttng.Handle,
+    events_list: List[lttng.Event],
+    channel_name: str,
+) -> None:
     """
     Enable events list for a given handle and channel name, and check for errors.
 
@@ -230,7 +231,10 @@ def _create_context_list(context_names_list: List[str]) -> List[lttng.EventConte
     return context_list
 
 
-def _add_context(handles: List[lttng.Handle], context_list: List[lttng.EventContext]) -> None:
+def _add_context(
+    handles: List[lttng.Handle],
+    context_list: List[lttng.EventContext],
+) -> None:
     """
     Add context list to given handles, and check for errors.
 
