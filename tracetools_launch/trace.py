@@ -42,7 +42,7 @@ class Trace(Action):
         # TODO make sure this is done as early as possible
         self._setup()
 
-    def _setup(self):
+    def _setup(self) -> None:
         print('setting up tracing!')
         lttng.lttng_setup(
             self.__session_name,
@@ -51,7 +51,7 @@ class Trace(Action):
             kernel_events=self.__events_kernel)
         lttng.lttng_start(self.__session_name)
 
-    def _destroy(self, event: Event, context: LaunchContext):
+    def _destroy(self, event: Event, context: LaunchContext) -> None:
         print('destroying tracing session!')
         lttng.lttng_stop(self.__session_name)
         lttng.lttng_destroy(self.__session_name)
