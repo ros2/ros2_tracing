@@ -9,6 +9,11 @@ def parse_args():
     Parse args for tracing.
     """
     parser = argparse.ArgumentParser(description='Setup and launch an LTTng tracing session.')
+    add_arguments(parser)
+    return parser.parse_args()
+
+
+def add_arguments(parser):
     parser.add_argument(
         '--session-name', '-s', dest='session_name',
         default=f'session-{time.strftime("%Y%m%d%H%M%S")}',
@@ -31,4 +36,3 @@ def parse_args():
     parser.add_argument(
         '--list', '-l', dest='list', action='store_true',
         help='display lists of enabled events (default: %(default)s)')
-    return parser.parse_args()
