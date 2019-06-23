@@ -55,3 +55,10 @@ class Trace(Action):
         print('destroying tracing session!')
         lttng.lttng_stop(self.__session_name)
         lttng.lttng_destroy(self.__session_name)
+
+    def __repr__(self):
+        return "Trace("\
+            f"session_name='{self.__session_name}', "\
+            f"path='{self.__path}', "\
+            f"num_events_ust={len(self.__events_ust)}, "\
+            f"num_events_kernel={len(self.__events_kernel)})"
