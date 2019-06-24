@@ -19,7 +19,6 @@ import os
 
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
-from tracetools_trace.tools import names
 
 
 def main():

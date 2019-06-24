@@ -15,10 +15,10 @@
 """Interface for tracing with LTTng."""
 
 import sys
+from typing import List
 
 # Temporary workaround
 sys.path = ['/usr/local/lib/python3.6/site-packages'] + sys.path
-from typing import List
 
 import lttng  # noqa: E402
 
@@ -206,7 +206,7 @@ def _create_session(session_name: str, full_path: str) -> None:
     if result == -LTTNG_ERR_EXIST_SESS:
         # Sessions seem to persist, so if it already exists,
         # just destroy it and try again
-        lttng_destroy(session_name)
+        _lttng_destroy(session_name)
         result = lttng.create(session_name, full_path)
     if result < 0:
         raise RuntimeError(f'session creation failed: {lttng.strerror(result)}')
