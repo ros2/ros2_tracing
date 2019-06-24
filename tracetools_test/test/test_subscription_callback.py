@@ -18,6 +18,7 @@ from tracetools_test.case import TraceTestCase
 
 
 class TestSubscriptionCallback(TraceTestCase):
+
     def __init__(self, *args) -> None:
         super().__init__(
             *args,
