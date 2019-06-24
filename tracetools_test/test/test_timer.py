@@ -51,7 +51,7 @@ class TestTimer(TraceTestCase):
         for event in start_events:
             self.assertValidHandle(event, 'callback')
             # Should not be 1 for timer
-            self.assertEqual(
+            self.assertFieldEquals(
                 event,
                 'is_intra_process',
                 0,
@@ -63,7 +63,7 @@ class TestTimer(TraceTestCase):
 
         # Find and check given timer period
         test_timer_init_event = self.get_events_with_procname('test_timer', init_events)
-        self.assertEqual(len(test_timer_init_event), 1)
+        self.assertNumEvents(test_timer_init_event, 1, 'none or more test timer init events')
         test_init_event = test_timer_init_event[0]
         self.assertFieldEquals(test_init_event, 'period', 1000000, 'invalid period')
 
