@@ -17,16 +17,15 @@
 import os
 import shutil
 import time
-from typing import Any
-from typing import Dict
 from typing import List
 from typing import Tuple
 
-import babeltrace
 from launch import LaunchDescription
 from launch import LaunchService
 from launch_ros import get_default_launch_description
 import launch_ros.actions
+from tracetools_read.utils import DictEvent
+from tracetools_read.utils import get_event_name
 from tracetools_trace.tools import lttng
 
 
@@ -82,81 +81,11 @@ def cleanup_trace(full_path: str) -> None:
     shutil.rmtree(full_path)
 
 
-DictEvent = Dict[str, Any]
-
-
-def get_trace_events(trace_directory: str) -> List[DictEvent]:
-    """
-    Get the events of a trace.
-
-    :param trace_directory: the path to the main/top trace directory
-    :return: events
-    """
-    tc = babeltrace.TraceCollection()
-    tc.add_traces_recursive(trace_directory, 'ctf')
-
-    return [_event_to_dict(event) for event in tc.events]
-
-
-# List of ignored CTF fields
-_IGNORED_FIELDS = [
-    'content_size',
-    'cpu_id',
-    'events_discarded',
-    'id',
-    'packet_size',
-    'packet_seq_num',
-    'stream_id',
-    'stream_instance_id',
-    'timestamp_end',
-    'timestamp_begin',
-    'magic',
-    'uuid',
-    'v',
-]
-_DISCARD = 'events_discarded'
-
-
-def _event_to_dict(event: babeltrace.babeltrace.Event) -> DictEvent:
-    """
-    Convert name, timestamp, and all other keys except those in IGNORED_FIELDS into a dictionary.
-
-    :param event: the event to convert
-    :return: the event as a dictionary
-    """
-    d = {'_name': event.name, '_timestamp': event.timestamp}
-    if hasattr(event, _DISCARD) and event[_DISCARD] > 0:
-        print(event[_DISCARD])
-    for key in [key for key in event.keys() if key not in _IGNORED_FIELDS]:
-        d[key] = event[key]
-    return d
-
-
 def get_event_names(events: List[DictEvent]) -> List[str]:
     """
-    Get a list of names of the events in the trace.
+    Get a list of events names from a list of events.
 
     :param events: the events of the trace
     :return: the list of event names
     """
     return [get_event_name(e) for e in events]
-
-
-def get_field(event: DictEvent, field_name: str, default=None, raise_if_not_found=True) -> Any:
-    field_value = event.get(field_name, default)
-    # If enabled, raise exception as soon as possible to avoid headaches
-    if raise_if_not_found and field_value is None:
-        raise AttributeError(f'event field "{field_name}" not found!')
-    return field_value
-
-
-def get_event_name(event: DictEvent) -> str:
-    return event['_name']
-
-
-def get_event_timestamp(event: DictEvent) -> int:
-    return event['_timestamp']
-
-
-def get_procname(event: DictEvent) -> str:
-    return event['procname']
