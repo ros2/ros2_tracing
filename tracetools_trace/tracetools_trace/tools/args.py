@@ -32,9 +32,7 @@ class DefaultArgValueCompleter:
 
 
 def parse_args():
-    """
-    Parse args for tracing.
-    """
+    """Parse args for tracing."""
     parser = argparse.ArgumentParser(description='Setup and launch an LTTng tracing session.')
     add_arguments(parser)
     return parser.parse_args()
@@ -52,15 +50,15 @@ def add_arguments(parser):
     arg = parser.add_argument(
         '--ust', '-u', nargs='*', dest='events_ust', default=names.DEFAULT_EVENTS_ROS,
         help='the ROS UST events to enable (default: all events) '
-            '[to disable all UST events, '
-            'provide this flag without any event name]')
+             '[to disable all UST events, '
+             'provide this flag without any event name]')
     arg.completer = DefaultArgValueCompleter(arg)
     arg = parser.add_argument(
         '--kernel', '-k', nargs='*', dest='events_kernel',
         default=names.DEFAULT_EVENTS_KERNEL,
         help='the kernel events to enable (default: all events) '
-            '[to disable all UST events, '
-            'provide this flag without any event name]')
+             '[to disable all UST events, '
+             'provide this flag without any event name]')
     arg.completer = DefaultArgValueCompleter(arg)
     parser.add_argument(
         '--list', '-l', dest='list', action='store_true',

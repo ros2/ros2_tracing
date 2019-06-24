@@ -11,8 +11,14 @@ setup(
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
-    maintainer='Christophe Bedard, Ingo Lütkebohle',
-    maintainer_email='fixed-term.christophe.bourquebedard@de.bosch.com, ingo.luetkebohle@de.bosch.com',
+    maintainer=(
+        'Christophe Bedard, '
+        'Ingo Lütkebohle'
+    ),
+    maintainer_email=(
+        'fixed-term.christophe.bourquebedard@de.bosch.com, '
+        'ingo.luetkebohle@de.bosch.com'
+    ),
     author='Christophe Bedard',
     author_email='fixed-term.christophe.bourquebedard@de.bosch.com',
     # url='',

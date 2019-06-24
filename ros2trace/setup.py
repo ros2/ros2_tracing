@@ -7,8 +7,14 @@ setup(
     packages=find_packages(exclude=['test']),
     install_requires=['ros2cli'],
     zip_safe=True,
-    maintainer='Christophe Bedard, Ingo Lütkebohle',
-    maintainer_email='fixed-term.christophe.bourquebedard@de.bosch.com, ingo.luetkebohle@de.bosch.com',
+    maintainer=(
+        'Christophe Bedard, '
+        'Ingo Lütkebohle'
+    ),
+    maintainer_email=(
+        'fixed-term.christophe.bourquebedard@de.bosch.com, '
+        'ingo.luetkebohle@de.bosch.com'
+    ),
     author='Christophe Bedard',
     author_email='fixed-term.christophe.bourquebedard@de.bosch.com',
     # url=',
