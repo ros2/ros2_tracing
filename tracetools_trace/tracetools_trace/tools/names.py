@@ -14,7 +14,7 @@
 
 """Lists of names (events, context) for tracing."""
 
-DEFAULT_EVENTS_KERNEL = [
+EVENTS_KERNEL = [
     'block_rq_complete',
     'block_rq_insert',
     'block_rq_issue',
@@ -46,6 +46,13 @@ DEFAULT_EVENTS_KERNEL = [
     'timer_hrtimer_cancel',
     'timer_hrtimer_expire_entry',
     'timer_hrtimer_expire_exit',
+]
+
+DEFAULT_EVENTS_KERNEL = [
+    'power_cpu_frequency',
+    'sched_switch',
+    'sched_waking',
+    'sched_wakeup',
 ]
 
 DEFAULT_EVENTS_ROS = [
