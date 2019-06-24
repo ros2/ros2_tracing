@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>tracetools_trace</name>
+  <version>0.0.1</version>
+  <description>Tools for setting up tracing sessions</description>
+  <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
+  <license>TODO</license>
+  <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
+
+  <!-- TODO consider adding python3-lttng to rosdep/python
+    https://github.com/ros/rosdistro/blob/master/rosdep/python.yaml
+  -->
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
