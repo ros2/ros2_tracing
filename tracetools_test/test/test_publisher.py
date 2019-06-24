@@ -48,16 +48,16 @@ class TestPublisher(TraceTestCase):
             'topic_name',
             '/the_topic',
             test_pub_init_events)
-        self.assertEqual(
-            len(test_pub_init_topic_events),
+        self.assertNumEvents(
+            test_pub_init_topic_events,
             1,
             'none or more than 1 pub_init even for test topic')
 
         # Check queue_depth value
         test_pub_init_topic_event = test_pub_init_topic_events[0]
-        test_queue_depth = self.get_field(test_pub_init_topic_event, 'queue_depth')
-        self.assertEqual(
-            test_queue_depth,
+        self.assertFieldEquals(
+            test_pub_init_topic_event,
+            'queue_depth',
             10,
             'pub_init event does not have expected queue depth value')
 
@@ -66,7 +66,7 @@ class TestPublisher(TraceTestCase):
         test_pub_node_init_events = self.get_events_with_procname(
             'test_publisher',
             node_init_events)
-        self.assertEqual(len(test_pub_node_init_events), 1, 'none or more than 1 node_init event')
+        self.assertNumEvents(test_pub_node_init_events, 1, 'none or more than 1 node_init event')
         test_pub_node_init_event = test_pub_node_init_events[0]
         self.assertMatchingField(
             test_pub_node_init_event,
