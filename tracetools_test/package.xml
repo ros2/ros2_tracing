@@ -26,7 +26,7 @@
   <test_depend>launch_ros</test_depend>
   <test_depend>python3-pytest</test_depend>
   <test_depend>tracetools</test_depend>
-  <test_depend>tracetools_trace</test_depend>
+  <test_depend>tracetools_launch</test_depend>
   <test_depend>tracetools_read</test_depend>
 
   <export>
