@@ -36,12 +36,12 @@ from tracetools_trace.tools.lttng import (
 
 
 def run_and_trace(
-        base_path: str,
-        session_name_prefix: str,
-        ros_events: List[str],
-        kernel_events: List[str],
-        package_name: str,
-        node_names: List[str]
+    base_path: str,
+    session_name_prefix: str,
+    ros_events: List[str],
+    kernel_events: List[str],
+    package_name: str,
+    node_names: List[str],
 ) -> Tuple[int, str]:
     """
     Run a node while tracing.
@@ -107,8 +107,19 @@ def get_trace_events(trace_directory: str) -> List[DictEvent]:
 
 # List of ignored CTF fields
 _IGNORED_FIELDS = [
-    'content_size', 'cpu_id', 'events_discarded', 'id', 'packet_size', 'packet_seq_num',
-    'stream_id', 'stream_instance_id', 'timestamp_end', 'timestamp_begin', 'magic', 'uuid', 'v'
+    'content_size',
+    'cpu_id',
+    'events_discarded',
+    'id',
+    'packet_size',
+    'packet_seq_num',
+    'stream_id',
+    'stream_instance_id',
+    'timestamp_end',
+    'timestamp_begin',
+    'magic',
+    'uuid',
+    'v',
 ]
 _DISCARD = 'events_discarded'
 

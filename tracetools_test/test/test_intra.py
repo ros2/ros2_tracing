@@ -18,7 +18,6 @@ from tracetools_test.case import TraceTestCase
 
 
 class TestIntra(TraceTestCase):
-
     def __init__(self, *args) -> None:
         super().__init__(
             *args,
