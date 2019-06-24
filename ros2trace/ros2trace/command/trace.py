@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Module for trace command extension implementation."""
+
 from ros2cli.command import CommandExtension
 from ros2trace.api import add_trace_arguments
 from ros2trace.api import init

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Entrypoint/script to setup and start an LTTng tracing session
+"""Entrypoint/script to setup and start an LTTng tracing session."""
 
 import os
 

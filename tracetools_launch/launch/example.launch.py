@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Example launch file for the Trace action
+"""Example launch file for the Trace action."""
 
 from launch import LaunchDescription
 from launch_ros.actions import Node

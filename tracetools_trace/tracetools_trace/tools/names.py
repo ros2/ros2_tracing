@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Lists of names (events, context)
+"""Lists of names (events, context) for tracing."""
 
 DEFAULT_EVENTS_KERNEL = [
     'block_rq_complete',
