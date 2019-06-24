@@ -7,7 +7,8 @@
     The trace command for ROS 2 command line tools.
   </description>
   <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
-  <license>TODO</license>
+  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
+  <license>Apache 2.0</license>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
   <depend>ros2cli</depend>

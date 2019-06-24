@@ -5,7 +5,8 @@
   <version>0.0.1</version>
   <description>Tools for setting up tracing sessions</description>
   <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
-  <license>TODO</license>
+  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
+  <license>Apache 2.0</license>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
   <!-- TODO consider adding python3-lttng to rosdep/python

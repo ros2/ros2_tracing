@@ -21,6 +21,6 @@ setup(
     # url='',
     keywords=['ROS'],
     description='Launch integration for tracing',
-    license='TODO',
+    license='Apache 2.0',
     tests_require=['pytest'],
 )

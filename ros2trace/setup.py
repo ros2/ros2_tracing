@@ -16,7 +16,7 @@ setup(
     description='The run command for ROS 2 command line tools.',
     long_description="""\
 The package provides the trace command for the ROS 2 command line tools.""",
-    license='TODO',
+    license='Apache 2.0',
     tests_require=['pytest'],
     entry_points={
         'ros2cli.command': [
