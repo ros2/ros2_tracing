@@ -60,20 +60,26 @@ def lttng_fini(session_name: str) -> None:
 
 
 def _lttng_setup(
-        session_name: str,
-        full_path: str,
-        ros_events: List[str] = DEFAULT_EVENTS_ROS,
-        kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
-        context_names: List[str] = DEFAULT_CONTEXT
-    ) -> None:
+    session_name: str,
+    full_path: str,
+    ros_events: List[str] = DEFAULT_EVENTS_ROS,
+    kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
+    context_names: List[str] = DEFAULT_CONTEXT,
+    channel_name_ust: str = 'ros2',
+    channel_name_kernel: str = 'kchan',
+) -> None:
     """
     Set up LTTng session, with events and context.
+
+    See: https://lttng.org/docs/#doc-core-concepts
 
     :param session_name: the name of the session
     :param full_path: the full path to the main directory to write trace data to
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_names: list of context elements to enable
+    :param channel_name_ust: the UST channel name
+    :param channel_name_kernel: the kernel channel name
     """
     ust_enabled = ros_events is not None and len(ros_events) > 0
     kernel_enabled = kernel_events is not None and len(kernel_events) > 0
@@ -82,27 +88,38 @@ def _lttng_setup(
     if ust_enabled:
         domain_ust = lttng.Domain()
         domain_ust.type = lttng.DOMAIN_UST
+        # Per-user buffer
         domain_ust.buf_type = lttng.BUFFER_PER_UID
         channel_ust = lttng.Channel()
-        channel_ust.name = 'ros2'
+        channel_ust.name = channel_name_ust
+        # Discard, do not overwrite
         channel_ust.attr.overwrite = 0
+        # 8 sub-buffers of 2 times the usual page size
         channel_ust.attr.subbuf_size = 2 * 4096
         channel_ust.attr.num_subbuf = 8
+        # Ignore switch timer interval and use read timer instead
         channel_ust.attr.switch_timer_interval = 0
         channel_ust.attr.read_timer_interval = 200
+        # mmap channel output instead of splice
         channel_ust.attr.output = lttng.EVENT_MMAP
         events_list_ust = _create_events(ros_events)
     if kernel_enabled:
         domain_kernel = lttng.Domain()
         domain_kernel.type = lttng.DOMAIN_KERNEL
+        # Global buffer (only option for kernel domain)
         domain_kernel.buf_type = lttng.BUFFER_GLOBAL
         channel_kernel = lttng.Channel()
-        channel_kernel.name = 'kchan'
+        channel_kernel.name = channel_name_kernel
+        # Discard, do not overwrite
         channel_kernel.attr.overwrite = 0
+        # 8 sub-buffers of 8 times the usual page size, since
+        # there can be way more kernel events than UST events
         channel_kernel.attr.subbuf_size = 8 * 4096
         channel_kernel.attr.num_subbuf = 8
+        # Ignore switch timer interval and use read timer instead
         channel_kernel.attr.switch_timer_interval = 0
         channel_kernel.attr.read_timer_interval = 200
+        # mmap channel output instead of splice
         channel_kernel.attr.output = lttng.EVENT_MMAP
         events_list_kernel = _create_events(kernel_events)
 
