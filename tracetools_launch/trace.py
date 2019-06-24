@@ -43,17 +43,15 @@ class Trace(Action):
 
     def _setup(self) -> None:
         print('setting up tracing!')
-        lttng.lttng_setup(
+        lttng.lttng_init(
             self.__session_name,
             self.__path,
             ros_events=self.__events_ust,
             kernel_events=self.__events_kernel)
-        lttng.lttng_start(self.__session_name)
 
     def _destroy(self, event: Event, context: LaunchContext) -> None:
         print('destroying tracing session!')
-        lttng.lttng_stop(self.__session_name)
-        lttng.lttng_destroy(self.__session_name)
+        lttng.lttng_fini(self.__session_name)
 
     def __repr__(self):
         return (
