@@ -100,9 +100,9 @@ class TestIntra(TraceTestCase):
 
         # Check is_intra_process field value
         start_event_intra = start_events_intra[0]
-        is_intra_value_intra = self.get_field(start_event_intra, 'is_intra_process')
-        self.assertEqual(
-            is_intra_value_intra,
+        self.assertFieldEquals(
+            start_event_intra,
+            'is_intra_process',
             1,
             'is_intra_process field value not valid for intra callback')
 
@@ -116,9 +116,9 @@ class TestIntra(TraceTestCase):
             1,
             'none or more than one normal start event')
         start_event_not_intra = start_events_not_intra[0]
-        is_intra_value_not_intra = self.get_field(start_event_not_intra, 'is_intra_process')
-        self.assertEqual(
-            is_intra_value_not_intra,
+        self.assertFieldEquals(
+            start_event_not_intra,
+            'is_intra_process',
             0,
             'is_intra_process field value not valid for normal callback')
 
