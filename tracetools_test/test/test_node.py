@@ -21,6 +21,7 @@ VERSION_REGEX = r'^[0-9]\.[0-9]\.[0-9]$'
 
 
 class TestNode(TraceTestCase):
+
     def __init__(self, *args) -> None:
         super().__init__(
             *args,
