@@ -21,7 +21,7 @@ from ros2trace.api import fini
 
 
 class TraceCommand(CommandExtension):
-    """Trace ROS."""
+    """Trace ROS nodes to get information on their execution."""
 
     def add_arguments(self, parser, cli_name):
         add_trace_arguments(parser)
