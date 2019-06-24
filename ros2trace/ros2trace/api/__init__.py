@@ -25,6 +25,11 @@ def add_trace_arguments(parser):
 
 
 def init(args):
+    """
+    Init and start tracing.
+
+    :param args: the parsed arguments object containing the right fields
+    """
     session_name = args.session_name
     base_path = args.path
     full_path = os.path.join(base_path, session_name)
@@ -52,6 +57,11 @@ def init(args):
 
 
 def fini(args):
+    """
+    Stop and finalize tracing.
+
+    :param args: the parsed arguments object containing the right fields
+    """
     session_name = args.session_name
     input('press enter to stop...')
     print('stopping & destroying tracing session')

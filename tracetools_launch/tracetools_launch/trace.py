@@ -42,7 +42,14 @@ class Trace(Action):
         events_kernel: List[str] = names.DEFAULT_EVENTS_KERNEL,
         **kwargs,
     ) -> None:
-        """Constructor."""
+        """
+        Constructor.
+
+        :param session_name: the name of the tracing session
+        :param base_path: the base directory in which to create the trace directory
+        :param events_ust: the list of ROS UST events to enable
+        :param events_kernel: the list of kernel events to enable
+        """
         super().__init__(**kwargs)
         self.__session_name = session_name
         self.__path = os.path.join(base_path, session_name)
