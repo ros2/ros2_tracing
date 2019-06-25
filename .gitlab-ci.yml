@@ -5,9 +5,9 @@ variables:
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
 
 before_script:
-  - apt-get update
   - vcs import < instrumentation.repos
   - vcs import < ci_source_deps.repos
+  - apt-get update
   - apt-get install --no-install-recommends -y libasio-dev libtinyxml2-dev
   - rosdep update
   - export RTI_NC_LICENSE_ACCEPTED=yes
