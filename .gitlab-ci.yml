@@ -13,16 +13,16 @@ before_script:
   - export RTI_NC_LICENSE_ACCEPTED=yes
   - rosdep install --from-paths . --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
 
-build:
-  script:
-    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
-    - colcon test --packages-select $PACKAGES_LIST
-  artifacts:
-    paths:
-      - install
-      - build/*/test_results/*/*.xunit.xml
-    reports:
-      junit: build/*/Testing/*/Test.xml
+# build:
+#   script:
+#     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+#     - colcon test --packages-select $PACKAGES_LIST
+#   artifacts:
+#     paths:
+#       - install
+#       - build/*/test_results/*/*.xunit.xml
+#     reports:
+#       junit: build/*/Testing/*/Test.xml
 
 build_enabled:
   script:
