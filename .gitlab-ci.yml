@@ -2,6 +2,7 @@ image: ros:dashing-ros-base-bionic
 
 variables:
   DOCKER_DRIVER: overlay2
+  PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
 
 before_script:
   - apt-get update
@@ -14,19 +15,19 @@ before_script:
 
 build:
   script:
-    - colcon build --symlink-install --packages-up-to tracetools tracetools_test
-    - colcon test --packages-select tracetools tracetools_test
+    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+    - colcon test --packages-select $PACKAGES_LIST
   artifacts:
     paths:
       - install
       - build/*/test_results/*/*.xunit.xml
     reports:
       junit: build/*/Testing/*/Test.xml
-      
+
 build_enabled:
   script:
-    - colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to tracetools tracetools_test
-    - colcon test --packages-select tracetools tracetools_test
+    - colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to $PACKAGES_LIST
+    - colcon test --packages-select $PACKAGES_LIST
   artifacts:
     paths:
       - install
