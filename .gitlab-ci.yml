@@ -19,6 +19,7 @@ build:
   artifacts:
     paths:
       - install
+      - build/*/test_results/*/*.xunit.xml
     reports:
       junit: build/*/Testing/*/Test.xml
       
@@ -29,5 +30,6 @@ build_enabled:
   artifacts:
     paths:
       - install
+      - build/*/test_results/*/*.xunit.xml
     reports:
       junit: build/*/Testing/*/Test.xml
