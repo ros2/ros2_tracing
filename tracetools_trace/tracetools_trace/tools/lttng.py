@@ -14,19 +14,13 @@
 
 """Interface for tracing with LTTng."""
 
-import sys
 from typing import List
 
-# Temporary workaround
-sys.path = ['/usr/local/lib/python3.6/site-packages'] + sys.path
+import lttng
 
-import lttng  # noqa: E402
-
-from .names import (  # noqa: E402
-    DEFAULT_CONTEXT,
-    DEFAULT_EVENTS_KERNEL,
-    DEFAULT_EVENTS_ROS,
-)
+from .names import DEFAULT_CONTEXT
+from .names import DEFAULT_EVENTS_KERNEL
+from .names import DEFAULT_EVENTS_ROS
 
 
 def lttng_init(
