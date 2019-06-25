@@ -2,20 +2,15 @@ image: ros:dashing-ros-base-bionic
 
 variables:
   DOCKER_DRIVER: overlay2
-  GIT_CLONE_PATH: $CI_BUILDS_DIR/src/$CI_PROJECT_NAME/
 
 before_script:
-  - cd $CI_BUILDS_DIR
   - apt-get update
-  - apt-get install wget
-  - wget -q https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos
-  - vcs import src < ros2.repos
-  - rm -rf src/ros2/rcl/ src/ros2/rclcpp/
-  - git clone -b instrumentation --single-branch https://$DEPLOY_USERNAME_RCL:$DEPLOY_TOKEN_RCL@gitlab.com/boschresearch/ros-wg/tracing/rcl.git
-  - git clone -b instrumentation --single-branch https://$DEPLOY_USERNAME_RCLCPP:$DEPLOY_TOKEN_RCLCPP@gitlab.com/boschresearch/ros-wg/tracing/rclcpp.git
+  - vcs import < instrumentation.repos
+  - vcs import < ci_source_deps.repos
   - apt-get install --no-install-recommends -y libasio-dev libtinyxml2-dev
   - rosdep update
-  - rosdep install --from-paths src --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
+  - export RTI_NC_LICENSE_ACCEPTED=yes
+  - rosdep install --from-paths . --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
 
 build:
   script:
