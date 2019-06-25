@@ -9,7 +9,7 @@ before_script:
   - vcs import < ci_source_deps.repos
   - apt-get update
   - apt-get install --no-install-recommends -y libasio-dev libtinyxml2-dev
-  - apt-get install python3-lttng python3-babeltrace
+  - apt-get install -y python3-lttng python3-babeltrace
   - rosdep update
   - export RTI_NC_LICENSE_ACCEPTED=yes
   - rosdep install --from-paths . --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
