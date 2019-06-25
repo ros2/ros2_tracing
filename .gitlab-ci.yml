@@ -1,4 +1,4 @@
-image: ros:dashing-ros-base-bionic
+image: registry.gitlab.com/ros_tracing/ros2_tracing/ci-base:latest
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -8,10 +8,7 @@ before_script:
   - vcs import < instrumentation.repos
   - vcs import < ci_source_deps.repos
   - apt-get update
-  - apt-get install --no-install-recommends -y libasio-dev libtinyxml2-dev
-  - apt-get install -y python3-lttng python3-babeltrace
   - rosdep update
-  - export RTI_NC_LICENSE_ACCEPTED=yes
   - rosdep install --from-paths . --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
 
 # build:
