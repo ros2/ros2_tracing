@@ -31,5 +31,8 @@ build_enabled:
     paths:
       - install
       - build/*/test_results/*/*.xunit.xml
+      - build/*/pytest.xml
     reports:
-      junit: build/*/test_results/*/*.xunit.xml
+      junit:
+        - build/*/test_results/*/*.xunit.xml
+        - build/*/pytest.xml
