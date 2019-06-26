@@ -9,9 +9,7 @@
   <license>Apache 2.0</license>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
-  <!-- TODO consider adding python3-lttng to rosdep/python
-    https://github.com/ros/rosdistro/blob/master/rosdep/python.yaml
-  -->
+  <exec_depend>python3-lttng</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
