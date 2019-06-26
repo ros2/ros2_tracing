@@ -21,7 +21,7 @@ before_script:
 #       - install
 #       - build/*/test_results/*/*.xunit.xml
 #     reports:
-#       junit: build/*/Testing/*/Test.xml
+#       junit: build/*/test_results/*/*.xunit.xml
 
 build_enabled:
   script:
@@ -32,4 +32,4 @@ build_enabled:
       - install
       - build/*/test_results/*/*.xunit.xml
     reports:
-      junit: build/*/Testing/*/Test.xml
+      junit: build/*/test_results/*/*.xunit.xml
