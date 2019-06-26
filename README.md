@@ -1,5 +1,7 @@
 # tracetools
 
+Tracing tools for ROS 2.
+
 ## Building
 
 If tracing is not enabled when building, or if LTTng is not found, then this package will not do anything.
