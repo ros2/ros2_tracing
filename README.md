@@ -8,14 +8,14 @@ If tracing is not enabled when building, or if LTTng is not found, then this pac
 
 To enable tracing:
 
-1. Install [LTTng](https://lttng.org/docs/#doc-ubuntu) with the Python interfaces to control tracing and read trace:
+1. Install [LTTng](https://lttng.org/docs/#doc-ubuntu) with the Python bindings to control tracing and read traces:
     ```
     $ sudo apt-add-repository ppa:lttng/stable-2.10
     $ sudo apt-get update
     $ sudo apt-get install lttng-tools lttng-modules-dkms liblttng-ust-dev
     $ sudo apt-get install python3-babeltrace python3-lttng
     ```
-    Note: the LTTng stable 2.10 PPA is used to get more recent versions.
+    Note: the LTTng stable 2.10 PPA is used to get newer versions of the packages.
 2. Build with the `WITH_LTTNG` flag:
     ```
     $ colcon build --cmake-args " -DWITH_LTTNG=ON"
