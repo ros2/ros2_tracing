@@ -200,8 +200,8 @@ class TraceTestCase(unittest.TestCase):
 
         :param initial_event: the first event, which is the origin of the common field value
         :param field_name: the name of the common field to check
-        :param matching_event_name: the name of the event to check (or None to check all)
-        :param events: the events to check (or None to check all in trace)
+        :param matching_event_name: the name of the event to check (or `None` to check all)
+        :param events: the events to check (or `None` to check all in trace)
         """
         if events is None:
             events = self._events
@@ -280,7 +280,7 @@ class TraceTestCase(unittest.TestCase):
         Get all events with the given name.
 
         :param event_name: the event name
-        :param events: the events to check (or None to check all events)
+        :param events: the events to check (or `None` to check all events)
         :return: the list of events with the given name
         """
         if events is None:
@@ -296,7 +296,7 @@ class TraceTestCase(unittest.TestCase):
         Get all events with the given procname.
 
         :param procname: the procname
-        :param events: the events to check (or None to check all events)
+        :param events: the events to check (or `None` to check all events)
         :return: the events with the given procname
         """
         if events is None:
@@ -314,7 +314,7 @@ class TraceTestCase(unittest.TestCase):
 
         :param field_name: the name of the field to check
         :param field_value: the value of the field to check
-        :param events: the events to check (or None to check all events)
+        :param events: the events to check (or `None` to check all events)
         :return: the events with the given field:value pair
         """
         if events is None:
@@ -332,7 +332,7 @@ class TraceTestCase(unittest.TestCase):
 
         :param field_name: the name of the field to check
         :param field_value: the value of the field to check
-        :param events: the events to check (or None to check all events)
+        :param events: the events to check (or `None` to check all events)
         :return: the events with the given field:value pair
         """
         if events is None:
