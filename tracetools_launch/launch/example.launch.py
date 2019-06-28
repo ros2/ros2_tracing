@@ -25,11 +25,11 @@ def generate_launch_description():
             session_name='my-tracing-session',
             base_path='/tmp'),
         Node(
-            package='examples_rclcpp_minimal_publisher',
-            node_executable='publisher_member_function',
+            package='tracetools_test',
+            node_executable='test_ping',
             output='screen'),
         Node(
-            package='examples_rclcpp_minimal_subscriber',
-            node_executable='subscriber_member_function',
+            package='tracetools_test',
+            node_executable='test_pong',
             output='screen'),
     ])

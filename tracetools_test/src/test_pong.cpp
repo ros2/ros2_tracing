@@ -24,8 +24,8 @@
 class PongNode : public rclcpp::Node
 {
 public:
-  explicit PongNode(rclcpp::NodeOptions options)
-  : Node(NODE_NAME, options)
+  PongNode(rclcpp::NodeOptions options, bool do_only_one)
+  : Node(NODE_NAME, options), do_only_one_(do_only_one)
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
       SUB_TOPIC_NAME,
@@ -36,6 +36,9 @@ public:
       rclcpp::QoS(10));
   }
 
+  explicit PongNode(rclcpp::NodeOptions options)
+  : PongNode(options, true) {}
+
 private:
   void callback(const std_msgs::msg::String::SharedPtr msg)
   {
@@ -43,19 +46,24 @@ private:
     auto next_msg = std::make_shared<std_msgs::msg::String>();
     next_msg->data = "some random pong string";
     pub_->publish(*next_msg);
-    rclcpp::shutdown();
+    if (do_only_one_) {
+      rclcpp::shutdown();
+    }
   }
 
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_;
+  bool do_only_one_;
 };
 
 int main(int argc, char * argv[])
 {
+  bool do_only_one = argc == 1;
+
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;
-  auto pong_node = std::make_shared<PongNode>(rclcpp::NodeOptions());
+  auto pong_node = std::make_shared<PongNode>(rclcpp::NodeOptions(), do_only_one);
   exec.add_node(pong_node);
 
   printf("spinning\n");
