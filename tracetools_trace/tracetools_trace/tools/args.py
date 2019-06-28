@@ -57,7 +57,7 @@ def add_arguments(parser):
         '--kernel', '-k', nargs='*', dest='events_kernel',
         default=names.DEFAULT_EVENTS_KERNEL,
         help='the kernel events to enable (default: all events) '
-             '[to disable all UST events, '
+             '[to disable all kernel events, '
              'provide this flag without any event name]')
     arg.completer = DefaultArgValueCompleter(arg)
     parser.add_argument(
