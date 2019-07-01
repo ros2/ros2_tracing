@@ -6,7 +6,7 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
 
 Tracing allows to record run-time data from a system, both for system data (e.g., when a process
 is being scheduled, or when I/O occurs) and for user-defined data. This package helps with
-user-defined trace data within the ROS2 framework, e.g. to trace when messages arrive,
+user-defined trace data within the ROS 2 framework, e.g. to trace when messages arrive,
 when timers fire, when callbacks are being run, etc.
 
 ## Goals and requirements
