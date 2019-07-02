@@ -129,7 +129,8 @@ void TRACEPOINT(
 void TRACEPOINT(
   rclcpp_callback_register,
   const void * callback,
-  const char * function_symbol);
+  const char * function_symbol,
+  const void * address);
 
 /**
  * tp: callback_start

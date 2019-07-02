@@ -182,13 +182,15 @@ void TRACEPOINT(
 void TRACEPOINT(
   rclcpp_callback_register,
   const void * callback,
-  const char * function_symbol)
+  const char * function_symbol,
+  const void * address)
 {
   CONDITIONAL_TP(
     ros2,
     rclcpp_callback_register,
     callback,
-    function_symbol);
+    function_symbol,
+    address);
 }
 
 void TRACEPOINT(

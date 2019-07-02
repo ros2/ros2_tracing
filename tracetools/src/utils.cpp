@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <iostream>
+
 #if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
 #include <dlfcn.h>
 #include <cxxabi.h>
@@ -24,11 +26,13 @@ const char * get_symbol(void * funptr)
 #if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
 #define SYMBOL_LAMBDA "[lambda]"
   if (funptr == 0) {
+    std::cout << "lamba!" << std::endl;
     return SYMBOL_LAMBDA;
   }
 
   Dl_info info;
   if (dladdr(funptr, &info) == 0) {
+    std::cout << "unknown!" << std::endl;
     return SYMBOL_UNKNOWN;
   }
 
