@@ -15,6 +15,7 @@
 """Interface for tracing with LTTng."""
 
 from typing import List
+from typing import Optional
 
 try:
     from . import lttng_impl
@@ -38,7 +39,7 @@ def lttng_init(
     ros_events: List[str] = DEFAULT_EVENTS_ROS,
     kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
     context_names: List[str] = DEFAULT_CONTEXT,
-) -> None:
+) -> Optional[str]:
     """
     Set up and start LTTng session.
 
@@ -47,9 +48,11 @@ def lttng_init(
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_names: list of context elements to enable
+    :return: the full path to the trace directory
     """
-    _lttng.setup(session_name, base_path, ros_events, kernel_events, context_names)
+    trace_directory = _lttng.setup(session_name, base_path, ros_events, kernel_events, context_names)
     _lttng.start(session_name)
+    return trace_directory
 
 
 def lttng_fini(

@@ -15,6 +15,7 @@
 """Implementation of the interface for tracing with LTTng."""
 
 from typing import List
+from typing import Optional
 
 import lttng
 
@@ -33,7 +34,7 @@ def setup(
     context_names: List[str] = DEFAULT_CONTEXT,
     channel_name_ust: str = 'ros2',
     channel_name_kernel: str = 'kchan',
-) -> None:
+) -> Optional[str]:
     """
     Set up LTTng session, with events and context.
 
@@ -46,6 +47,7 @@ def setup(
     :param context_names: list of context elements to enable
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
+    :return: the full path to the trace directory
     """
     # Resolve full tracing directory path
     full_path = get_full_session_path(session_name, base_path=base_path)
@@ -112,6 +114,8 @@ def setup(
     # TODO make it possible to add context in userspace and kernel separately
     enabled_handles = [h for h in [handle_ust, handle_kernel] if h is not None]
     _add_context(enabled_handles, context_list)
+
+    return full_path
 
 
 def start(
