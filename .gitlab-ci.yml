@@ -4,6 +4,9 @@ variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
 
+services.
+  - docker:dind
+
 # build:
 #   script:
 #     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
