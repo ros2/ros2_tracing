@@ -18,3 +18,7 @@ repositories:
     type: git
     url: https://github.com/ros2/rcpputils.git
     version: master
+  ros2/rosidl_typesupport_fastrtps:
+    type: git
+    url: https://github.com/ros2/rosidl_typesupport_fastrtps.git
+    version: master
