@@ -72,7 +72,9 @@ TEST(TestUtils, valid_symbol_bind) {
   EXPECT_STREQ(
     get_symbol(
       fscwc),
-    "std::_Bind<void (SomeClassWithCallback::*(SomeClassWithCallback*, std::_Placeholder<1>, std::_Placeholder<2>))(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)>")
+    "std::_Bind<void (SomeClassWithCallback::*(SomeClassWithCallback*, "
+    "std::_Placeholder<1>, std::_Placeholder<2>))(int, std::__cxx11::basic_string"
+    "<char, std::char_traits<char>, std::allocator<char> >)>")
     <<
     "invalid symbol";
 }
