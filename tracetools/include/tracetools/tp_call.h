@@ -189,13 +189,11 @@ TRACEPOINT_EVENT(
   rclcpp_callback_register,
   TP_ARGS(
     const void *, callback_arg,
-    const char *, symbol_arg,
-    const void *, address_arg
+    const char *, symbol_arg
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, callback, callback_arg)
     ctf_string(symbol, symbol_arg)
-    ctf_integer_hex(const void *, address, address_arg)
   )
 )
 
