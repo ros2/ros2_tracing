@@ -41,7 +41,7 @@ build_enabled:
     - /.*docker.*/
         
 ci_base_image:
-  image: alpine:docker
+  image: docker:stable
   script:
     - cd docker-ci-base && docker build --tag ci-base .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
