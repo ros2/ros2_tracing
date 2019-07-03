@@ -48,6 +48,6 @@ ci_base_image:
   script:
     - cd docker-ci-base && docker build --tag ci-base .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker push ci-base
+    - docker push registry.gitlab.com/ros_tracing/ros2_tracing/ci-base
   only:
     - /.*docker.*/
