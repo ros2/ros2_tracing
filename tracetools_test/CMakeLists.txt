@@ -25,62 +25,80 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_publisher
     rclcpp
     std_msgs
+    tracetools
   )
+  target_link_libraries(test_publisher -rdynamic)
   add_executable(test_subscription
     src/test_subscription.cpp
   )
   ament_target_dependencies(test_subscription
     rclcpp
     std_msgs
+    tracetools
   )
+  target_link_libraries(test_subscription -rdynamic)
   add_executable(test_intra
     src/test_intra.cpp
   )
   ament_target_dependencies(test_intra
     rclcpp
     std_msgs
+    tracetools
   )
+  target_link_libraries(test_intra -rdynamic)
   add_executable(test_ping
     src/test_ping.cpp
   )
   ament_target_dependencies(test_ping
     rclcpp
     std_msgs
+    tracetools
   )
+  target_link_libraries(test_ping -rdynamic)
   add_executable(test_pong
     src/test_pong.cpp
   )
   ament_target_dependencies(test_pong
     rclcpp
     std_msgs
+    tracetools
   )
+  target_link_libraries(test_pong -rdynamic)
   add_executable(test_timer
     src/test_timer.cpp
   )
   ament_target_dependencies(test_timer
     rclcpp
+    tracetools
   )
+  target_link_libraries(test_timer -rdynamic)
   add_executable(test_service
     src/test_service.cpp
   )
   ament_target_dependencies(test_service
     rclcpp
     std_srvs
+    tracetools
   )
+  target_link_libraries(test_service -rdynamic)
   add_executable(test_service_ping
     src/test_service_ping.cpp
   )
   ament_target_dependencies(test_service_ping
     rclcpp
     std_srvs
+    tracetools
   )
+  target_link_libraries(test_service_ping -rdynamic)
   add_executable(test_service_pong
     src/test_service_pong.cpp
   )
   ament_target_dependencies(test_service_pong
     rclcpp
     std_srvs
+    tracetools
   )
+  target_link_libraries(test_service_pong -rdynamic)
 
   install(TARGETS
     test_intra
