@@ -12,38 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <iostream>
-
 #if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
 #include <dlfcn.h>
 #include <cxxabi.h>
 #endif
 #include "tracetools/utils.hpp"
 
-const char * get_symbol(void * funptr)
+const char * _demangle_symbol(const char * mangled)
 {
-#define SYMBOL_UNKNOWN "UNKNOWN"
 #if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
-#define SYMBOL_LAMBDA "[lambda]"
-  if (funptr == 0) {
-    std::cout << "lamba!" << std::endl;
-    return SYMBOL_LAMBDA;
-  }
-
-  Dl_info info;
-  if (dladdr(funptr, &info) == 0) {
-    std::cout << "unknown!" << std::endl;
-    return SYMBOL_UNKNOWN;
-  }
-
   char * demangled = nullptr;
   int status;
-  demangled = abi::__cxa_demangle(info.dli_sname, NULL, 0, &status);
+  demangled = abi::__cxa_demangle(mangled, NULL, 0, &status);
   // Use demangled symbol if possible
-  const char * demangled_val = (status == 0 ? demangled : info.dli_sname);
+  const char * demangled_val = (status == 0 ? demangled : mangled);
   return demangled_val != 0 ? demangled_val : SYMBOL_UNKNOWN;
 #else
-  (void)funptr;
+  (void)mangled;
+  return SYMBOL_UNKNOWN;
+#endif
+}
+
+const char * _get_symbol_funcptr(void * funcptr)
+{
+#if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
+  Dl_info info;
+  if (dladdr(funcptr, &info) == 0) {
+    return SYMBOL_UNKNOWN;
+  }
+  return _demangle_symbol(info.dli_sname);
+#else
+  (void)funcptr;
   return SYMBOL_UNKNOWN;
 #endif
 }

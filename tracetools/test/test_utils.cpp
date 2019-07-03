@@ -44,14 +44,11 @@ TEST(TestUtils, valid_address_symbol) {
   // Function pointer
   std::function<void(std::shared_ptr<int>)> f = &function_shared;
   // Address for one with an actual underlying function should be non-zero
-  ASSERT_GT(get_address(f), (void *)0) << "get_address() for function not valid";
-  ASSERT_STREQ(get_symbol(get_address(f)), "function_shared(std::shared_ptr<int>)") <<
+  ASSERT_STREQ(get_symbol(f), "function_shared(std::shared_ptr<int>)") <<
     "invalid function name";
 
   // Lambda
   std::function<int(int)> l = [](int num) {return num + 1;};
-  // Address for an std::function with an underlying lambda should be nullptr
-  ASSERT_EQ(get_address(l), nullptr) << "get_address() for lambda std::function not 0";
   // TODO(christophebedard) check symbol
 
   // Bind (to member function)
@@ -62,6 +59,5 @@ TEST(TestUtils, valid_address_symbol) {
     std::placeholders::_1,
     std::placeholders::_2
   );
-  ASSERT_EQ(get_address(fscwc), nullptr) << "get_address() for std::bind std::function not 0";
   // TODO(christophebedard) check symbol
 }
