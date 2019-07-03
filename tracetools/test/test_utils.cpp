@@ -20,17 +20,19 @@
 #include "tracetools/utils.hpp"
 #include "test_utils.hpp"
 
-int function_int_int(int num)
+class SomeClassWithCallback
 {
-  return num + 1;
-}
+public:
+  SomeClassWithCallback() {}
 
-void function_generic_shared(const std::shared_ptr<int> p)
-{
-  (void)p;
-}
+  void my_callback(int some_number, std::string some_string)
+  {
+    (void)some_number;
+    (void)some_string;
+  }
+};
 
-void function_generic_unique(const std::unique_ptr<int> p)
+void function_shared(const std::shared_ptr<int> p)
 {
   (void)p;
 }
@@ -39,29 +41,26 @@ void function_generic_unique(const std::unique_ptr<int> p)
    Testing address and symbol resolution for std::function objects.
  */
 TEST(TestUtils, valid_address_symbol) {
-  std::function<int(int)> f = &function_int_int;
-  std::function<int(int)> lambda = [](int num) {return num + 1;};
-  std::function<int(int)> l = lambda;
+  // Function pointer
+  std::function<void(std::shared_ptr<int>)> f = &function_shared;
+  // Address for one with an actual underlying function should be non-zero
+  ASSERT_GT(get_address(f), (void *)0) << "get_address() for function not valid";
+  ASSERT_STREQ(get_symbol(get_address(f)), "function_shared(std::shared_ptr<int>)") << "invalid function name";
 
-  ASSERT_EQ(f(69), l(69));
-
+  // Lambda
+  std::function<int(int)> l = [](int num) {return num + 1;};
   // Address for an std::function with an underlying lambda should be nullptr
   ASSERT_EQ(get_address(l), nullptr) << "get_address() for lambda std::function not 0";
-  // But address for one with an actual underlying function should be non-zero
-  ASSERT_GT(get_address(f), (void *)0) << "get_address() for function not valid";
+  // TODO symbol
 
-  ASSERT_STREQ(get_symbol(get_address(f)), "function_int_int(int)") << "invalid function name";
-
-  // Generic
-  std::function<void (const std::shared_ptr<int>)> fg_shared = &function_generic_shared;
-  SomeGenericClass<int> gc_shared;
-  gc_shared.set(fg_shared);
-  ASSERT_GT(gc_shared.get_address_(), (void *)0) << "generic -- address invalid";
-  ASSERT_STREQ(gc_shared.get_symbol_(), "function_generic_shared(std::shared_ptr<int>)") << "generic -- symbol invalid";
-
-  std::function<void (const std::unique_ptr<int>)> fg_unique = &function_generic_unique;
-  SomeGenericClass<int> gc_unique;
-  gc_unique.set(fg_unique);
-  ASSERT_GT(gc_unique.get_address_(), (void *)0) << "generic -- address invalid";
-  ASSERT_STREQ(gc_unique.get_symbol_(), "function_generic_unique(std::unique_ptr<int, std::default_delete<int> >)") << "generic -- symbol invalid";
+  // Bind (to member function)
+  SomeClassWithCallback scwc;
+  std::function<void(int, std::string)> fscwc = std::bind(
+    &SomeClassWithCallback::my_callback,
+    &scwc,
+    std::placeholders::_1,
+    std::placeholders::_2
+  );
+  ASSERT_EQ(get_address(fscwc), nullptr) << "get_address() for std::bind std::function not 0";
+  // TODO symbol
 }

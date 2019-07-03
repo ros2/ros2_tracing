@@ -94,7 +94,6 @@ if(BUILD_TESTING)
   ament_add_gtest(test_utils test/test_utils.cpp)
   if(TARGET test_utils)
     target_link_libraries(test_utils ${PROJECT_NAME} -rdynamic)
-    target_include_directories(test_utils PRIVATE test/)
   endif()
 endif()
 
