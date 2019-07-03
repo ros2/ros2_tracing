@@ -4,7 +4,7 @@ variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
 
-services.
+services:
   - docker:dind
 
 # build:
