@@ -4,14 +4,6 @@ variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
 
-before_script:
-  - vcs import < instrumentation.repos
-  - vcs import < ci_source_deps.repos
-  - apt-get update
-  - rosdep update
-  - rosdep install --from-paths . --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
-  - lttng-sessiond --daemonize
-
 # build:
 #   script:
 #     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
@@ -28,6 +20,12 @@ before_script:
 
 build_enabled:
   script:
+    - vcs import < instrumentation.repos
+    - vcs import < ci_source_deps.repos
+    - apt-get update
+    - rosdep update
+    - rosdep install --from-paths . --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
+    - lttng-sessiond --daemonize
     - colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to $PACKAGES_LIST
     - colcon test --packages-select $PACKAGES_LIST
   artifacts:
@@ -39,3 +37,14 @@ build_enabled:
       junit:
         - build/*/test_results/*/*.xunit.xml
         - build/*/pytest.xml
+    except:
+       - /.*docker.*/
+        
+ci_base_image:
+  image: alpine:docker
+  script:
+    - cd docker-ci-base && docker build --tag ci-base .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker push ci-base
+  only:
+    - /.*docker.*/
