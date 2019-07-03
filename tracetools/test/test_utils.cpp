@@ -20,6 +20,11 @@
 
 #include "tracetools/utils.hpp"
 
+void function_shared(const std::shared_ptr<int> p)
+{
+  (void)p;
+}
+
 class SomeClassWithCallback
 {
 public:
@@ -32,25 +37,30 @@ public:
   }
 };
 
-void function_shared(const std::shared_ptr<int> p)
-{
-  (void)p;
+/*
+   Testing symbol resolution for std::function object created from a function pointer.
+ */
+TEST(TestUtils, valid_symbol_funcptr) {
+  std::function<void(std::shared_ptr<int>)> f = &function_shared;
+  EXPECT_STREQ(get_symbol(f), "function_shared(std::shared_ptr<int>)") <<
+    "invalid symbol";
 }
 
 /*
-   Testing address and symbol resolution for std::function objects.
+   Testing symbol resolution for std::function object created from a lambda.
  */
-TEST(TestUtils, valid_address_symbol) {
-  // Function pointer
-  std::function<void(std::shared_ptr<int>)> f = &function_shared;
-  // Address for one with an actual underlying function should be non-zero
-  ASSERT_STREQ(get_symbol(f), "function_shared(std::shared_ptr<int>)") <<
-    "invalid function name";
-
-  // Lambda
+TEST(TestUtils, valid_symbol_lambda) {
   std::function<int(int)> l = [](int num) {return num + 1;};
-  // TODO(christophebedard) check symbol
+  EXPECT_STREQ(
+    get_symbol(l),
+    "TestUtils_valid_symbol_lambda_Test::TestBody()::{lambda(int)#1}") <<
+    "invalid symbol";
+}
 
+/*
+   Testing symbol resolution for std::function object created from std::bind.
+ */
+TEST(TestUtils, valid_symbol_bind) {
   // Bind (to member function)
   SomeClassWithCallback scwc;
   std::function<void(int, std::string)> fscwc = std::bind(
@@ -59,5 +69,10 @@ TEST(TestUtils, valid_address_symbol) {
     std::placeholders::_1,
     std::placeholders::_2
   );
-  // TODO(christophebedard) check symbol
+  EXPECT_STREQ(
+    get_symbol(
+      fscwc),
+    "std::_Bind<void (SomeClassWithCallback::*(SomeClassWithCallback*, std::_Placeholder<1>, std::_Placeholder<2>))(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)>")
+    <<
+    "invalid symbol";
 }
