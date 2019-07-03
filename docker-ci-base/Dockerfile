@@ -20,9 +20,12 @@ RUN apt-get install --no-install-recommends -y \
 ENV RTI_NC_LICENSE_ACCEPTED=yes
 RUN apt-get install --no-install-recommends -y \
     rti-connext-dds-5.3.1
+
+RUN mkdir /root/ws
+COPY . /root/ws
+WORKDIR /root/ws
 RUN vcs import < instrumentation.repos && vcs import < ci_source_deps.repos
 RUN apt-get update && rosdep update && rosdep install --from-paths . --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
 RUN apt-get purge -y ros-dashing-fastrtps
 
 RUN colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to rclcpp
-
