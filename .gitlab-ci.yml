@@ -37,8 +37,8 @@ build_enabled:
       junit:
         - build/*/test_results/*/*.xunit.xml
         - build/*/pytest.xml
-    except:
-       - /.*docker.*/
+  except:
+    - /.*docker.*/
         
 ci_base_image:
   image: alpine:docker
