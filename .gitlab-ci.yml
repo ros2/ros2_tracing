@@ -29,7 +29,7 @@ build_enabled:
 ci_base_image:
   image: docker:stable
   script:
-    - docker build --tag $base_image_id -f docker-ci-base/Dockerfile
+    - docker build --tag $base_image_id -f docker-ci-base/Dockerfile .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker push $base_image_id
   only:
