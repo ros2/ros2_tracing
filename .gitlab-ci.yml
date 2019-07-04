@@ -3,32 +3,15 @@ image: registry.gitlab.com/ros_tracing/ros2_tracing/ci-base:latest
 variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
+  base_image_id: registry.gitlab.com/ros_tracing/ros2_tracing/ci-base
 
-before_script:
-  - vcs import < instrumentation.repos
-  - vcs import < ci_source_deps.repos
-  - apt-get update
-  - rosdep update
-  - rosdep install --from-paths . --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
-  - apt-get purge -y ros-dashing-fastrtps
-  - lttng-sessiond --daemonize
-
-# build:
-#   script:
-#     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
-#     - colcon test --packages-select $PACKAGES_LIST
-#   artifacts:
-#     paths:
-#       - install
-#       - build/*/test_results/*/*.xunit.xml
-#       - build/*/pytest.xml
-#     reports:
-#       junit:
-#         - build/*/test_results/*/*.xunit.xml
-#         - build/*/pytest.xml
+services:
+  - docker:dind
 
 build_enabled:
+  image: $base_image_id
   script:
+    - lttng-sessiond --daemonize
     - colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to $PACKAGES_LIST
     - colcon test --packages-select $PACKAGES_LIST
   artifacts:
@@ -40,3 +23,14 @@ build_enabled:
       junit:
         - build/*/test_results/*/*.xunit.xml
         - build/*/pytest.xml
+  except:
+    - /.*docker.*/
+        
+ci_base_image:
+  image: docker:stable
+  script:
+    - docker build --tag $base_image_id -f docker-ci-base/Dockerfile .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker push $base_image_id
+  only:
+    - /.*docker.*/
