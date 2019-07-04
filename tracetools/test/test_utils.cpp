@@ -61,7 +61,6 @@ TEST(TestUtils, valid_symbol_lambda) {
    Testing symbol resolution for std::function object created from std::bind.
  */
 TEST(TestUtils, valid_symbol_bind) {
-  // Bind (to member function)
   SomeClassWithCallback scwc;
   std::function<void(int, std::string)> fscwc = std::bind(
     &SomeClassWithCallback::my_callback,
