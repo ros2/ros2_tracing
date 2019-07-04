@@ -57,7 +57,7 @@ if(TRACING_ENABLED)
   list(APPEND SOURCES ${LTTNG_TP_FILES})
 endif()
 
-add_library(${PROJECT_NAME} ${SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 if(TRACING_ENABLED)
   target_compile_definitions(${PROJECT_NAME} PUBLIC TRACETOOLS_LTTNG_ENABLED)
   target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES} -ldl)
@@ -87,8 +87,14 @@ else()
 endif()
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
+
+  ament_add_gtest(test_utils test/test_utils.cpp)
+  if(TARGET test_utils)
+    target_link_libraries(test_utils ${PROJECT_NAME} -rdynamic)
+  endif()
 endif()
 
 ament_package()
