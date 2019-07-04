@@ -39,7 +39,7 @@ const char * get_symbol(std::function<T(U...)> f)
   return _demangle_symbol(f.target_type().name());
 #else
   (void)f;
-  return SYMBOL_UNKNOWN;
+  return "DISABLED__get_symbol";
 #endif
 }
 
