@@ -27,7 +27,6 @@ const char * _get_symbol_funcptr(void * funcptr);
 template<typename T, typename ... U>
 const char * get_symbol(std::function<T(U...)> f)
 {
-#if defined(TRACETOOLS_LTTNG_ENABLED) && !defined(_WIN32)
   typedef T (fnType)(U...);
   fnType ** fnPointer = f.template target<fnType *>();
   // If we get an actual address
@@ -37,10 +36,6 @@ const char * get_symbol(std::function<T(U...)> f)
   }
   // Otherwise we have to go through target_type()
   return _demangle_symbol(f.target_type().name());
-#else
-  (void)f;
-  return "DISABLED__get_symbol";
-#endif
 }
 
 #endif  // TRACETOOLS__UTILS_HPP_
