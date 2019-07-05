@@ -1,9 +1,7 @@
-image: registry.gitlab.com/ros_tracing/ros2_tracing/ci-base:latest
-
 variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
-  base_image_id: registry.gitlab.com/ros_tracing/ros2_tracing/ci-base
+  base_image_id: registry.gitlab.com/micro-ros/ros_tracing/ros2_tracing/ci-base
 
 services:
   - docker:dind
