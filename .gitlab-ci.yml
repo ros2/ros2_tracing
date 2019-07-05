@@ -8,11 +8,13 @@ variables:
 services:
   - docker:dind
 
+before_script:
+  - vcs import < instrumentation.repos
+
 build_enabled:
   image: $base_image_id
   script:
     - lttng-sessiond --daemonize
-    - pwd
     - . /root/ws/install/local_setup.sh
     - colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
