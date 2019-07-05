@@ -52,7 +52,6 @@ class TraceTestCase(unittest.TestCase):
         package: str = 'tracetools_test',
     ) -> None:
         """Constructor."""
-        print(f'methodName={args[0]}')
         super().__init__(methodName=args[0])
         self._base_path = base_path
         self._session_name_prefix = session_name_prefix
