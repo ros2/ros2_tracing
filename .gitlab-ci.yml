@@ -8,12 +8,15 @@ variables:
 services:
   - docker:dind
 
-before_script:
-  - vcs import < instrumentation.repos
+stage:
+ - deps
+ - build
 
 build_enabled:
   image: $base_image_id
+  stage: build
   script:
+    - vcs import < instrumentation.repos
     - lttng-sessiond --daemonize
     - . /root/ws/install/local_setup.sh
     - colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to $PACKAGES_LIST
@@ -33,6 +36,7 @@ build_enabled:
     - /.*docker.*/
         
 ci_base_image:
+  stage: deps
   image: docker:stable
   script:
     - docker build --tag $base_image_id -f docker-ci-base/Dockerfile .
