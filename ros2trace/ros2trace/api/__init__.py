@@ -14,10 +14,9 @@
 
 """API functions for the ROS 2 trace command."""
 
-import os
-
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
+from tracetools_trace.tools import path
 
 
 def add_trace_arguments(parser):
@@ -32,7 +31,6 @@ def init(args):
     """
     session_name = args.session_name
     base_path = args.path
-    full_path = os.path.join(base_path, session_name)
     ros_events = args.events_ust
     kernel_events = args.events_kernel
 
@@ -51,9 +49,14 @@ def init(args):
     else:
         print('kernel tracing disabled')
 
-    print(f'writting tracing session to: {full_path}')
+    full_session_path = path.get_full_session_path(session_name, base_path)
+    print(f'writting tracing session to: {full_session_path}')
     input('press enter to start...')
-    lttng.lttng_init(session_name, full_path, ros_events=ros_events, kernel_events=kernel_events)
+    lttng.lttng_init(
+        session_name,
+        base_path=base_path,
+        ros_events=ros_events,
+        kernel_events=kernel_events)
 
 
 def fini(args):

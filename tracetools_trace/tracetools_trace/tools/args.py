@@ -18,6 +18,7 @@ import argparse
 import time
 
 from . import names
+from . import path
 
 
 class DefaultArgValueCompleter:
@@ -45,7 +46,7 @@ def add_arguments(parser):
         help='the name of the tracing session (default: session-YYYYMMDDHHMMSS)')
     parser.add_argument(
         '--path', '-p', dest='path',
-        default='/tmp',
+        default=path.DEFAULT_BASE_PATH,
         help='path of the base directory for trace data (default: %(default)s)')
     arg = parser.add_argument(
         '--ust', '-u', nargs='*', dest='events_ust', default=names.DEFAULT_EVENTS_ROS,
