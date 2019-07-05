@@ -44,7 +44,7 @@ def main():
         print('kernel tracing disabled')
 
     full_session_path = path.get_full_session_path(session_name, base_path)
-    print(f'writting tracing session to: {full_session_path}')
+    print(f'writing tracing session to: {full_session_path}')
     input('press enter to start...')
     lttng.lttng_init(
         session_name,
