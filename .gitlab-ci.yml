@@ -8,7 +8,7 @@ variables:
 services:
   - docker:dind
 
-stage:
+stages:
  - deps
  - build
 
