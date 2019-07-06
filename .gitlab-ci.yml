@@ -1,19 +1,20 @@
-image: registry.gitlab.com/ros_tracing/ros2_tracing/ci-base:latest
-
 variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
-  base_image_id: registry.gitlab.com/ros_tracing/ros2_tracing/ci-base
+  base_image_id: registry.gitlab.com/micro-ros/ros_tracing/ros2_tracing/ci-base
 
 services:
   - docker:dind
 
-before_script:
-  - vcs import < instrumentation.repos
+stages:
+ - deps
+ - build
 
 build_enabled:
   image: $base_image_id
+  stage: build
   script:
+    - vcs import < instrumentation.repos
     - lttng-sessiond --daemonize
     - . /root/ws/install/local_setup.sh
     - colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to $PACKAGES_LIST
@@ -33,6 +34,7 @@ build_enabled:
     - /.*docker.*/
         
 ci_base_image:
+  stage: deps
   image: docker:stable
   script:
     - docker build --tag $base_image_id -f docker-ci-base/Dockerfile .
@@ -40,3 +42,4 @@ ci_base_image:
     - docker push $base_image_id
   only:
     - /.*docker.*/
+    - scheduled
