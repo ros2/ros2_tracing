@@ -12,23 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Example launch file for the Trace action."""
-
-from launch import LaunchDescription
-from launch_ros.actions import Node
-from tracetools_launch.action import Trace
+import os
 
 
-def generate_launch_description():
-    return LaunchDescription([
-        Trace(
-            session_name='my-tracing-session'),
-        Node(
-            package='tracetools_test',
-            node_executable='test_ping',
-            output='screen'),
-        Node(
-            package='tracetools_test',
-            node_executable='test_pong',
-            output='screen'),
-    ])
+DEFAULT_BASE_PATH = '~/.ros/tracing/'
+
+
+def get_full_session_path(
+    session_name: str,
+    base_path: str = DEFAULT_BASE_PATH
+) -> str:
+    """
+    Get the full path to the trace directory of a given session.
+
+    :param session_name: the name of the tracing session
+    :param base_path: the path to the directory containing the trace directory
+    :return: the full path to the tracing session directory
+    """
+    if base_path is None:
+        base_path = DEFAULT_BASE_PATH
+    return os.path.expanduser(os.path.join(base_path, session_name))

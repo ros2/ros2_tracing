@@ -38,7 +38,7 @@ The first option is to use the `ros2 trace` command.
 $ ros2 trace
 ```
 
-By default, it will enable all ROS tracepoints and a few kernel tracepoints. The trace will be written to `/tmp/session-YYYYMMDDHHMMSS`. Run the command with `-h` for more information.
+By default, it will enable all ROS tracepoints and a few kernel tracepoints. The trace will be written to `~/.ros/tracing/session-YYYYMMDDHHMMSS`. Run the command with `-h` for more information.
 
 ### Launch file trace action
 

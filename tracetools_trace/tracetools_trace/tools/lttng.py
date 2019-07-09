@@ -21,11 +21,13 @@ import lttng
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_KERNEL
 from .names import DEFAULT_EVENTS_ROS
+from .path import DEFAULT_BASE_PATH
+from .path import get_full_session_path
 
 
 def lttng_init(
     session_name: str,
-    full_path: str,
+    base_path: str = DEFAULT_BASE_PATH,
     ros_events: List[str] = DEFAULT_EVENTS_ROS,
     kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
     context_names: List[str] = DEFAULT_CONTEXT
@@ -34,12 +36,12 @@ def lttng_init(
     Set up and start LTTng session.
 
     :param session_name: the name of the session
-    :param full_path: the full path to the main directory to write trace data to
+    :param base_path: the path to the directory in which to create the tracing session directory
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_names: list of context elements to enable
     """
-    _lttng_setup(session_name, full_path, ros_events, kernel_events, context_names)
+    _lttng_setup(session_name, base_path, ros_events, kernel_events, context_names)
     _lttng_start(session_name)
 
 
@@ -55,7 +57,7 @@ def lttng_fini(session_name: str) -> None:
 
 def _lttng_setup(
     session_name: str,
-    full_path: str,
+    base_path: str = DEFAULT_BASE_PATH,
     ros_events: List[str] = DEFAULT_EVENTS_ROS,
     kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
     context_names: List[str] = DEFAULT_CONTEXT,
@@ -68,13 +70,16 @@ def _lttng_setup(
     See: https://lttng.org/docs/#doc-core-concepts
 
     :param session_name: the name of the session
-    :param full_path: the full path to the main directory to write trace data to
+    :param base_path: the path to the directory in which to create the tracing session directory
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_names: list of context elements to enable
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
     """
+    # Resolve full tracing directory path
+    full_path = get_full_session_path(session_name, base_path=base_path)
+
     ust_enabled = ros_events is not None and len(ros_events) > 0
     kernel_enabled = kernel_events is not None and len(kernel_events) > 0
 
