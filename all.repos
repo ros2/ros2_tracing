@@ -177,7 +177,7 @@ repositories:
     version: master
   ros2/rcl:
     type: git
-    url: https://gitlab.com/ros_tracing/rcl.git
+    url: https://gitlab.com/micro-ROS/ros_tracing/rcl.git
     version: instrumentation
   ros2/rcl_interfaces:
     type: git
@@ -193,7 +193,7 @@ repositories:
 #    version: master
   ros2/rclcpp:
     type: git
-    url: https://gitlab.com/ros_tracing/rclcpp.git
+    url: https://gitlab.com/micro-ROS/ros_tracing/rclcpp.git
     version: instrumentation
   ros2/rclpy:
     type: git
@@ -317,7 +317,7 @@ repositories:
     version: master
   ros2/tracing:
     type: git
-    url: https://gitlab.com/ros_tracing/ros2_tracing.git
+    url: https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing.git
     version: master
 #  ros2/tutorials:
 #    type: git
@@ -341,5 +341,5 @@ repositories:
     version: master
   tracetools_analysis:
     type: git
-    url: https://github.com/ros_tracing/tracetools_analysis.git
+    url: https://gitlab.com/micro-ROS/ros_tracing/tracetools_analysis.git
     version: master
