@@ -46,11 +46,11 @@ class TestIntra(TraceTestCase):
             'topic_name',
             '/the_topic/_intra',
             sub_init_events)
-        self.assertNumEvents(
+        self.assertNumEventsEqual(
             sub_init_normal_events,
             1,
             'none or more than 1 sub init event for normal sub')
-        self.assertNumEvents(
+        self.assertNumEventsEqual(
             sub_init_intra_events,
             1,
             'none or more than 1 sub init event for intra sub')
@@ -68,7 +68,7 @@ class TestIntra(TraceTestCase):
             sub_handle_intra,
             self.get_events_with_name(
                 'ros2:rclcpp_subscription_callback_added'))
-        self.assertNumEvents(
+        self.assertNumEventsEqual(
             callback_added_events,
             1,
             'none or more than 1 callback added event')
@@ -78,9 +78,15 @@ class TestIntra(TraceTestCase):
         # Get corresponding callback start/end pairs
         start_events = self.get_events_with_name('ros2:callback_start')
         end_events = self.get_events_with_name('ros2:callback_end')
-        # Should still have two start:end pairs (1 normal + 1 intra)
-        self.assertNumEvents(start_events, 2, 'does not have 2 callback start events')
-        self.assertNumEvents(end_events, 2, 'does not have 2 callback end events')
+        # Should still have at least two start:end pairs (1 normal + 1 intra)
+        self.assertNumEventsGreaterEqual(
+            start_events,
+            2,
+            'does not have at least 2 callback start events')
+        self.assertNumEventsGreaterEqual(
+            end_events,
+            2,
+            'does not have at least 2 callback end events')
         start_events_intra = self.get_events_with_field_value(
             'callback',
             callback_handle_intra,
@@ -89,14 +95,14 @@ class TestIntra(TraceTestCase):
             'callback',
             callback_handle_intra,
             end_events)
-        self.assertNumEvents(
+        self.assertNumEventsGreaterEqual(
             start_events_intra,
             1,
-            'none or more than one intra start event')
-        self.assertNumEvents(
+            'no intra start event')
+        self.assertNumEventsGreaterEqual(
             end_events_intra,
             1,
-            'none or more than one intra end event')
+            'no intra end event')
 
         # Check is_intra_process field value
         start_event_intra = start_events_intra[0]
@@ -111,10 +117,10 @@ class TestIntra(TraceTestCase):
             'callback',
             callback_handle_intra,
             start_events)
-        self.assertNumEvents(
+        self.assertNumEventsGreaterEqual(
             start_events_not_intra,
             1,
-            'none or more than one normal start event')
+            'no normal start event')
         start_event_not_intra = start_events_not_intra[0]
         self.assertFieldEquals(
             start_event_not_intra,

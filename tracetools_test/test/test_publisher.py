@@ -49,7 +49,7 @@ class TestPublisher(TraceTestCase):
             'topic_name',
             '/the_topic',
             test_pub_init_events)
-        self.assertNumEvents(
+        self.assertNumEventsEqual(
             test_pub_init_topic_events,
             1,
             'none or more than 1 pub_init even for test topic')
@@ -67,7 +67,10 @@ class TestPublisher(TraceTestCase):
         test_pub_node_init_events = self.get_events_with_procname(
             'test_publisher',
             node_init_events)
-        self.assertNumEvents(test_pub_node_init_events, 1, 'none or more than 1 node_init event')
+        self.assertNumEventsEqual(
+            test_pub_node_init_events,
+            1,
+            'none or more than 1 node_init event')
         test_pub_node_init_event = test_pub_node_init_events[0]
         self.assertMatchingField(
             test_pub_node_init_event,

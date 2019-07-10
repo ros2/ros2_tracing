@@ -54,7 +54,7 @@ class TestSubscription(TraceTestCase):
             'topic_name',
             '/the_topic',
             sub_init_events)
-        self.assertNumEvents(test_sub_init_events, 1, 'cannot find test topic name')
+        self.assertNumEventsEqual(test_sub_init_events, 1, 'cannot find test topic name')
         test_sub_init_event = test_sub_init_events[0]
 
         # Check queue_depth value
@@ -69,7 +69,7 @@ class TestSubscription(TraceTestCase):
         test_sub_node_init_events = self.get_events_with_procname(
             'test_subscription',
             node_init_events)
-        self.assertNumEvents(
+        self.assertNumEventsEqual(
             test_sub_node_init_events,
             1,
             'none or more than 1 node_init event')

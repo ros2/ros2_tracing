@@ -172,7 +172,7 @@ class TraceTestCase(unittest.TestCase):
         """
         self.assertTrue(self.are_events_ordered(first_event, second_event))
 
-    def assertNumEvents(
+    def assertNumEventsEqual(
         self,
         events: List[DictEvent],
         expected_number: int,
@@ -186,6 +186,21 @@ class TraceTestCase(unittest.TestCase):
         :param msg: the message to display on failure
         """
         self.assertEqual(len(events), expected_number, msg)
+
+    def assertNumEventsGreaterEqual(
+        self,
+        events: List[DictEvent],
+        min_expected_number: int,
+        msg: str = 'wrong number of events'
+    ):
+        """
+        Check that the number of events is greater of equal.
+
+        :param events: the events to check
+        :param min_expected_number: the minimum expected number of events
+        :param msg: the message to display on failure
+        """
+        self.assertGreaterEqual(len(events), min_expected_number, msg)
 
     def assertMatchingField(
         self,
