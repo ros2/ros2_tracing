@@ -64,7 +64,7 @@ class TestTimer(TraceTestCase):
 
         # Find and check given timer period
         test_timer_init_event = self.get_events_with_procname('test_timer', init_events)
-        self.assertNumEvents(test_timer_init_event, 1, 'none or more test timer init events')
+        self.assertNumEventsEqual(test_timer_init_event, 1, 'none or more test timer init events')
         test_init_event = test_timer_init_event[0]
         self.assertFieldEquals(test_init_event, 'period', 1000000, 'invalid period')
 
