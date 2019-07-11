@@ -10,7 +10,7 @@ build_enabled:
     - rosdep install --from-paths . -i . -i /root/ws --rosdistro dashing -y
     - lttng-sessiond --daemonize
     - . /root/ws/install/local_setup.sh
-    - colcon build --symlink-install --cmake-args " -DWITH_LTTNG=ON" --packages-up-to $PACKAGES_LIST
+    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - colcon test --packages-select $PACKAGES_LIST
     - colcon test-result
