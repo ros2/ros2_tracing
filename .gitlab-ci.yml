@@ -3,23 +3,35 @@ variables:
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
   base_image_id: registry.gitlab.com/micro-ros/ros_tracing/ci_base
 
+image: $base_image_id
+
+before_script:
+  - vcs import < instrumentation.repos
+  - rosdep install --from-paths . -i . -i /root/ws --rosdistro dashing -y
+  - . /root/ws/install/local_setup.sh
+
 build_enabled:
-  image: $base_image_id
   script:
-    - vcs import < instrumentation.repos
-    - rosdep install --from-paths . -i . -i /root/ws --rosdistro dashing -y
     - lttng-sessiond --daemonize
-    - . /root/ws/install/local_setup.sh
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - colcon test --packages-select $PACKAGES_LIST
     - colcon test-result
-  artifacts:
-    paths:
-      - install
+
+build:
+  script:
+    - rm colcon.meta
+    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+    - . install/local_setup.sh
+    - colcon test --packages-select $PACKAGES_LIST
+    - colcon test-result
+
+artifacts:
+  paths:
+    - install
+    - build/*/test_results/*/*.xunit.xml
+    - build/*/pytest.xml
+  reports:
+    junit:
       - build/*/test_results/*/*.xunit.xml
       - build/*/pytest.xml
-    reports:
-      junit:
-        - build/*/test_results/*/*.xunit.xml
-        - build/*/pytest.xml
