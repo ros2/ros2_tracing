@@ -21,9 +21,9 @@ setup(
     ),
     author='Christophe Bedard',
     author_email='fixed-term.christophe.bourquebedard@de.bosch.com',
-    # url='',
-    keywords=['ROS'],
-    description='Tools for reading trace',
+    url='https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing',
+    keywords=[],
+    description='Tools for reading traces.',
     license='Apache 2.0',
     tests_require=['pytest'],
 )

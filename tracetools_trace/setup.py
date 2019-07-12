@@ -21,9 +21,13 @@ setup(
     ),
     author='Christophe Bedard',
     author_email='fixed-term.christophe.bourquebedard@de.bosch.com',
-    # url='',
-    keywords=['ROS'],
-    description='Tools for setting up tracing sessions',
+    url='https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing',
+    keywords=[],
+    description='Tools for setting up tracing sessions.',
+    long_description=(
+        'This package provides tools for setting up tracing sessions. '
+        'It also provides basic utilities to provide CLI functionality.'
+    ),
     entry_points={
         'console_scripts': [
             f'trace = {package_name}.trace:main',

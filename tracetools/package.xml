@@ -3,11 +3,11 @@
 <package format="2">
   <name>tracetools</name>
   <version>0.1.0</version>
-  <description>ROS 2 wrapper for instrumentation</description>
+  <description>Tracing wrapper for ROS 2.</description>
   <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
-  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Luetkebohle</maintainer>
+  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
   <license>Apache 2.0</license>
-  <author email="ingo.luetkebohle@de.bosch.com">Ingo Luetkebohle</author>
+  <author email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</author>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
