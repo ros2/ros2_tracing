@@ -5,5 +5,10 @@
         "-DWITH_LTTNG=ON",
       ],
     },
+    "tracetools_test": {
+      "cmake-args": [
+        "-DWITH_LTTNG=ON",
+      ],
+    },
   },
 }
