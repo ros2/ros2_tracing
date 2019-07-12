@@ -3,9 +3,7 @@
 <package format="2">
   <name>ros2trace</name>
   <version>0.1.0</version>
-  <description>
-    The trace command for ROS 2 command line tools.
-  </description>
+  <description>The trace command for ROS 2 command line tools.</description>
   <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
   <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
   <license>Apache 2.0</license>

@@ -17,11 +17,13 @@ setup(
     ),
     author='Christophe Bedard',
     author_email='fixed-term.christophe.bourquebedard@de.bosch.com',
-    # url=',
+    url='https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing',
     keywords=[],
-    description='The run command for ROS 2 command line tools.',
-    long_description="""\
-The package provides the trace command for the ROS 2 command line tools.""",
+    description='The trace command for ROS 2 command line tools.',
+    long_description=(
+        'The package provides the trace command '
+        'for the ROS 2 command line tools.'
+    ),
     license='Apache 2.0',
     tests_require=['pytest'],
     entry_points={

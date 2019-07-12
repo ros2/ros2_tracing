@@ -3,9 +3,9 @@
 <package format="2">
   <name>tracetools_test</name>
   <version>0.1.0</version>
-  <description>Separate test package for tracetools</description>
+  <description>Testing utilities and tests for the tracetools package.</description>
   <maintainer email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</maintainer>
-  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Luetkebohle</maintainer>
+  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
   <license>Apache 2.0</license>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 

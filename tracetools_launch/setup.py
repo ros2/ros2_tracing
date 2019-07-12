@@ -24,9 +24,13 @@ setup(
     ),
     author='Christophe Bedard',
     author_email='fixed-term.christophe.bourquebedard@de.bosch.com',
-    # url='',
-    keywords=['ROS'],
-    description='Launch integration for tracing',
+    url='https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing',
+    keywords=[],
+    description='Launch integration for tracing.',
+    long_description=(
+        'This package provides a trace action to '
+        'launch tracing through a launch file.'
+    ),
     license='Apache 2.0',
     tests_require=['pytest'],
 )
