@@ -5,6 +5,17 @@ variables:
 
 image: $base_image_id
 
+.global_artifacts: &global_artifacts
+  artifacts:
+    paths:
+      - install
+      - build/*/test_results/*/*.xunit.xml
+      - build/*/pytest.xml
+    reports:
+      junit:
+        - build/*/test_results/*/*.xunit.xml
+        - build/*/pytest.xml
+
 before_script:
   - vcs import < instrumentation.repos
   - rosdep install --from-paths . -i . -i /root/ws --rosdistro dashing -y
@@ -17,6 +28,7 @@ build_enabled:
     - . install/local_setup.sh
     - colcon test --packages-select $PACKAGES_LIST
     - colcon test-result
+  <<: *global_artifacts
 
 build:
   script:
@@ -25,13 +37,4 @@ build:
     - . install/local_setup.sh
     - colcon test --packages-select $PACKAGES_LIST
     - colcon test-result
-
-artifacts:
-  paths:
-    - install
-    - build/*/test_results/*/*.xunit.xml
-    - build/*/pytest.xml
-  reports:
-    junit:
-      - build/*/test_results/*/*.xunit.xml
-      - build/*/pytest.xml
+  <<: *global_artifacts
