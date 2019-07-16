@@ -92,7 +92,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
   # Only build tracetools utils tests if LTTng is enabled and found
-  if(TRACETOOLS_LTTNG_ENABLED)
+  if(TRACING_ENABLED)
     ament_add_gtest(test_utils test/test_utils.cpp)
     if(TARGET test_utils)
       target_link_libraries(test_utils ${PROJECT_NAME} -rdynamic)
