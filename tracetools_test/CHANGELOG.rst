@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.1 (2019-07-16)
+------------------
 * Disable tracing-related tests by default
 * Contributors: Christophe Bedard
 
