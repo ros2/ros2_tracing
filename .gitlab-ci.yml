@@ -32,7 +32,6 @@ build_enabled:
 
 build:
   script:
-    - rm colcon.meta
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - colcon test --packages-select $PACKAGES_LIST
