@@ -14,6 +14,7 @@ find_package(ament_cmake REQUIRED)
 
 option(TRACETOOLS_DISABLED "Explicitly disable support for tracing with LTTng" OFF)
 if(NOT TRACETOOLS_DISABLED)
+  # Set TRACING_ENABLED if we can find lttng-ust
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
     pkg_check_modules(LTTNG lttng-ust)
