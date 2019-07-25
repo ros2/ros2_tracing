@@ -12,15 +12,14 @@ endif()
 
 find_package(ament_cmake_ros REQUIRED)
 
-option(WITH_LTTNG "Enable support for tracing with LTTng" ON)
-if(WITH_LTTNG)
-  # Set TRACING_ENABLED if we can find lttng-ust
-  # TODO: Should these be quiet?
+option(TRACETOOLS_DISABLED "Explicitly disable support for tracing with LTTng" OFF)
+if(NOT TRACETOOLS_DISABLED)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
     pkg_check_modules(LTTNG lttng-ust)
     if(LTTNG_FOUND)
       set(TRACING_ENABLED TRUE)
+      message("LTTng found: tracing enabled")
     endif()
   endif()
 endif()
@@ -52,8 +51,8 @@ set(SOURCES
 if(TRACING_ENABLED)
   list(APPEND SOURCES
     include/tracetools/tp_call.h
-    src/tp_call.c)
-
+    src/tp_call.c
+  )
 endif()
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
