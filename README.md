@@ -4,7 +4,7 @@ Tracing tools for ROS 2.
 
 ## Building
 
-If the `TRACETOOLS_ENABLED` option is disabled during build or if LTTng is not found, then this package will not do anything.
+If the `TRACETOOLS_DISABLED` option is enabled during build or if LTTng is not found, then this package will not do anything.
 
 To enable tracing:
 
