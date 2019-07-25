@@ -12,7 +12,17 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-option(WITH_LTTNG "Include support for tracing with LTTng" OFF)
+option(TRACETOOLS_DISABLED "Explicitly disable support for tracing with LTTng" OFF)
+if(NOT TRACETOOLS_DISABLED)
+  # Set TRACING_ENABLED if we can find lttng-ust
+  find_package(PkgConfig)
+  if(PkgConfig_FOUND)
+    pkg_check_modules(LTTNG lttng-ust)
+    if(LTTNG_FOUND)
+      set(TRACING_ENABLED TRUE)
+    endif()
+  endif()
+endif()
 
 # Tests
 if(BUILD_TESTING)
@@ -119,36 +129,30 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
   # Only build tracing tests if LTTng is enabled and found
-  if(WITH_LTTNG)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(LTTNG REQUIRED lttng-ust)
-    if(LTTNG_FOUND)
-      message("LTTng found: tracing tests enabled")
+  if(TRACING_ENABLED)
+    find_package(ament_cmake_pytest REQUIRED)
 
-      find_package(ament_cmake_pytest REQUIRED)
+    # Run each test in its own pytest invocation
+    set(_tracetools_test_pytest_tests
+      test/test_intra.py
+      test/test_node.py
+      test/test_publisher.py
+      test/test_service.py
+      test/test_service_callback.py
+      test/test_subscription.py
+      test/test_subscription_callback.py
+      test/test_timer.py
+    )
 
-      # Run each test in its own pytest invocation
-      set(_tracetools_test_pytest_tests
-        test/test_intra.py
-        test/test_node.py
-        test/test_publisher.py
-        test/test_service.py
-        test/test_service_callback.py
-        test/test_subscription.py
-        test/test_subscription_callback.py
-        test/test_timer.py
+    foreach(_test_path ${_tracetools_test_pytest_tests})
+      get_filename_component(_test_name ${_test_path} NAME_WE)
+      ament_add_pytest_test(${_test_name} ${_test_path}
+        PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}"
+        APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
+        PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
+        TIMEOUT 60
       )
-
-      foreach(_test_path ${_tracetools_test_pytest_tests})
-        get_filename_component(_test_name ${_test_path} NAME_WE)
-        ament_add_pytest_test(${_test_name} ${_test_path}
-          PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}"
-          APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
-            PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
-          TIMEOUT 60
-        )
-      endforeach()
-    endif()
+    endforeach()
   endif()
 endif()
 

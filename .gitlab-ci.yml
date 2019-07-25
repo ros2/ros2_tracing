@@ -26,15 +26,16 @@ build_enabled:
     - lttng-sessiond --daemonize
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
+    - ./build/tracetools/status
     - colcon test --packages-select $PACKAGES_LIST
     - colcon test-result
   <<: *global_artifacts
 
 build:
   script:
-    - rm colcon.meta
-    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+    - colcon build --symlink-install --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
+    - (! ./build/tracetools/status)
     - colcon test --packages-select $PACKAGES_LIST
     - colcon test-result
   <<: *global_artifacts
