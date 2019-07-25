@@ -32,7 +32,7 @@ build_enabled:
 
 build:
   script:
-    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+    - colcon build --symlink-install --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - colcon test --packages-select $PACKAGES_LIST
     - colcon test-result
