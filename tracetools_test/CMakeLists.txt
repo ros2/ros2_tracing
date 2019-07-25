@@ -141,7 +141,7 @@ if(BUILD_TESTING)
       test/test_subscription.py
       test/test_subscription_callback.py
       test/test_timer.py
-      )
+    )
 
     foreach(_test_path ${_tracetools_test_pytest_tests})
       get_filename_component(_test_name ${_test_path} NAME_WE)
@@ -150,7 +150,7 @@ if(BUILD_TESTING)
         APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
         PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
         TIMEOUT 60
-        )
+      )
     endforeach()
   endif()
 endif()
