@@ -2,6 +2,15 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.0 (2019-07-30)
+------------------
+* Add option to compile out LTTng entirely
+* Fix ament_target_dependencies() for tracetools status executable
+* Remove bash scripts
+* Enable tracing by default if LTTng is available
+* Fix test_utils never getting built
+* Contributors: Christophe Bedard, Ingo Lütkebohle, Tobias Blass
+
 0.1.1 (2019-07-16)
 ------------------
 * Disable tracing-related tests by default
