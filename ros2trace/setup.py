@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='ros2trace',
-    version='0.1.1',
+    version='0.2.0',
     packages=find_packages(exclude=['test']),
     install_requires=['ros2cli'],
     zip_safe=True,

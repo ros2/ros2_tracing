@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2019-07-30)
+------------------
 * Add option to compile out LTTng entirely
 * Fix ament_target_dependencies() for tracetools status executable
 * Remove bash scripts

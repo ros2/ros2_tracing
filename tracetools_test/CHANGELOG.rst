@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2019-07-30)
+------------------
 * Enable tracing by default if LTTng is available
 * Contributors: Christophe Bedard, Tobias Blass
 
