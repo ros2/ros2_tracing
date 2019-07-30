@@ -25,7 +25,11 @@ if(NOT TRACETOOLS_DISABLED)
   endif()
 endif()
 
-include_directories(include)
+# store configuration variables for runtime use
+configure_file(include/${PROJECT_NAME}/config.h.in include/${PROJECT_NAME}/config.h)
+
+# add both source and output include, to capture config.h
+include_directories(include ${PROJECT_BINARY_DIR}/include)
 
 # Status checking tool
 add_executable(status
@@ -65,6 +69,10 @@ ament_export_interfaces(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
 install(
   DIRECTORY include/
   DESTINATION include
+)
+install(
+  FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h
+  DESTINATION include/${PROJECT_NAME}
 )
 install(
   TARGETS ${PROJECT_NAME}
