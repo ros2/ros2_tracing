@@ -36,9 +36,6 @@ add_executable(status
 target_link_libraries(status
   ${PROJECT_NAME}
 )
-ament_target_dependencies(status
-  ${PROJECT_NAME}
-)
 install(TARGETS
   status
   DESTINATION lib/${PROJECT_NAME}
