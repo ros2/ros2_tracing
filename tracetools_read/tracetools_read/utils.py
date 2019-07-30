@@ -50,7 +50,6 @@ def get_trace_events(trace_directory: str) -> List[DictEvent]:
 # List of ignored CTF fields
 _IGNORED_FIELDS = [
     'content_size',
-    'cpu_id',
     'events_discarded',
     'id',
     'packet_size',
