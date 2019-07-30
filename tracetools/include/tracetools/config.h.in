@@ -12,22 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
-#include "tracetools/tracetools.h"
+#ifndef TRACETOOLS__CONFIG_H_
+#define TRACETOOLS__CONFIG_H_
 
-int main()
-{
-#ifndef TRACETOOLS_DISABLED
-  printf("Tracing ");
-  if (ros_trace_compile_status()) {
-    printf("enabled\n");
-    return 0;
-  } else {
-    printf("disabled\n");
-    return 1;
-  }
-#else
-  printf("Tracing disabled through configuration\n");
-  return 1;
-#endif
-}
+#cmakedefine TRACETOOLS_DISABLED
+
+#endif  // TRACETOOLS__CONFIG_H_

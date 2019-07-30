@@ -14,6 +14,8 @@
 
 #include "tracetools/tracetools.h"
 
+#ifndef TRACETOOLS_DISABLED
+
 #if defined(TRACETOOLS_LTTNG_ENABLED)
 # include "tracetools/tp_call.h"
 # define CONDITIONAL_TP(...) \
@@ -216,3 +218,5 @@ void TRACEPOINT(
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #endif
+
+#endif  // TRACETOOLS_DISABLED
