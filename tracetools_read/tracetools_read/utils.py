@@ -85,7 +85,7 @@ def get_field(event: DictEvent, field_name: str, default=None, raise_if_not_foun
     field_value = event.get(field_name, default)
     # If enabled, raise exception as soon as possible to avoid headaches
     if raise_if_not_found and field_value is None:
-        raise AttributeError(f'event field "{field_name}" not found!')
+        raise AttributeError(f"event field '{field_name}' not found for event: {event}")
     return field_value
 
 
