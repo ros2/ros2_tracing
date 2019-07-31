@@ -16,7 +16,7 @@ setup(
     install_requires=['setuptools'],
     maintainer=(
         'Christophe Bedard, '
-        'Ingo Lütkebohle'
+        'Ingo Luetkebohle'
     ),
     maintainer_email=(
         'fixed-term.christophe.bourquebedard@de.bosch.com, '
