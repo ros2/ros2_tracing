@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replace special character to fix encoding issue
+* Contributors: Christophe Bedard
+
 0.2.0 (2019-07-30)
 ------------------
 * Include event data in 'field not found' error message

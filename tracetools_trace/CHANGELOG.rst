@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replace special character to fix encoding issue
+* Contributors: Christophe Bedard
+
 0.1.0 (2019-07-11)
 ------------------
 * Use proper arg parser and event names completers
