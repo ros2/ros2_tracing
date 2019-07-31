@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.1 (2019-07-31)
+------------------
+* Replace special character to fix encoding issue
+* Contributors: Christophe Bedard
+
 0.1.0 (2019-07-11)
 ------------------
 * Add tracing integration into launch
