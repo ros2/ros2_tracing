@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Revert "Replace special character to fix encoding issue"
+* Contributors: Christophe Bedard
+
 0.2.1 (2019-07-31)
 ------------------
 * Replace special character to fix encoding issue
