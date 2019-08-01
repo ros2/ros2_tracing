@@ -19,12 +19,13 @@
 #include <string.h>
 #include <stdbool.h>
 #include "tracetools/config.h"
+#include "tracetools/visibility_control.hpp"
 
 #ifndef TRACETOOLS_DISABLED
 #  define TRACEPOINT(event_name, ...) \
   (ros_trace_ ## event_name)(__VA_ARGS__)
 #  define DECLARE_TRACEPOINT(event_name, ...) \
-  void(ros_trace_ ## event_name)(__VA_ARGS__);
+  TRACETOOLS_PUBLIC void(ros_trace_ ## event_name)(__VA_ARGS__);
 #else
 #  define TRACEPOINT(event_name, ...)
 #  define DECLARE_TRACEPOINT(event_name, ...)
@@ -38,7 +39,7 @@ extern "C"
 /**
  * Report whether tracing is compiled in
  */
-bool ros_trace_compile_status();
+TRACETOOLS_PUBLIC bool ros_trace_compile_status();
 
 /**
  * tp: rcl_init

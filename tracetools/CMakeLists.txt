@@ -31,20 +31,6 @@ configure_file(include/${PROJECT_NAME}/config.h.in include/${PROJECT_NAME}/confi
 # add both source and output include, to capture config.h
 include_directories(include ${PROJECT_BINARY_DIR}/include)
 
-# Status checking tool
-add_executable(status
-  src/status.c
-  src/tracetools.c
-  src/utils.cpp
-)
-target_link_libraries(status
-  ${PROJECT_NAME}
-)
-install(TARGETS
-  status
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 # Tracetools lib
 set(SOURCES
   src/tracetools.c
@@ -57,15 +43,33 @@ if(TRACING_ENABLED)
   )
 endif()
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
+add_library(${PROJECT_NAME} ${SOURCES})
 if(TRACING_ENABLED)
   target_compile_definitions(${PROJECT_NAME} PUBLIC TRACETOOLS_LTTNG_ENABLED)
   target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES} -ldl)
-else()
-  target_link_libraries(${PROJECT_NAME})
+endif()
+if(WIN32)
+    # Causes the visibility macros to use dllexport rather than dllimport
+    # which is appropriate when building the dll but not consuming it.
+    target_compile_definitions(${PROJECT_NAME}
+      PRIVATE "TRACETOOLS_BUILDING_DLL")
 endif()
 
 ament_export_interfaces(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
+
+# Status checking tool
+add_executable(status
+  src/status.c
+  src/utils.cpp
+)
+target_link_libraries(status
+  ${PROJECT_NAME}
+)
+install(TARGETS
+  status
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 install(
   DIRECTORY include/
   DESTINATION include
