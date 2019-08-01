@@ -23,7 +23,7 @@ To enable tracing:
 3. Source and check that tracing is enabled:
     ```
     $ source ./install/local_setup.bash
-    $ ros2 run tracetools tracetools_status
+    $ ros2 run tracetools status
     ```
 
 ## Tracing
