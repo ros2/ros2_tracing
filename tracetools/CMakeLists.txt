@@ -31,20 +31,6 @@ configure_file(include/${PROJECT_NAME}/config.h.in include/${PROJECT_NAME}/confi
 # add both source and output include, to capture config.h
 include_directories(include ${PROJECT_BINARY_DIR}/include)
 
-# Status checking tool
-add_executable(status
-  src/status.c
-  src/tracetools.c
-  src/utils.cpp
-)
-target_link_libraries(status
-  ${PROJECT_NAME}
-)
-install(TARGETS
-  status
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 # Tracetools lib
 set(SOURCES
   src/tracetools.c
@@ -66,6 +52,21 @@ else()
 endif()
 
 ament_export_interfaces(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
+
+# Status checking tool
+add_executable(status
+  src/status.c
+  src/tracetools.c
+  src/utils.cpp
+)
+target_link_libraries(status
+  ${PROJECT_NAME}
+)
+install(TARGETS
+  status
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 install(
   DIRECTORY include/
   DESTINATION include
