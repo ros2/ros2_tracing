@@ -60,7 +60,6 @@ ament_export_interfaces(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
 # Status checking tool
 add_executable(status
   src/status.c
-  src/utils.cpp
 )
 target_link_libraries(status
   ${PROJECT_NAME}
