@@ -33,7 +33,7 @@
     #define TRACETOOLS_EXPORT __declspec(dllexport)
     #define TRACETOOLS_IMPORT __declspec(dllimport)
   #endif
-  #ifdef TRACETOOLS_BUILDING_LIBRARY
+  #ifdef TRACETOOLS_BUILDING_DLL
     #define TRACETOOLS_PUBLIC TRACETOOLS_EXPORT
   #else
     #define TRACETOOLS_PUBLIC TRACETOOLS_IMPORT
