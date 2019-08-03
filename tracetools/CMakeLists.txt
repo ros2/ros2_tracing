@@ -8,6 +8,8 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  add_compile_options(/W4)
 endif()
 
 find_package(ament_cmake_ros REQUIRED)
