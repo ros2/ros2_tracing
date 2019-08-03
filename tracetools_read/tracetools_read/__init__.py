@@ -80,7 +80,24 @@ def event_to_dict(event: babeltrace.babeltrace.Event) -> DictEvent:
     return d
 
 
-def get_field(event: DictEvent, field_name: str, default=None, raise_if_not_found=True) -> Any:
+def get_field(
+    event: DictEvent,
+    field_name: str,
+    default: Any = None,
+    raise_if_not_found: bool = True,
+) -> Any:
+    """
+    Get value of a field from an event.
+
+    Can return a custom default value if not found. Will raise `AttributeError` by default if not
+    found, but it can be suppressed. These two options cannot be used together.
+
+    :param event: the event
+    :param field_name: the name of the field
+    :param default: the value to use if not found
+    :param raise_if_not_found: whether to raise an error the field is not found
+    :return: `None` (or default value) if not found
+    """
     field_value = event.get(field_name, default)
     # If enabled, raise exception as soon as possible to avoid headaches
     if raise_if_not_found and field_value is None:
