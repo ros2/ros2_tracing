@@ -25,7 +25,7 @@ import babeltrace
 DictEvent = Dict[str, Any]
 
 
-def _get_trace_ctf_events(trace_directory: str) -> Iterable[babeltrace.babeltrace.Event]:
+def get_trace_ctf_events(trace_directory: str) -> Iterable[babeltrace.babeltrace.Event]:
     """
     Get the events of a trace.
 
@@ -44,7 +44,7 @@ def get_trace_events(trace_directory: str) -> List[DictEvent]:
     :param trace_directory: the path to the main/top trace directory
     :return: events
     """
-    return [event_to_dict(event) for event in _get_trace_ctf_events(trace_directory)]
+    return [event_to_dict(event) for event in get_trace_ctf_events(trace_directory)]
 
 
 # List of ignored CTF fields
