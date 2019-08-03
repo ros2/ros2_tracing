@@ -25,8 +25,8 @@ from launch import LaunchService
 from launch_ros import get_default_launch_description
 from launch_ros.actions import Node
 from tracetools_launch.action import Trace
-from tracetools_read.utils import DictEvent
-from tracetools_read.utils import get_event_name
+from tracetools_read import DictEvent
+from tracetools_read import get_event_name
 
 
 def run_and_trace(
