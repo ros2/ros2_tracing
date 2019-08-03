@@ -72,12 +72,11 @@ def event_to_dict(event: babeltrace.babeltrace.Event) -> DictEvent:
     :param event: the event to convert
     :return: the event as a dictionary
     """
-    d = {'_name': event.name, '_timestamp': event.timestamp}
     if hasattr(event, _DISCARD) and event[_DISCARD] > 0:
         print(event[_DISCARD])
-    for key in [key for key in event.keys() if key not in _IGNORED_FIELDS]:
-        d[key] = event[key]
-    return d
+    meta = {'_name': event.name, '_timestamp': event.timestamp}
+    data = {key: event[key] for key in event.keys() if key not in _IGNORED_FIELDS}
+    return {**meta, **data}
 
 
 def get_field(
