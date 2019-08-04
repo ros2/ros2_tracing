@@ -16,7 +16,6 @@
 
 import os
 import shutil
-import time
 from typing import List
 from typing import Tuple
 
@@ -48,13 +47,14 @@ def run_and_trace(
     :param node_names: the names of the nodes to execute
     :return: exit code, full generated path
     """
-    session_name = f'{session_name_prefix}-{time.strftime("%Y%m%d%H%M%S")}'
+    session_name = session_name_prefix
     full_path = os.path.join(base_path, session_name)
 
     launch_actions = []
     # Add trace action
     launch_actions.append(Trace(
         session_name=session_name,
+        append_timestamp=True,
         base_path=base_path,
         events_ust=ros_events,
         events_kernel=kernel_events
