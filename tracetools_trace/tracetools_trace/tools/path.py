@@ -28,7 +28,7 @@ def append_timestamp(
     :param session_name_base: the base name of the tracing session
     :return: the session name with timestamp
     """
-    return session_name_base + '-' + time.strftime("%Y%m%d%H%M%S")
+    return session_name_base + '-' + time.strftime('%Y%m%d%H%M%S')
 
 
 def get_full_session_path(
