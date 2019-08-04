@@ -54,7 +54,8 @@ class Trace(Action):
         :param events_kernel: the list of kernel events to enable
         """
         super().__init__(**kwargs)
-        session_name = path.append_timestamp(session_name) if append_timestamp else session_name
+        if append_timestamp:
+            session_name = path.append_timestamp(session_name)
         self.__session_name = session_name
         self.__base_path = base_path
         self.__events_ust = events_ust
