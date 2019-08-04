@@ -15,7 +15,6 @@
 """Module containing parsing functions for tracing commands."""
 
 import argparse
-import time
 
 from . import names
 from . import path
