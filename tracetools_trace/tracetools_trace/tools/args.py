@@ -42,7 +42,7 @@ def parse_args():
 def add_arguments(parser):
     parser.add_argument(
         '--session-name', '-s', dest='session_name',
-        default=f'session-{time.strftime("%Y%m%d%H%M%S")}',
+        default=path.append_timestamp('session'),
         help='the name of the tracing session (default: session-YYYYMMDDHHMMSS)')
     parser.add_argument(
         '--path', '-p', dest='path',
