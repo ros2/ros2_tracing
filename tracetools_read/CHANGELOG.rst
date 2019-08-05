@@ -2,8 +2,8 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.3 (2019-08-05)
+------------------
 * Move tracetools_read.utils to the init file
 * Contributors: Christophe Bedard
 
