@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Move tracetools_read.utils to the init file
+* Contributors: Christophe Bedard
+
 0.2.2 (2019-08-01)
 ------------------
 * Revert "Replace special character to fix encoding issue"

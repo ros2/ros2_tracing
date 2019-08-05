@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix Windows warnings
+* Contributors: Christophe Bedard, Ingo Lütkebohle
+
 0.2.2 (2019-08-01)
 ------------------
 * Fix Windows linking issues
