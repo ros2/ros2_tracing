@@ -38,6 +38,7 @@ class Trace(Action):
         self,
         *,
         session_name: str,
+        append_timestamp: bool = False,
         base_path: str = path.DEFAULT_BASE_PATH,
         events_ust: List[str] = names.DEFAULT_EVENTS_ROS,
         events_kernel: List[str] = names.DEFAULT_EVENTS_KERNEL,
@@ -47,11 +48,14 @@ class Trace(Action):
         Constructor.
 
         :param session_name: the name of the tracing session
+        :param append_timestamp: whether to append timestamp to the session name
         :param base_path: the path to the base directory in which to create the tracing session directory
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
         """
         super().__init__(**kwargs)
+        if append_timestamp:
+            session_name = path.append_timestamp(session_name)
         self.__session_name = session_name
         self.__base_path = base_path
         self.__events_ust = events_ust
