@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.3 (2019-08-05)
+------------------
+* Fix Windows warnings
+* Contributors: Christophe Bedard, Ingo Lütkebohle
+
 0.2.0 (2019-07-30)
 ------------------
 * Enable tracing by default if LTTng is available
