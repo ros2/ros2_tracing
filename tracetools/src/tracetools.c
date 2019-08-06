@@ -36,6 +36,9 @@ bool ros_trace_compile_status()
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
+#else
+# pragma warning(push)
+# pragma warning(disable: 4100)
 #endif
 
 void TRACEPOINT(
@@ -217,6 +220,8 @@ void TRACEPOINT(
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
+#else
+# pragma warning(pop)
 #endif
 
 #endif  // TRACETOOLS_DISABLED
