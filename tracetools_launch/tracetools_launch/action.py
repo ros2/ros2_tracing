@@ -102,12 +102,13 @@ class Trace(Action):
         return output_split[1].strip()
 
     def execute(self, context: LaunchContext) -> Optional[List[Action]]:
-        if self.__ld_preload_action is not None:
-            context.add_action(self.__ld_preload_action)
         # TODO make sure this is done as late as possible
         context.register_event_handler(OnShutdown(on_shutdown=self._destroy))
         # TODO make sure this is done as early as possible
         self._setup()
+        if self.__ld_preload_action is not None:
+            return [self.__ld_preload_action]
+        return None
 
     def _setup(self) -> None:
         lttng.lttng_init(
