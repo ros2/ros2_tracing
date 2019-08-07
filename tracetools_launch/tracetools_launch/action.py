@@ -69,6 +69,7 @@ class Trace(Action):
         self.__base_path = base_path
         self.__events_ust = events_ust
         self.__events_kernel = events_kernel
+        self.__profile_fast = profile_fast
         self.__ld_preload_action = None
         if self.has_profiling_events(events_ust):
             profile_lib_name = self.PROFILE_LIB_FAST if profile_fast else self.PROFILE_LIB_NORMAL
@@ -127,5 +128,7 @@ class Trace(Action):
             f'session_name={self.__session_name}, '
             f'base_path={self.__base_path}, '
             f'num_events_ust={len(self.__events_ust)}, '
-            f'num_events_kernel={len(self.__events_kernel)})'
+            f'num_events_kernel={len(self.__events_kernel)}), '
+            f'profiling={self.__ld_preload_action is not None}, '
+            f'profile_fast={self.__profile_fast}'
         )
