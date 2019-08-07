@@ -39,7 +39,7 @@ class Trace(Action):
 
     PROFILE_LIB_NORMAL = 'liblttng-ust-cyg-profile.so'
     PROFILE_LIB_FAST = 'liblttng-ust-cyg-profile-fast.so'
-    PROFILE_PATTERN = '^lttng_ust_cyg_profile.*:func_.*'
+    PROFILE_EVENT_PATTERN = '^lttng_ust_cyg_profile.*:func_.*'
 
     def __init__(
         self,
@@ -79,7 +79,8 @@ class Trace(Action):
 
     @classmethod
     def has_profiling_events(cls, events_ust: List[str]) -> bool:
-        matches = [re.match(cls.PROFILE_PATTERN, event_name) for event_name in events_ust]
+        """Check if the UST events list contains at least one profiling event."""
+        matches = [re.match(cls.PROFILE_EVENT_PATTERN, event_name) for event_name in events_ust]
         return any(matches)
 
     @staticmethod
