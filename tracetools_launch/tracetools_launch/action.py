@@ -14,7 +14,6 @@
 
 """Module for the Trace action."""
 
-import os
 from typing import List
 from typing import Optional
 
@@ -49,7 +48,7 @@ class Trace(Action):
 
         :param session_name: the name of the tracing session
         :param append_timestamp: whether to append timestamp to the session name
-        :param base_path: the path to the base directory in which to create the tracing session directory
+        :param base_path: the path to the base directory in which to create the session directory
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
         """
@@ -79,9 +78,9 @@ class Trace(Action):
 
     def __repr__(self):
         return (
-            "Trace("
-            f"session_name='{self.__session_name}', "
-            f"base_path='{self.__base_path}', "
-            f"num_events_ust={len(self.__events_ust)}, "
-            f"num_events_kernel={len(self.__events_kernel)})"
+            'Trace('
+            f'session_name={self.__session_name}, '
+            f'base_path={self.__base_path}, '
+            f'num_events_ust={len(self.__events_ust)}, '
+            f'num_events_kernel={len(self.__events_kernel)})'
         )
