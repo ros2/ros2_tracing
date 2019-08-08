@@ -516,3 +516,68 @@ This effort should first focus on `rcl` and `rclcpp` , but `rclpy` should eventu
 ### ROS 1/2 compatibility
 
 We could look into making analyses work on both ROS 1 and ROS 2, through a common instrumentation interface (or other abstraction).
+
+## Analysis architecture
+
+With profiling as an example implementation.
+
+```plantuml
+@startuml
+
+class Processor {
+ +process(events)
+ -_process_event(event)
+ -_expand_dependencies(initial_handlers): list {static}
+ -_get_handler_maps(handlers): multimap {static}
+}
+class DependencySolver {
+ +solve(initial_dependants): list
+}
+DependencySolver <-- Processor
+
+abstract class Dependant {
+ +dependencies(): list {static}
+}
+abstract class EventHandler {
+ +handler_map
+ +data(): DataModel {abstract}
+ +process(events) {static}
+}
+class ProfileHandler {
+ +data(): ProfileDataModel
+ +_handle_sched_switch(event, metadata)
+ +_handle_function_entry(event, metadata)
+ +_handle_function_exit(event, metadata)
+}
+Dependant <|-- EventHandler
+EventHandler <|-- ProfileHandler
+Processor o-- EventHandler
+
+abstract class DataModel {
+}
+class ProfileDataModel {
+ +times: DataFrame
+ +add_duration(tid, depth, name, timestamp, duration)
+}
+DataModel <|-- ProfileDataModel
+ProfileDataModel o-- ProfileHandler
+
+abstract class DataModelUtil {
+ +convert_time_columns(df, columns): df {static}
+}
+class ProfileDataModelUtil {
+ +get_tids(): list
+ +get_function_duration_data(tid): DataFrames
+}
+DataModelUtil <|-- ProfileDataModelUtil
+DataModelUtil o-- DataModel
+
+class Notebook {
+}
+Notebook --> ProfileHandler
+Notebook --> ProfileDataModelUtil
+Notebook --> Processor
+hide Notebook circle
+
+@enduml
+```
