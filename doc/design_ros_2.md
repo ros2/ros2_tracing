@@ -2,6 +2,38 @@
 
 Design document for ROS 2 tracing, instrumentation, and analysis effort.
 
+**Table of contents**
+1. [Introduction](#introduction)
+2. [Goals and requirements](#goals-and-requirements)
+    1. [Goals](#goals)
+    2. [Requirements: instrumentation](#requirements-instrumentation)
+    3. [Requirements: analysis & visualization](#requirements-analysis-visualization)
+    4. [Tools/accessibility](#toolsaccessibility)
+3. [Instrumentation design](#instrumentation-design)
+    1. [Flow description](#flow-description)
+        1. [Process creation](#process-creation)
+        2. [Node/component creation](#nodecomponent-creation)
+        3. [Publisher creation](#publisher-creation)
+        4. [Subscription creation](#subscription-creation)
+        5. [Executors](#executors)
+        6. [Subscription callbacks](#subscription-callbacks)
+        7. [Message publishing](#message-publishing)
+        8. [Service creation](#service-creation)
+        9. [Service callbacks](#service-callbacks)
+        10. [Client creation](#client-creation)
+        11. [Client request](#client-request)
+        12. [Timer creation](#timer-creation)
+        13. [Timer callbacks](#timer-callbacks)
+4. [Design & implementation notes](#design-implementation-notes)
+    1. [Targeted tools/dependencies](#targeted-toolsdependencies)
+    2. [Design](#design)
+5. [Architecture](#architecture)
+    1. [Timeline](#timeline)
+    2. [Notes on client libraries](#notes-on-client-libraries)
+    3. [ROS 1/2 compatibility](#ros-12-compatibility)
+6. [Tools](#tools)
+7. [Analysis architecture](#analysis-architecture)
+
 ## Introduction
 
 Tracing allows to record run-time data from a system, both for system data (e.g., when a process
@@ -516,6 +548,8 @@ This effort should first focus on `rcl` and `rclcpp` , but `rclpy` should eventu
 ### ROS 1/2 compatibility
 
 We could look into making analyses work on both ROS 1 and ROS 2, through a common instrumentation interface (or other abstraction).
+
+## Tools
 
 ## Analysis architecture
 
