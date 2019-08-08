@@ -56,9 +56,9 @@ Generic tracepoints for ROS 2 user code could be applied to a user-provided mode
 
 ### Tools/accessibility
 
-To make tracing ROS 2 more accessible and easier to adopt, we can put effort into integrating LTTng session setup & recording into the ROS 2 launch system.
+To make tracing ROS 2 more accessible and easier to adopt, we can put effort into integrating LTTng session setup & recording into the ROS 2 launch system and command line interface.
 
-This might include converting existing `tracetools` scripts to more flexible Python scripts, and then plugging that into the launch system.
+This might include converting existing `tracetools` scripts to more flexible Python scripts, and then plugging that into the launch system and creating a `ros2cli` extension.
 
 ## Instrumentation design
 
