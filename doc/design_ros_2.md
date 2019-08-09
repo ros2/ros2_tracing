@@ -31,7 +31,7 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
     1. [Timeline](#timeline)
     2. [Notes on client libraries](#notes-on-client-libraries)
     3. [ROS 1/2 compatibility](#ros-12-compatibility)
-6. [Tools](#tools)
+6. [Tools packages](#tools-packages)
 7. [Analysis architecture](#analysis-architecture)
 
 ## Introduction
@@ -549,7 +549,7 @@ This effort should first focus on `rcl` and `rclcpp` , but `rclpy` should eventu
 
 We could look into making analyses work on both ROS 1 and ROS 2, through a common instrumentation interface (or other abstraction).
 
-## Tools
+## Tools packages
 
 * `tracetools_trace`
     * wraps the LTTng Python bindings to setup and start a tracing session
