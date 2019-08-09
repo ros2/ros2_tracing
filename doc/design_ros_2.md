@@ -576,6 +576,66 @@ We could look into making analyses work on both ROS 1 and ROS 2, through a commo
         * wrap trace events in Python `dict`
         * handle and process trace events to gather data
 
+```plantuml
+@startuml
+
+interface babeltrace
+hide babeltrace fields
+hide babeltrace methods
+hide babeltrace circle
+interface lttng
+hide lttng fields
+hide lttng methods
+hide lttng circle
+interface pandas
+hide pandas fields
+hide pandas methods
+hide pandas circle
+interface bokeh
+hide bokeh fields
+hide bokeh methods
+hide bokeh circle
+package <i>ros2cli</i> as ros2cli <<Rectangle>> #DADADA {
+}
+package <i>launch</i> as launch <<Rectangle>> #DADADA {
+}
+lttng -[hidden] babeltrace
+babeltrace -[hidden] pandas
+pandas -[hidden] bokeh
+ros2cli -[hidden] launch
+launch -[hidden] lttng
+
+package tracetools_trace <<Rectangle>> {
+}
+lttng <-- tracetools_trace
+
+package ros2trace <<Rectangle>> {
+}
+package tracetools_launch <<Rectangle>> {
+}
+ros2cli <|-- ros2trace
+tracetools_trace <-- ros2trace
+launch <|-- tracetools_launch
+tracetools_trace <-- tracetools_launch
+
+package tracetools_read <<Rectangle>> {
+}
+babeltrace <-- tracetools_read
+
+package tracetools_test <<Rectangle>> {
+}
+tracetools_launch <-- tracetools_test
+tracetools_read <-- tracetools_test
+
+package tracetools_analysis <<Rectangle>> {
+}
+tracetools_read <-- tracetools_analysis
+pandas <--- tracetools_analysis
+bokeh <--- tracetools_analysis
+
+@enduml
+```
+
 ## Analysis architecture
 
 With profiling as an example implementation.
