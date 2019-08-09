@@ -555,27 +555,25 @@ We could look into making analyses work on both ROS 1 and ROS 2, through a commo
     * wraps the LTTng Python bindings to setup and start a tracing session
     * exposes simplified setup functions with default values
     * provides an example `trace` entrypoint for tracing
-        ```shell
-        $ ros2 run tracetools_trace trace
-        ```
+        `$ ros2 run tracetools_trace trace`
 * `ros2trace`
     * provides a `ros2cli` extension
+    `$ ros2 trace`
         * uses `tracetools_trace` functions
 * `tracetools_launch`
     * provides a `Trace` action for `launch`
         * uses `tracetools_trace` functions
 * `tracetools_read`
-    * wraps the `babeltrace` Python bindings to read CTF traces
+    * wraps the babeltrace Python bindings to read CTF traces
 * `tracetools_test`
     * provides a `TraceTestCase` class extending `unittest.TestCase`
         * uses the `Trace` action with `launch` to trace the test nodes
-        * provides utility functions (e.g. assertion)
-
+        * provides trace-specific utility functions (e.g. assert)
 * `tracetools_analysis`
     * uses `tracetools_read` to read traces
     * provides utilities to:
         * convert CTF traces to pickle files
-        * wrap trace events in a Python `dict`
+        * wrap trace events in Python `dict`
         * handle and process trace events to gather data
 
 ## Analysis architecture
