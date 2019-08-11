@@ -30,7 +30,7 @@ build_enabled:
     - colcon test-result
   <<: *global_artifacts
 
-build:
+build_disabled:
   image: $base_image_id
   script:
     - colcon build --symlink-install --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
