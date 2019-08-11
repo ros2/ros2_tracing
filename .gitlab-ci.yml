@@ -41,6 +41,8 @@ build_disabled:
   <<: *global_artifacts
 
 build_no_lttng:
+  only:
+    - schedules
   image: $base_image_id:base
   script:
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
