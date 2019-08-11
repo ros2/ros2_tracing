@@ -23,6 +23,10 @@ repositories:
     type: git
     url: https://github.com/ament/uncrustify_vendor.git
     version: master
+  eProsima/foonathan_memory_vendor:
+    type: git
+    url: https://github.com/eProsima/foonathan_memory_vendor.git
+    version: master
   eProsima/Fast-CDR:
     type: git
     url: https://github.com/eProsima/Fast-CDR.git
@@ -30,6 +34,10 @@ repositories:
   eProsima/Fast-RTPS:
     type: git
     url: https://github.com/eProsima/Fast-RTPS.git
+    version: master
+  micro-ROS/ros_tracing/ros2_tracing:
+    type: git
+    url: https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing.git
     version: master
   osrf/osrf_pycommon:
     type: git
@@ -134,6 +142,10 @@ repositories:
   ros2/demos:
     type: git
     url: https://github.com/ros2/demos.git
+    version: master
+  ros2/eigen3_cmake_module:
+    type: git
+    url: https://github.com/ros2/eigen3_cmake_module.git
     version: master
   ros2/examples:
     type: git
@@ -314,10 +326,6 @@ repositories:
   ros2/tlsf:
     type: git
     url: https://github.com/ros2/tlsf.git
-    version: master
-  ros2/tracing:
-    type: git
-    url: https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing.git
     version: master
 #  ros2/tutorials:
 #    type: git
