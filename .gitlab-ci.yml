@@ -3,8 +3,6 @@ variables:
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
   base_image_id: registry.gitlab.com/micro-ros/ros_tracing/ci_base
 
-image: $base_image_id
-
 .global_artifacts: &global_artifacts
   artifacts:
     paths:
@@ -22,6 +20,7 @@ before_script:
   - . /root/ws/install/local_setup.sh
 
 build_enabled:
+  image: $base_image_id
   script:
     - lttng-sessiond --daemonize
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
@@ -31,11 +30,44 @@ build_enabled:
     - colcon test-result
   <<: *global_artifacts
 
-build:
+build_disabled:
+  image: $base_image_id
   script:
     - colcon build --symlink-install --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - (! ./build/tracetools/status)
+    - colcon test --packages-select $PACKAGES_LIST
+    - colcon test-result
+  <<: *global_artifacts
+
+build_no_lttng:
+  only:
+    - schedules
+  image: $base_image_id:base
+  script:
+    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+    - . install/local_setup.sh
+    - (! ./build/tracetools/status)
+    - colcon test --packages-select $PACKAGES_LIST
+    - colcon test-result
+  <<: *global_artifacts
+
+build_from_source:
+  only:
+    - schedules
+  image: $base_image_id
+  before_script:
+    - wget https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos
+    - mkdir src/
+    - vcs import src/ < ros2.repos
+    - rm -rf src/micro-ROS/
+    - vcs import --force src/ < instrumentation.repos
+    - rosdep install --from-paths src --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
+  script:
+    - lttng-sessiond --daemonize
+    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+    - . install/local_setup.sh
+    - ./build/tracetools/status
     - colcon test --packages-select $PACKAGES_LIST
     - colcon test-result
   <<: *global_artifacts
