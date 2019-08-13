@@ -2,6 +2,38 @@
 
 Design document for ROS 2 tracing, instrumentation, and analysis effort.
 
+**Table of contents**
+1. [Introduction](#introduction)
+2. [Goals and requirements](#goals-and-requirements)
+    1. [Goals](#goals)
+    2. [Requirements: instrumentation](#requirements-instrumentation)
+    3. [Requirements: analysis & visualization](#requirements-analysis-visualization)
+    4. [Tools/accessibility](#toolsaccessibility)
+3. [Instrumentation design](#instrumentation-design)
+    1. [Flow description](#flow-description)
+        1. [Process creation](#process-creation)
+        2. [Node/component creation](#nodecomponent-creation)
+        3. [Publisher creation](#publisher-creation)
+        4. [Subscription creation](#subscription-creation)
+        5. [Executors](#executors)
+        6. [Subscription callbacks](#subscription-callbacks)
+        7. [Message publishing](#message-publishing)
+        8. [Service creation](#service-creation)
+        9. [Service callbacks](#service-callbacks)
+        10. [Client creation](#client-creation)
+        11. [Client request](#client-request)
+        12. [Timer creation](#timer-creation)
+        13. [Timer callbacks](#timer-callbacks)
+4. [Design & implementation notes](#design-implementation-notes)
+    1. [Targeted tools/dependencies](#targeted-toolsdependencies)
+    2. [Design](#design)
+5. [Architecture](#architecture)
+    1. [Timeline](#timeline)
+    2. [Notes on client libraries](#notes-on-client-libraries)
+    3. [ROS 1/2 compatibility](#ros-12-compatibility)
+6. [Tools packages](#tools-packages)
+7. [Analysis architecture](#analysis-architecture)
+
 ## Introduction
 
 Tracing allows to record run-time data from a system, both for system data (e.g., when a process
@@ -56,9 +88,9 @@ Generic tracepoints for ROS 2 user code could be applied to a user-provided mode
 
 ### Tools/accessibility
 
-To make tracing ROS 2 more accessible and easier to adopt, we can put effort into integrating LTTng session setup & recording into the ROS 2 launch system.
+To make tracing ROS 2 more accessible and easier to adopt, we can put effort into integrating LTTng session setup & recording into the ROS 2 launch system and command line interface.
 
-This might include converting existing `tracetools` scripts to more flexible Python scripts, and then plugging that into the launch system.
+This might include converting existing `tracetools` scripts to more flexible Python scripts, and then plugging that into the launch system and creating a `ros2cli` extension.
 
 ## Instrumentation design
 
@@ -516,3 +548,155 @@ This effort should first focus on `rcl` and `rclcpp` , but `rclpy` should eventu
 ### ROS 1/2 compatibility
 
 We could look into making analyses work on both ROS 1 and ROS 2, through a common instrumentation interface (or other abstraction).
+
+## Tools packages
+
+* `tracetools_trace`
+    * wraps the LTTng Python bindings to setup and start a tracing session
+    * exposes simplified setup functions with default values
+    * provides an example `trace` entrypoint for tracing
+        `$ ros2 run tracetools_trace trace`
+* `ros2trace`
+    * provides a `ros2cli` extension
+    `$ ros2 trace`
+        * uses `tracetools_trace` functions
+* `tracetools_launch`
+    * provides a `Trace` action for `launch`
+        * uses `tracetools_trace` functions
+* `tracetools_read`
+    * wraps the babeltrace Python bindings to read CTF traces
+* `tracetools_test`
+    * provides a `TraceTestCase` class extending `unittest.TestCase`
+        * uses the `Trace` action with `launch` to trace the test nodes
+        * provides trace-specific utility functions (e.g. assert)
+* `tracetools_analysis`
+    * uses `tracetools_read` to read traces
+    * provides utilities to:
+        * convert CTF traces to pickle files
+        * wrap trace events in Python `dict`
+        * handle and process trace events to gather data
+
+```plantuml
+@startuml
+
+interface babeltrace
+hide babeltrace fields
+hide babeltrace methods
+hide babeltrace circle
+interface lttng
+hide lttng fields
+hide lttng methods
+hide lttng circle
+interface pandas
+hide pandas fields
+hide pandas methods
+hide pandas circle
+interface bokeh
+hide bokeh fields
+hide bokeh methods
+hide bokeh circle
+package <i>ros2cli</i> as ros2cli <<Rectangle>> #DADADA {
+}
+package <i>launch</i> as launch <<Rectangle>> #DADADA {
+}
+lttng -[hidden] babeltrace
+babeltrace -[hidden] pandas
+pandas -[hidden] bokeh
+ros2cli -[hidden] launch
+launch -[hidden] lttng
+
+package tracetools_trace <<Rectangle>> {
+}
+lttng <-- tracetools_trace
+
+package ros2trace <<Rectangle>> {
+}
+package tracetools_launch <<Rectangle>> {
+}
+ros2cli <|-- ros2trace
+tracetools_trace <-- ros2trace
+launch <|-- tracetools_launch
+tracetools_trace <-- tracetools_launch
+
+package tracetools_read <<Rectangle>> {
+}
+babeltrace <-- tracetools_read
+
+package tracetools_test <<Rectangle>> {
+}
+tracetools_launch <-- tracetools_test
+tracetools_read <-- tracetools_test
+
+package tracetools_analysis <<Rectangle>> {
+}
+tracetools_read <-- tracetools_analysis
+pandas <--- tracetools_analysis
+bokeh <--- tracetools_analysis
+
+@enduml
+```
+
+## Analysis architecture
+
+With profiling as an example implementation.
+
+```plantuml
+@startuml
+
+class Processor {
+ +process(events)
+ -_process_event(event)
+ -_expand_dependencies(initial_handlers): list {static}
+ -_get_handler_maps(handlers): multimap {static}
+}
+class DependencySolver {
+ +solve(initial_dependants): list
+}
+DependencySolver <-- Processor
+
+abstract class Dependant {
+ +dependencies(): list {static}
+}
+abstract class EventHandler {
+ +handler_map
+ +data(): DataModel {abstract}
+ +process(events) {static}
+}
+class ProfileHandler {
+ +data(): ProfileDataModel
+ +_handle_sched_switch(event, metadata)
+ +_handle_function_entry(event, metadata)
+ +_handle_function_exit(event, metadata)
+}
+Dependant <|-- EventHandler
+EventHandler <|-- ProfileHandler
+Processor o-- EventHandler
+
+abstract class DataModel {
+}
+class ProfileDataModel {
+ +times: DataFrame
+ +add_duration(tid, depth, name, timestamp, duration)
+}
+DataModel <|-- ProfileDataModel
+ProfileDataModel o-- ProfileHandler
+
+abstract class DataModelUtil {
+ +convert_time_columns(df, columns): df {static}
+}
+class ProfileDataModelUtil {
+ +get_tids(): list
+ +get_function_duration_data(tid): DataFrames
+}
+DataModelUtil <|-- ProfileDataModelUtil
+DataModelUtil o-- DataModel
+
+class Notebook {
+}
+Notebook --> ProfileHandler
+Notebook --> ProfileDataModelUtil
+Notebook --> Processor
+hide Notebook circle
+
+@enduml
+```
