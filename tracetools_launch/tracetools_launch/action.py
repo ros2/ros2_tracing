@@ -81,8 +81,7 @@ class Trace(Action):
     @classmethod
     def has_profiling_events(cls, events_ust: List[str]) -> bool:
         """Check if the UST events list contains at least one profiling event."""
-        matches = [re.match(cls.PROFILE_EVENT_PATTERN, event_name) for event_name in events_ust]
-        return any(matches)
+        return any(re.match(cls.PROFILE_EVENT_PATTERN, event_name) for event_name in events_ust)
 
     @staticmethod
     def get_shared_lib_path(lib_name: str) -> Union[str, None]:
