@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add LD_PRELOAD support for profiling in Trace action
+* Contributors: Christophe Bedard
+
 0.2.3 (2019-08-05)
 ------------------
 * Add append_timestamp option for trace action
