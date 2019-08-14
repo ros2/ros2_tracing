@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.4 (2019-08-14)
+------------------
+* Ignore unused tracepoint parameters on Windows
+* Contributors: Christophe Bedard
+
 0.2.3 (2019-08-05)
 ------------------
 * Fix Windows warnings
