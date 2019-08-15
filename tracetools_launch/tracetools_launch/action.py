@@ -14,7 +14,6 @@
 
 """Module for the Trace action."""
 
-import os
 import re
 import subprocess
 from typing import List
@@ -26,6 +25,7 @@ from launch.actions import SetEnvironmentVariable
 from launch.event import Event
 from launch.event_handlers import OnShutdown
 from launch.launch_context import LaunchContext
+from tracetools_trace import tracing_supported
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import names
 from tracetools_trace.tools import path
@@ -94,7 +94,7 @@ class Trace(Action):
         :param lib_name: the name of the shared library
         :return: the full path if found, `None` otherwise
         """
-        if os.name == 'nt':
+        if not tracing_supported():
             return None
         (exit_code, output) = subprocess.getstatusoutput(f'whereis -b {lib_name}')
         if exit_code != 0:
