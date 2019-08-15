@@ -22,13 +22,16 @@ from tracetools_launch.action import Trace
 def generate_launch_description():
     return LaunchDescription([
         Trace(
-            session_name='my-tracing-session'),
+            session_name='my-tracing-session',
+        ),
         Node(
             package='tracetools_test',
             node_executable='test_ping',
-            output='screen'),
+            output='screen',
+        ),
         Node(
             package='tracetools_test',
             node_executable='test_pong',
-            output='screen'),
+            output='screen',
+        ),
     ])
