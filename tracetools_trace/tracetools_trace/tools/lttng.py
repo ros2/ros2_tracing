@@ -16,7 +16,10 @@
 
 from typing import List
 
-import lttng
+try:
+    import lttng
+except ImportError:
+    lttng = None
 
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_KERNEL
@@ -77,6 +80,9 @@ def _lttng_setup(
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
     """
+    if lttng is None:
+        return None
+
     # Resolve full tracing directory path
     full_path = get_full_session_path(session_name, base_path=base_path)
 
@@ -149,6 +155,9 @@ def _lttng_start(session_name: str) -> None:
 
     :param session_name: the name of the session
     """
+    if lttng is None:
+        return None
+
     result = lttng.start(session_name)
     if result < 0:
         raise RuntimeError(f'failed to start tracing: {lttng.strerror(result)}')
@@ -160,6 +169,9 @@ def _lttng_stop(session_name: str) -> None:
 
     :param session_name: the name of the session
     """
+    if lttng is None:
+        return None
+
     result = lttng.stop(session_name)
     if result < 0:
         raise RuntimeError(f'failed to stop tracing: {lttng.strerror(result)}')
@@ -171,6 +183,9 @@ def _lttng_destroy(session_name: str) -> None:
 
     :param session_name: the name of the session
     """
+    if lttng is None:
+        return None
+
     result = lttng.destroy(session_name)
     if result < 0:
         raise RuntimeError(f'failed to destroy tracing session: {lttng.strerror(result)}')
