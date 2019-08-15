@@ -20,6 +20,7 @@ import sys
 def tracing_supported() -> bool:
     """
     Check if tracing is supported on this platform.
+
     It does not mean a tracer is installed.
     """
     return sys.platform == 'linux'
