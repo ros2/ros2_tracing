@@ -44,6 +44,8 @@ def lttng_init(
     :param kernel_events: list of kernel events to enable
     :param context_names: list of context elements to enable
     """
+    if lttng is None:
+        return None
     _lttng_setup(session_name, base_path, ros_events, kernel_events, context_names)
     _lttng_start(session_name)
 
@@ -54,6 +56,8 @@ def lttng_fini(session_name: str) -> None:
 
     :param session_name: the name of the session
     """
+    if lttng is None:
+        return None
     _lttng_stop(session_name)
     _lttng_destroy(session_name)
 
@@ -80,9 +84,6 @@ def _lttng_setup(
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
     """
-    if lttng is None:
-        return None
-
     # Resolve full tracing directory path
     full_path = get_full_session_path(session_name, base_path=base_path)
 
@@ -155,9 +156,6 @@ def _lttng_start(session_name: str) -> None:
 
     :param session_name: the name of the session
     """
-    if lttng is None:
-        return None
-
     result = lttng.start(session_name)
     if result < 0:
         raise RuntimeError(f'failed to start tracing: {lttng.strerror(result)}')
@@ -169,9 +167,6 @@ def _lttng_stop(session_name: str) -> None:
 
     :param session_name: the name of the session
     """
-    if lttng is None:
-        return None
-
     result = lttng.stop(session_name)
     if result < 0:
         raise RuntimeError(f'failed to stop tracing: {lttng.strerror(result)}')
@@ -183,9 +178,6 @@ def _lttng_destroy(session_name: str) -> None:
 
     :param session_name: the name of the session
     """
-    if lttng is None:
-        return None
-
     result = lttng.destroy(session_name)
     if result < 0:
         raise RuntimeError(f'failed to destroy tracing session: {lttng.strerror(result)}')
