@@ -25,10 +25,10 @@ from launch.actions import SetEnvironmentVariable
 from launch.event import Event
 from launch.event_handlers import OnShutdown
 from launch.launch_context import LaunchContext
-from tracetools_trace import tracing_supported
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import names
 from tracetools_trace.tools import path
+from tracetools_trace.tools import tracing_supported
 
 
 class Trace(Action):
