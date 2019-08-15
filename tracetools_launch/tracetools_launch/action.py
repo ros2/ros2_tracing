@@ -28,6 +28,7 @@ from launch.launch_context import LaunchContext
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import names
 from tracetools_trace.tools import path
+from tracetools_trace.tools import tracing_supported
 
 
 class Trace(Action):
@@ -73,10 +74,12 @@ class Trace(Action):
         self.__ld_preload_action = None
         if self.has_profiling_events(events_ust):
             profile_lib_name = self.PROFILE_LIB_FAST if profile_fast else self.PROFILE_LIB_NORMAL
-            self.__ld_preload_action = SetEnvironmentVariable(
-                'LD_PRELOAD',
-                self.get_shared_lib_path(profile_lib_name),
-            )
+            profile_lib_path = self.get_shared_lib_path(profile_lib_name)
+            if profile_lib_path is not None:
+                self.__ld_preload_action = SetEnvironmentVariable(
+                    'LD_PRELOAD',
+                    profile_lib_path,
+                )
 
     @classmethod
     def has_profiling_events(cls, events_ust: List[str]) -> bool:
@@ -91,6 +94,8 @@ class Trace(Action):
         :param lib_name: the name of the shared library
         :return: the full path if found, `None` otherwise
         """
+        if not tracing_supported():
+            return None
         (exit_code, output) = subprocess.getstatusoutput(f'whereis -b {lib_name}')
         if exit_code != 0:
             return None

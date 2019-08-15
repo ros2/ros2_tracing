@@ -16,7 +16,10 @@
 
 from typing import List
 
-import lttng
+try:
+    import lttng
+except ImportError:
+    lttng = None
 
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_KERNEL
@@ -41,6 +44,8 @@ def lttng_init(
     :param kernel_events: list of kernel events to enable
     :param context_names: list of context elements to enable
     """
+    if lttng is None:
+        return None
     _lttng_setup(session_name, base_path, ros_events, kernel_events, context_names)
     _lttng_start(session_name)
 
@@ -51,6 +56,8 @@ def lttng_fini(session_name: str) -> None:
 
     :param session_name: the name of the session
     """
+    if lttng is None:
+        return None
     _lttng_stop(session_name)
     _lttng_destroy(session_name)
 
