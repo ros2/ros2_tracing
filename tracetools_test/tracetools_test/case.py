@@ -25,7 +25,7 @@ from tracetools_read import get_event_name
 from tracetools_read import get_event_timestamp
 from tracetools_read import get_field
 from tracetools_read import get_procname
-from tracetools_read import get_trace_events
+from tracetools_read.trace import get_trace_events
 
 from .utils import cleanup_trace
 from .utils import get_event_names
