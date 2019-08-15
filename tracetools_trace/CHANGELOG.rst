@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Make lttng interface silently do nothing if lttng cannot be imported
+* Contributors: Christophe Bedard
+
 0.2.2 (2019-08-01)
 ------------------
 * Revert "Replace special character to fix encoding issue"

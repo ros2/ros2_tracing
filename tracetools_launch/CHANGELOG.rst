@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Check if OS is Windows when getting shared lib path
+* Contributors: Christophe Bedard
+
 0.2.4 (2019-08-14)
 ------------------
 * Add LD_PRELOAD support for profiling in Trace action
