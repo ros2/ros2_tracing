@@ -2,8 +2,8 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.5 (2019-08-15)
+------------------
 * Check if OS is Windows when getting shared lib path
 * Contributors: Christophe Bedard
 

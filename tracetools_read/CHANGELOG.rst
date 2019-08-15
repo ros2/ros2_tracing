@@ -2,8 +2,8 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.5 (2019-08-15)
+------------------
 * Move babeltrace interface functions to separate file to avoid importing it needlessly
 * Contributors: Christophe Bedard
 

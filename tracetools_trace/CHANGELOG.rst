@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.5 (2019-08-15)
+------------------
 * Make lttng interface silently do nothing if lttng cannot be imported
 * Contributors: Christophe Bedard
 
