@@ -58,7 +58,12 @@ private:
 
 int main(int argc, char * argv[])
 {
-  bool do_only_one = argc == 1;
+  bool do_only_one = true;
+  for (int i = 0; i < argc; ++i) {
+    if (strncmp(argv[i], "do_more", 7) == 0) {
+      do_only_one = false;
+    }
+  }
 
   rclcpp::init(argc, argv);
 
