@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.6 (2019-08-16)
+------------------
 * Fix "do_more" check for test_ping/test_pong
 * Contributors: Christophe Bedard
 
