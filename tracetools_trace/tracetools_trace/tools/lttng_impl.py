@@ -25,7 +25,7 @@ from .path import DEFAULT_BASE_PATH
 from .path import get_full_session_path
 
 
-def _lttng_setup(
+def setup(
     session_name: str,
     base_path: str = DEFAULT_BASE_PATH,
     ros_events: List[str] = DEFAULT_EVENTS_ROS,
@@ -113,7 +113,7 @@ def _lttng_setup(
     _add_context(enabled_handles, context_list)
 
 
-def _lttng_start(session_name: str) -> None:
+def start(session_name: str) -> None:
     """
     Start LTTng session, and check for errors.
 
@@ -124,7 +124,7 @@ def _lttng_start(session_name: str) -> None:
         raise RuntimeError(f'failed to start tracing: {lttng.strerror(result)}')
 
 
-def _lttng_stop(session_name: str) -> None:
+def stop(session_name: str) -> None:
     """
     Stop LTTng session, and check for errors.
 
@@ -135,7 +135,7 @@ def _lttng_stop(session_name: str) -> None:
         raise RuntimeError(f'failed to stop tracing: {lttng.strerror(result)}')
 
 
-def _lttng_destroy(session_name: str) -> None:
+def destroy(session_name: str) -> None:
     """
     Destroy LTTng session, and check for errors.
 
@@ -175,7 +175,7 @@ def _create_session(session_name: str, full_path: str) -> None:
     if result == -LTTNG_ERR_EXIST_SESS:
         # Sessions seem to persist, so if it already exists,
         # just destroy it and try again
-        _lttng_destroy(session_name)
+        destroy(session_name)
         result = lttng.create(session_name, full_path)
     if result < 0:
         raise RuntimeError(f'session creation failed: {lttng.strerror(result)}')
