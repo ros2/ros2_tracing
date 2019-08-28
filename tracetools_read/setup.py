@@ -16,7 +16,7 @@ setup(
         'Ingo Lütkebohle'
     ),
     maintainer_email=(
-        'fixed-term.christophe.bourquebedard@de.bosch.com, '
+        'bedard.christophe@gmail.com, '
         'ingo.luetkebohle@de.bosch.com'
     ),
     author='Christophe Bedard',
