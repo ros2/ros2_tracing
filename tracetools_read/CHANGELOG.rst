@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix missing ament_xmllint dependency
+* Contributors: Christophe Bedard
+
 0.2.5 (2019-08-15)
 ------------------
 * Move babeltrace interface functions to separate file to avoid importing it needlessly

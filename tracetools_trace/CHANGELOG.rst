@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix missing ament_xmllint dependency
+* Contributors: Christophe Bedard
+
 0.2.6 (2019-08-16)
 ------------------
 * Extract lttng interface functions to other files
