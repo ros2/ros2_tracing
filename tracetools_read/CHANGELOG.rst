@@ -2,8 +2,8 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.7 (2019-09-09)
+------------------
 * Fix missing ament_xmllint dependency
 * Contributors: Christophe Bedard
 
