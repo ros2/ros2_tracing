@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.7 (2019-09-09)
+------------------
+* Fix missing ament_xmllint dependency
+* Contributors: Christophe Bedard
+
 0.2.5 (2019-08-15)
 ------------------
 * Check if OS is Windows when getting shared lib path
