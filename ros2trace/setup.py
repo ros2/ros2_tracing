@@ -1,10 +1,15 @@
 from setuptools import find_packages
 from setuptools import setup
 
+package_name = 'ros2trace'
+
 setup(
-    name='ros2trace',
+    name=package_name,
     version='0.2.7',
     packages=find_packages(exclude=['test']),
+    data_files=[
+        ('share/' + package_name, ['package.xml']),
+    ],
     install_requires=['ros2cli'],
     zip_safe=True,
     maintainer=(
@@ -28,7 +33,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'ros2cli.command': [
-            'trace = ros2trace.command.trace:TraceCommand',
+            f'trace = {package_name}.command.trace:TraceCommand',
         ],
     }
 )
