@@ -26,7 +26,7 @@ build_enabled:
     - . install/local_setup.sh
     - ./build/tracetools/status
     - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result
+    - colcon test-result --all
   <<: *global_artifacts
 
 build_disabled:
@@ -36,7 +36,7 @@ build_disabled:
     - . install/local_setup.sh
     - (! ./build/tracetools/status)
     - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result
+    - colcon test-result --all
   <<: *global_artifacts
 
 build_no_lttng:
@@ -46,5 +46,5 @@ build_no_lttng:
     - . install/local_setup.sh
     - (! ./build/tracetools/status)
     - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result
+    - colcon test-result --all
   <<: *global_artifacts
