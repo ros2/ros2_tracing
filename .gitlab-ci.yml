@@ -16,10 +16,9 @@ variables:
 
 before_script:
   - vcs import < instrumentation.repos
-  - rosdep install --from-paths . -i . -i /root/ws --rosdistro dashing -y
   - . /root/ws/install/local_setup.sh
 
-build_enabled:
+tracing_enabled:
   image: $base_image_id
   script:
     - lttng-sessiond --daemonize
@@ -27,49 +26,25 @@ build_enabled:
     - . install/local_setup.sh
     - ./build/tracetools/status
     - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result
+    - colcon test-result --all
   <<: *global_artifacts
 
-build_disabled:
+tracing_disabled:
   image: $base_image_id
   script:
     - colcon build --symlink-install --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - (! ./build/tracetools/status)
     - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result
+    - colcon test-result --all
   <<: *global_artifacts
 
-build_no_lttng:
+no_lttng:
   image: $base_image_id:base
-  before_script:
-    - vcs import < instrumentation.repos
-    - rosdep install --from-paths . -i . -i /root/ws --rosdistro dashing -y --skip-keys "python3-lttng python3-babeltrace console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
-    - . /root/ws/install/local_setup.sh
   script:
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - (! ./build/tracetools/status)
     - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result
-  <<: *global_artifacts
-
-build_from_source:
-  only:
-    - schedules
-  image: $base_image_id
-  before_script:
-    - wget https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos
-    - mkdir src/
-    - vcs import src/ < ros2.repos
-    - rm -rf src/micro-ROS/
-    - vcs import --force src/ < instrumentation.repos
-    - rosdep install --from-paths src --ignore-src --rosdistro dashing -y --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers"
-  script:
-    - lttng-sessiond --daemonize
-    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
-    - . install/local_setup.sh
-    - ./build/tracetools/status
-    - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result
+    - colcon test-result --all
   <<: *global_artifacts
