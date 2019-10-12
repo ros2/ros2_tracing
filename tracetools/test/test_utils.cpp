@@ -58,6 +58,25 @@ TEST(TestUtils, valid_symbol_lambda) {
 }
 
 /*
+   Testing symbol resolution lambdas with capture.
+ */
+TEST(TestUtils, valid_symbol_lambda_capture) {
+  int num = 1;
+
+  auto l = [ = ]() {return num + 1;};
+  EXPECT_STREQ(
+    get_symbol(l),
+    "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda()#1}") <<
+    "invalid symbol";
+
+  auto m = [&](int other_num) {return num + other_num;};
+  EXPECT_STREQ(
+    get_symbol(m),
+    "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#2}") <<
+    "invalid symbol";
+}
+
+/*
    Testing symbol resolution for std::function object created from std::bind.
  */
 TEST(TestUtils, valid_symbol_bind) {
