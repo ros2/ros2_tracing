@@ -45,3 +45,7 @@ By default, it will enable all ROS tracepoints and a few kernel tracepoints. The
 Another option is to use the `Trace` action in a launch file along with your `Node` action(s).
 
 See [this example launch file](./tracetools_launch/launch/example.launch.py) for more information.
+
+## Design
+
+See the [design document](./doc/design_ros_2.md).
