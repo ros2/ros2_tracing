@@ -14,6 +14,7 @@
 
 """Module with functions for reading traces."""
 
+import os
 from typing import Iterable
 from typing import List
 
@@ -23,6 +24,22 @@ from . import DictEvent
 
 
 BabeltraceEvent = babeltrace.babeltrace.Event
+
+
+def is_trace_directory(path: str) -> bool:
+    """
+    Check recursively if a path is a trace directory.
+
+    :param path: the path to check
+    :return: `True` if it is a trace directory, `False` otherwise
+    """
+    path = os.path.expanduser(path)
+    if not os.path.isdir(path):
+        return False
+    tc = babeltrace.TraceCollection()
+    # Could still return an empty dict even if it is not a trace directory (recursively)
+    traces = tc.add_traces_recursive(path, 'ctf')
+    return traces is not None and len(traces) > 0
 
 
 def get_trace_ctf_events(trace_directory: str) -> Iterable[BabeltraceEvent]:
