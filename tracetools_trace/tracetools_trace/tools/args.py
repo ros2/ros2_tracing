@@ -40,26 +40,27 @@ def parse_args():
 
 def add_arguments(parser):
     parser.add_argument(
-        '--session-name', '-s', dest='session_name',
+        '-s', '--session-name', dest='session_name',
         default=path.append_timestamp('session'),
         help='the name of the tracing session (default: session-YYYYMMDDHHMMSS)')
     parser.add_argument(
-        '--path', '-p', dest='path',
+        '-p', '--path', dest='path',
         default=path.DEFAULT_BASE_PATH,
         help='path of the base directory for trace data (default: %(default)s)')
     arg = parser.add_argument(
-        '--ust', '-u', nargs='*', dest='events_ust', default=names.DEFAULT_EVENTS_ROS,
+        '-u', '--ust', nargs='*', dest='events_ust',
+        default=names.DEFAULT_EVENTS_ROS,
         help='the ROS UST events to enable (default: all events) '
              '[to disable all UST events, '
              'provide this flag without any event name]')
     arg.completer = DefaultArgValueCompleter(arg)
     arg = parser.add_argument(
-        '--kernel', '-k', nargs='*', dest='events_kernel',
+        '-k', '--kernel', nargs='*', dest='events_kernel',
         default=names.DEFAULT_EVENTS_KERNEL,
         help='the kernel events to enable (default: all events) '
              '[to disable all kernel events, '
              'provide this flag without any event name]')
     arg.completer = DefaultArgValueCompleter(arg)
     parser.add_argument(
-        '--list', '-l', dest='list', action='store_true',
+        '-l', '--list', dest='list', action='store_true',
         help='display lists of enabled events (default: %(default)s)')
