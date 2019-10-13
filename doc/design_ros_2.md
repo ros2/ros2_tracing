@@ -575,6 +575,12 @@ We could look into making analyses work on both ROS 1 and ROS 2, through a commo
         * convert CTF traces to pickle files
         * wrap trace events in Python `dict`
         * handle and process trace events to gather data
+* `ros2trace_analysis`
+    * provides a `ros2cli` extension with verbs
+    `$ ros2 trace-analysis`
+        * uses `tracetools_analysis` functions
+        `$ ros2 trace-analysis convert`
+        `$ ros2 trace-analysis process`
 
 ```plantuml
 @startuml
@@ -632,6 +638,11 @@ package tracetools_analysis <<Rectangle>> {
 tracetools_read <-- tracetools_analysis
 pandas <--- tracetools_analysis
 bokeh <--- tracetools_analysis
+
+package ros2trace_analysis <<Rectangle>> {
+}
+ros2cli <|-- ros2trace_analysis
+tracetools_analysis <-- ros2trace_analysis
 
 @enduml
 ```
