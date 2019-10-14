@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.8 (2019-10-14)
+------------------
 * Re-order args for trace command
 * Contributors: Christophe Bedard
 

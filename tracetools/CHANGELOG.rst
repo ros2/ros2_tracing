@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.8 (2019-10-14)
+------------------
 * Add overload of get_symbols as a fallback
 * Contributors: Christophe Bedard, Ingo Lütkebohle
 

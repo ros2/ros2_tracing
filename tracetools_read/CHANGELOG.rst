@@ -2,8 +2,8 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.8 (2019-10-14)
+------------------
 * Add is_trace_directory() util function
 * Contributors: Christophe Bedard
 
