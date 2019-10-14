@@ -38,4 +38,11 @@ const char * get_symbol(std::function<T(U...)> f)
   return _demangle_symbol(f.target_type().name());
 }
 
+// Fallback meant for lambdas with captures
+template<typename L>
+const char * get_symbol(L && l)
+{
+  return _demangle_symbol(typeid(l).name());
+}
+
 #endif  // TRACETOOLS__UTILS_HPP_
