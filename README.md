@@ -42,6 +42,14 @@ By default, it will enable all ROS tracepoints and a few kernel tracepoints. The
 
 ### Launch file trace action
 
-Another option is to use the `Trace` action in a launch file along with your `Node` action(s).
+Another option is to use the `Trace` action in a launch file along with your `Node` action(s). This way, tracing happens when launching the launch file.
+
+```
+$ ros2 launch tracetools_launch example.launch.py
+```
 
 See [this example launch file](./tracetools_launch/launch/example.launch.py) for more information.
+
+## Design
+
+See the [design document](./doc/design_ros_2.md).
