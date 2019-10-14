@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Re-order args for trace command
+* Contributors: Christophe Bedard
+
 0.2.7 (2019-09-09)
 ------------------
 * Fix missing ament_xmllint dependency
