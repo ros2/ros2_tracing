@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.8 (2019-10-14)
+------------------
+* Add overload of get_symbols as a fallback
+* Contributors: Christophe Bedard, Ingo Lütkebohle
+
 0.2.4 (2019-08-14)
 ------------------
 * Ignore unused tracepoint parameters on Windows
