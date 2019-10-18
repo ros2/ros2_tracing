@@ -5,7 +5,7 @@
   <version>0.2.8</version>
   <description>Tracing wrapper for ROS 2.</description>
   <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
-  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
+  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Luetkebohle</maintainer>
   <license>Apache 2.0</license>
   <author email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</author>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
