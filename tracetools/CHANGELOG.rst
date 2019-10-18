@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.9 (2019-10-18)
+------------------
 * Set symbols visibility to public for util functions
 * Contributors: Christophe Bedard, Ingo Lütkebohle
 
