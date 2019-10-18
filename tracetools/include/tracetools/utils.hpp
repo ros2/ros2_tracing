@@ -18,11 +18,13 @@
 #include <stddef.h>
 #include <functional>
 
+#include "tracetools/visibility_control.hpp"
+
 #define SYMBOL_UNKNOWN "UNKNOWN"
 
-const char * _demangle_symbol(const char * mangled);
+TRACETOOLS_PUBLIC const char * _demangle_symbol(const char * mangled);
 
-const char * _get_symbol_funcptr(void * funcptr);
+TRACETOOLS_PUBLIC const char * _get_symbol_funcptr(void * funcptr);
 
 template<typename T, typename ... U>
 const char * get_symbol(std::function<T(U...)> f)
