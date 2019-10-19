@@ -15,7 +15,7 @@ variables:
         - build/*/pytest.xml
 
 before_script:
-  - vcs import < instrumentation.repos
+  - vcs import < instrumented.repos
   - . /root/ws/install/local_setup.sh
 
 tracing_enabled:
