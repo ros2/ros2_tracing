@@ -141,7 +141,7 @@ if(BUILD_TESTING)
 
     # Run each test in its own pytest invocation
     set(_tracetools_test_pytest_tests
-      test/test_intra.py
+      #test/test_intra.py
       test/test_node.py
       test/test_publisher.py
       test/test_service.py
