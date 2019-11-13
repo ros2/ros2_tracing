@@ -50,7 +50,6 @@ class TestIntra(TraceTestCase):
         # Get subscription handle
         sub_init_normal_event = sub_init_normal_events[0]
         sub_handle_intra = self.get_field(sub_init_normal_event, 'subscription_handle')
-        print(f'sub_handle_intra: {sub_handle_intra}')
 
         # Get corresponding callback handle
         # Callback handle
