@@ -19,7 +19,7 @@
 #if defined(TRACETOOLS_LTTNG_ENABLED)
 # include "tracetools/tp_call.h"
 # define CONDITIONAL_TP(...) \
-  tracepoint(__VA_ARGS__)
+  tracepoint(TRACEPOINT_PROVIDER, __VA_ARGS__)
 #else
 # define CONDITIONAL_TP(...)
 #endif
@@ -46,7 +46,6 @@ void TRACEPOINT(
   const void * context_handle)
 {
   CONDITIONAL_TP(
-    ros2,
     rcl_init,
     context_handle,
     tracetools_VERSION);
@@ -60,7 +59,6 @@ void TRACEPOINT(
   const char * node_namespace)
 {
   CONDITIONAL_TP(
-    ros2,
     rcl_node_init,
     node_handle,
     rmw_handle,
@@ -77,7 +75,6 @@ void TRACEPOINT(
   const size_t queue_depth)
 {
   CONDITIONAL_TP(
-    ros2,
     rcl_publisher_init,
     publisher_handle,
     node_handle,
@@ -95,7 +92,6 @@ void TRACEPOINT(
   const size_t queue_depth)
 {
   CONDITIONAL_TP(
-    ros2,
     rcl_subscription_init,
     subscription_handle,
     node_handle,
@@ -110,7 +106,6 @@ void TRACEPOINT(
   const void * subscription)
 {
   CONDITIONAL_TP(
-    ros2,
     rclcpp_subscription_init,
     subscription_handle,
     subscription);
@@ -122,7 +117,6 @@ void TRACEPOINT(
   const void * callback)
 {
   CONDITIONAL_TP(
-    ros2,
     rclcpp_subscription_callback_added,
     subscription,
     callback);
@@ -136,7 +130,6 @@ void TRACEPOINT(
   const char * service_name)
 {
   CONDITIONAL_TP(
-    ros2,
     rcl_service_init,
     service_handle,
     node_handle,
@@ -150,7 +143,6 @@ void TRACEPOINT(
   const void * callback)
 {
   CONDITIONAL_TP(
-    ros2,
     rclcpp_service_callback_added,
     service_handle,
     callback);
@@ -164,7 +156,6 @@ void TRACEPOINT(
   const char * service_name)
 {
   CONDITIONAL_TP(
-    ros2,
     rcl_client_init,
     client_handle,
     node_handle,
@@ -178,7 +169,6 @@ void TRACEPOINT(
   int64_t period)
 {
   CONDITIONAL_TP(
-    ros2,
     rcl_timer_init,
     timer_handle,
     period);
@@ -190,7 +180,6 @@ void TRACEPOINT(
   const void * callback)
 {
   CONDITIONAL_TP(
-    ros2,
     rclcpp_timer_callback_added,
     timer_handle,
     callback);
@@ -202,7 +191,6 @@ void TRACEPOINT(
   const char * function_symbol)
 {
   CONDITIONAL_TP(
-    ros2,
     rclcpp_callback_register,
     callback,
     function_symbol);
@@ -214,7 +202,6 @@ void TRACEPOINT(
   const bool is_intra_process)
 {
   CONDITIONAL_TP(
-    ros2,
     callback_start,
     callback,
     (is_intra_process ? 1 : 0));
@@ -225,7 +212,6 @@ void TRACEPOINT(
   const void * callback)
 {
   CONDITIONAL_TP(
-    ros2,
     callback_end,
     callback);
 }
