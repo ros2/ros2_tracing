@@ -105,14 +105,26 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
-  rclcpp_subscription_callback_added,
+  rclcpp_subscription_init,
   const void * subscription_handle,
+  const void * subscription)
+{
+  CONDITIONAL_TP(
+    ros2,
+    rclcpp_subscription_init,
+    subscription_handle,
+    subscription);
+}
+
+void TRACEPOINT(
+  rclcpp_subscription_callback_added,
+  const void * subscription,
   const void * callback)
 {
   CONDITIONAL_TP(
     ros2,
     rclcpp_subscription_callback_added,
-    subscription_handle,
+    subscription,
     callback);
 }
 
