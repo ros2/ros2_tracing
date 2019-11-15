@@ -33,8 +33,8 @@ class TestTimer(TraceTestCase):
         )
 
     def test_all(self):
-        # Check events order as set (e.g. init, callback added, start, end)
-        self.assertEventsOrderSet(self._events_ros)
+        # Check events as set
+        self.assertEventsSet(self._events_ros)
 
         # Check fields
         init_events = self.get_events_with_name('ros2:rcl_timer_init')

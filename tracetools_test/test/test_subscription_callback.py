@@ -31,8 +31,8 @@ class TestSubscriptionCallback(TraceTestCase):
         )
 
     def test_all(self):
-        # Check events order as set (e.g. start before end)
-        self.assertEventsOrderSet(self._events_ros)
+        # Check events as set
+        self.assertEventsSet(self._events_ros)
 
         # Check fields
         start_events = self.get_events_with_name('ros2:callback_start')

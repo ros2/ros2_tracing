@@ -99,13 +99,13 @@ class TraceTestCase(unittest.TestCase):
     def tearDown(self):
         cleanup_trace(self._full_path)
 
-    def assertEventsOrderSet(self, event_names: List[str]):
+    def assertEventsSet(self, event_names: List[str]):
         """
         Compare given event names to trace events names as sets.
 
         :param event_names: the list of event names to compare to (as a set)
         """
-        self.assertSetEqual(set(self._event_names), set(event_names), 'wrong events order')
+        self.assertSetEqual(set(self._event_names), set(event_names), 'wrong events')
 
     def assertProcessNamesExist(self, names: List[str]):
         """

@@ -32,8 +32,8 @@ class TestService(TraceTestCase):
         )
 
     def test_all(self):
-        # Check events order as set (e.g. service_init before callback_added)
-        self.assertEventsOrderSet(self._events_ros)
+        # Check events as set
+        self.assertEventsSet(self._events_ros)
 
         # Check fields
         srv_init_events = self.get_events_with_name('ros2:rcl_service_init')

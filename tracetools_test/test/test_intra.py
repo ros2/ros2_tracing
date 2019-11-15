@@ -33,8 +33,8 @@ class TestIntra(TraceTestCase):
         )
 
     def test_all(self):
-        # Check events order as set (e.g. node_init before pub_init)
-        self.assertEventsOrderSet(self._events_ros)
+        # Check events as set
+        self.assertEventsSet(self._events_ros)
 
         # Check sub_init
         sub_init_events = self.get_events_with_name('ros2:rcl_subscription_init')

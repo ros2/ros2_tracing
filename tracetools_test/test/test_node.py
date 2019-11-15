@@ -34,8 +34,8 @@ class TestNode(TraceTestCase):
         )
 
     def test_all(self):
-        # Check events order as set (e.g. init before node_init)
-        self.assertEventsOrderSet(self._events_ros)
+        # Check events as set
+        self.assertEventsSet(self._events_ros)
 
         # Check fields
         rcl_init_events = self.get_events_with_name('ros2:rcl_init')
