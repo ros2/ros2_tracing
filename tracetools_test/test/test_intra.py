@@ -25,45 +25,68 @@ class TestIntra(TraceTestCase):
             session_name_prefix='session-test-intra',
             events_ros=[
                 'ros2:rcl_subscription_init',
+                'ros2:rclcpp_subscription_init',
                 'ros2:rclcpp_subscription_callback_added',
                 'ros2:callback_start',
                 'ros2:callback_end',
             ],
-            nodes=['test_intra']
+            nodes=['test_intra'],
         )
 
     def test_all(self):
         # Check events as set
         self.assertEventsSet(self._events_ros)
 
-        # Check sub_init
-        sub_init_events = self.get_events_with_name('ros2:rcl_subscription_init')
-        sub_init_normal_events = self.get_events_with_field_value(
+        print('EVENTS: ', self._events)
+
+        # Check rcl_subscription_init events
+        rcl_sub_init_events = self.get_events_with_name('ros2:rcl_subscription_init')
+        rcl_sub_init_topic_events = self.get_events_with_field_value(
             'topic_name',
             '/the_topic',
-            sub_init_events)
+            rcl_sub_init_events,
+        )
+        # Only 1 for our given topic
         self.assertNumEventsEqual(
-            sub_init_normal_events,
+            rcl_sub_init_topic_events,
             1,
-            'none or more than 1 sub init event')
+            'none or more than 1 rcl_sub_init event for the topic',
+        )
 
         # Get subscription handle
-        sub_init_normal_event = sub_init_normal_events[0]
-        sub_handle_intra = self.get_field(sub_init_normal_event, 'subscription_handle')
+        rcl_sub_init_topic_event = rcl_sub_init_topic_events[0]
+        sub_handle_intra = self.get_field(rcl_sub_init_topic_event, 'subscription_handle')
 
-        # Get corresponding callback handle
-        # Callback handle
-        callback_added_events = self.get_events_with_field_value(
+        # Check rclcpp_subscription_init events
+        rclcpp_sub_init_events = self.get_events_with_name('ros2:rclcpp_subscription_init')
+        rclcpp_sub_init_topic_events = self.get_events_with_field_value(
             'subscription_handle',
             sub_handle_intra,
-            self.get_events_with_name(
-                'ros2:rclcpp_subscription_callback_added'))
+            rclcpp_sub_init_events,
+        )
+        # Should have 2 events for the given subscription handle
+        # (Subscription and SubscriptionIntraProcess)
         self.assertNumEventsEqual(
-            callback_added_events,
-            1,
-            'none or more than 1 callback added event')
-        callback_added_event = callback_added_events[0]
-        callback_handle = self.get_field(callback_added_event, 'callback')
+            rclcpp_sub_init_topic_events,
+            2,
+            'number of rclcpp_sub_init events for the topic not equal to 2',
+        )
+
+        # Get the 2 subscription pointers
+        events = rclcpp_sub_init_topic_events
+        subscription_pointers = [self.get_field(e, 'subscription') for e in events]
+
+        # Get the corresponding callback pointers
+        rclcpp_sub_callback_added_events = self.get_events_with_name(
+            'ros2:rclcpp_subscription_callback_added',
+        )
+        rclcpp_sub_callback_added_topic_events = self.get_events_with_field_value(
+            'subscription',
+            subscription_pointers,
+            rclcpp_sub_callback_added_events,
+        )
+        events = rclcpp_sub_callback_added_topic_events
+        callback_pointers = [self.get_field(e, 'callback') for e in events]
 
         # Get corresponding callback start/end pairs
         start_events = self.get_events_with_name('ros2:callback_start')
@@ -77,30 +100,47 @@ class TestIntra(TraceTestCase):
             end_events,
             1,
             'does not have at least 1 callback end event')
-        start_events_intra = self.get_events_with_field_value(
+        start_events_topic = self.get_events_with_field_value(
             'callback',
-            callback_handle,
+            callback_pointers,
             start_events)
-        end_events_intra = self.get_events_with_field_value(
+        end_events_topic = self.get_events_with_field_value(
             'callback',
-            callback_handle,
+            callback_pointers,
             end_events)
         self.assertNumEventsGreaterEqual(
-            start_events_intra,
+            start_events_topic,
             1,
-            'no intra start event')
+            'no callback_start event found for topic')
         self.assertNumEventsGreaterEqual(
-            end_events_intra,
+            end_events_topic,
             1,
-            'no intra end event')
+            'no callback_end found event for topic')
 
-        # Check is_intra_process field value
-        start_event_intra = start_events_intra[0]
-        self.assertFieldEquals(
-            start_event_intra,
+        # Check for is_intra_process field value of 1/true
+        start_events_intra = self.get_events_with_field_value(
             'is_intra_process',
             1,
-            'is_intra_process field value not valid for intra callback')
+            start_events_topic,
+        )
+        # Should have one event
+        self.assertNumEventsEqual(
+            start_events_intra,
+            1,
+            'none or more than 1 callback_start event for intra-process topic',
+        )
+        # As a sanity check, make sure its callback pointer has a corresponding callback_end event
+        callback_pointer_intra = self.get_field(start_events_intra[0], 'callback')
+        end_events_intra = self.get_events_with_field_value(
+            'callback',
+            callback_pointer_intra,
+            end_events_topic,
+        )
+        self.assertNumEventsEqual(
+            end_events_intra,
+            1,
+            'none or more than 1 callback_end event for intra-process topic',
+        )
 
 
 if __name__ == '__main__':
