@@ -56,7 +56,8 @@ class TestNode(TraceTestCase):
         for node_name in self._nodes:
             self.assertTrue(
                 node_name in node_name_fields,
-                f'cannot find node_init event for node name: {node_name} ({node_name_fields})')
+                f'cannot find node_init event for node name: {node_name} ({node_name_fields})',
+            )
 
 
 if __name__ == '__main__':
