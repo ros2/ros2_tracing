@@ -119,15 +119,15 @@ class TraceTestCase(unittest.TestCase):
             name_trimmed = name[:15]
             self.assertTrue(name_trimmed in procnames, 'node name not found in tracepoints')
 
-    def assertValidHandle(self, event: DictEvent, handle_field_name: Union[str, List[str]]):
+    def assertValidHandle(self, event: DictEvent, handle_field_names: Union[str, List[str]]):
         """
         Check that the handle associated with a field name is valid.
 
         :param event: the event which has a handle field
-        :param handle_field_name: the field name(s) of the handle to check
+        :param handle_field_names: the handle field name(s) to check
         """
-        is_list = isinstance(handle_field_name, list)
-        handle_field_names = handle_field_name if is_list else [handle_field_name]
+        if not isinstance(handle_field_names, list):
+            handle_field_names = [handle_field_names]
         for field_name in handle_field_names:
             handle_value = self.get_field(event, field_name)
             self.assertIsInstance(handle_value, int, 'handle value not int')
