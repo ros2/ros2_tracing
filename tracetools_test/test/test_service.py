@@ -28,7 +28,7 @@ class TestService(TraceTestCase):
                 'ros2:rcl_service_init',
                 'ros2:rclcpp_service_callback_added',
             ],
-            nodes=['test_service']
+            nodes=['test_service'],
         )
 
     def test_all(self):

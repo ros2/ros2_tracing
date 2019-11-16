@@ -27,7 +27,7 @@ class TestServiceCallback(TraceTestCase):
                 'ros2:callback_start',
                 'ros2:callback_end',
             ],
-            nodes=['test_service_ping', 'test_service_pong']
+            nodes=['test_service_ping', 'test_service_pong'],
         )
 
     def test_all(self):

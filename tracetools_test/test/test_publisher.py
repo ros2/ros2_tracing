@@ -27,7 +27,7 @@ class TestPublisher(TraceTestCase):
                 'ros2:rcl_node_init',
                 'ros2:rcl_publisher_init',
             ],
-            nodes=['test_publisher']
+            nodes=['test_publisher'],
         )
 
     def test_all(self):

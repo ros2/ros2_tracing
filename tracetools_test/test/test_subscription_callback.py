@@ -27,7 +27,7 @@ class TestSubscriptionCallback(TraceTestCase):
                 'ros2:callback_start',
                 'ros2:callback_end',
             ],
-            nodes=['test_ping', 'test_pong']
+            nodes=['test_ping', 'test_pong'],
         )
 
     def test_all(self):
