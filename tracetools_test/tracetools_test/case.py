@@ -309,6 +309,9 @@ class TraceTestCase(unittest.TestCase):
         """
         Get all events with the given procname.
 
+        Note: the given procname value will be truncated to the same max length as the procname
+        field.
+
         :param procname: the procname
         :param events: the events to check (or `None` to check all events)
         :return: the events with the given procname
