@@ -36,6 +36,8 @@ class TestServiceCallback(TraceTestCase):
 
         # Check fields
         start_events = self.get_events_with_name('ros2:callback_start')
+        end_events = self.get_events_with_name('ros2:callback_end')
+
         for event in start_events:
             self.assertValidHandle(event, 'callback')
             # Should not be 1 for services (yet)
@@ -43,24 +45,25 @@ class TestServiceCallback(TraceTestCase):
                 event,
                 'is_intra_process',
                 0,
-                'invalid value for is_intra_process')
-
-        end_events = self.get_events_with_name('ros2:callback_end')
+                'invalid value for is_intra_process',
+            )
         for event in end_events:
             self.assertValidHandle(event, 'callback')
 
-        # Check that there is at least a start/end pair for each node
+        # Check that there is at least 1 start/end pair for each node
         for node in self._nodes:
             test_start_events = self.get_events_with_procname(node, start_events)
             test_end_events = self.get_events_with_procname(node, end_events)
             self.assertGreater(
                 len(test_start_events),
                 0,
-                f'no start_callback events for node: {node}')
+                f'no start_callback events for node: {node}',
+            )
             self.assertGreater(
                 len(test_end_events),
                 0,
-                f'no end_callback events for node: {node}')
+                f'no end_callback events for node: {node}',
+            )
 
 
 if __name__ == '__main__':
