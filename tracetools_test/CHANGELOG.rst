@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.10 (2019-11-17)
+-------------------
 * Update tests after new intra-process communications
 * Contributors: Christophe Bedard
 

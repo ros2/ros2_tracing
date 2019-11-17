@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.10 (2019-11-17)
+-------------------
 * Add new rclcpp_subscription_init tracepoint to support new intra-process comms 
 * Contributors: Christophe Bedard
 

@@ -2,8 +2,8 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.10 (2019-11-17)
+-------------------
 * Make printing list of enabled events more readable
 * Contributors: Christophe Bedard
 
