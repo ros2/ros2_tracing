@@ -100,13 +100,26 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
-  rclcpp_subscription_callback_added,
+  rclcpp_subscription_init,
   TP_ARGS(
     const void *, subscription_handle_arg,
-    const void *, callback_arg
+    const void *, subscription_arg
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, subscription_handle, subscription_handle_arg)
+    ctf_integer_hex(const void *, subscription, subscription_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_subscription_callback_added,
+  TP_ARGS(
+    const void *, subscription_arg,
+    const void *, callback_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, subscription, subscription_arg)
     ctf_integer_hex(const void *, callback, callback_arg)
   )
 )

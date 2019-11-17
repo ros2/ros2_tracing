@@ -30,12 +30,12 @@ class TestNode(TraceTestCase):
                 'ros2:rcl_init',
                 'ros2:rcl_node_init',
             ],
-            nodes=['test_publisher']
+            nodes=['test_publisher'],
         )
 
     def test_all(self):
-        # Check events order as set (e.g. init before node_init)
-        self.assertEventsOrderSet(self._events_ros)
+        # Check events as set
+        self.assertEventsSet(self._events_ros)
 
         # Check fields
         rcl_init_events = self.get_events_with_name('ros2:rcl_init')
@@ -56,7 +56,8 @@ class TestNode(TraceTestCase):
         for node_name in self._nodes:
             self.assertTrue(
                 node_name in node_name_fields,
-                f'cannot find node_init event for node name: {node_name} ({node_name_fields})')
+                f'cannot find node_init event for node name: {node_name} ({node_name_fields})',
+            )
 
 
 if __name__ == '__main__':

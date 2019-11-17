@@ -27,19 +27,20 @@ class TestPublisher(TraceTestCase):
                 'ros2:rcl_node_init',
                 'ros2:rcl_publisher_init',
             ],
-            nodes=['test_publisher']
+            nodes=['test_publisher'],
         )
 
     def test_all(self):
-        # Check events order as set (e.g. node_init before pub_init)
-        self.assertEventsOrderSet(self._events_ros)
+        # Check events as set
+        self.assertEventsSet(self._events_ros)
 
         # Check fields
         pub_init_events = self.get_events_with_name('ros2:rcl_publisher_init')
         for event in pub_init_events:
             self.assertValidHandle(
                 event,
-                ['publisher_handle', 'node_handle', 'rmw_publisher_handle'])
+                ['publisher_handle', 'node_handle', 'rmw_publisher_handle'],
+            )
             self.assertValidQueueDepth(event, 'queue_depth')
             self.assertStringFieldNotEmpty(event, 'topic_name')
 
@@ -48,11 +49,13 @@ class TestPublisher(TraceTestCase):
         test_pub_init_topic_events = self.get_events_with_field_value(
             'topic_name',
             '/the_topic',
-            test_pub_init_events)
+            test_pub_init_events,
+        )
         self.assertNumEventsEqual(
             test_pub_init_topic_events,
             1,
-            'none or more than 1 pub_init even for test topic')
+            'none or more than 1 rcl_pub_init even for test topic',
+        )
 
         # Check queue_depth value
         test_pub_init_topic_event = test_pub_init_topic_events[0]
@@ -60,23 +63,27 @@ class TestPublisher(TraceTestCase):
             test_pub_init_topic_event,
             'queue_depth',
             10,
-            'pub_init event does not have expected queue depth value')
+            'pub_init event does not have expected queue depth value',
+        )
 
         # Check that the node handle matches with the node_init event
         node_init_events = self.get_events_with_name('ros2:rcl_node_init')
         test_pub_node_init_events = self.get_events_with_procname(
             'test_publisher',
-            node_init_events)
+            node_init_events,
+        )
         self.assertNumEventsEqual(
             test_pub_node_init_events,
             1,
-            'none or more than 1 node_init event')
+            'none or more than 1 node_init event',
+        )
         test_pub_node_init_event = test_pub_node_init_events[0]
         self.assertMatchingField(
             test_pub_node_init_event,
             'node_handle',
             None,
-            test_pub_init_events)
+            test_pub_init_events,
+        )
 
 
 if __name__ == '__main__':

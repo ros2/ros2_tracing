@@ -99,15 +99,21 @@ class TraceTestCase(unittest.TestCase):
     def tearDown(self):
         cleanup_trace(self._full_path)
 
-    def assertEventsOrderSet(self, event_names: List[str]):
+    def assertEventsSet(
+        self,
+        event_names: List[str],
+    ) -> None:
         """
         Compare given event names to trace events names as sets.
 
         :param event_names: the list of event names to compare to (as a set)
         """
-        self.assertSetEqual(set(self._event_names), set(event_names), 'wrong events order')
+        self.assertSetEqual(set(self._event_names), set(event_names), 'wrong events')
 
-    def assertProcessNamesExist(self, names: List[str]):
+    def assertProcessNamesExist(
+        self,
+        names: List[str],
+    ) -> None:
         """
         Check that the given processes exist.
 
@@ -119,21 +125,29 @@ class TraceTestCase(unittest.TestCase):
             name_trimmed = name[:15]
             self.assertTrue(name_trimmed in procnames, 'node name not found in tracepoints')
 
-    def assertValidHandle(self, event: DictEvent, handle_field_name: Union[str, List[str]]):
+    def assertValidHandle(
+        self,
+        event: DictEvent,
+        handle_field_names: Union[str, List[str]],
+    ) -> None:
         """
         Check that the handle associated with a field name is valid.
 
         :param event: the event which has a handle field
-        :param handle_field_name: the field name(s) of the handle to check
+        :param handle_field_names: the handle field name(s) to check
         """
-        is_list = isinstance(handle_field_name, list)
-        handle_field_names = handle_field_name if is_list else [handle_field_name]
+        if not isinstance(handle_field_names, list):
+            handle_field_names = [handle_field_names]
         for field_name in handle_field_names:
             handle_value = self.get_field(event, field_name)
             self.assertIsInstance(handle_value, int, 'handle value not int')
             self.assertGreater(handle_value, 0, f'invalid handle value: {field_name}')
 
-    def assertValidQueueDepth(self, event: DictEvent, queue_depth_field_name: str = 'queue_depth'):
+    def assertValidQueueDepth(
+        self,
+        event: DictEvent,
+        queue_depth_field_name: str = 'queue_depth',
+    ) -> None:
         """
         Check that the queue depth value is valid.
 
@@ -144,7 +158,11 @@ class TraceTestCase(unittest.TestCase):
         self.assertIsInstance(queue_depth_value, int, 'invalid queue depth type')
         self.assertGreater(queue_depth_value, 0, 'invalid queue depth')
 
-    def assertStringFieldNotEmpty(self, event: DictEvent, string_field_name: str):
+    def assertStringFieldNotEmpty(
+        self,
+        event: DictEvent,
+        string_field_name: str,
+    ) -> None:
         """
         Check that a string field is not empty.
 
@@ -154,7 +172,11 @@ class TraceTestCase(unittest.TestCase):
         string_field = self.get_field(event, string_field_name)
         self.assertGreater(len(string_field), 0, 'empty string')
 
-    def assertEventAfterTimestamp(self, event: DictEvent, timestamp: int):
+    def assertEventAfterTimestamp(
+        self,
+        event: DictEvent,
+        timestamp: int,
+    ) -> None:
         """
         Check that the event happens after the given timestamp.
 
@@ -163,7 +185,11 @@ class TraceTestCase(unittest.TestCase):
         """
         self.assertGreater(get_event_timestamp(event), timestamp, 'event not after timestamp')
 
-    def assertEventOrder(self, first_event: DictEvent, second_event: DictEvent):
+    def assertEventOrder(
+        self,
+        first_event: DictEvent,
+        second_event: DictEvent,
+    ) -> None:
         """
         Check that the first event was generated before the second event.
 
@@ -176,8 +202,8 @@ class TraceTestCase(unittest.TestCase):
         self,
         events: List[DictEvent],
         expected_number: int,
-        msg: str = 'wrong number of events'
-    ):
+        msg: str = 'wrong number of events',
+    ) -> None:
         """
         Check number of events.
 
@@ -191,8 +217,8 @@ class TraceTestCase(unittest.TestCase):
         self,
         events: List[DictEvent],
         min_expected_number: int,
-        msg: str = 'wrong number of events'
-    ):
+        msg: str = 'wrong number of events',
+    ) -> None:
         """
         Check that the number of events is greater of equal.
 
@@ -207,8 +233,8 @@ class TraceTestCase(unittest.TestCase):
         initial_event: DictEvent,
         field_name: str,
         matching_event_name: str = None,
-        events: List[DictEvent] = None
-    ):
+        events: List[DictEvent] = None,
+    ) -> None:
         """
         Check that the value of a field for a given event has a matching event that follows.
 
@@ -247,8 +273,8 @@ class TraceTestCase(unittest.TestCase):
         event: DictEvent,
         field_name: str,
         value: Any,
-        msg: str = 'wrong field value'
-    ):
+        msg: str = 'wrong field value',
+    ) -> None:
         """
         Check the value of a field.
 
@@ -260,7 +286,11 @@ class TraceTestCase(unittest.TestCase):
         actual_value = self.get_field(event, field_name)
         self.assertEqual(actual_value, value, msg)
 
-    def get_field(self, event: DictEvent, field_name: str) -> Any:
+    def get_field(
+        self,
+        event: DictEvent,
+        field_name: str,
+    ) -> Any:
         """
         Get field value; will fail test if not found.
 
@@ -276,7 +306,10 @@ class TraceTestCase(unittest.TestCase):
         else:
             return value
 
-    def get_procname(self, event: DictEvent) -> str:
+    def get_procname(
+        self,
+        event: DictEvent,
+    ) -> str:
         """
         Get procname.
 
@@ -288,7 +321,7 @@ class TraceTestCase(unittest.TestCase):
     def get_events_with_name(
         self,
         event_name: str,
-        events: List[DictEvent] = None
+        events: List[DictEvent] = None,
     ) -> List[DictEvent]:
         """
         Get all events with the given name.
@@ -304,10 +337,13 @@ class TraceTestCase(unittest.TestCase):
     def get_events_with_procname(
         self,
         procname: str,
-        events: List[DictEvent] = None
+        events: List[DictEvent] = None,
     ) -> List[DictEvent]:
         """
         Get all events with the given procname.
+
+        Note: the given procname value will be truncated to the same max length as the procname
+        field.
 
         :param procname: the procname
         :param events: the events to check (or `None` to check all events)
@@ -320,40 +356,48 @@ class TraceTestCase(unittest.TestCase):
     def get_events_with_field_value(
         self,
         field_name: str,
-        field_value: Any,
-        events: List[DictEvent] = None
+        field_values: Any,
+        events: List[DictEvent] = None,
     ) -> List[DictEvent]:
         """
         Get all events with the given field:value.
 
         :param field_name: the name of the field to check
-        :param field_value: the value of the field to check
+        :param field_values: the value(s) of the field to check
         :param events: the events to check (or `None` to check all events)
         :return: the events with the given field:value pair
         """
+        if not isinstance(field_values, list):
+            field_values = [field_values]
         if events is None:
             events = self._events
-        return [e for e in events if get_field(e, field_name, None) == field_value]
+        return [e for e in events if get_field(e, field_name, None) in field_values]
 
     def get_events_with_field_not_value(
         self,
         field_name: str,
-        field_value: Any,
-        events: List[DictEvent] = None
+        field_values: Any,
+        events: List[DictEvent] = None,
     ) -> List[DictEvent]:
         """
         Get all events with the given field but not the value.
 
         :param field_name: the name of the field to check
-        :param field_value: the value of the field to check
+        :param field_values: the value(s) of the field to check
         :param events: the events to check (or `None` to check all events)
         :return: the events with the given field:value pair
         """
+        if not isinstance(field_values, list):
+            field_values = [field_values]
         if events is None:
             events = self._events
-        return [e for e in events if get_field(e, field_name, None) != field_value]
+        return [e for e in events if get_field(e, field_name, None) not in field_values]
 
-    def are_events_ordered(self, first_event: DictEvent, second_event: DictEvent):
+    def are_events_ordered(
+        self,
+        first_event: DictEvent,
+        second_event: DictEvent,
+    ) -> bool:
         """
         Check that the first event was generated before the second event.
 

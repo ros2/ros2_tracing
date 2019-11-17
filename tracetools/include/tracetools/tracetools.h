@@ -81,11 +81,19 @@ DECLARE_TRACEPOINT(
   const size_t queue_depth)
 
 /**
+ * tp: rclcpp_subscription_init
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_subscription_init,
+  const void * subscription_handle,
+  const void * subscription)
+
+/**
  * tp: rclcpp_subscription_callback_added
  */
 DECLARE_TRACEPOINT(
   rclcpp_subscription_callback_added,
-  const void * subscription_handle,
+  const void * subscription,
   const void * callback)
 
 /**

@@ -29,12 +29,12 @@ class TestTimer(TraceTestCase):
                 'ros2:callback_start',
                 'ros2:callback_end',
             ],
-            nodes=['test_timer']
+            nodes=['test_timer'],
         )
 
     def test_all(self):
-        # Check events order as set (e.g. init, callback added, start, end)
-        self.assertEventsOrderSet(self._events_ros)
+        # Check events as set
+        self.assertEventsSet(self._events_ros)
 
         # Check fields
         init_events = self.get_events_with_name('ros2:rcl_timer_init')
@@ -56,7 +56,8 @@ class TestTimer(TraceTestCase):
                 event,
                 'is_intra_process',
                 0,
-                'invalid value for is_intra_process')
+                'invalid value for is_intra_process',
+            )
 
         end_events = self.get_events_with_name('ros2:callback_end')
         for event in end_events:
@@ -73,7 +74,8 @@ class TestTimer(TraceTestCase):
             test_init_event,
             'timer_handle',
             'ros2:rclcpp_timer_callback_added',
-            callback_added_events)
+            callback_added_events,
+        )
 
         # Check that a callback start:end pair has a common callback handle
         for start_event in start_events:
@@ -81,7 +83,8 @@ class TestTimer(TraceTestCase):
                 start_event,
                 'callback',
                 None,
-                end_events)
+                end_events,
+            )
 
 
 if __name__ == '__main__':
