@@ -17,6 +17,7 @@
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import path
+from tracetools_trace.tools import print_events_list
 
 
 def add_trace_arguments(parser):
@@ -39,13 +40,13 @@ def init(args):
     if ust_enabled:
         print(f'UST tracing enabled ({len(ros_events)} events)')
         if args.list:
-            print(f'\tevents: {ros_events}')
+            print_events_list(ros_events)
     else:
         print('UST tracing disabled')
     if kernel_enabled:
         print(f'kernel tracing enabled ({len(kernel_events)} events)')
         if args.list:
-            print(f'\tevents: {kernel_events}')
+            print_events_list(kernel_events)
     else:
         print('kernel tracing disabled')
 
