@@ -1,4 +1,5 @@
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2019 Apex.AI, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,14 +23,16 @@ class TestSubscription(TraceTestCase):
     def __init__(self, *args) -> None:
         super().__init__(
             *args,
-            session_name_prefix='session-test-subscription-creation',
+            session_name_prefix='session-test-subscription',
             events_ros=[
                 'ros2:rcl_node_init',
                 'ros2:rcl_subscription_init',
                 'ros2:rclcpp_subscription_init',
                 'ros2:rclcpp_subscription_callback_added',
+                'ros2:callback_start',
+                'ros2:callback_end',
             ],
-            nodes=['test_subscription'],
+            nodes=['test_ping', 'test_pong'],
         )
 
     def test_all(self):
@@ -42,6 +45,8 @@ class TestSubscription(TraceTestCase):
         callback_added_events = self.get_events_with_name(
             'ros2:rclcpp_subscription_callback_added',
         )
+        start_events = self.get_events_with_name('ros2:callback_start')
+        end_events = self.get_events_with_name('ros2:callback_end')
 
         for event in rcl_sub_init_events:
             self.assertValidHandle(
@@ -57,11 +62,22 @@ class TestSubscription(TraceTestCase):
             )
         for event in callback_added_events:
             self.assertValidHandle(event, ['subscription', 'callback'])
+        for event in start_events:
+            self.assertValidHandle(event, 'callback')
+            is_intra_process_value = self.get_field(event, 'is_intra_process')
+            self.assertIsInstance(is_intra_process_value, int, 'is_intra_process not int')
+            self.assertTrue(
+                is_intra_process_value in [0, 1],
+                f'invalid value for is_intra_process: {is_intra_process_value}',
+            )
+        for event in end_events:
+            self.assertValidHandle(event, 'callback')
 
-        # Check that the test topic name exists
+        # Check that the pong test topic name exists
+        # Note: using the ping node
         test_rcl_sub_init_events = self.get_events_with_field_value(
             'topic_name',
-            '/the_topic',
+            '/pong',
             rcl_sub_init_events,
         )
         self.assertNumEventsEqual(test_rcl_sub_init_events, 1, 'cannot find test topic name')
@@ -78,7 +94,7 @@ class TestSubscription(TraceTestCase):
         # Check that the node handle matches the node_init event
         node_init_events = self.get_events_with_name('ros2:rcl_node_init')
         test_sub_node_init_events = self.get_events_with_procname(
-            'test_subscription',
+            'test_ping',
             node_init_events,
         )
         self.assertNumEventsEqual(
@@ -120,6 +136,52 @@ class TestSubscription(TraceTestCase):
             callback_added_matching_events,
             1,
             'none or more than 1 rclcpp_sub_callback_added event for topic',
+        )
+
+        # Check that each start:end pair has a common callback handle
+        ping_events = self.get_events_with_procname('test_ping')
+        pong_events = self.get_events_with_procname('test_pong')
+        ping_events_start = self.get_events_with_name('ros2:callback_start', ping_events)
+        pong_events_start = self.get_events_with_name('ros2:callback_start', pong_events)
+        for ping_start in ping_events_start:
+            self.assertMatchingField(
+                ping_start,
+                'callback',
+                'ros2:callback_end',
+                ping_events,
+            )
+        for pong_start in pong_events_start:
+            self.assertMatchingField(
+                pong_start,
+                'callback',
+                'ros2:callback_end',
+                pong_events,
+            )
+
+        # Check that callback pointer matches between sub_callback_added and callback_start/end
+        # There is only one callback for /pong topic in ping node
+        callback_added_matching_event = callback_added_matching_events[0]
+        callback_pointer = self.get_field(callback_added_matching_event, 'callback')
+        callback_start_matching_events = self.get_events_with_field_value(
+            'callback',
+            callback_pointer,
+            ping_events_start,
+        )
+        self.assertNumEventsEqual(
+            callback_start_matching_events,
+            1,
+            'none or more than 1 callback_start event for topic callback',
+        )
+        ping_events_end = self.get_events_with_name('ros2:callback_end', ping_events)
+        callback_end_matching_events = self.get_events_with_field_value(
+            'callback',
+            callback_pointer,
+            ping_events_end,
+        )
+        self.assertNumEventsEqual(
+            callback_end_matching_events,
+            1,
+            'none or more than 1 callback_end event for topic callback',
         )
 
 
