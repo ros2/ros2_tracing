@@ -2,6 +2,12 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.10 (2019-11-17)
+-------------------
+* Make printing list of enabled events more readable
+* Add new rclcpp_subscription_init tracepoint to default ROS events list
+* Contributors: Christophe Bedard
+
 0.2.8 (2019-10-14)
 ------------------
 * Re-order args for trace command

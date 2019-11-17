@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.10 (2019-11-17)
+-------------------
+* Update tests after new intra-process communications
+* Contributors: Christophe Bedard
+
 0.2.6 (2019-08-16)
 ------------------
 * Fix "do_more" check for test_ping/test_pong

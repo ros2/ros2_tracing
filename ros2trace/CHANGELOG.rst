@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.10 (2019-11-17)
+-------------------
+* Make printing list of enabled events more readable
+* Contributors: Christophe Bedard
+
 0.2.2 (2019-08-01)
 ------------------
 * Revert "Replace special character to fix encoding issue"

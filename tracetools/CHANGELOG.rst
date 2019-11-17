@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.10 (2019-11-17)
+-------------------
+* Add new rclcpp_subscription_init tracepoint to support new intra-process comms 
+* Contributors: Christophe Bedard
+
 0.2.9 (2019-10-18)
 ------------------
 * Set symbols visibility to public for util functions
