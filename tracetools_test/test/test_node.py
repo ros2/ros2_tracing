@@ -17,7 +17,7 @@ import unittest
 from tracetools_test.case import TraceTestCase
 
 
-VERSION_REGEX = r'^[0-9]\.[0-9]\.[0-9]$'
+VERSION_REGEX = r'^[0-9]+\.[0-9]+\.[0-9]+$'
 
 
 class TestNode(TraceTestCase):
