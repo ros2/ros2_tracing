@@ -147,6 +147,7 @@ if(BUILD_TESTING)
         APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
         PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
         TIMEOUT 60
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
       )
     endforeach()
   endif()
