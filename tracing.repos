@@ -1,0 +1,9 @@
+repositories:
+  micro-ROS/ros_tracing/ros2_tracing:
+    type: git
+    url: https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing.git
+    version: master
+  tracetools_analysis:
+    type: git
+    url: https://gitlab.com/micro-ROS/ros_tracing/tracetools_analysis.git
+    version: master
