@@ -555,7 +555,7 @@ We could look into making analyses work on both ROS 1 and ROS 2, through a commo
     * wraps the LTTng Python bindings to setup and start a tracing session
     * exposes simplified setup functions with default values
     * provides an example `trace` entrypoint for tracing
-        `$ ros2 run tracetools_trace trace`
+        * `$ ros2 run tracetools_trace trace`
 * `ros2trace`
     * provides a `ros2cli` extension
     `$ ros2 trace`
@@ -577,10 +577,10 @@ We could look into making analyses work on both ROS 1 and ROS 2, through a commo
         * handle and process trace events to gather data
 * `ros2trace_analysis`
     * provides a `ros2cli` extension with verbs
-    `$ ros2 trace-analysis`
-        * uses `tracetools_analysis` functions
-        `$ ros2 trace-analysis convert`
-        `$ ros2 trace-analysis process`
+        * `$ ros2 trace-analysis`
+    * uses/exposes `tracetools_analysis` functions
+        * `$ ros2 trace-analysis convert`
+        * `$ ros2 trace-analysis process`
 
 ```plantuml
 @startuml
