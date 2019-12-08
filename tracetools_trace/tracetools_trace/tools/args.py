@@ -38,7 +38,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def add_arguments(parser):
+def add_arguments(parser: argparse.ArgumentParser):
     parser.add_argument(
         '-s', '--session-name', dest='session_name',
         default=path.append_timestamp('session'),

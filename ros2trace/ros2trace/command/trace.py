@@ -15,18 +15,26 @@
 """Module for trace command extension implementation."""
 
 from ros2cli.command import CommandExtension
-from ros2trace.api import add_trace_arguments
-from ros2trace.api import fini
-from ros2trace.api import init
+from tracetools_trace.tools import args
+from tracetools_trace.trace import fini
+from tracetools_trace.trace import init
 
 
 class TraceCommand(CommandExtension):
     """Trace ROS nodes to get information on their execution."""
 
     def add_arguments(self, parser, cli_name):
-        add_trace_arguments(parser)
+        args.add_arguments(parser)
 
     def main(self, *, parser, args):
-        init(args)
-        fini(args)
+        init(
+            args.session_name,
+            args.path,
+            args.events_ust,
+            args.events_kernel,
+            args.list,
+        )
+        fini(
+            args.session_name,
+        )
         return 0
