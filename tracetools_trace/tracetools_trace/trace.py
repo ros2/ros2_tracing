@@ -15,31 +15,41 @@
 
 """Entrypoint/script to setup and start an LTTng tracing session."""
 
+from typing import List
+
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import path
 from tracetools_trace.tools import print_events_list
 
 
-def main():
-    params = args.parse_args()
+def init(
+    session_name: str,
+    base_path: str,
+    ros_events: List[str],
+    kernel_events: List[str],
+    display_list: bool = False,
+) -> None:
+    """
+    Init and start tracing.
 
-    session_name = params.session_name
-    base_path = params.path
-    ros_events = params.events_ust
-    kernel_events = params.events_kernel
-
+    :param session_name: the name of the session
+    :param base_path: the path to the directory in which to create the tracing session directory
+    :param ros_events: list of ROS events to enable
+    :param kernel_events: list of kernel events to enable
+    :param display_list: whether to display list(s) of enabled events
+    """
     ust_enabled = len(ros_events) > 0
     kernel_enabled = len(kernel_events) > 0
     if ust_enabled:
         print(f'UST tracing enabled ({len(ros_events)} events)')
-        if params.list:
+        if display_list:
             print_events_list(ros_events)
     else:
         print('UST tracing disabled')
     if kernel_enabled:
         print(f'kernel tracing enabled ({len(kernel_events)} events)')
-        if params.list:
+        if display_list:
             print_events_list(kernel_events)
     else:
         print('kernel tracing disabled')
@@ -52,7 +62,31 @@ def main():
         base_path=base_path,
         ros_events=ros_events,
         kernel_events=kernel_events)
-    input('press enter to stop...')
 
+
+def fini(
+    session_name: str,
+) -> None:
+    """
+    Stop and finalize tracing.
+
+    :param session_name: the name of the session
+    """
+    input('press enter to stop...')
     print('stopping & destroying tracing session')
     lttng.lttng_fini(session_name)
+
+
+def main():
+    params = args.parse_args()
+
+    init(
+        params.session_name,
+        params.path,
+        params.events_ust,
+        params.events_kernel,
+        params.list,
+    )
+    fini(
+        params.session_name,
+    )
