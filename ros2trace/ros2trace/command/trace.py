@@ -16,8 +16,8 @@
 
 from ros2cli.command import CommandExtension
 from tracetools_trace.tools import args
-from tracetools_trace.trace import init
 from tracetools_trace.trace import fini
+from tracetools_trace.trace import init
 
 
 class TraceCommand(CommandExtension):
