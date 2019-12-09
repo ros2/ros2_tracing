@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use imperative mood in constructor docstring.
+* Contributors: Christophe Bedard, Steven! Ragnarök
+
 0.2.11 (2019-12-09)
 -------------------
 * Fix working directory for tracetools_test Python tests

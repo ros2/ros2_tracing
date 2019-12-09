@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use imperative mood in constructor docstring.
+* Contributors: Christophe Bedard, Steven! Ragnarök
+
 0.2.11 (2019-12-09)
 -------------------
 * Register Python packages in the ament index
