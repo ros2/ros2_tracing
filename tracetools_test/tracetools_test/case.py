@@ -51,7 +51,7 @@ class TraceTestCase(unittest.TestCase):
         events_kernel: List[str] = None,
         package: str = 'tracetools_test',
     ) -> None:
-        """Constructor."""
+        """Create a TraceTestCase."""
         super().__init__(methodName=args[0])
         self._base_path = base_path
         self._session_name_prefix = session_name_prefix
