@@ -2,8 +2,8 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.11 (2019-12-09)
+-------------------
 * Remove duplicated code for trace command
 * Contributors: Christophe Bedard
 

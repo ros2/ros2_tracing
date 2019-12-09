@@ -5,7 +5,7 @@ package_name = 'ros2trace'
 
 setup(
     name=package_name,
-    version='0.2.10',
+    version='0.2.11',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/' + package_name, ['package.xml']),
