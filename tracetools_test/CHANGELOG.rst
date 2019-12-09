@@ -2,6 +2,12 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix working directory for tracetools_test Python tests
+* Fix version regex to support multi-digit numbers
+* Contributors: Christophe Bedard
+
 0.2.10 (2019-11-17)
 -------------------
 * Update tests after new intra-process communications
