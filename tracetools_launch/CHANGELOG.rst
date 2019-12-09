@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.11 (2019-12-09)
+-------------------
+* Register Python packages in the ament index
+* Contributors: Christophe Bedard
+
 0.2.7 (2019-09-09)
 ------------------
 * Fix missing ament_xmllint dependency

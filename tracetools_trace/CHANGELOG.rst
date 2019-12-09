@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.11 (2019-12-09)
+-------------------
+* Register Python packages in the ament index
+* Contributors: Christophe Bedard
+
 0.2.10 (2019-11-17)
 -------------------
 * Make printing list of enabled events more readable

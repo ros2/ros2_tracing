@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.11 (2019-12-09)
+-------------------
+* Register Python packages in the ament index
+* Contributors: Christophe Bedard
+
 0.2.8 (2019-10-14)
 ------------------
 * Add is_trace_directory() util function
