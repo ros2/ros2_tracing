@@ -47,8 +47,7 @@ void TRACEPOINT(
 {
   CONDITIONAL_TP(
     rcl_init,
-    context_handle,
-    tracetools_VERSION);
+    context_handle);
 }
 
 void TRACEPOINT(
@@ -204,7 +203,7 @@ void TRACEPOINT(
   CONDITIONAL_TP(
     callback_start,
     callback,
-    (is_intra_process ? 1 : 0));
+    is_intra_process);
 }
 
 void TRACEPOINT(

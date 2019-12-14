@@ -29,17 +29,17 @@
 #include <lttng/tracepoint.h>
 
 #include <stdint.h>
+#include <stdbool.h>
 
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
   rcl_init,
   TP_ARGS(
-    const void *, context_handle_arg,
-    const char *, version_arg
+    const void *, context_handle_arg
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, context_handle, context_handle_arg)
-    ctf_string(version, version_arg)
+    ctf_string(version, tracetools_VERSION)
   )
 )
 
@@ -215,11 +215,11 @@ TRACEPOINT_EVENT(
   callback_start,
   TP_ARGS(
     const void *, callback_arg,
-    int, is_intra_process_arg
+    const bool, is_intra_process_arg
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, callback, callback_arg)
-    ctf_integer(int, is_intra_process, is_intra_process_arg)
+    ctf_integer(int, is_intra_process, (is_intra_process_arg ? 1 : 0))
   )
 )
 
