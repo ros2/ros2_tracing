@@ -42,7 +42,7 @@ class TestTraceAction(unittest.TestCase):
                 'lttng_ust_statedump:bin_info',
                 'ros2:event',
             ],
-            []
+            [],
         ]
         for events in events_lists_match:
             self.assertTrue(Trace.has_profiling_events(events))
