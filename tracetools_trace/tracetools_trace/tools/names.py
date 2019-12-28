@@ -24,6 +24,8 @@ EVENTS_KERNEL = [
     'irq_softirq_exit',
     'irq_handler_entry',
     'irq_handler_exit',
+    'kmem_mm_page_alloc',
+    'kmem_mm_page_free',
     'lttng_statedump_process_state',
     'lttng_statedump_start',
     'lttng_statedump_end',
@@ -51,6 +53,8 @@ EVENTS_KERNEL = [
 # Kernel events that are currently used by analyses (or will most likely be used in the future)
 DEFAULT_EVENTS_KERNEL = [
     'sched_switch',
+    'kmem_mm_page_alloc',
+    'kmem_mm_page_free',
     'power_cpu_frequency',
 ]
 
