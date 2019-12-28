@@ -48,11 +48,10 @@ EVENTS_KERNEL = [
     'timer_hrtimer_expire_exit',
 ]
 
+# Kernel events that are currently used by analyses (or will most likely be used in the future)
 DEFAULT_EVENTS_KERNEL = [
-    'power_cpu_frequency',
     'sched_switch',
-    'sched_waking',
-    'sched_wakeup',
+    'power_cpu_frequency',
 ]
 
 DEFAULT_EVENTS_ROS = [
