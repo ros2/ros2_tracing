@@ -647,9 +647,19 @@ tracetools_analysis <-- ros2trace_analysis
 @enduml
 ```
 
-## Analysis architecture
+## Analysis
 
-With profiling as an example implementation.
+### Design
+
+Generally, for a given trace data analysis objective, the following classes are extended: `EventHandler`, `DataModel`, and `DataModelUtil`.
+
+A user/developer can implement an `EventHandler`, which defines callbacks for specific events. Those callbacks get called by the `Processor`, and end up putting slightly-processed data into a `DataModel`, which is a data container that uses `pandas` `DataFrame`s.
+
+Meaningful data can be extracted from the `DataModel`. However, a `DataModelUtil` can provide common utility functions so that users don't have to re-write them. This meaningful output data can then be presented through a Jupyter notebook (e.g. plots) or a normal Python script (e.g. tables).
+
+### Architecture
+
+With profiling as an example implementation:
 
 ```plantuml
 @startuml
