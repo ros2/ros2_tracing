@@ -669,7 +669,7 @@ abstract class Dependant {
  +dependencies(): list {static}
 }
 abstract class EventHandler {
- +handler_map
+ +handler_map(): map
  +data(): DataModel {abstract}
  +process(events) {static}
 }
@@ -684,6 +684,7 @@ EventHandler <|-- ProfileHandler
 Processor o-- EventHandler
 
 abstract class DataModel {
+ +print_data() {abstract}
 }
 class ProfileDataModel {
  +times: DataFrame
@@ -693,6 +694,7 @@ DataModel <|-- ProfileDataModel
 ProfileDataModel o-- ProfileHandler
 
 abstract class DataModelUtil {
+ +print_data(): DataModel
  +convert_time_columns(df, columns): df {static}
 }
 class ProfileDataModelUtil {
