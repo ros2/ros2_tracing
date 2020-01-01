@@ -1,4 +1,4 @@
-# tracetools
+# ros2_tracing
 
 Tracing tools for ROS 2.
 
@@ -53,3 +53,7 @@ See [this example launch file](./tracetools_launch/launch/example.launch.py) for
 ## Design
 
 See the [design document](./doc/design_ros_2.md).
+
+## Analysis
+
+See [`tracetools_analysis`](https://gitlab.com/micro-ROS/ros_tracing/tracetools_analysis).
