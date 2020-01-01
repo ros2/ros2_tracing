@@ -52,7 +52,9 @@ def lttng_init(
     _lttng.start(session_name)
 
 
-def lttng_fini(session_name: str) -> None:
+def lttng_fini(
+    session_name: str,
+) -> None:
     """
     Stop and destroy LTTng session.
 

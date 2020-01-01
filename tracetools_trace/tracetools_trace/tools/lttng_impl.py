@@ -114,7 +114,9 @@ def setup(
     _add_context(enabled_handles, context_list)
 
 
-def start(session_name: str) -> None:
+def start(
+    session_name: str,
+) -> None:
     """
     Start LTTng session, and check for errors.
 
@@ -125,7 +127,9 @@ def start(session_name: str) -> None:
         raise RuntimeError(f'failed to start tracing: {lttng.strerror(result)}')
 
 
-def stop(session_name: str) -> None:
+def stop(
+    session_name: str,
+) -> None:
     """
     Stop LTTng session, and check for errors.
 
@@ -136,7 +140,9 @@ def stop(session_name: str) -> None:
         raise RuntimeError(f'failed to stop tracing: {lttng.strerror(result)}')
 
 
-def destroy(session_name: str) -> None:
+def destroy(
+    session_name: str,
+) -> None:
     """
     Destroy LTTng session, and check for errors.
 
@@ -147,7 +153,9 @@ def destroy(session_name: str) -> None:
         raise RuntimeError(f'failed to destroy tracing session: {lttng.strerror(result)}')
 
 
-def _create_events(event_names_list: List[str]) -> List[lttng.Event]:
+def _create_events(
+    event_names_list: List[str],
+) -> List[lttng.Event]:
     """
     Create events list from names.
 
@@ -164,7 +172,10 @@ def _create_events(event_names_list: List[str]) -> List[lttng.Event]:
     return events_list
 
 
-def _create_session(session_name: str, full_path: str) -> None:
+def _create_session(
+    session_name: str,
+    full_path: str,
+) -> None:
     """
     Create session from name and full directory path, and check for errors.
 
@@ -182,7 +193,10 @@ def _create_session(session_name: str, full_path: str) -> None:
         raise RuntimeError(f'session creation failed: {lttng.strerror(result)}')
 
 
-def _create_handle(session_name: str, domain: lttng.Domain) -> lttng.Handle:
+def _create_handle(
+    session_name: str,
+    domain: lttng.Domain,
+) -> lttng.Handle:
     """
     Create a handle for a given session name and a domain, and check for errors.
 
@@ -197,7 +211,10 @@ def _create_handle(session_name: str, domain: lttng.Domain) -> lttng.Handle:
     return handle
 
 
-def _enable_channel(handle: lttng.Handle, channel: lttng.Channel) -> None:
+def _enable_channel(
+    handle: lttng.Handle,
+    channel: lttng.Channel,
+) -> None:
     """
     Enable channel for a handle, and check for errors.
 
@@ -236,7 +253,9 @@ context_map = {
 }
 
 
-def _context_name_to_type(context_name: str) -> int:
+def _context_name_to_type(
+    context_name: str,
+) -> int:
     """
     Convert from context name to LTTng enum/constant type.
 
@@ -246,7 +265,9 @@ def _context_name_to_type(context_name: str) -> int:
     return context_map.get(context_name)
 
 
-def _create_context_list(context_names_list: List[str]) -> List[lttng.EventContext]:
+def _create_context_list(
+    context_names_list: List[str],
+) -> List[lttng.EventContext]:
     """
     Create context list from names, and check for errors.
 
