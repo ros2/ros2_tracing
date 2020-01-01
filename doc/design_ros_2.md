@@ -32,7 +32,9 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
     2. [Notes on client libraries](#notes-on-client-libraries)
     3. [ROS 1/2 compatibility](#ros-12-compatibility)
 6. [Tools packages](#tools-packages)
-7. [Analysis architecture](#analysis-architecture)
+7. [Analysis](#analysis)
+    1. [Analysis design](#analysis-design)
+    1. [Analysis architecture](#analysis-architecture)
 
 ## Introduction
 
@@ -649,7 +651,7 @@ tracetools_analysis <-- ros2trace_analysis
 
 ## Analysis
 
-### Design
+### Analysis design
 
 Generally, for a given trace data analysis objective, the following classes are extended: `EventHandler`, `DataModel`, and `DataModelUtil`.
 
@@ -657,7 +659,7 @@ A user/developer can implement an `EventHandler`, which defines callbacks for sp
 
 Meaningful data can be extracted from the `DataModel`. However, a `DataModelUtil` can provide common utility functions so that users don't have to re-write them. This meaningful output data can then be presented through a Jupyter notebook (e.g. plots) or a normal Python script (e.g. tables).
 
-### Architecture
+### Analysis architecture
 
 With profiling as an example implementation:
 
