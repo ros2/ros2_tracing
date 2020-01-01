@@ -75,11 +75,19 @@ DEFAULT_EVENTS_ROS = [
     'ros2:callback_end',
 ]
 
-DEFAULT_CONTEXT = [
+CONTEXT = [
     'procname',
     'perf:thread:instructions',
     'perf:thread:cycles',
     'perf:thread:cpu-cycles',
+    'pid',
+    'tid',
+    'vpid',
+    'vtid',
+]
+
+DEFAULT_CONTEXT = [
+    'procname',
     'vpid',
     'vtid',
 ]
