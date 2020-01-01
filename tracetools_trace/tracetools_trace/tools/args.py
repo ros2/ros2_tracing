@@ -50,17 +50,24 @@ def add_arguments(parser: argparse.ArgumentParser):
     arg = parser.add_argument(
         '-u', '--ust', nargs='*', dest='events_ust',
         default=names.DEFAULT_EVENTS_ROS,
-        help='the ROS UST events to enable (default: all events) '
+        help='the ROS UST events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all UST events, '
              'provide this flag without any event name]')
     arg.completer = DefaultArgValueCompleter(arg)
     arg = parser.add_argument(
         '-k', '--kernel', nargs='*', dest='events_kernel',
         default=names.DEFAULT_EVENTS_KERNEL,
-        help='the kernel events to enable (default: all events) '
+        help='the kernel events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all kernel events, '
              'provide this flag without any event name]')
     arg.completer = DefaultArgValueCompleter(arg)
+    arg = parser.add_argument(
+        '-c', '--context', nargs='*', dest='context_names',
+        default=names.DEFAULT_CONTEXT,
+        help='the context names to enable (default: see tracetools_trace.tools.names) '
+             '[to disable all context names, '
+             'provide this flag without any name]')
+    arg.completer = DefaultArgValueCompleter(arg)
     parser.add_argument(
         '-l', '--list', dest='list', action='store_true',
-        help='display lists of enabled events (default: %(default)s)')
+        help='display lists of enabled events and context names (default: %(default)s)')

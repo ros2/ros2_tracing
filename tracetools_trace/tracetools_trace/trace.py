@@ -28,6 +28,7 @@ def init(
     base_path: str,
     ros_events: List[str],
     kernel_events: List[str],
+    context_names: List[str],
     display_list: bool = False,
 ) -> None:
     """
@@ -37,7 +38,8 @@ def init(
     :param base_path: the path to the directory in which to create the tracing session directory
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
-    :param display_list: whether to display list(s) of enabled events
+    :param context_names: list of context names to enable
+    :param display_list: whether to display list(s) of enabled events and context names
     """
     ust_enabled = len(ros_events) > 0
     kernel_enabled = len(kernel_events) > 0
@@ -53,6 +55,10 @@ def init(
             print_names_list(kernel_events)
     else:
         print('kernel tracing disabled')
+    if len(context_names) > 0:
+        print(f'context ({len(context_names)} names)')
+        if display_list:
+            print_names_list(context_names)
 
     full_session_path = path.get_full_session_path(session_name, base_path)
     print(f'writing tracing session to: {full_session_path}')
@@ -61,7 +67,9 @@ def init(
         session_name,
         base_path=base_path,
         ros_events=ros_events,
-        kernel_events=kernel_events)
+        kernel_events=kernel_events,
+        context_names=context_names,
+    )
 
 
 def fini(
@@ -85,6 +93,7 @@ def main():
         params.path,
         params.events_ust,
         params.events_kernel,
+        params.context_names,
         params.list,
     )
     fini(

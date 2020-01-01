@@ -37,7 +37,7 @@ def lttng_init(
     base_path: str = DEFAULT_BASE_PATH,
     ros_events: List[str] = DEFAULT_EVENTS_ROS,
     kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
-    context_names: List[str] = DEFAULT_CONTEXT
+    context_names: List[str] = DEFAULT_CONTEXT,
 ) -> None:
     """
     Set up and start LTTng session.

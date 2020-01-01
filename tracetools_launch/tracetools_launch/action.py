@@ -51,6 +51,7 @@ class Trace(Action):
         base_path: str = path.DEFAULT_BASE_PATH,
         events_ust: List[str] = names.DEFAULT_EVENTS_ROS,
         events_kernel: List[str] = names.DEFAULT_EVENTS_KERNEL,
+        context_names: List[str] = names.DEFAULT_CONTEXT,
         profile_fast: bool = True,
         **kwargs,
     ) -> None:
@@ -62,6 +63,7 @@ class Trace(Action):
         :param base_path: the path to the base directory in which to create the session directory
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
+        :param context_names: the list of context names to enable
         :param profile_fast: `True` to use fast profiling, `False` for normal (only if necessary)
         """
         super().__init__(**kwargs)
@@ -71,6 +73,7 @@ class Trace(Action):
         self.__base_path = base_path
         self.__events_ust = events_ust
         self.__events_kernel = events_kernel
+        self.__context_names = context_names
         self.__profile_fast = profile_fast
         self.__ld_preload_actions = []
         # Add LD_PRELOAD actions if corresponding events are enabled
@@ -125,7 +128,9 @@ class Trace(Action):
             self.__session_name,
             self.__base_path,
             ros_events=self.__events_ust,
-            kernel_events=self.__events_kernel)
+            kernel_events=self.__events_kernel,
+            context_names=self.__context_names,
+        )
 
     def _destroy(self, event: Event, context: LaunchContext) -> None:
         lttng.lttng_fini(self.__session_name)
@@ -137,6 +142,7 @@ class Trace(Action):
             f'base_path={self.__base_path}, '
             f'num_events_ust={len(self.__events_ust)}, '
             f'num_events_kernel={len(self.__events_kernel)}, '
+            f'context_names={self.__context_names}, '
             f'profile_fast={self.__profile_fast}, '
             f'ld_preload_actions={self.__ld_preload_actions})'
         )
