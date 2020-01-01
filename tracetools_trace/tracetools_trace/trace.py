@@ -20,7 +20,7 @@ from typing import List
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import path
-from tracetools_trace.tools import print_events_list
+from tracetools_trace.tools import print_names_list
 
 
 def init(
@@ -44,13 +44,13 @@ def init(
     if ust_enabled:
         print(f'UST tracing enabled ({len(ros_events)} events)')
         if display_list:
-            print_events_list(ros_events)
+            print_names_list(ros_events)
     else:
         print('UST tracing disabled')
     if kernel_enabled:
         print(f'kernel tracing enabled ({len(kernel_events)} events)')
         if display_list:
-            print_events_list(kernel_events)
+            print_names_list(kernel_events)
     else:
         print('kernel tracing disabled')
 

@@ -27,9 +27,9 @@ def tracing_supported() -> bool:
     return sys.platform == 'linux'
 
 
-def print_events_list(
-    events: List[str],
+def print_names_list(
+    names: List[str],
     prefix: str = '\t',
 ) -> None:
-    for event in events:
-        print(f'{prefix}{event}')
+    for name in names:
+        print(f'{prefix}{name}')
