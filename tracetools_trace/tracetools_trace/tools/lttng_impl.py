@@ -229,6 +229,7 @@ def _enable_events(
 context_map = {
     'procname': lttng.EVENT_CONTEXT_PROCNAME,
     'pid': lttng.EVENT_CONTEXT_PID,
+    'tid': lttng.EVENT_CONTEXT_TID,
     'vpid': lttng.EVENT_CONTEXT_VPID,
     'vtid': lttng.EVENT_CONTEXT_VTID,
 }
