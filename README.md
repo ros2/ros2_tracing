@@ -1,4 +1,4 @@
-# tracetools
+# ros2_tracing
 
 Tracing tools for ROS 2.
 
