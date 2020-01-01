@@ -682,11 +682,10 @@ abstract class Dependant {
 }
 abstract class EventHandler {
  +handler_map(): map
- +data(): DataModel {abstract}
+ +data(): DataModel
  +process(events) {static}
 }
 class ProfileHandler {
- +data(): ProfileDataModel
  +_handle_sched_switch(event, metadata)
  +_handle_function_entry(event, metadata)
  +_handle_function_exit(event, metadata)
