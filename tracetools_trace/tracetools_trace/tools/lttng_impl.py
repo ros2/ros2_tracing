@@ -109,6 +109,7 @@ def setup(
 
     # Context
     context_list = _create_context_list(context_names)
+    # TODO make it possible to add context in userspace and kernel separately
     enabled_handles = [h for h in [handle_ust, handle_kernel] if h is not None]
     _add_context(enabled_handles, context_list)
 
