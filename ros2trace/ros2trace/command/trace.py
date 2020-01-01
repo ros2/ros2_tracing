@@ -32,6 +32,7 @@ class TraceCommand(CommandExtension):
             args.path,
             args.events_ust,
             args.events_kernel,
+            args.context_names,
             args.list,
         )
         fini(
