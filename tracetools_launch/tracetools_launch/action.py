@@ -18,6 +18,7 @@ import re
 from typing import List
 from typing import Optional
 
+from launch import logging
 from launch.action import Action
 from launch.event import Event
 from launch.event_handlers import OnShutdown
@@ -75,6 +76,7 @@ class Trace(Action):
         self.__events_kernel = events_kernel
         self.__context_names = context_names
         self.__profile_fast = profile_fast
+        self.__logger = logging.get_logger(__name__)
         self.__ld_preload_actions = []
         # Add LD_PRELOAD actions if corresponding events are enabled
         if self.has_profiling_events(self.__events_ust):
@@ -124,15 +126,17 @@ class Trace(Action):
         return self.__ld_preload_actions
 
     def _setup(self) -> None:
-        lttng.lttng_init(
+        trace_directory = lttng.lttng_init(
             self.__session_name,
             self.__base_path,
             ros_events=self.__events_ust,
             kernel_events=self.__events_kernel,
             context_names=self.__context_names,
         )
+        self.__logger.info(f'Writing tracing session to: {trace_directory}')
 
     def _destroy(self, event: Event, context: LaunchContext) -> None:
+        self.__logger.debug(f'Finalizing tracing session: {self.__session_name}')
         lttng.lttng_fini(self.__session_name)
 
     def __repr__(self):
