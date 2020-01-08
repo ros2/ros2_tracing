@@ -50,7 +50,13 @@ def lttng_init(
     :param context_names: list of context elements to enable
     :return: the full path to the trace directory
     """
-    trace_directory = _lttng.setup(session_name, base_path, ros_events, kernel_events, context_names)
+    trace_directory = _lttng.setup(
+        session_name,
+        base_path,
+        ros_events,
+        kernel_events,
+        context_names,
+    )
     _lttng.start(session_name)
     return trace_directory
 
