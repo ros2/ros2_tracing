@@ -29,8 +29,9 @@ try:
     current_version = _lttng.get_version()
     LTTNG_MIN_VERSION = '2.10.7'
     if current_version is None or current_version < StrictVersion(LTTNG_MIN_VERSION):
-        raise RuntimeError(
-            f'lttng module version >={LTTNG_MIN_VERSION} required, found {str(current_version)}'
+        print(
+            f'lttng module version >={LTTNG_MIN_VERSION} required, found {str(current_version)}',
+            file=sys.stderr,
         )
 except ImportError:
     # Fall back on stub functions so that this still passes linter checks
