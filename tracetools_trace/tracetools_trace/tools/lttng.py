@@ -25,7 +25,6 @@ try:
     _lttng = lttng_impl
 except ImportError:
     # Fall back on empty functions
-    print('Warning: lttng Python package not found', file=sys.stderr)
     from . import lttng_stub
 
     _lttng = lttng_stub
