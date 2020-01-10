@@ -24,7 +24,7 @@ try:
 
     _lttng = lttng_impl
 except ImportError:
-    # Fall back on empty functions
+    # Fall back on stub functions so that this still passes linter checks
     from . import lttng_stub
 
     _lttng = lttng_stub
