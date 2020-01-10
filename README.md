@@ -17,6 +17,7 @@ To enable tracing:
     ```
     Notes:
     * **Version 2.10.7 or above is required for all LTTng packages**. On Ubuntu, use the above PPA. On other distros, [build from source](https://lttng.org/docs/v2.10/#doc-building-from-source), making sure to also [build the Python bindings](https://github.com/lttng/lttng-tools#building).
+    * LTTng 2.11 has not been tested yet.
 2. Build
     ```
     $ colcon build
