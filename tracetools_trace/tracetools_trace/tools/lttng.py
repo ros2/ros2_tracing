@@ -23,6 +23,15 @@ try:
     from . import lttng_impl
 
     _lttng = lttng_impl
+
+    # Check lttng module version
+    from distutils.version import StrictVersion
+    current_version = _lttng.get_version()
+    LTTNG_MIN_VERSION = '2.10.7'
+    if current_version is None or current_version < StrictVersion(LTTNG_MIN_VERSION):
+        raise RuntimeError(
+            f'lttng module version >={LTTNG_MIN_VERSION} required, found {str(current_version)}'
+        )
 except ImportError:
     # Fall back on stub functions so that this still passes linter checks
     from . import lttng_stub

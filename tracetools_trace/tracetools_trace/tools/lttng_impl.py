@@ -14,8 +14,11 @@
 
 """Implementation of the interface for tracing with LTTng."""
 
+from distutils.version import StrictVersion
+import re
 from typing import List
 from typing import Optional
+from typing import Union
 
 import lttng
 
@@ -24,6 +27,23 @@ from .names import DEFAULT_EVENTS_KERNEL
 from .names import DEFAULT_EVENTS_ROS
 from .path import DEFAULT_BASE_PATH
 from .path import get_full_session_path
+
+
+def get_version() -> Union[StrictVersion, None]:
+    """
+    Get the version of the lttng module.
+
+    The module does not have a __version__ attribute, but the version is mentioned in its __doc__,
+    and seems to be written in a consistent way across versions.
+
+    :return: the version as a StrictVersion object, or `None` if it cannot be extracted
+    """
+    doc_lines = lttng.__doc__.split('\n')
+    first_line = list(filter(None, doc_lines))[0]
+    version_string = first_line.split(' ')[1]
+    if not re.compile(r'^[0-9]+\.[0-9]+\.[0-9]+$').match(version_string):
+        return None
+    return StrictVersion(version_string)
 
 
 def setup(
