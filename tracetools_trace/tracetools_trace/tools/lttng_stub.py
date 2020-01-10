@@ -15,17 +15,20 @@
 """Stub version of the interface for tracing with LTTng."""
 
 
+ERROR_MESSAGE = 'lttng module not found, but still tried to use it'
+
+
 def setup(*args, **kwargs) -> None:
-    pass
+    raise RuntimeError(ERROR_MESSAGE)
 
 
 def start(*args, **kwargs) -> None:
-    pass
+    raise RuntimeError(ERROR_MESSAGE)
 
 
 def stop(*args, **kwargs) -> None:
-    pass
+    raise RuntimeError(ERROR_MESSAGE)
 
 
 def destroy(*args, **kwargs) -> None:
-    pass
+    raise RuntimeError(ERROR_MESSAGE)
