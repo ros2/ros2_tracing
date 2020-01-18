@@ -22,6 +22,7 @@ from typing import Union
 
 import lttng
 
+from .names import CONTEXT_TYPE_CONSTANTS_MAP
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_KERNEL
 from .names import DEFAULT_EVENTS_ROS
@@ -131,8 +132,10 @@ def setup(
 
     # Context
     context_list = _create_context_list(context_names)
-    # TODO make it possible to add context in userspace and kernel separately
-    enabled_handles = [h for h in [handle_ust, handle_kernel] if h is not None]
+    # TODO make it possible to add context in userspace and kernel separately, since some context
+    # types might only apply to userspace OR kernel; only consider userspace contexts for now
+    handles_context = [handle_ust]
+    enabled_handles = list(filter(None, handles_context))
     _add_context(enabled_handles, context_list)
 
     return full_path
@@ -269,24 +272,21 @@ def _enable_events(
 
 
 context_map = {
-    'procname': lttng.EVENT_CONTEXT_PROCNAME,
-    'pid': lttng.EVENT_CONTEXT_PID,
-    'tid': lttng.EVENT_CONTEXT_TID,
-    'vpid': lttng.EVENT_CONTEXT_VPID,
-    'vtid': lttng.EVENT_CONTEXT_VTID,
+    name: getattr(lttng, name_constant, None) if name_constant is not None else None
+    for name, name_constant in CONTEXT_TYPE_CONSTANTS_MAP.items()
 }
 
 
 def _context_name_to_type(
     context_name: str,
-) -> int:
+) -> Union[int, None]:
     """
     Convert from context name to LTTng enum/constant type.
 
     :param context_name: the generic name for the context
-    :return: the associated type
+    :return: the associated type, or `None` if it cannot be found
     """
-    return context_map.get(context_name)
+    return context_map.get(context_name, None)
 
 
 def _create_context_list(
@@ -299,12 +299,14 @@ def _create_context_list(
     :return: the event context list
     """
     context_list = []
-    for c in context_names_list:
+    for context_name in context_names_list:
         ec = lttng.EventContext()
-        context_type = _context_name_to_type(c)
+        context_type = _context_name_to_type(context_name)
         if context_type is not None:
             ec.ctx = context_type
             context_list.append(ec)
+        else:
+            raise RuntimeError(f'failed to find context type: {context_name}')
     return context_list
 
 
