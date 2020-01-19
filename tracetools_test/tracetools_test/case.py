@@ -70,7 +70,8 @@ class TraceTestCase(unittest.TestCase):
             self._events_ros,
             self._events_kernel,
             self._package,
-            self._nodes)
+            self._nodes,
+        )
 
         print(f'TRACE DIRECTORY: {full_path}')
         self._exit_code = exit_code

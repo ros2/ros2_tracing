@@ -53,13 +53,15 @@ def run_and_trace(
 
     launch_actions = []
     # Add trace action
-    launch_actions.append(Trace(
-        session_name=session_name,
-        append_timestamp=False,
-        base_path=base_path,
-        events_ust=ros_events,
-        events_kernel=kernel_events
-    ))
+    launch_actions.append(
+        Trace(
+            session_name=session_name,
+            append_timestamp=False,
+            base_path=base_path,
+            events_ust=ros_events,
+            events_kernel=kernel_events,
+        )
+    )
     # Add nodes
     for node_name in node_names:
         n = Node(
