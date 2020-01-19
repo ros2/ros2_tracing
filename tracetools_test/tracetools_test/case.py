@@ -48,7 +48,7 @@ class TraceTestCase(unittest.TestCase):
         events_ros: List[str],
         nodes: List[str],
         base_path: str = '/tmp',
-        events_kernel: List[str] = None,
+        events_kernel: List[str] = [],
         package: str = 'tracetools_test',
     ) -> None:
         """Create a TraceTestCase."""
