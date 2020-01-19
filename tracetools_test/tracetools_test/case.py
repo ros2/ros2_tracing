@@ -48,7 +48,7 @@ class TraceTestCase(unittest.TestCase):
         events_ros: List[str],
         nodes: List[str],
         base_path: str = '/tmp',
-        events_kernel: List[str] = None,
+        events_kernel: List[str] = [],
         package: str = 'tracetools_test',
     ) -> None:
         """Create a TraceTestCase."""
@@ -70,7 +70,8 @@ class TraceTestCase(unittest.TestCase):
             self._events_ros,
             self._events_kernel,
             self._package,
-            self._nodes)
+            self._nodes,
+        )
 
         print(f'TRACE DIRECTORY: {full_path}')
         self._exit_code = exit_code
