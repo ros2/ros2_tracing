@@ -1,5 +1,7 @@
 # ros2_tracing
 
+[![pipeline status](https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing/badges/master/pipeline.svg)](https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing/commits/master)
+
 Tracing tools for ROS 2.
 
 ## Building
