@@ -19,7 +19,7 @@ before_script:
   - . /root/ws/install/local_setup.sh
 
 tracing_enabled:
-  image: $base_image_id
+  image: $base_image_id:dashing
   script:
     - lttng-sessiond --daemonize
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
@@ -30,7 +30,7 @@ tracing_enabled:
   <<: *global_artifacts
 
 tracing_disabled:
-  image: $base_image_id
+  image: $base_image_id:dashing
   script:
     - colcon build --symlink-install --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
@@ -40,7 +40,7 @@ tracing_disabled:
   <<: *global_artifacts
 
 no_lttng:
-  image: $base_image_id:base
+  image: $base_image_id:dashing-base
   script:
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
