@@ -64,15 +64,15 @@ class TestIntra(TraceTestCase):
             sub_handle_intra,
             rclcpp_sub_init_events,
         )
-        # Should have 2 events for the given subscription handle
-        # (Subscription and SubscriptionIntraProcess)
+        # Should have 1 event for the given subscription handle
+        # (Subscription)
         self.assertNumEventsEqual(
             rclcpp_sub_init_topic_events,
-            2,
-            'number of rclcpp_sub_init events for the topic not equal to 2',
+            1,
+            'number of rclcpp_sub_init events for the topic not equal to 1',
         )
 
-        # Get the 2 subscription pointers
+        # Get the subscription pointer
         events = rclcpp_sub_init_topic_events
         subscription_pointers = [self.get_field(e, 'subscription') for e in events]
 
