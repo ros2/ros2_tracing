@@ -1,9 +1,0 @@
-repositories:
-  ros2/rcl:
-    type: git
-    url: https://gitlab.com/micro-ROS/ros_tracing/rcl.git
-    version: instrumentation
-  ros2/rclcpp:
-    type: git
-    url: https://gitlab.com/micro-ROS/ros_tracing/rclcpp.git
-    version: instrumentation
