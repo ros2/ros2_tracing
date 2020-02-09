@@ -251,6 +251,7 @@ class TraceTestCase(unittest.TestCase):
         field_name: str,
         matching_event_name: str = None,
         events: List[DictEvent] = None,
+        check_order: bool = True,
     ) -> None:
         """
         Check that the value of a field for a given event has a matching event that follows.
@@ -259,6 +260,7 @@ class TraceTestCase(unittest.TestCase):
         :param field_name: the name of the common field to check
         :param matching_event_name: the name of the event to check (or `None` to check all)
         :param events: the events to check (or `None` to check all in trace)
+        :param check_order: whether to check that the matching event comes after the initial event
         """
         if events is None:
             events = self._events
@@ -276,14 +278,15 @@ class TraceTestCase(unittest.TestCase):
             len(matches),
             1,
             f'no corresponding {field_name}')
-        # Check order
-        # Since matching pairs might repeat, we need to check
-        # that there is at least one match that comes after
-        matches_ordered = [e for e in matches if self.are_events_ordered(initial_event, e)]
-        self.assertGreaterEqual(
-            len(matches_ordered),
-            1,
-            'matching field event not after initial event')
+        if check_order:
+            # Check order
+            # Since matching pairs might repeat, we need to check
+            # that there is at least one match that comes after
+            matches_ordered = [e for e in matches if self.are_events_ordered(initial_event, e)]
+            self.assertGreaterEqual(
+                len(matches_ordered),
+                1,
+                'matching field event not after initial event')
 
     def assertFieldEquals(
         self,
