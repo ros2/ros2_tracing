@@ -82,15 +82,6 @@ if(BUILD_TESTING)
     tracetools
   )
   target_link_libraries(test_timer "${RDYNAMIC_FLAG}")
-  add_executable(test_service
-    src/test_service.cpp
-  )
-  ament_target_dependencies(test_service
-    rclcpp
-    std_srvs
-    tracetools
-  )
-  target_link_libraries(test_service "${RDYNAMIC_FLAG}")
   add_executable(test_service_ping
     src/test_service_ping.cpp
   )
@@ -115,7 +106,6 @@ if(BUILD_TESTING)
     test_ping
     test_pong
     test_publisher
-    test_service
     test_service_ping
     test_service_pong
     test_timer
@@ -135,7 +125,6 @@ if(BUILD_TESTING)
       test/test_node.py
       test/test_publisher.py
       test/test_service.py
-      test/test_service_callback.py
       test/test_subscription.py
       test/test_timer.py
     )
