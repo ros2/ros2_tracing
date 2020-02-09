@@ -132,17 +132,33 @@ class TraceTestCase(unittest.TestCase):
         handle_field_names: Union[str, List[str]],
     ) -> None:
         """
-        Check that the handle associated with a field name is valid.
+        Check that the handle associated to a field name is valid.
 
         :param event: the event which has a handle field
         :param handle_field_names: the handle field name(s) to check
         """
-        if not isinstance(handle_field_names, list):
-            handle_field_names = [handle_field_names]
-        for field_name in handle_field_names:
-            handle_value = self.get_field(event, field_name)
-            self.assertIsInstance(handle_value, int, 'handle value not int')
-            self.assertGreater(handle_value, 0, f'invalid handle value: {field_name}')
+        self.assertValidPointer(
+            event,
+            handle_field_names,
+        )
+
+    def assertValidPointer(
+        self,
+        event: DictEvent,
+        pointer_field_names: Union[str, List[str]],
+    ) -> None:
+        """
+        Check that the pointer associated to a field name is valid.
+
+        :param event: the event which has a pointer field
+        :param pointer_field_names: the pointer field name(s) to check
+        """
+        if not isinstance(pointer_field_names, list):
+            pointer_field_names = [pointer_field_names]
+        for field_name in pointer_field_names:
+            pointer_value = self.get_field(event, field_name)
+            self.assertIsInstance(pointer_value, int, 'pointer value not int')
+            self.assertGreater(pointer_value, 0, f'invalid pointer value: {field_name}')
 
     def assertValidQueueDepth(
         self,
