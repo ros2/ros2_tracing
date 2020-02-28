@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "tracetools/config.h"
+
 #ifdef TRACETOOLS_LTTNG_ENABLED
 #include <dlfcn.h>
 #include <cxxabi.h>
