@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if defined(TRACETOOLS_LTTNG_ENABLED)
+#include "tracetools/config.h"
+
+#ifdef TRACETOOLS_LTTNG_ENABLED
 #include <dlfcn.h>
 #include <cxxabi.h>
 #endif
@@ -20,7 +22,7 @@
 
 const char * _demangle_symbol(const char * mangled)
 {
-#if defined(TRACETOOLS_LTTNG_ENABLED)
+#ifdef TRACETOOLS_LTTNG_ENABLED
   char * demangled = nullptr;
   int status;
   demangled = abi::__cxa_demangle(mangled, NULL, 0, &status);
@@ -35,7 +37,7 @@ const char * _demangle_symbol(const char * mangled)
 
 const char * _get_symbol_funcptr(void * funcptr)
 {
-#if defined(TRACETOOLS_LTTNG_ENABLED)
+#ifdef TRACETOOLS_LTTNG_ENABLED
   Dl_info info;
   if (dladdr(funcptr, &info) == 0) {
     return SYMBOL_UNKNOWN;

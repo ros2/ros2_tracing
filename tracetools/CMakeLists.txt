@@ -19,21 +19,23 @@ if(WIN32)
 else()
   set(DISABLED_DEFAULT OFF)
 endif()
-option(TRACETOOLS_DISABLED "Explicitly disable support for tracing with LTTng" ${DISABLED_DEFAULT})
+option(TRACETOOLS_DISABLED "Explicitly disable support for tracing" ${DISABLED_DEFAULT})
 
 if(NOT TRACETOOLS_DISABLED)
-  # Set TRACING_ENABLED if we can find lttng-ust
+  # Set TRACETOOLS_LTTNG_ENABLED if we can find lttng-ust
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
     pkg_check_modules(LTTNG lttng-ust)
     if(LTTNG_FOUND)
-      set(TRACING_ENABLED TRUE)
+      set(TRACETOOLS_LTTNG_ENABLED TRUE)
       message("LTTng found: tracing enabled")
     endif()
   endif()
 endif()
 
 # store configuration variables for runtime use
+#   TRACETOOLS_DISABLED
+#   TRACETOOLS_LTTNG_ENABLED
 configure_file(include/${PROJECT_NAME}/config.h.in include/${PROJECT_NAME}/config.h)
 
 # add both source and output include, to capture config.h
@@ -44,7 +46,7 @@ set(SOURCES
   src/tracetools.c
   src/utils.cpp
 )
-if(TRACING_ENABLED)
+if(TRACETOOLS_LTTNG_ENABLED)
   list(APPEND SOURCES
     include/tracetools/tp_call.h
     src/tp_call.c
@@ -52,8 +54,7 @@ if(TRACING_ENABLED)
 endif()
 
 add_library(${PROJECT_NAME} ${SOURCES})
-if(TRACING_ENABLED)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC TRACETOOLS_LTTNG_ENABLED)
+if(TRACETOOLS_LTTNG_ENABLED)
   target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
 endif()
 if(WIN32)
@@ -95,7 +96,7 @@ install(
 )
 
 ament_export_include_directories(include)
-if(TRACING_ENABLED)
+if(TRACETOOLS_LTTNG_ENABLED)
   ament_export_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
 else()
   ament_export_libraries(${PROJECT_NAME})
@@ -109,7 +110,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 
   # Only build tracetools utils tests if LTTng is enabled and found
-  if(TRACING_ENABLED)
+  if(TRACETOOLS_LTTNG_ENABLED)
     ament_add_gtest(test_utils test/test_utils.cpp)
     if(TARGET test_utils)
       target_link_libraries(test_utils ${PROJECT_NAME} -rdynamic)

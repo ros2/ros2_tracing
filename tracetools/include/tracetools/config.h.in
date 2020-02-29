@@ -16,5 +16,6 @@
 #define TRACETOOLS__CONFIG_H_
 
 #cmakedefine TRACETOOLS_DISABLED
+#cmakedefine TRACETOOLS_LTTNG_ENABLED
 
 #endif  // TRACETOOLS__CONFIG_H_

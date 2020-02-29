@@ -16,7 +16,7 @@
 
 #ifndef TRACETOOLS_DISABLED
 
-#if defined(TRACETOOLS_LTTNG_ENABLED)
+#ifdef TRACETOOLS_LTTNG_ENABLED
 # include "tracetools/tp_call.h"
 # define CONDITIONAL_TP(...) \
   tracepoint(TRACEPOINT_PROVIDER, __VA_ARGS__)
@@ -26,7 +26,7 @@
 
 bool ros_trace_compile_status()
 {
-#if defined(TRACETOOLS_LTTNG_ENABLED)
+#ifdef TRACETOOLS_LTTNG_ENABLED
   return true;
 #else
   return false;
