@@ -33,25 +33,44 @@ if(NOT TRACETOOLS_DISABLED)
   endif()
 endif()
 
-# store configuration variables for runtime use
+# Store configuration variables for runtime use
 #   TRACETOOLS_DISABLED
 #   TRACETOOLS_LTTNG_ENABLED
 configure_file(include/${PROJECT_NAME}/config.h.in include/${PROJECT_NAME}/config.h)
-
-# add both source and output include, to capture config.h
-include_directories(include ${PROJECT_BINARY_DIR}/include)
 
 # Tracetools lib
 set(SOURCES
   src/tracetools.c
   src/utils.cpp
 )
+set(HEADERS
+  include/${PROJECT_NAME}/tracetools.h
+  include/${PROJECT_NAME}/utils.hpp
+  include/${PROJECT_NAME}/visibility_control.hpp
+)
 if(TRACETOOLS_LTTNG_ENABLED)
+  # We only need these if we're using LTTng
   list(APPEND SOURCES
-    include/tracetools/tp_call.h
     src/tp_call.c
   )
+  list(APPEND HEADERS
+    include/${PROJECT_NAME}/tp_call.h
+  )
 endif()
+
+# Copy select headers to the actual include/ directory that we will use and export
+foreach(_header ${HEADERS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_header}
+    ${PROJECT_BINARY_DIR}/${_header}
+    COPYONLY
+  )
+endforeach()
+
+# Only use output/binary include directory
+include_directories(
+  ${PROJECT_BINARY_DIR}/include
+)
 
 add_library(${PROJECT_NAME} ${SOURCES})
 if(TRACETOOLS_LTTNG_ENABLED)
@@ -79,12 +98,8 @@ install(TARGETS
 )
 
 install(
-  DIRECTORY include/
-  DESTINATION include
-)
-install(
-  FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h
-  DESTINATION include/${PROJECT_NAME}
+  DIRECTORY ${PROJECT_BINARY_DIR}/include/
+  DESTINATION include/
 )
 install(
   TARGETS ${PROJECT_NAME}
