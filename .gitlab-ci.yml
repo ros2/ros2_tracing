@@ -22,6 +22,7 @@ before_script:
 tracing_enabled:
   image: $BASE_IMAGE_ID:$DISTRO
   script:
+    - lttng --version && apt list lttng-tools liblttng-ust-dev python3-lttng python3-babeltrace
     - lttng-sessiond --daemonize
     - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
