@@ -22,7 +22,7 @@ from typing import Optional
 try:
     from . import lttng_impl
 
-    _lttng = lttng_impl
+    _lttng = lttng_impl  # type: ignore
 
     # Check lttng module version
     from distutils.version import StrictVersion
@@ -37,7 +37,7 @@ except ImportError:
     # Fall back on stub functions so that this still passes linter checks
     from . import lttng_stub
 
-    _lttng = lttng_stub
+    _lttng = lttng_stub  # type: ignore
 
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_KERNEL

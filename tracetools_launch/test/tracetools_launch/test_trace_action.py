@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import List
 import unittest
 
 from tracetools_launch.action import Trace
@@ -26,7 +27,7 @@ class TestTraceAction(unittest.TestCase):
         )
 
     def test_has_profiling_events(self) -> None:
-        events_lists_match = [
+        events_lists_match: List[List[str]] = [
             [
                 'lttng_ust_cyg_profile_fast:func_entry',
                 'hashtag:yopo',
@@ -37,7 +38,7 @@ class TestTraceAction(unittest.TestCase):
                 'lttng_ust_cyg_profile:func_exit',
             ],
         ]
-        events_lists_no_match = [
+        events_lists_no_match: List[List[str]] = [
             [
                 'lttng_ust_statedump:bin_info',
                 'ros2:event',
@@ -50,7 +51,7 @@ class TestTraceAction(unittest.TestCase):
             self.assertFalse(Trace.has_profiling_events(events))
 
     def test_has_ust_memory_events(self) -> None:
-        events_lists_match = [
+        events_lists_match: List[List[str]] = [
             [
                 'hashtag:yopo',
                 'lttng_ust_libc:malloc',
@@ -60,7 +61,7 @@ class TestTraceAction(unittest.TestCase):
                 'lttng_ust_libc:still_a_match',
             ],
         ]
-        events_lists_no_match = [
+        events_lists_no_match: List[List[str]] = [
             [],
             [
                 'my_random:event',
