@@ -1,8 +1,8 @@
 variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
-  base_image_id: registry.gitlab.com/micro-ros/ros_tracing/ci_base
-  distro: foxy
+  BASE_IMAGE_ID: registry.gitlab.com/micro-ros/ros_tracing/ci_base
+  DISTRO: foxy
 
 .global_artifacts: &global_artifacts
   artifacts:
@@ -20,32 +20,33 @@ before_script:
   - . /root/ws/install/local_setup.sh
 
 tracing_enabled:
-  image: $base_image_id:$distro
+  image: $BASE_IMAGE_ID:$DISTRO
   script:
+    - lttng --version && apt list lttng-tools liblttng-ust-dev python3-lttng python3-babeltrace
     - lttng-sessiond --daemonize
-    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - ./build/tracetools/status
-    - colcon test --packages-select $PACKAGES_LIST
+    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all
   <<: *global_artifacts
 
 tracing_disabled:
-  image: $base_image_id:$distro
+  image: $BASE_IMAGE_ID:$DISTRO
   script:
-    - colcon build --symlink-install --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
+    - colcon build --symlink-install --event-handlers console_cohesion+ --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - (! ./build/tracetools/status)
-    - colcon test --packages-select $PACKAGES_LIST
+    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all
   <<: *global_artifacts
 
 no_lttng:
-  image: $base_image_id:$distro-base
+  image: $BASE_IMAGE_ID:$DISTRO-base
   script:
-    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
+    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
     - . install/local_setup.sh
     - (! ./build/tracetools/status)
-    - colcon test --packages-select $PACKAGES_LIST
+    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all
   <<: *global_artifacts
