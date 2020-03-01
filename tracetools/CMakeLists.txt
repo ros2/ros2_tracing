@@ -99,7 +99,7 @@ install(TARGETS
 
 install(
   DIRECTORY ${PROJECT_BINARY_DIR}/include/
-  DESTINATION include/
+  DESTINATION include
 )
 install(
   TARGETS ${PROJECT_NAME}
