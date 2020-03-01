@@ -41,7 +41,10 @@ def get_version() -> Union[StrictVersion, None]:
     :return: the version as a StrictVersion object, or `None` if it cannot be extracted
     """
     doc_lines = lttng.__doc__.split('\n')
-    first_line: str = list(filter(None, doc_lines))[0]
+    filtered_doc_lines: List[str] = list(filter(None, doc_lines))
+    if len(filtered_doc_lines) == 0:
+        return None
+    first_line = filtered_doc_lines[0]
     version_string = first_line.split(' ')[1]
     if not re.compile(r'^[0-9]+\.[0-9]+\.[0-9]+$').match(version_string):
         return None
