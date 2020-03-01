@@ -31,14 +31,14 @@ class DefaultArgValueCompleter:
         return self.list
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse args for tracing."""
     parser = argparse.ArgumentParser(description='Setup and launch an LTTng tracing session.')
     add_arguments(parser)
     return parser.parse_args()
 
 
-def add_arguments(parser: argparse.ArgumentParser):
+def add_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '-s', '--session-name', dest='session_name',
         default=path.append_timestamp('session'),
@@ -47,27 +47,27 @@ def add_arguments(parser: argparse.ArgumentParser):
         '-p', '--path', dest='path',
         default=path.DEFAULT_BASE_PATH,
         help='path of the base directory for trace data (default: %(default)s)')
-    arg = parser.add_argument(
+    events_ust_arg = parser.add_argument(  # type: ignore
         '-u', '--ust', nargs='*', dest='events_ust',
         default=names.DEFAULT_EVENTS_ROS,
         help='the ROS UST events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all UST events, '
              'provide this flag without any event name]')
-    arg.completer = DefaultArgValueCompleter(arg)
-    arg = parser.add_argument(
+    events_ust_arg.completer = DefaultArgValueCompleter(events_ust_arg)  # type: ignore
+    events_kernel_arg = parser.add_argument(  # type: ignore
         '-k', '--kernel', nargs='*', dest='events_kernel',
         default=names.DEFAULT_EVENTS_KERNEL,
         help='the kernel events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all kernel events, '
              'provide this flag without any event name]')
-    arg.completer = DefaultArgValueCompleter(arg)
-    arg = parser.add_argument(
+    events_kernel_arg.completer = DefaultArgValueCompleter(events_kernel_arg)  # type: ignore
+    context_arg = parser.add_argument(  # type: ignore
         '-c', '--context', nargs='*', dest='context_names',
         default=names.DEFAULT_CONTEXT,
         help='the context names to enable (default: see tracetools_trace.tools.names) '
              '[to disable all context names, '
              'provide this flag without any name]')
-    arg.completer = DefaultArgValueCompleter(arg)
+    context_arg.completer = DefaultArgValueCompleter(context_arg)  # type: ignore
     parser.add_argument(
         '-l', '--list', dest='list', action='store_true',
         help='display lists of enabled events and context names (default: %(default)s)')

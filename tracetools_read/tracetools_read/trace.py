@@ -23,9 +23,6 @@ import babeltrace
 from . import DictEvent
 
 
-BabeltraceEvent = babeltrace.babeltrace.Event
-
-
 def is_trace_directory(path: str) -> bool:
     """
     Check recursively if a path is a trace directory.
@@ -42,7 +39,7 @@ def is_trace_directory(path: str) -> bool:
     return traces is not None and len(traces) > 0
 
 
-def get_trace_ctf_events(trace_directory: str) -> Iterable[BabeltraceEvent]:
+def get_trace_ctf_events(trace_directory: str) -> Iterable[babeltrace.babeltrace.Event]:
     """
     Get the events of a trace.
 
@@ -61,7 +58,10 @@ def get_trace_events(trace_directory: str) -> List[DictEvent]:
     :param trace_directory: the path to the main/top trace directory
     :return: events
     """
-    return [event_to_dict(event) for event in get_trace_ctf_events(trace_directory)]
+    events: List[DictEvent] = [
+        event_to_dict(event) for event in get_trace_ctf_events(trace_directory)
+    ]
+    return events
 
 
 # List of ignored CTF fields
@@ -82,7 +82,7 @@ _IGNORED_FIELDS = [
 _DISCARD = 'events_discarded'
 
 
-def event_to_dict(event: BabeltraceEvent) -> DictEvent:
+def event_to_dict(event: babeltrace.babeltrace.Event) -> DictEvent:
     """
     Convert name, timestamp, and all other keys except those in IGNORED_FIELDS into a dictionary.
 

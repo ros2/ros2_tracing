@@ -77,7 +77,7 @@ class Trace(Action):
         self.__context_names = context_names
         self.__profile_fast = profile_fast
         self.__logger = logging.get_logger(__name__)
-        self.__ld_preload_actions = []
+        self.__ld_preload_actions: List[LdPreload] = []
         # Add LD_PRELOAD actions if corresponding events are enabled
         if self.has_profiling_events(self.__events_ust):
             self.__ld_preload_actions.append(

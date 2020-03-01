@@ -41,7 +41,7 @@ def get_version() -> Union[StrictVersion, None]:
     :return: the version as a StrictVersion object, or `None` if it cannot be extracted
     """
     doc_lines = lttng.__doc__.split('\n')
-    first_line = list(filter(None, doc_lines))[0]
+    first_line: str = list(filter(None, doc_lines))[0]
     version_string = first_line.split(' ')[1]
     if not re.compile(r'^[0-9]+\.[0-9]+\.[0-9]+$').match(version_string):
         return None
@@ -144,7 +144,7 @@ def setup(
     # TODO make it possible to add context in userspace and kernel separately, since some context
     # types might only apply to userspace OR kernel; only consider userspace contexts for now
     handles_context = [handle_ust]
-    enabled_handles = list(filter(None, handles_context))
+    enabled_handles: List[lttng.Handle] = list(filter(None, handles_context))
     _add_context(enabled_handles, context_list)
 
     return full_path
