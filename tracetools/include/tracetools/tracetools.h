@@ -27,7 +27,7 @@
 #  define DECLARE_TRACEPOINT(event_name, ...) \
   TRACETOOLS_PUBLIC void(ros_trace_ ## event_name)(__VA_ARGS__);
 #else
-#  define TRACEPOINT(event_name, ...)
+#  define TRACEPOINT(event_name, ...) ((void) (0))
 #  define DECLARE_TRACEPOINT(event_name, ...)
 #endif
 
