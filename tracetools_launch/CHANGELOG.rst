@@ -2,6 +2,13 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add logs for trace action init and fini
+* Expose context enabling through CLI and Trace action
+* Extract LdPreload action from Trace action to support preloading any lib
+* Contributors: Christophe Bedard
+
 0.2.12 (2019-12-09)
 -------------------
 * Use imperative mood in constructor docstring.

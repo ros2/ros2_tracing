@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Expose context enabling through CLI and Trace action
+* Contributors: Christophe Bedard
+
 0.2.11 (2019-12-09)
 -------------------
 * Remove duplicated code for trace command

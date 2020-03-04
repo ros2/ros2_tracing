@@ -2,6 +2,12 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge and update service test to cover callback registration
+* Fix default value for events_kernel in TraceTestCase
+* Contributors: Christophe Bedard
+
 0.2.12 (2019-12-09)
 -------------------
 * Use imperative mood in constructor docstring.

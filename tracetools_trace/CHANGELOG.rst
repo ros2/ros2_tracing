@@ -2,6 +2,16 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add more context types and refactor mapping between name and constant
+* Check version of LTTng Python module and raise error if below 2.10.7
+* Add logs for trace action init and fini
+* Expose context enabling through CLI and Trace action
+* Add kmem_mm_page_alloc|free to default kernel events
+* Remove sched_waking/sched_wakeup from the default kernel events list
+* Contributors: Christophe Bedard
+
 0.2.11 (2019-12-09)
 -------------------
 * Register Python packages in the ament index

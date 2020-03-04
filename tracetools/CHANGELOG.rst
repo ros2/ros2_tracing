@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Various improvements to the build setup and CMakeLists.txt
+* Contributors: Christophe Bedard, Stephen Brawner
+
 0.2.10 (2019-11-17)
 -------------------
 * Add new rclcpp_subscription_init tracepoint to support new intra-process comms 
