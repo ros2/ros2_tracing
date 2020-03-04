@@ -6,7 +6,7 @@ Tracing tools for ROS 2.
 
 ## Building
 
-If the `TRACETOOLS_DISABLED` option is enabled during build or if LTTng is not found, then this package will not do anything.
+If LTTng is not found during build, or if the [`TRACETOOLS_DISABLED` option is enabled](#disabling-tracing), then this package will not do anything.
 
 To enable tracing:
 
@@ -25,6 +25,14 @@ To enable tracing:
     $ source ./install/local_setup.bash
     $ ros2 run tracetools status
     ```
+
+### Disabling tracing
+
+Alternatively, to build and disable tracing, use `TRACETOOLS_DISABLED`:
+
+```
+$ colcon build --cmake-args " -DTRACETOOLS_DISABLED=ON"
+```
 
 ## Tracing
 
