@@ -36,7 +36,7 @@ $ colcon build --cmake-args " -DTRACETOOLS_DISABLED=ON"
 
 ## Tracing
 
-The steps above will not lead to trace data being generated, and thus they will have no impact on execution. LTTng has to be enabled. The packages in this repo provide two options.
+The steps above will not lead to trace data being generated, and thus they will have no impact on execution. LTTng has to be configured for tracing. The packages in this repo provide two options.
 
 ### Trace command
 
