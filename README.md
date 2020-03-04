@@ -10,16 +10,12 @@ If the `TRACETOOLS_DISABLED` option is enabled during build or if LTTng is not f
 
 To enable tracing:
 
-1. Install [LTTng](https://lttng.org/docs/v2.10/#doc-ubuntu) with the Python bindings to control tracing and read traces:
+1. Install [LTTng](https://lttng.org/docs/v2.11/) (`>=2.11.1`) with the Python bindings to control tracing and read traces:
     ```
-    $ sudo apt-add-repository ppa:lttng/stable-2.10
     $ sudo apt-get update
     $ sudo apt-get install lttng-tools lttng-modules-dkms liblttng-ust-dev
     $ sudo apt-get install python3-babeltrace python3-lttng
     ```
-    Notes:
-    * **Version 2.10.7 or above is required for all LTTng packages**. On Ubuntu, use the above PPA. On other distros, [build from source](https://lttng.org/docs/v2.10/#doc-building-from-source), making sure to also [build the Python bindings](https://github.com/lttng/lttng-tools#building).
-    * LTTng 2.11 has not been tested yet.
 2. Build
     ```
     $ colcon build
