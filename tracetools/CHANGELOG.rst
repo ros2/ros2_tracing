@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.0 (2020-03-04)
+------------------
 * Various improvements to the build setup and CMakeLists.txt
 * Contributors: Christophe Bedard, Stephen Brawner
 

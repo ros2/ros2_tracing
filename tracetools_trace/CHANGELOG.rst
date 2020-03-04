@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.0 (2020-03-04)
+------------------
 * Add more context types and refactor mapping between name and constant
 * Check version of LTTng Python module and raise error if below 2.10.7
 * Add logs for trace action init and fini

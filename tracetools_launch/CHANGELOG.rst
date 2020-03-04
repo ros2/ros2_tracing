@@ -2,8 +2,8 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.0 (2020-03-04)
+------------------
 * Add logs for trace action init and fini
 * Expose context enabling through CLI and Trace action
 * Extract LdPreload action from Trace action to support preloading any lib

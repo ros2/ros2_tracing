@@ -2,8 +2,8 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.0 (2020-03-04)
+------------------
 * Expose context enabling through CLI and Trace action
 * Contributors: Christophe Bedard
 

@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.0 (2020-03-04)
+------------------
 * Merge and update service test to cover callback registration
 * Fix default value for events_kernel in TraceTestCase
 * Contributors: Christophe Bedard
