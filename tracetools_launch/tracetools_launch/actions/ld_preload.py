@@ -39,7 +39,7 @@ class LdPreload(Action):
         """
         Create an LdPreload action.
 
-        :param lib_name: the name of the library
+        :param lib_name: the name of the library (e.g. 'lib.so')
         """
         super().__init__(**kwargs)
         self.__lib_name = lib_name
