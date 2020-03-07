@@ -19,6 +19,7 @@ from typing import List
 from typing import Optional
 from typing import Union
 
+from launch import logging
 from launch.action import Action
 from launch.actions import SetEnvironmentVariable
 from launch.launch_context import LaunchContext
@@ -38,19 +39,23 @@ class LdPreload(Action):
         """
         Create an LdPreload action.
 
-        :param lib_name: the name of the library
+        :param lib_name: the name of the library (e.g. 'lib.so')
         """
         super().__init__(**kwargs)
         self.__lib_name = lib_name
         self.__set_env_action = None
+        self.__logger = logging.get_logger(__name__)
         # Try to find lib
         self.__lib_path = self.get_shared_lib_path(self.__lib_name)
         # And create action if found
         if self.__lib_path is not None:
+            self.__logger.debug(f'Shared library found at: {self.__lib_path}')
             self.__set_env_action = SetEnvironmentVariable(
                 self.ENV_VAR_LD_PRELOAD,
                 self.__lib_path,
             )
+        else:
+            self.__logger.warn(f'Could not find shared library: {self.__lib_name}')
 
     def lib_found(self) -> bool:
         return self.__set_env_action is not None
