@@ -16,6 +16,7 @@
 
 from distutils.version import StrictVersion
 import re
+import subprocess
 from typing import List
 from typing import Optional
 from typing import Set
@@ -74,6 +75,13 @@ def setup(
     :param channel_name_kernel: the kernel channel name
     :return: the full path to the trace directory
     """
+    # Check if there is a session daemon running
+    if lttng.session_daemon_alive() == 0:
+        # Otherwise spawn one without doing any error checks
+        subprocess.run(
+            ['lttng-sessiond', '--daemonize'],
+        )
+
     # Convert lists to sets
     if not isinstance(ros_events, set):
         ros_events = set(ros_events)
