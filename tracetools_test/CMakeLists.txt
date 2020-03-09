@@ -31,13 +31,6 @@ if(BUILD_TESTING)
   find_package(std_srvs REQUIRED)
   find_package(tracetools REQUIRED)
 
-  # Avoid using -rdynamic on Windows
-  if(NOT WIN32)
-    set(RDYNAMIC_FLAG "-rdynamic")
-  else()
-    set(RDYNAMIC_FLAG "")
-  endif()
-
   add_executable(test_publisher
     src/test_publisher.cpp
   )
@@ -46,7 +39,6 @@ if(BUILD_TESTING)
     std_msgs
     tracetools
   )
-  target_link_libraries(test_publisher "${RDYNAMIC_FLAG}")
   add_executable(test_intra
     src/test_intra.cpp
   )
@@ -55,7 +47,6 @@ if(BUILD_TESTING)
     std_msgs
     tracetools
   )
-  target_link_libraries(test_intra "${RDYNAMIC_FLAG}")
   add_executable(test_ping
     src/test_ping.cpp
   )
@@ -64,7 +55,6 @@ if(BUILD_TESTING)
     std_msgs
     tracetools
   )
-  target_link_libraries(test_ping "${RDYNAMIC_FLAG}")
   add_executable(test_pong
     src/test_pong.cpp
   )
@@ -73,7 +63,6 @@ if(BUILD_TESTING)
     std_msgs
     tracetools
   )
-  target_link_libraries(test_pong "${RDYNAMIC_FLAG}")
   add_executable(test_timer
     src/test_timer.cpp
   )
@@ -81,7 +70,6 @@ if(BUILD_TESTING)
     rclcpp
     tracetools
   )
-  target_link_libraries(test_timer "${RDYNAMIC_FLAG}")
   add_executable(test_service_ping
     src/test_service_ping.cpp
   )
@@ -90,7 +78,6 @@ if(BUILD_TESTING)
     std_srvs
     tracetools
   )
-  target_link_libraries(test_service_ping "${RDYNAMIC_FLAG}")
   add_executable(test_service_pong
     src/test_service_pong.cpp
   )
@@ -99,7 +86,6 @@ if(BUILD_TESTING)
     std_srvs
     tracetools
   )
-  target_link_libraries(test_service_pong "${RDYNAMIC_FLAG}")
 
   install(TARGETS
     test_intra
