@@ -26,10 +26,10 @@ endif()
 
 # Tests
 if(BUILD_TESTING)
+  # tracetools is exported by rclcpp
   find_package(rclcpp REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(std_srvs REQUIRED)
-  find_package(tracetools REQUIRED)
 
   add_executable(test_publisher
     src/test_publisher.cpp
@@ -37,7 +37,6 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_publisher
     rclcpp
     std_msgs
-    tracetools
   )
   add_executable(test_intra
     src/test_intra.cpp
@@ -45,7 +44,6 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_intra
     rclcpp
     std_msgs
-    tracetools
   )
   add_executable(test_ping
     src/test_ping.cpp
@@ -53,7 +51,6 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_ping
     rclcpp
     std_msgs
-    tracetools
   )
   add_executable(test_pong
     src/test_pong.cpp
@@ -61,14 +58,12 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_pong
     rclcpp
     std_msgs
-    tracetools
   )
   add_executable(test_timer
     src/test_timer.cpp
   )
   ament_target_dependencies(test_timer
     rclcpp
-    tracetools
   )
   add_executable(test_service_ping
     src/test_service_ping.cpp
@@ -76,7 +71,6 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_service_ping
     rclcpp
     std_srvs
-    tracetools
   )
   add_executable(test_service_pong
     src/test_service_pong.cpp
@@ -84,7 +78,6 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_service_pong
     rclcpp
     std_srvs
-    tracetools
   )
 
   install(TARGETS
@@ -103,6 +96,7 @@ if(BUILD_TESTING)
 
   # Only build tracing tests if LTTng is enabled and found
   if(TRACING_ENABLED)
+    find_package(tracetools REQUIRED)
     find_package(ament_cmake_gtest REQUIRED)
     ament_add_gtest(test_utils test/test_utils.cpp)
     if(TARGET test_utils)
