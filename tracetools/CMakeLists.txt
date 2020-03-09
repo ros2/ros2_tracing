@@ -125,19 +125,8 @@ endif()
 
 if(BUILD_TESTING)
   set(ament_cmake_cppcheck_ADDITIONAL_INCLUDE_DIRS ${LTTNG_INCLUDE_DIRS})
-
-  find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
-
-  # Only build tracetools utils tests if LTTng is enabled and found
-  if(TRACETOOLS_LTTNG_ENABLED)
-    ament_add_gtest(test_utils test/test_utils.cpp)
-    if(TARGET test_utils)
-      # Since we cannot use ament_target_dependencies(... tracetools) in the same file
-      target_link_libraries(test_utils ${PROJECT_NAME} -rdynamic)
-    endif()
-  endif()
 endif()
 
 ament_package()

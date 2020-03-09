@@ -103,8 +103,15 @@ if(BUILD_TESTING)
 
   # Only build tracing tests if LTTng is enabled and found
   if(TRACING_ENABLED)
-    find_package(ament_cmake_pytest REQUIRED)
+    find_package(ament_cmake_gtest REQUIRED)
+    ament_add_gtest(test_utils test/test_utils.cpp)
+    if(TARGET test_utils)
+      ament_target_dependencies(test_utils
+        tracetools
+      )
+    endif()
 
+    find_package(ament_cmake_pytest REQUIRED)
     # Run each test in its own pytest invocation
     set(_tracetools_test_pytest_tests
       test/test_intra.py
@@ -114,7 +121,6 @@ if(BUILD_TESTING)
       test/test_subscription.py
       test/test_timer.py
     )
-
     foreach(_test_path ${_tracetools_test_pytest_tests})
       get_filename_component(_test_name ${_test_path} NAME_WE)
       ament_add_pytest_test(${_test_name} ${_test_path}
