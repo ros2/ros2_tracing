@@ -20,6 +20,7 @@ else()
   set(DISABLED_DEFAULT OFF)
 endif()
 option(TRACETOOLS_DISABLED "Explicitly disable support for tracing" ${DISABLED_DEFAULT})
+option(TRACETOOLS_NO_RDYNAMIC "Disable export of -rdynamic link flag" OFF)
 
 if(NOT TRACETOOLS_DISABLED)
   # Set TRACETOOLS_LTTNG_ENABLED if we can find lttng-ust
@@ -118,7 +119,9 @@ if(TRACETOOLS_LTTNG_ENABLED)
   # using function pointers directly/without std::bind()
   # (the flag should not be used on Windows, but TRACETOOLS_LTTNG_ENABLED
   # should never be true on Windows anyway, so there is no need to check)
-  ament_export_link_flags("-rdynamic")
+  if(NOT TRACETOOLS_NO_RDYNAMIC)
+    ament_export_link_flags("-rdynamic")
+  endif()
 else()
   ament_export_libraries(${PROJECT_NAME})
 endif()
