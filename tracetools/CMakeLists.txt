@@ -20,6 +20,7 @@ else()
   set(DISABLED_DEFAULT OFF)
 endif()
 option(TRACETOOLS_DISABLED "Explicitly disable support for tracing" ${DISABLED_DEFAULT})
+option(TRACETOOLS_NO_RDYNAMIC "Disable export of -rdynamic link flag" OFF)
 
 if(NOT TRACETOOLS_DISABLED)
   # Set TRACETOOLS_LTTNG_ENABLED if we can find lttng-ust
@@ -112,24 +113,23 @@ install(
 ament_export_include_directories(include)
 if(TRACETOOLS_LTTNG_ENABLED)
   ament_export_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
+  # Export -rdynamic for downtream packages to use when calling
+  #   ament_target_dependencies()
+  # which is needed to resolve function addresses to symbols when
+  # using function pointers directly/without std::bind()
+  # (the flag should not be used on Windows, but TRACETOOLS_LTTNG_ENABLED
+  # should never be true on Windows anyway, so there is no need to check)
+  if(NOT TRACETOOLS_NO_RDYNAMIC)
+    ament_export_link_flags("-rdynamic")
+  endif()
 else()
   ament_export_libraries(${PROJECT_NAME})
 endif()
 
 if(BUILD_TESTING)
   set(ament_cmake_cppcheck_ADDITIONAL_INCLUDE_DIRS ${LTTNG_INCLUDE_DIRS})
-
-  find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
-
-  # Only build tracetools utils tests if LTTng is enabled and found
-  if(TRACETOOLS_LTTNG_ENABLED)
-    ament_add_gtest(test_utils test/test_utils.cpp)
-    if(TARGET test_utils)
-      target_link_libraries(test_utils ${PROJECT_NAME} -rdynamic)
-    endif()
-  endif()
 endif()
 
 ament_package()

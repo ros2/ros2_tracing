@@ -26,17 +26,10 @@ endif()
 
 # Tests
 if(BUILD_TESTING)
+  # tracetools is exported by rclcpp
   find_package(rclcpp REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(std_srvs REQUIRED)
-  find_package(tracetools REQUIRED)
-
-  # Avoid using -rdynamic on Windows
-  if(NOT WIN32)
-    set(RDYNAMIC_FLAG "-rdynamic")
-  else()
-    set(RDYNAMIC_FLAG "")
-  endif()
 
   add_executable(test_publisher
     src/test_publisher.cpp
@@ -44,62 +37,48 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_publisher
     rclcpp
     std_msgs
-    tracetools
   )
-  target_link_libraries(test_publisher "${RDYNAMIC_FLAG}")
   add_executable(test_intra
     src/test_intra.cpp
   )
   ament_target_dependencies(test_intra
     rclcpp
     std_msgs
-    tracetools
   )
-  target_link_libraries(test_intra "${RDYNAMIC_FLAG}")
   add_executable(test_ping
     src/test_ping.cpp
   )
   ament_target_dependencies(test_ping
     rclcpp
     std_msgs
-    tracetools
   )
-  target_link_libraries(test_ping "${RDYNAMIC_FLAG}")
   add_executable(test_pong
     src/test_pong.cpp
   )
   ament_target_dependencies(test_pong
     rclcpp
     std_msgs
-    tracetools
   )
-  target_link_libraries(test_pong "${RDYNAMIC_FLAG}")
   add_executable(test_timer
     src/test_timer.cpp
   )
   ament_target_dependencies(test_timer
     rclcpp
-    tracetools
   )
-  target_link_libraries(test_timer "${RDYNAMIC_FLAG}")
   add_executable(test_service_ping
     src/test_service_ping.cpp
   )
   ament_target_dependencies(test_service_ping
     rclcpp
     std_srvs
-    tracetools
   )
-  target_link_libraries(test_service_ping "${RDYNAMIC_FLAG}")
   add_executable(test_service_pong
     src/test_service_pong.cpp
   )
   ament_target_dependencies(test_service_pong
     rclcpp
     std_srvs
-    tracetools
   )
-  target_link_libraries(test_service_pong "${RDYNAMIC_FLAG}")
 
   install(TARGETS
     test_intra
@@ -117,8 +96,16 @@ if(BUILD_TESTING)
 
   # Only build tracing tests if LTTng is enabled and found
   if(TRACING_ENABLED)
-    find_package(ament_cmake_pytest REQUIRED)
+    find_package(tracetools REQUIRED)
+    find_package(ament_cmake_gtest REQUIRED)
+    ament_add_gtest(test_utils test/test_utils.cpp)
+    if(TARGET test_utils)
+      ament_target_dependencies(test_utils
+        tracetools
+      )
+    endif()
 
+    find_package(ament_cmake_pytest REQUIRED)
     # Run each test in its own pytest invocation
     set(_tracetools_test_pytest_tests
       test/test_intra.py
@@ -128,7 +115,6 @@ if(BUILD_TESTING)
       test/test_subscription.py
       test/test_timer.py
     )
-
     foreach(_test_path ${_tracetools_test_pytest_tests})
       get_filename_component(_test_name ${_test_path} NAME_WE)
       ament_add_pytest_test(${_test_name} ${_test_path}
