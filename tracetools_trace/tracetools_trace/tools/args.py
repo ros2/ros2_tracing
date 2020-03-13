@@ -49,7 +49,7 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
         help='path of the base directory for trace data (default: %(default)s)')
     events_ust_arg = parser.add_argument(  # type: ignore
         '-u', '--ust', nargs='*', dest='events_ust', metavar='EVENT',
-        default=names.DEFAULT_EVENTS_ROS,
+        default=names.DEFAULT_EVENTS_UST,
         help='the userspace events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all UST events, '
              'provide this flag without any event name]')
