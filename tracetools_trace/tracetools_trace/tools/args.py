@@ -48,21 +48,21 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
         default=path.DEFAULT_BASE_PATH,
         help='path of the base directory for trace data (default: %(default)s)')
     events_ust_arg = parser.add_argument(  # type: ignore
-        '-u', '--ust', nargs='*', dest='events_ust',
+        '-u', '--ust', nargs='*', dest='events_ust', metavar='EVENT',
         default=names.DEFAULT_EVENTS_ROS,
         help='the ROS UST events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all UST events, '
              'provide this flag without any event name]')
     events_ust_arg.completer = DefaultArgValueCompleter(events_ust_arg)  # type: ignore
     events_kernel_arg = parser.add_argument(  # type: ignore
-        '-k', '--kernel', nargs='*', dest='events_kernel',
+        '-k', '--kernel', nargs='*', dest='events_kernel', metavar='EVENT',
         default=names.DEFAULT_EVENTS_KERNEL,
         help='the kernel events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all kernel events, '
              'provide this flag without any event name]')
     events_kernel_arg.completer = DefaultArgValueCompleter(events_kernel_arg)  # type: ignore
     context_arg = parser.add_argument(  # type: ignore
-        '-c', '--context', nargs='*', dest='context_names',
+        '-c', '--context', nargs='*', dest='context_names', metavar='CONTEXT',
         default=names.DEFAULT_CONTEXT,
         help='the context names to enable (default: see tracetools_trace.tools.names) '
              '[to disable all context names, '
