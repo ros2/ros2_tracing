@@ -50,7 +50,7 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     events_ust_arg = parser.add_argument(  # type: ignore
         '-u', '--ust', nargs='*', dest='events_ust', metavar='EVENT',
         default=names.DEFAULT_EVENTS_ROS,
-        help='the ROS UST events to enable (default: see tracetools_trace.tools.names) '
+        help='the userspace events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all UST events, '
              'provide this flag without any event name]')
     events_ust_arg.completer = DefaultArgValueCompleter(events_ust_arg)  # type: ignore
