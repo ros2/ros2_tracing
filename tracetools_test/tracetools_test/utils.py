@@ -21,7 +21,6 @@ from typing import Tuple
 
 from launch import LaunchDescription
 from launch import LaunchService
-from launch_ros import get_default_launch_description
 from launch_ros.actions import Node
 from tracetools_launch.action import Trace
 from tracetools_read import DictEvent
@@ -72,7 +71,6 @@ def run_and_trace(
         launch_actions.append(n)
     ld = LaunchDescription(launch_actions)
     ls = LaunchService()
-    ls.include_launch_description(get_default_launch_description())
     ls.include_launch_description(ld)
 
     exit_code = ls.run()
