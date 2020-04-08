@@ -92,7 +92,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
   "$<INSTALL_INTERFACE:include>"
 )
-ament_export_interfaces(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
+ament_export_targets(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
 
 # Status checking tool
 add_executable(status
