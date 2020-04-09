@@ -68,14 +68,18 @@ foreach(_header ${HEADERS})
   )
 endforeach()
 
-# Only use output/binary include directory
-include_directories(
-  ${PROJECT_BINARY_DIR}/include
-)
-
 add_library(${PROJECT_NAME} ${SOURCES})
 if(TRACETOOLS_LTTNG_ENABLED)
   target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
+  # Export -rdynamic for downtream packages to use when calling
+  #   ament_target_dependencies()
+  # which is needed to resolve function addresses to symbols when
+  # using function pointers directly/without std::bind()
+  # (the flag should not be used on Windows, but TRACETOOLS_LTTNG_ENABLED
+  # should never be true on Windows anyway, so there is no need to check)
+  if(NOT TRACETOOLS_NO_RDYNAMIC)
+    target_link_libraries(${PROJECT_NAME} "-rdynamic")
+  endif()
 endif()
 if(WIN32)
   # Causes the visibility macros to use dllexport rather than dllimport
@@ -83,6 +87,11 @@ if(WIN32)
   target_compile_definitions(${PROJECT_NAME} PRIVATE "TRACETOOLS_BUILDING_DLL")
 endif()
 
+# Only use output/binary include directory
+target_include_directories(${PROJECT_NAME} PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+  "$<INSTALL_INTERFACE:include>"
+)
 ament_export_interfaces(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
 
 # Status checking tool
@@ -113,12 +122,7 @@ install(
 ament_export_include_directories(include)
 if(TRACETOOLS_LTTNG_ENABLED)
   ament_export_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
-  # Export -rdynamic for downtream packages to use when calling
-  #   ament_target_dependencies()
-  # which is needed to resolve function addresses to symbols when
-  # using function pointers directly/without std::bind()
-  # (the flag should not be used on Windows, but TRACETOOLS_LTTNG_ENABLED
-  # should never be true on Windows anyway, so there is no need to check)
+  # Export -rdynamic for downstream packages using classic CMake variables
   if(NOT TRACETOOLS_NO_RDYNAMIC)
     ament_export_link_flags("-rdynamic")
   endif()
