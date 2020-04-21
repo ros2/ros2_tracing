@@ -65,7 +65,7 @@ def run_and_trace(
     for node_name in node_names:
         n = Node(
             package=package_name,
-            node_executable=node_name,
+            executable=node_name,
             output='screen',
         )
         launch_actions.append(n)
