@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2020-04-24)
+------------------
 * Start a session daemon if there isn't one before setting up tracing
 * Contributors: Christophe Bedard
 

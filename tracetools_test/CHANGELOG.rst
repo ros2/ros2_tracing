@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2020-04-24)
+------------------
 * Add test_depend on python3-pytest-cov for tracetools_test
 * Call ament_add_pytest_test only once for tracetools_test
 * Move test_utils from tracetools to tracetools_test

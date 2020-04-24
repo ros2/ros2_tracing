@@ -2,8 +2,8 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2020-04-24)
+------------------
 * Document what kind of lib_name LdPreload expects
 * Add logs for LdPreload action on success or failure
 * Contributors: Christophe Bedard

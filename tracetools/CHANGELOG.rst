@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2020-04-24)
+------------------
 * Export -rdynamic using ament_export_link_flags and modern CMake
 * Contributors: Christophe Bedard, Dirk Thomas
 
