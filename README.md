@@ -62,6 +62,34 @@ See [this example launch file](./tracetools_launch/launch/example.launch.py) for
 
 See the [design document](./doc/design_ros_2.md).
 
+## Packages
+
+### ros2trace
+
+Package containing a `ros2cli` extension to enable tracing.
+
+### tracetools
+
+Library to support instrumenting ROS packages, including core packages.
+
+This package claims to be in the **Quality Level 4** category, see the [Quality Declaration](./tracetools/QUALITY_DECLARATION.md) for more details.
+
+### tracetools_launch
+
+Package containing tools to enable tracing through launch files.
+
+### tracetools_read
+
+Package containing tools to read traces.
+
+### tracetools_test
+
+Package containing system tests for `tracetools` and the tools to support them.
+
+### tracetools_trace
+
+Package containing tools to enable tracing.
+
 ## Analysis
 
 See [`tracetools_analysis`](https://gitlab.com/micro-ROS/ros_tracing/tracetools_analysis).
