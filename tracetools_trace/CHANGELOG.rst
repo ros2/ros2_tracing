@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Start a session daemon if there isn't one before setting up tracing
+* Contributors: Christophe Bedard
+
 0.3.0 (2020-03-04)
 ------------------
 * Add more context types and refactor mapping between name and constant

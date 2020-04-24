@@ -2,6 +2,13 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add test_depend on python3-pytest-cov for tracetools_test
+* Call ament_add_pytest_test only once for tracetools_test
+* Move test_utils from tracetools to tracetools_test
+* Contributors: Christophe Bedard
+
 0.3.0 (2020-03-04)
 ------------------
 * Merge and update service test to cover callback registration
