@@ -4,6 +4,10 @@ variables:
   BASE_IMAGE_ID: registry.gitlab.com/micro-ros/ros_tracing/ci_base
   DISTRO: foxy
 
+stages:
+  - build_test
+  - report
+
 .global_artifacts: &global_artifacts
   artifacts:
     paths:
@@ -20,6 +24,7 @@ before_script:
   - . /root/ws/install/local_setup.sh
 
 tracing_enabled:
+  stage: build_test
   image: $BASE_IMAGE_ID:$DISTRO
   script:
     - lttng --version && apt list lttng-tools liblttng-ust-dev python3-lttng python3-babeltrace
@@ -31,6 +36,7 @@ tracing_enabled:
   <<: *global_artifacts
 
 tracing_disabled:
+  stage: build_test
   image: $BASE_IMAGE_ID:$DISTRO
   script:
     - colcon build --symlink-install --event-handlers console_cohesion+ --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
@@ -40,10 +46,24 @@ tracing_disabled:
   <<: *global_artifacts
 
 no_lttng:
+  stage: build_test
   image: $BASE_IMAGE_ID:$DISTRO-base
   script:
     - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
     - (! ./build/tracetools/status)
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all
+  <<: *global_artifacts
+
+coverage:
+  stage: report
+  image: $BASE_IMAGE_ID:$DISTRO
+  script:
+    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST --mixin coverage-gcc coverage-pytest --cmake-args -DBUILD_TESTING=ON --no-warn-unused-cli -DCMAKE_BUILD_TYPE=Debug
+    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST --mixin coverage-pytest
+    - colcon test-result --all
+    - colcon lcov-result --packages-select tracetools tracetools_test --verbose
+    - coverage combine build/tracetools_test/pytest_cov/*/.coverage
+    - coverage report -m
+  allow_failure: true
   <<: *global_artifacts
