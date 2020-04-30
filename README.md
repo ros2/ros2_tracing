@@ -72,7 +72,7 @@ Package containing a `ros2cli` extension to enable tracing.
 
 Library to support instrumenting ROS packages, including core packages.
 
-This package claims to be in the **Quality Level 4** category, see the [Quality Declaration](./tracetools/QUALITY_DECLARATION.md) for more details.
+This package claims to be in the **Quality Level 3** category, see the [Quality Declaration](./tracetools/QUALITY_DECLARATION.md) for more details.
 
 ### tracetools_launch
 
