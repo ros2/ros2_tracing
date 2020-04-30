@@ -40,7 +40,8 @@ All changes occur through a merge request.
 
 ### Contributor Origin [2.ii]
 
-`tracetools` does not currently have any contributor origin policy.
+`tracetools` uses DCO as its confirmation of contributor origin policy. More information can be found in [CONTRIBUTING](../CONTRIBUTING.md).
+There is currently no automated check.
 
 ### Peer Review Policy [2.iii]
 
@@ -168,7 +169,7 @@ The table below compares the requirements in REP-2004 with the current state of 
 |1.vi| API/ABI stablility policy within ROS distribution | ✓ |
 |2| **Change control process** ||
 |2.i| All changes occur through change request | ✓ |
-|2.ii| Confirmation of contributor origin |  |
+|2.ii| Confirmation of contributor origin | ✓ * |
 |2.iii| Peer review policy | ✓ * |
 |2.iv| CI policy for change requests | ✓ |
 |2.v| Documentation policy for change requests | ✓ |
