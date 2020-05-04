@@ -2,7 +2,7 @@ This document is a declaration of software quality for the `tracetools` package,
 
 # `tracetools` Quality Declaration
 
-The package `tracetools` claims to be in the **Quality Level 4** category.
+The package `tracetools` claims to be in the **Quality Level 3** category.
 
 Below are the rationales, notes, and caveats for this claim, organized by each requirement listed in the [Package Requirements for Quality Level 1 in REP-2004](https://www.ros.org/reps/rep-2004.html).
 
@@ -14,7 +14,7 @@ Below are the rationales, notes, and caveats for this claim, organized by each r
 
 ### Version Stability [1.ii]
 
-`tracetools` is not currently at or above a stable version, i.e. `>= 1.0.0`.
+`tracetools` is at or above a stable version, i.e. `>= 1.0.0`.
 
 ### Public API Declaration [1.iii]
 
@@ -162,7 +162,7 @@ The table below compares the requirements in REP-2004 with the current state of 
 |--|--|--|
 |1| **Version policy** ||
 |1.i| Version policy | ✓ |
-|1.ii| Stable version |  |
+|1.ii| Stable version | ✓ |
 |1.iii| Strictly declared public API | ✓ |
 |1.iv| API stability policy | ✓ |
 |1.v| ABI stability policy | ✓ |
@@ -184,7 +184,7 @@ The table below compares the requirements in REP-2004 with the current state of 
 |4.i| Feature items tests | ✓ |
 |4.ii| Public API tests | ✓ |
 |4.iii.a| Using coverage | ✓ |
-|4.iii.a| Coverage policy |  |
+|4.iii.b| Coverage policy |  |
 |4.iv.a| Performance tests |  |
 |4.iv.b| Performance tests policy |  |
 |4.v.a| Code style enforcement (linters) | ✓ |
@@ -200,7 +200,8 @@ The table below compares the requirements in REP-2004 with the current state of 
 
 \* : going forward
 
-Comparing this table to the [Quality Level Comparison Chart of REP-2004](https://www.ros.org/reps/rep-2004.html#quality-level-comparison-chart) led us to conclude that this package qualifies for Quality Level 4.
+Comparing this table to the [Quality Level Comparison Chart of REP-2004](https://www.ros.org/reps/rep-2004.html#quality-level-comparison-chart) led us to conclude that this package qualifies for Quality Level 3.
 
-Missing for Quality Level 3:
-* 1.ii Stable version
+Missing for Quality Level 2:
+* 5.iii Justifies quality use of non-ROS dependencies
+* 7.i Vulnerability Disclosure Policy
