@@ -59,7 +59,7 @@ coverage:
   stage: report
   image: $BASE_IMAGE_ID:$DISTRO
   script:
-    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST --mixin coverage-gcc coverage-pytest --cmake-args -DBUILD_TESTING=ON --no-warn-unused-cli -DCMAKE_BUILD_TYPE=Debug
+    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST --mixin coverage-gcc coverage-pytest --cmake-args -DBUILD_TESTING=ON --no-warn-unused-cli
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST --mixin coverage-pytest
     - colcon test-result --all
     - colcon lcov-result --packages-select tracetools tracetools_test --verbose
