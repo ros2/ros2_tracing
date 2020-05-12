@@ -65,7 +65,6 @@ coverage:
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST --mixin coverage-pytest
     - colcon test-result --all
     - colcon lcov-result --packages-select tracetools tracetools_test --verbose
-    - coverage combine build/tracetools_test/pytest_cov/*/.coverage
-    - coverage report -m
+    - colcon coveragepy-result --packages-select $PACKAGES_LIST --verbose --coverage-report-args -m
   allow_failure: true
   <<: *global_artifacts
