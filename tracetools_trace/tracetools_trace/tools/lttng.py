@@ -14,8 +14,9 @@
 
 """Interface for tracing with LTTng."""
 
+import platform
+import subprocess
 import sys
-
 from typing import List
 from typing import Optional
 
@@ -83,3 +84,35 @@ def lttng_fini(
     """
     _lttng.stop(session_name)
     _lttng.destroy(session_name)
+
+
+def is_lttng_installed() -> bool:
+    """
+    Check if LTTng is installed.
+
+    It first checks if the OS can support LTTng.
+    If so, it then simply checks if LTTng is installed using the 'lttng' command.
+
+    :return: True if it is installed, False otherwise
+    """
+    message_doc = (
+        'Cannot trace. See documentation at: '
+        'https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing'
+    )
+    system = platform.system()
+    if 'Linux' != system:
+        print(f"System '{system}' does not support LTTng.\n{message_doc}", file=sys.stderr)
+        return False
+    try:
+        process = subprocess.Popen(
+            ['lttng', '--version'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        _, stderr = process.communicate()
+        if 0 != process.returncode:
+            raise RuntimeError(stderr.decode())
+        return True
+    except Exception as e:
+        print(f'LTTng not found: {e}\n{message_doc}', file=sys.stderr)
+        return False
