@@ -50,7 +50,9 @@ no_lttng:
   image: $BASE_IMAGE_ID:$DISTRO-base
   script:
     - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
+    - . install/setup.sh
     - (! ./build/tracetools/status)
+    - (! ros2 trace)
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all
   <<: *global_artifacts
