@@ -15,6 +15,7 @@
 
 """Entrypoint/script to setup and start an LTTng tracing session."""
 
+import sys
 from typing import List
 
 from tracetools_trace.tools import args
@@ -41,6 +42,9 @@ def init(
     :param context_names: list of context names to enable
     :param display_list: whether to display list(s) of enabled events and context names
     """
+    if not lttng.is_lttng_installed():
+        sys.exit(2)
+
     ust_enabled = len(ros_events) > 0
     kernel_enabled = len(kernel_events) > 0
     if ust_enabled:
