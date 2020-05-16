@@ -74,6 +74,8 @@ Library to support instrumenting ROS packages, including core packages.
 
 This package claims to be in the **Quality Level 3** category, see the [Quality Declaration](./tracetools/QUALITY_DECLARATION.md) for more details.
 
+See the [API documentation](https://micro-ros.gitlab.io/ros_tracing/ros2_tracing-api/).
+
 ### tracetools_launch
 
 Package containing tools to enable tracing through launch files.
