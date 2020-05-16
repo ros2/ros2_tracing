@@ -68,3 +68,11 @@ coverage:
     - colcon coveragepy-result --packages-select $PACKAGES_LIST --verbose --coverage-report-args -m
   allow_failure: true
   <<: *global_artifacts
+
+trigger_gen_docs:
+  stage: report
+  only:
+    refs:
+      - master
+      - foxy
+  trigger: micro-ROS/ros_tracing/ros2_tracing-api
