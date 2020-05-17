@@ -20,12 +20,21 @@
 
 #include "tracetools/visibility_control.hpp"
 
+/// Default symbol, used when address resolution fails.
 #define SYMBOL_UNKNOWN "UNKNOWN"
 
 TRACETOOLS_PUBLIC const char * _demangle_symbol(const char * mangled);
 
 TRACETOOLS_PUBLIC const char * _get_symbol_funcptr(void * funcptr);
 
+/// Get symbol from an std::function object.
+/**
+ * If function address resolution or symbol demangling fails,
+ * this will return a string that starts with \ref SYMBOL_UNKNOWN.
+ *
+ * \param[in] f the std::function object
+ * \return the symbol, or a placeholder
+ */
 template<typename T, typename ... U>
 const char * get_symbol(std::function<T(U...)> f)
 {
@@ -40,7 +49,13 @@ const char * get_symbol(std::function<T(U...)> f)
   return _demangle_symbol(f.target_type().name());
 }
 
-// Fallback meant for lambdas with captures
+/// Get symbol from a function-related object.
+/**
+ * Fallback meant for lambdas with captures.
+ *
+ * \param[in] l a generic object
+ * \return the symbol
+ */
 template<typename L>
 const char * get_symbol(L && l)
 {
