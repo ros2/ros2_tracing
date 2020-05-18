@@ -110,7 +110,7 @@ This includes:
 
 Changes are required to make a best effort to keep or increase coverage before being accepted, but decreases are allowed if properly justified and accepted by reviewers.
 
-Current coverage statistics can be viewed in the [results of the latest `coverage` CI job](https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing/pipelines/latest).
+Current coverage statistics can be viewed [on codecov.io](https://codecov.io/gl/micro-ROS:ros_tracing/ros2_tracing) or in the [results of the latest `coverage` CI job](https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing/pipelines/latest).
 
 ### Performance [4.iv]
 
