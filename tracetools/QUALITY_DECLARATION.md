@@ -73,7 +73,9 @@ It does not currently have a features list with links to the corresponding featu
 
 ### Public API Documentation [3.ii]
 
-`tracetools` does not currently have documentation for its public API.
+`tracetools` has embedded API documentation which can be generated using doxygen. The latest version can be viewed [here](https://micro-ros.gitlab.io/ros_tracing/ros2_tracing-api/).
+
+New additions to the public API require documentation before being added.
 
 ### License [3.iii]
 
@@ -175,7 +177,7 @@ The table below compares the requirements in REP-2004 with the current state of 
 |2.v| Documentation policy for change requests | ✓ |
 |3| **Documentation** ||
 |3.i| Per feature documentation | ✓ |
-|3.ii| Public API documentation |  |
+|3.ii| Public API documentation | ✓ |
 |3.iii| Declared license(s) | ✓ |
 |3.iv| Copyright in source files | ✓ |
 |3.v.a| Quality declaration linked to from README | ✓ |
