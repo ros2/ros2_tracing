@@ -26,12 +26,12 @@ def generate_launch_description():
         ),
         Node(
             package='tracetools_test',
-            node_executable='test_ping',
+            executable='test_ping',
             output='screen',
         ),
         Node(
             package='tracetools_test',
-            node_executable='test_pong',
+            executable='test_pong',
             output='screen',
         ),
     ])
