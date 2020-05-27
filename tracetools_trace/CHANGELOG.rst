@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2020-05-27)
+------------------
 * Fail gracefully when trying to trace if LTTng is not installed
 * Contributors: Christophe Bedard
 
