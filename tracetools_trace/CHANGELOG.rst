@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.1 (2020-05-27)
+------------------
+* Fail gracefully when trying to trace if LTTng is not installed
+* Contributors: Christophe Bedard
+
 1.0.0 (2020-04-24)
 ------------------
 * Start a session daemon if there isn't one before setting up tracing

@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.1 (2020-05-27)
+------------------
+* Deprecation fixes
+* Contributors: Christophe Bedard
+
 1.0.0 (2020-04-24)
 ------------------
 * Document what kind of lib_name LdPreload expects

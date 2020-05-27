@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>tracetools_launch</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <description>Launch integration for tracing.</description>
   <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
   <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Luetkebohle</maintainer>
