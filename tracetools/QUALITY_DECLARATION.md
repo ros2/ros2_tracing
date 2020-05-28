@@ -154,7 +154,7 @@ Nightly results can be found here:
 
 ### Vulnerability Disclosure Policy [7.i]
 
-`tracetools` does not currently have a vulnerability disclosure policy.
+`tracetools` conforms to the Vulnerability Disclosure Policy in [REP-2006](https://www.ros.org/reps/rep-2006.html).
 
 # Current Status
 
@@ -198,7 +198,7 @@ The table below compares the requirements in REP-2004 with the current state of 
 |6| **Platform Support** ||
 |6.i| Support targets tier 1 ROS platforms | ✓ |
 |7| **Security** ||
-|7.i| Vulnerability Disclosure Policy |  |
+|7.i| Vulnerability Disclosure Policy | ✓ |
 
 \* : going forward
 
@@ -206,4 +206,3 @@ Comparing this table to the [Quality Level Comparison Chart of REP-2004](https:/
 
 Missing for Quality Level 2:
 * 5.iii Justifies quality use of non-ROS dependencies
-* 7.i Vulnerability Disclosure Policy
