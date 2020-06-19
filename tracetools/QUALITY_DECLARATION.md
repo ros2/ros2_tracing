@@ -2,7 +2,7 @@ This document is a declaration of software quality for the `tracetools` package,
 
 # `tracetools` Quality Declaration
 
-The package `tracetools` claims to be in the **Quality Level 3** category.
+The package `tracetools` claims to be in the **Quality Level 2** category.
 
 Below are the rationales, notes, and caveats for this claim, organized by each requirement listed in the [Package Requirements for Quality Level 1 in REP-2004](https://www.ros.org/reps/rep-2004.html).
 
@@ -62,8 +62,6 @@ Nightly results for all [tier 1 platforms as defined in REP-2000](https://www.ro
 All merge requests must resolve related documentation changes before merging.
 
 ## Documentation [3]
-
-`tracetools` does not currently follow all the recommended guidelines for ROS Core packages in the [ROS 2 Developer Guide](https://index.ros.org/doc/ros2/Contributing/Developer-Guide/#documentation).
 
 ### Feature Documentation [3.i]
 
@@ -137,7 +135,10 @@ This package does not have any optional runtime ROS dependencies.
 
 ### Direct Runtime non-ROS Dependency [5.iii]
 
-`tracetools` has a run-time dependency on [LTTng](https://lttng.org/docs/v2.11/). A Quality Level review for LTTng has yet to be done.
+`tracetools` has a run-time dependency on [LTTng](https://lttng.org/docs/v2.11/).
+LTTng provides tracing capabilities.
+
+It is **Quality Level 1**, see its [Quality Declaration document](../LTTng_QUALITY_DECLARATION.md).
 
 ## Platform Support [6]
 
@@ -182,6 +183,7 @@ The table below compares the requirements in REP-2004 with the current state of 
 |3.iv| Copyright in source files | ✓ |
 |3.v.a| Quality declaration linked to from README | ✓ |
 |3.v.b| Centralized declaration available for peer review |  |
+|3.v.c| References any Level N lists the package belongs to | ✓ |
 |4| **Testing** ||
 |4.i| Feature items tests | ✓ |
 |4.ii| Public API tests | ✓ |
@@ -194,7 +196,7 @@ The table below compares the requirements in REP-2004 with the current state of 
 |5| **Dependencies** ||
 |5.i| Must not have lower level ROS dependencies | ✓ |
 |5.ii| Optional ROS lower level dependencies | ✓ |
-|5.iii| Justifies quality use of non-ROS dependencies |  |
+|5.iii| Justifies quality use of non-ROS dependencies | ✓ |
 |6| **Platform Support** ||
 |6.i| Support targets tier 1 ROS platforms | ✓ |
 |7| **Security** ||
@@ -202,7 +204,4 @@ The table below compares the requirements in REP-2004 with the current state of 
 
 \* : going forward
 
-Comparing this table to the [Quality Level Comparison Chart of REP-2004](https://www.ros.org/reps/rep-2004.html#quality-level-comparison-chart) led us to conclude that this package qualifies for Quality Level 3.
-
-Missing for Quality Level 2:
-* 5.iii Justifies quality use of non-ROS dependencies
+Comparing this table to the [Quality Level Comparison Chart of REP-2004](https://www.ros.org/reps/rep-2004.html#quality-level-comparison-chart) led us to conclude that this package qualifies for Quality Level 2.
