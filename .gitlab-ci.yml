@@ -70,6 +70,14 @@ coverage:
   allow_failure: true
   <<: *global_artifacts
 
+dco:
+  stage: report
+  image: $BASE_IMAGE_ID:$DISTRO-base
+  before_script: []
+  script:
+    - pip3 install -U dco-check
+    - dco-check --verbose
+
 trigger_gen_docs:
   stage: report
   only:
