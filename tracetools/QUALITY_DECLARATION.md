@@ -41,7 +41,7 @@ All changes occur through a merge request.
 ### Contributor Origin [2.ii]
 
 `tracetools` uses DCO as its confirmation of contributor origin policy. More information can be found in [CONTRIBUTING](../CONTRIBUTING.md).
-There is currently no automated check.
+There is an automated DCO check for change requests.
 
 ### Peer Review Policy [2.iii]
 
