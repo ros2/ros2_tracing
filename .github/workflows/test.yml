@@ -1,0 +1,83 @@
+name: ros2_tracing
+on:
+  pull_request:
+  push:
+    branches:
+      - rolling
+  schedule:
+    - cron: "0 5 * * *"
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Normal build with LTTng installed (binary)
+          - os: ubuntu-22.04
+            distro: rolling
+            build-type: binary
+            lttng: lttng-enabled
+            instrumentation: instrumentation-enabled
+          # Normal build with LTTng installed (source)
+          - os: ubuntu-22.04
+            distro: rolling
+            build-type: source
+            lttng: lttng-enabled
+            instrumentation: instrumentation-enabled
+          # Build with LTTng installed but tracing disabled
+          - os: ubuntu-22.04
+            distro: rolling
+            build-type: source
+            lttng: lttng-enabled
+            instrumentation: instrumentation-disabled
+          # Normal build without LTTng being installed
+          - os: ubuntu-22.04
+            distro: rolling
+            build-type: source
+            lttng: lttng-disabled
+            instrumentation: instrumentation-enabled
+    env:
+      ROS2_REPOS_FILE_URL: 'https://raw.githubusercontent.com/ros2/ros2/${{ matrix.distro }}/ros2.repos'
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ros-tooling/setup-ros@master
+      with:
+        required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
+    - name: Install LTTng
+      run: |
+        sudo apt-get update
+        sudo apt-get install -q -y lttng-tools liblttng-ust-dev python3-lttng python3-babeltrace python3-pandas
+      if: endsWith(matrix.lttng, '-enabled')
+    - uses: ros-tooling/action-ros-ci@master
+      with:
+        package-name: ros2trace test_tracetools test_tracetools_launch tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
+        target-ros2-distro: ${{ matrix.distro }}
+        vcs-repo-file-url: ${{ matrix.build-type == 'source' && env.ROS2_REPOS_FILE_URL || '' }}
+        extra-cmake-args: ${{ endsWith(matrix.instrumentation, '-disabled') && '-DTRACETOOLS_DISABLED=ON' || '' }}
+        colcon-defaults: |
+          {
+            "build": {
+              "mixin": [
+                "coverage-gcc",
+                "coverage-pytest"
+              ]
+            },
+            "test": {
+              "mixin": [
+                "coverage-pytest"
+              ]
+            }
+          }
+    - name: Make sure tracing instrumentation is available
+      run: |
+        source ros_ws/install/setup.bash
+        ./ros_ws/build/tracetools/status
+      if: endsWith(matrix.lttng, '-enabled') && endsWith(matrix.instrumentation, '-enabled')
+    - name: Make sure tracing instrumentation is disabled
+      run: |
+        source ros_ws/install/setup.bash
+        (! ./ros_ws/build/tracetools/status)
+      if: endsWith(matrix.lttng, '-disabled') || endsWith(matrix.instrumentation, '-disabled')
+    - uses: codecov/codecov-action@v3
+      with:
+        files: ros_ws/lcov/total_coverage.info,ros_ws/coveragepy/.coverage
