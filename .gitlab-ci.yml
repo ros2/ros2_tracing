@@ -32,7 +32,7 @@ tracing_enabled:
     - . install/setup.sh
     - ./build/tracetools/status
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
-    - colcon test-result --all
+    - colcon test-result --all --verbose
   <<: *global_artifacts
 
 tracing_disabled:
@@ -42,7 +42,7 @@ tracing_disabled:
     - colcon build --symlink-install --event-handlers console_cohesion+ --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
     - (! ./build/tracetools/status)
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
-    - colcon test-result --all
+    - colcon test-result --all --verbose
   <<: *global_artifacts
 
 no_lttng:
@@ -54,7 +54,7 @@ no_lttng:
     - (! ./build/tracetools/status)
     - (! ros2 trace)
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
-    - colcon test-result --all
+    - colcon test-result --all --verbose
   <<: *global_artifacts
 
 coverage:
@@ -65,7 +65,7 @@ coverage:
     - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST --mixin coverage-gcc coverage-pytest --cmake-args -DBUILD_TESTING=ON --no-warn-unused-cli
     - colcon lcov-result --initial
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST --mixin coverage-pytest
-    - colcon test-result --all
+    - colcon test-result --all --verbose
     - colcon lcov-result --packages-select tracetools tracetools_test --filter **/tracetools_test/test/* --verbose
     - colcon coveragepy-result --packages-select $PACKAGES_LIST --verbose --coverage-report-args -m
     - codecov -X gcovout --file lcov/total_coverage.info coveragepy/.coverage
