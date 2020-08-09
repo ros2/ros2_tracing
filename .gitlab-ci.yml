@@ -22,30 +22,29 @@ before_script:
 tracing_enabled:
   image: $base_image_id:$distro
   script:
+    - lttng --version && apt list lttng-tools liblttng-ust-dev python3-lttng python3-babeltrace
     - lttng-sessiond --daemonize
-    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
-    - . install/local_setup.sh
+    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
+    - . install/setup.sh
     - ./build/tracetools/status
-    - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result --all
+    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
+    - colcon test-result --all --verbose
   <<: *global_artifacts
 
 tracing_disabled:
   image: $base_image_id:$distro
   script:
-    - colcon build --symlink-install --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
-    - . install/local_setup.sh
+    - colcon build --symlink-install --event-handlers console_cohesion+ --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
     - (! ./build/tracetools/status)
-    - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result --all
+    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
+    - colcon test-result --all --verbose
   <<: *global_artifacts
 
 no_lttng:
   image: $base_image_id:$distro-base
   script:
-    - colcon build --symlink-install --packages-up-to $PACKAGES_LIST
-    - . install/local_setup.sh
+    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
     - (! ./build/tracetools/status)
-    - colcon test --packages-select $PACKAGES_LIST
-    - colcon test-result --all
+    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
+    - colcon test-result --all --verbose
   <<: *global_artifacts
