@@ -1,8 +1,7 @@
 # All settings not listed here will use the Doxygen default values.
-# To use, see: https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing-api
 
 PROJECT_NAME           = "tracetools"
-PROJECT_NUMBER         = $(PROJECT_NUMBER)
+PROJECT_NUMBER         = master
 PROJECT_BRIEF          = "Tracing tools and instrumentation for ROS 2"
 
 INPUT                  = ./include
@@ -27,6 +26,7 @@ EXCLUDE_SYMBOLS        = \
     "_get_symbol_funcptr"
 
 # Tag files that do not exist will produce a warning and cross-project linking will not work.
-TAGFILES += "../../../data/cppreference-doxygen-web.tag.xml=http://en.cppreference.com/w/"
+TAGFILES += "../../../../../doxygen_tag_files/cppreference-doxygen-web.tag.xml=http://en.cppreference.com/w/"
 # Uncomment to generate tag files for cross-project linking.
-GENERATE_TAGFILE = "../../../data/tracetools.tag"
+#   (path relative to workspace dir: doxygen_tag_files/$PACKAGE_NAME.tag)
+#GENERATE_TAGFILE = "../../../../../doxygen_tag_files/tracetools.tag"

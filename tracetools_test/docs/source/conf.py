@@ -45,9 +45,9 @@ copyright = '2019, Robert Bosch GmbH'  # noqa
 author = 'Robert Bosch GmbH'
 
 # The short X.Y version
-version = os.environ.get('SPHINX_VERSION_SHORT', '')
+version = ''
 # The full version, including alpha/beta/rc tags
-release = os.environ.get('SPHINX_VERSION_FULL', '')
+release = '1.0.1'
 
 
 # -- General configuration ---------------------------------------------------
