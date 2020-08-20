@@ -16,12 +16,14 @@ find_package(ament_cmake_ros REQUIRED)
 
 if(WIN32)
   set(DISABLED_DEFAULT ON)
+  set(STATUS_CHECKING_TOOL_DEFAULT OFF)
 else()
   set(DISABLED_DEFAULT OFF)
+  set(STATUS_CHECKING_TOOL_DEFAULT ON)
 endif()
 option(TRACETOOLS_DISABLED "Explicitly disable support for tracing" ${DISABLED_DEFAULT})
 option(TRACETOOLS_NO_RDYNAMIC "Disable export of -rdynamic link flag" OFF)
-option(TRACETOOLS_STATUS_CHECKING_TOOL "Enable the status checking tool" ON)
+option(TRACETOOLS_STATUS_CHECKING_TOOL "Enable the status checking tool" ${STATUS_CHECKING_TOOL_DEFAULT})
 
 if(NOT TRACETOOLS_DISABLED)
   # Set TRACETOOLS_LTTNG_ENABLED if we can find lttng-ust
