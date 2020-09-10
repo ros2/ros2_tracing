@@ -95,9 +95,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
   "$<INSTALL_INTERFACE:include>"
 )
-if(NOT TRACETOOLS_DISABLED)
-  ament_export_targets(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
-endif()
+ament_export_targets(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
 
 if(TRACETOOLS_STATUS_CHECKING_TOOL)
   # Status checking tool
@@ -133,7 +131,7 @@ if(TRACETOOLS_LTTNG_ENABLED)
   if(NOT TRACETOOLS_NO_RDYNAMIC)
     ament_export_link_flags("-rdynamic")
   endif()
-elseif(NOT TRACETOOLS_DISABLED)
+else()
   ament_export_libraries(${PROJECT_NAME})
 endif()
 
