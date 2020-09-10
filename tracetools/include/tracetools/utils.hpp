@@ -18,13 +18,10 @@
 #include <stddef.h>
 #include <functional>
 
-#include "tracetools/config.h"
 #include "tracetools/visibility_control.hpp"
 
 /// Default symbol, used when address resolution fails.
 #define SYMBOL_UNKNOWN "UNKNOWN"
-
-#ifndef TRACETOOLS_DISABLED
 
 TRACETOOLS_PUBLIC const char * _demangle_symbol(const char * mangled);
 
@@ -64,7 +61,5 @@ const char * get_symbol(L && l)
 {
   return _demangle_symbol(typeid(l).name());
 }
-
-#endif  // TRACETOOLS_DISABLED
 
 #endif  // TRACETOOLS__UTILS_HPP_
