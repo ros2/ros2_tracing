@@ -1,8 +1,8 @@
 repositories:
   ros2/rcl:
     type: git
-    url: https://github.com/ros2/rcl.git
-    version: master
+    url: https://gitlab.com/micro-ROS/ros_tracing/rcl.git
+    version: add-lifecycle-node-state-transition-instrumentation
   ros2/rclcpp:
     type: git
     url: https://github.com/ros2/rclcpp.git
