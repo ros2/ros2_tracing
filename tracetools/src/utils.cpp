@@ -14,8 +14,6 @@
 
 #include "tracetools/config.h"
 
-#ifndef TRACETOOLS_DISABLED
-
 #ifdef TRACETOOLS_LTTNG_ENABLED
 #include <dlfcn.h>
 #include <cxxabi.h>
@@ -50,5 +48,3 @@ const char * _get_symbol_funcptr(void * funcptr)
   return "DISABLED__get_symbol_funcptr";
 #endif
 }
-
-#endif  // TRACETOOLS_DISABLED

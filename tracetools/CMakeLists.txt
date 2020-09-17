@@ -16,14 +16,12 @@ find_package(ament_cmake_ros REQUIRED)
 
 if(WIN32)
   set(DISABLED_DEFAULT ON)
-  set(STATUS_CHECKING_TOOL_DEFAULT OFF)
 else()
   set(DISABLED_DEFAULT OFF)
-  set(STATUS_CHECKING_TOOL_DEFAULT ON)
 endif()
 option(TRACETOOLS_DISABLED "Explicitly disable support for tracing" ${DISABLED_DEFAULT})
 option(TRACETOOLS_NO_RDYNAMIC "Disable export of -rdynamic link flag" OFF)
-option(TRACETOOLS_STATUS_CHECKING_TOOL "Enable the status checking tool" ${STATUS_CHECKING_TOOL_DEFAULT})
+option(TRACETOOLS_STATUS_CHECKING_TOOL "Enable the status checking tool" ON)
 
 if(NOT TRACETOOLS_DISABLED)
   # Set TRACETOOLS_LTTNG_ENABLED if we can find lttng-ust
@@ -95,9 +93,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
   "$<INSTALL_INTERFACE:include>"
 )
-if(NOT TRACETOOLS_DISABLED)
-  ament_export_targets(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
-endif()
+ament_export_targets(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
 
 if(TRACETOOLS_STATUS_CHECKING_TOOL)
   # Status checking tool
@@ -133,7 +129,7 @@ if(TRACETOOLS_LTTNG_ENABLED)
   if(NOT TRACETOOLS_NO_RDYNAMIC)
     ament_export_link_flags("-rdynamic")
   endif()
-elseif(NOT TRACETOOLS_DISABLED)
+else()
   ament_export_libraries(${PROJECT_NAME})
 endif()
 
