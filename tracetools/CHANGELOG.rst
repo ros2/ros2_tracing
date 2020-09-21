@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.4 (2020-09-20)
+------------------
 * Allow disabling tracetools status app
 * Contributors: Christophe Bedard, Ingo Lütkebohle, José Antonio Moral
 
