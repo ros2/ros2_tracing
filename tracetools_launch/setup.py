@@ -7,7 +7,7 @@ package_name = 'tracetools_launch'
 
 setup(
     name=package_name,
-    version='1.0.2',
+    version='1.0.4',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/' + package_name, ['package.xml']),

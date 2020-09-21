@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.4 (2020-09-20)
+------------------
+* Allow disabling tracetools status app
+* Contributors: Christophe Bedard, Ingo Lütkebohle, José Antonio Moral
+
 1.0.0 (2020-04-24)
 ------------------
 * Export -rdynamic using ament_export_link_flags and modern CMake

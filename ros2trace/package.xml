@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>ros2trace</name>
-  <version>1.0.2</version>
+  <version>1.0.4</version>
   <description>The trace command for ROS 2 command line tools.</description>
   <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
   <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
