@@ -23,7 +23,7 @@ setup(
     ),
     author='Christophe Bedard',
     author_email='fixed-term.christophe.bourquebedard@de.bosch.com',
-    url='https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing',
+    url='https://gitlab.com/ros-tracing/ros2_tracing',
     keywords=[],
     description='Tools for setting up tracing sessions.',
     long_description=(
