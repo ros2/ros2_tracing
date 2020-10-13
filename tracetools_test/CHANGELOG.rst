@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add lifecycle node state transition instrumentation test
+* Contributors: Christophe Bedard, Ingo Lütkebohle
+
 1.0.0 (2020-04-24)
 ------------------
 * Add test_depend on python3-pytest-cov for tracetools_test
