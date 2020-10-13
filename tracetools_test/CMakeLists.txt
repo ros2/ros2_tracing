@@ -27,7 +27,9 @@ endif()
 # Tests
 if(BUILD_TESTING)
   # tracetools is exported by rclcpp
+  find_package(lifecycle_msgs REQUIRED)
   find_package(rclcpp REQUIRED)
+  find_package(rclcpp_lifecycle REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(std_srvs REQUIRED)
 
@@ -44,6 +46,20 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_intra
     rclcpp
     std_msgs
+  )
+  add_executable(test_lifecycle_node
+    src/test_lifecycle_node.cpp
+  )
+  ament_target_dependencies(test_lifecycle_node
+    rclcpp
+    rclcpp_lifecycle
+  )
+  add_executable(test_lifecycle_client
+    src/test_lifecycle_client.cpp
+  )
+  ament_target_dependencies(test_lifecycle_client
+    lifecycle_msgs
+    rclcpp
   )
   add_executable(test_ping
     src/test_ping.cpp
@@ -82,6 +98,8 @@ if(BUILD_TESTING)
 
   install(TARGETS
     test_intra
+    test_lifecycle_node
+    test_lifecycle_client
     test_ping
     test_pong
     test_publisher

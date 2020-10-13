@@ -1,4 +1,5 @@
 // Copyright 2019 Robert Bosch GmbH
+// Copyright 2020 Christophe Bedard
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -231,6 +232,34 @@ TRACEPOINT_EVENT(
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, callback, callback_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rcl_lifecycle_state_machine_init,
+  TP_ARGS(
+    const void *, node_handle_arg,
+    const void *, state_machine_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, node_handle, node_handle_arg)
+    ctf_integer_hex(const void *, state_machine, state_machine_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rcl_lifecycle_transition,
+  TP_ARGS(
+    const void *, state_machine_arg,
+    const char *, start_label_arg,
+    const char *, goal_label_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, state_machine, state_machine_arg)
+    ctf_string(start_label, start_label_arg)
+    ctf_string(goal_label, goal_label_arg)
   )
 )
 
