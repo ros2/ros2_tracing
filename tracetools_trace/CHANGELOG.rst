@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2020-10-12)
+------------------
+* Add lifecycle node state transition instrumentation
+* Contributors: Christophe Bedard, Ingo Lütkebohle
+
 1.0.1 (2020-05-27)
 ------------------
 * Fail gracefully when trying to trace if LTTng is not installed
