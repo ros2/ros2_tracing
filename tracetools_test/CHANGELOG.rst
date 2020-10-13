@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.0 (2020-10-12)
+------------------
 * Add lifecycle node state transition instrumentation test
 * Contributors: Christophe Bedard, Ingo Lütkebohle
 
