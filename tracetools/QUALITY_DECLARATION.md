@@ -71,7 +71,7 @@ It does not currently have a features list with links to the corresponding featu
 
 ### Public API Documentation [3.ii]
 
-`tracetools` has embedded API documentation which can be generated using doxygen. The latest version can be viewed [here](https://micro-ros.gitlab.io/ros_tracing/ros2_tracing-api/).
+`tracetools` has embedded API documentation which can be generated using doxygen. The latest version can be viewed [here](https://ros-tracing.gitlab.io/ros2_tracing-api/).
 
 New additions to the public API require documentation before being added.
 
@@ -110,7 +110,7 @@ This includes:
 
 Changes are required to make a best effort to keep or increase coverage before being accepted, but decreases are allowed if properly justified and accepted by reviewers.
 
-Current coverage statistics can be viewed [on codecov.io](https://codecov.io/gl/micro-ROS:ros_tracing/ros2_tracing) or in the [results of the latest `coverage` CI job](https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing/pipelines/latest).
+Current coverage statistics can be viewed [on codecov.io](https://codecov.io/gl/ros-tracing/ros2_tracing) or in the [results of the latest `coverage` CI job](https://gitlab.com/ros-tracing/ros2_tracing/pipelines/latest).
 
 ### Performance [4.iv]
 
