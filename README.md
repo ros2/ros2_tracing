@@ -1,6 +1,6 @@
 # ros2_tracing
 
-[![pipeline status](https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing/badges/master/pipeline.svg)](https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing/commits/master)
+[![pipeline status](https://gitlab.com/ros-tracing/ros2_tracing/badges/master/pipeline.svg)](https://gitlab.com/ros-tracing/ros2_tracing/commits/master)
 
 Tracing tools for ROS 2.
 
@@ -61,4 +61,4 @@ See the [design document](./doc/design_ros_2.md).
 
 ## Analysis
 
-See [`tracetools_analysis`](https://gitlab.com/micro-ROS/ros_tracing/tracetools_analysis).
+See [`tracetools_analysis`](https://gitlab.com/ros-tracing/tracetools_analysis).
