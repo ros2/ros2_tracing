@@ -1,7 +1,7 @@
 variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
-  BASE_IMAGE_ID: registry.gitlab.com/micro-ros/ros_tracing/ci_base
+  BASE_IMAGE_ID: registry.gitlab.com/ros-tracing/ci_base
   DISTRO: foxy
 
 stages:
@@ -76,4 +76,4 @@ trigger_gen_docs:
     refs:
       - master
       - foxy
-  trigger: micro-ROS/ros_tracing/ros2_tracing-api
+  trigger: ros-tracing/ros2_tracing-api

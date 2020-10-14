@@ -97,7 +97,7 @@ def is_lttng_installed() -> bool:
     """
     message_doc = (
         'Cannot trace. See documentation at: '
-        'https://gitlab.com/micro-ROS/ros_tracing/ros2_tracing'
+        'https://gitlab.com/ros-tracing/ros2_tracing'
     )
     system = platform.system()
     if 'Linux' != system:
