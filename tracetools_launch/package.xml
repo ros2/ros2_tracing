@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>tracetools_launch</name>
   <version>2.0.0</version>
   <description>Launch integration for tracing.</description>
   <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
   <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Luetkebohle</maintainer>
   <license>Apache 2.0</license>
+  <url type="website">https://index.ros.org/p/tracetools_launch/</url>
+  <url type="repository">https://gitlab.com/ros-tracing/ros2_tracing</url>
+  <url type="bugtracker">https://gitlab.com/ros-tracing/ros2_tracing/-/issues</url>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
   <depend>launch</depend>

@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>ros2trace</name>
   <version>2.0.0</version>
   <description>The trace command for ROS 2 command line tools.</description>
   <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
   <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
   <license>Apache 2.0</license>
+  <url type="website">https://index.ros.org/p/ros2trace/</url>
+  <url type="repository">https://gitlab.com/ros-tracing/ros2_tracing</url>
+  <url type="bugtracker">https://gitlab.com/ros-tracing/ros2_tracing/-/issues</url>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
   <depend>ros2cli</depend>
