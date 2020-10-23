@@ -47,6 +47,13 @@ TEST(TestUtils, valid_symbol_funcptr) {
 }
 
 /*
+   Testing _get_symbol_funcptr from a null pointer.
+ */
+TEST(TestUtils, invalid_get_symbol_funcptr) {
+  EXPECT_STREQ(_get_symbol_funcptr(nullptr), SYMBOL_UNKNOWN);
+}
+
+/*
    Testing symbol resolution for std::function object created from a lambda.
  */
 TEST(TestUtils, valid_symbol_lambda) {
