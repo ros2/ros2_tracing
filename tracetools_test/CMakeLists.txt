@@ -124,10 +124,23 @@ if(BUILD_TESTING)
     endif()
 
     find_package(ament_cmake_pytest REQUIRED)
-    ament_add_pytest_test(${PROJECT_NAME} test
-      APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
-      TIMEOUT 60
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    set(_tracetools_test_pytest_tests
+      test/test_intra.py
+      test/test_lifecycle_node.py
+      test/test_node.py
+      test/test_publisher.py
+      test/test_service.py
+      test/test_subscription.py
+      test/test_timer.py
+    )
+    foreach(_test_path ${_tracetools_test_pytest_tests})
+      get_filename_component(_test_name ${_test_path} NAME_WE)
+      ament_add_pytest_test(${_test_name} ${_test_path}
+        APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
+        TIMEOUT 60
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      )
+    endforeach()
   endif()
 endif()
 
