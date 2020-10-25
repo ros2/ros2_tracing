@@ -2,7 +2,7 @@ This document is a declaration of software quality for the `tracetools` package,
 
 # `tracetools` Quality Declaration
 
-The package `tracetools` claims to be in the **Quality Level 2** category.
+The `tracetools` package claims to be in the **Quality Level 1** category.
 
 Below are the rationales, notes, and caveats for this claim, organized by each requirement listed in the [Package Requirements for Quality Level 1 in REP-2004](https://www.ros.org/reps/rep-2004.html).
 
@@ -106,15 +106,19 @@ The tests aim to cover both typical usage and corner cases, but are quantified b
 This includes:
 
 - tracking and reporting line coverage statistics
+- achieving and maintaining a good branch line coverage (95%)
 - no lines are manually skipped in coverage calculations
 
 Changes are required to make a best effort to keep or increase coverage before being accepted, but decreases are allowed if properly justified and accepted by reviewers.
 
 Current coverage statistics can be viewed [on codecov.io](https://codecov.io/gl/ros-tracing/ros2_tracing) or in the [results of the latest `coverage` CI job](https://gitlab.com/ros-tracing/ros2_tracing/pipelines/latest).
 
+`tracetools` might not reach the 95% goal because it uses `#ifdef` in case LTTng is not installed, but, when using and enabling LTTng, the line coverage is above 95%.
+
 ### Performance [4.iv]
 
 `tracetools` does not currently have any performance tests.
+However, since it is simply an interface and does not contain much logic (or actual code), it does not arguably require performance tests.
 
 ### Linters and Static Analysis [4.v]
 
@@ -188,9 +192,9 @@ The table below compares the requirements in REP-2004 with the current state of 
 |4.i| Feature items tests | ✓ |
 |4.ii| Public API tests | ✓ |
 |4.iii.a| Using coverage | ✓ |
-|4.iii.b| Coverage policy |  |
-|4.iv.a| Performance tests |  |
-|4.iv.b| Performance tests policy |  |
+|4.iii.b| Coverage policy | ✓ |
+|4.iv.a| Performance tests | x |
+|4.iv.b| Performance tests policy | ✓ |
 |4.v.a| Code style enforcement (linters) | ✓ |
 |4.v.b| Use of static analysis tools | ✓ |
 |5| **Dependencies** ||
@@ -204,4 +208,4 @@ The table below compares the requirements in REP-2004 with the current state of 
 
 \* : going forward
 
-Comparing this table to the [Quality Level Comparison Chart of REP-2004](https://www.ros.org/reps/rep-2004.html#quality-level-comparison-chart) led us to conclude that this package qualifies for Quality Level 2.
+Comparing this table to the [Quality Level Comparison Chart of REP-2004](https://www.ros.org/reps/rep-2004.html#quality-level-comparison-chart) led us to conclude that this package qualifies for Quality Level 1.
