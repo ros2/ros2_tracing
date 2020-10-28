@@ -1,4 +1,3 @@
-// Copyright 2019 Robert Bosch GmbH
 // Copyright 2020 Christophe Bedard
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,26 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdbool.h>
-#include <stdio.h>
+#include <gtest/gtest.h>
 
 #include "tracetools/config.h"
 #include "tracetools/status.h"
+#include "tracetools/tracetools.h"
 
-int tracetools_status(bool trace_compile_status_enabled)
-{
+TEST(TestStatus, test_status) {
+  // No real need to check the output
+  EXPECT_EQ(1, tracetools_status(false));
 #ifndef TRACETOOLS_DISABLED
-  printf("Tracing ");
-  if (trace_compile_status_enabled) {
-    printf("enabled\n");
-    return 0;
-  } else {
-    printf("disabled\n");
-    return 1;
-  }
+  EXPECT_EQ(0, tracetools_status(true));
+  (void)ros_trace_compile_status();
 #else
-  (void)trace_compile_status_enabled;
-  printf("Tracing disabled through configuration\n");
-  return 1;
+  EXPECT_EQ(1, tracetools_status(true));
 #endif
 }
