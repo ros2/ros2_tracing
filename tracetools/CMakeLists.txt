@@ -62,15 +62,6 @@ if(TRACETOOLS_LTTNG_ENABLED)
   )
 endif()
 
-# Copy select headers to the actual include/ directory that we will use and export
-foreach(_header ${HEADERS})
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/${_header}
-    ${PROJECT_BINARY_DIR}/${_header}
-    COPYONLY
-  )
-endforeach()
-
 add_library(${PROJECT_NAME} ${SOURCES})
 if(TRACETOOLS_LTTNG_ENABLED)
   target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
@@ -100,18 +91,42 @@ if(NOT TRACETOOLS_DISABLED)
 endif()
 
 if(TRACETOOLS_STATUS_CHECKING_TOOL)
+  # Lib for status checking
+  add_library(${PROJECT_NAME}_status
+    src/status.c
+  )
+  target_link_libraries(${PROJECT_NAME}_status
+    ${PROJECT_NAME}
+  )
+  install(TARGETS
+    ${PROJECT_NAME}_status
+    DESTINATION lib
+  )
+  list(APPEND HEADERS
+    include/${PROJECT_NAME}/status.h
+  )
   # Status checking tool
   add_executable(status
-    src/status.c
+    src/status_tool.c
   )
   target_link_libraries(status
     ${PROJECT_NAME}
+    ${PROJECT_NAME}_status
   )
   install(TARGETS
     status
     DESTINATION lib/${PROJECT_NAME}
   )
 endif()
+
+# Copy select headers to the actual include/ directory that we will use and export
+foreach(_header ${HEADERS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_header}
+    ${PROJECT_BINARY_DIR}/${_header}
+    COPYONLY
+  )
+endforeach()
 
 install(
   DIRECTORY ${PROJECT_BINARY_DIR}/include/
@@ -141,6 +156,20 @@ if(BUILD_TESTING)
   set(ament_cmake_cppcheck_ADDITIONAL_INCLUDE_DIRS ${LTTNG_INCLUDE_DIRS})
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
+
+  if(TRACETOOLS_STATUS_CHECKING_TOOL)
+    find_package(ament_cmake_gtest REQUIRED)
+    ament_add_gtest(test_status test/test_status.cpp)
+    if(TARGET test_status)
+      target_link_libraries(test_status ${PROJECT_NAME} ${PROJECT_NAME}_status)
+    endif()
+
+    # Run status tool executable as test and set pass/fail expectation appropriately
+    add_test(test_status_tool status)
+    if(NOT TRACETOOLS_LTTNG_ENABLED)
+      set_tests_properties(test_status_tool PROPERTIES WILL_FAIL TRUE)
+    endif()
+  endif()
 endif()
 
 ament_package()
