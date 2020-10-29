@@ -66,7 +66,7 @@ coverage:
     - colcon lcov-result --initial
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST --mixin coverage-pytest
     - colcon test-result --all --verbose
-    - colcon lcov-result --packages-select tracetools tracetools_test --filter **/tracetools_test/test/* --verbose
+    - colcon lcov-result --packages-select tracetools tracetools_test --filter **/tracetools/test/* **/tracetools_test/test/* --verbose
     - colcon coveragepy-result --packages-select $PACKAGES_LIST --verbose --coverage-report-args -m
     - codecov -X gcovout --file lcov/total_coverage.info coveragepy/.coverage
   allow_failure: true
