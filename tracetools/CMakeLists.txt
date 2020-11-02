@@ -137,6 +137,15 @@ if(BUILD_TESTING)
   set(ament_cmake_cppcheck_ADDITIONAL_INCLUDE_DIRS ${LTTNG_INCLUDE_DIRS})
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
+
+  if(TRACETOOLS_STATUS_CHECKING_TOOL)
+    # Run status tool executable as test and set pass/fail expectation appropriately
+    add_test(test_status_tool status)
+    if(NOT TRACETOOLS_LTTNG_ENABLED)
+      set_tests_properties(test_status_tool PROPERTIES WILL_FAIL TRUE)
+    endif()
+  endif()
+
 endif()
 
 ament_package()
