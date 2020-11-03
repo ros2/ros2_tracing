@@ -1,7 +1,7 @@
 # ros2_tracing
 
-[![pipeline status](https://gitlab.com/ros-tracing/ros2_tracing/badges/master/pipeline.svg)](https://gitlab.com/ros-tracing/ros2_tracing/commits/master)
-[![codecov](https://codecov.io/gl/ros-tracing/ros2_tracing/branch/master/graph/badge.svg)](https://codecov.io/gl/ros-tracing/ros2_tracing)
+[![pipeline status](https://gitlab.com/ros-tracing/ros2_tracing/badges/foxy/pipeline.svg)](https://gitlab.com/ros-tracing/ros2_tracing/commits/foxy)
+[![codecov](https://codecov.io/gl/ros-tracing/ros2_tracing/branch/foxy/graph/badge.svg)](https://codecov.io/gl/ros-tracing/ros2_tracing)
 
 Tracing tools for ROS 2.
 
