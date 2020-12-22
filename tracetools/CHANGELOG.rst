@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.5 (2020-12-22)
+------------------
 * Bring tracetools up to quality level 1
 * Contributors: Christophe Bedard
 
