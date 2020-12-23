@@ -5,5 +5,5 @@ repositories:
     version: master
   ros2/rclcpp:
     type: git
-    url: https://github.com/ros2/rclcpp.git
-    version: master
+    url: https://github.com/christophebedard/rclcpp.git
+    version: add-instrumentation-link-timer-node
