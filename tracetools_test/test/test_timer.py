@@ -24,8 +24,10 @@ class TestTimer(TraceTestCase):
             *args,
             session_name_prefix='session-test-timer-all',
             events_ros=[
+                'ros2:rcl_node_init',
                 'ros2:rcl_timer_init',
                 'ros2:rclcpp_timer_callback_added',
+                'ros2:rclcpp_timer_link_node',
                 'ros2:callback_start',
                 'ros2:callback_end',
             ],
@@ -47,6 +49,10 @@ class TestTimer(TraceTestCase):
         callback_added_events = self.get_events_with_name('ros2:rclcpp_timer_callback_added')
         for event in callback_added_events:
             self.assertValidHandle(event, ['timer_handle', 'callback'])
+
+        link_node_events = self.get_events_with_name('ros2:rclcpp_timer_link_node')
+        for event in link_node_events:
+            self.assertValidHandle(event, ['timer_handle', 'node_handle'])
 
         start_events = self.get_events_with_name('ros2:callback_start')
         for event in start_events:
@@ -73,8 +79,41 @@ class TestTimer(TraceTestCase):
         self.assertMatchingField(
             test_init_event,
             'timer_handle',
-            'ros2:rclcpp_timer_callback_added',
+            None,
             callback_added_events,
+        )
+        callback_added_event = callback_added_events[0]
+
+        # Check that there is a link_node event for the timer
+        self.assertMatchingField(
+            test_init_event,
+            'timer_handle',
+            None,
+            link_node_events,
+        )
+        # And that the node from that node handle exists
+        node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        self.assertNumEventsEqual(node_init_events, 1)
+        node_init_event = node_init_events[0]
+        self.assertMatchingField(
+            node_init_event,
+            'node_handle',
+            None,
+            link_node_events,
+        )
+
+        # Check that the callback events correspond to the registered timer callback
+        self.assertMatchingField(
+            callback_added_event,
+            'callback',
+            None,
+            start_events,
+        )
+        self.assertMatchingField(
+            callback_added_event,
+            'callback',
+            None,
+            end_events,
         )
 
         # Check that a callback start:end pair has a common callback handle
