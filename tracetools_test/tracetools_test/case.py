@@ -14,6 +14,7 @@
 
 """Module for a tracing-specific unittest.TestCase extension."""
 
+import os
 import time
 from typing import Any
 from typing import List
@@ -39,6 +40,9 @@ class TraceTestCase(unittest.TestCase):
     Sets up tracing, traces given nodes, and provides
     the resulting events for an extending class to test on.
     It also does some basic checks on the resulting trace.
+
+    If the TRACETOOLS_TEST_DEBUG environment variable is set (and
+    non-empty), the resulting trace will not be removed after the test.
     """
 
     def __init__(
@@ -98,7 +102,8 @@ class TraceTestCase(unittest.TestCase):
         self.assertProcessNamesExist(self._nodes)
 
     def tearDown(self):
-        cleanup_trace(self._full_path)
+        if not os.environ.get('TRACETOOLS_TEST_DEBUG', None):
+            cleanup_trace(self._full_path)
 
     def assertEventsSet(
         self,
