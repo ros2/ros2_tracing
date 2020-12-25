@@ -15,8 +15,10 @@
 
 """Entrypoint/script to setup and start an LTTng tracing session."""
 
+import os
 import sys
 from typing import List
+from typing import Optional
 
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
@@ -26,7 +28,7 @@ from tracetools_trace.tools import print_names_list
 
 def init(
     session_name: str,
-    base_path: str,
+    base_path: Optional[str],
     ros_events: List[str],
     kernel_events: List[str],
     context_names: List[str],
@@ -36,7 +38,8 @@ def init(
     Init and start tracing.
 
     :param session_name: the name of the session
-    :param base_path: the path to the directory in which to create the tracing session directory
+    :param base_path: the path to the directory in which to create the tracing session directory,
+    or `None` for default
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_names: list of context names to enable
@@ -64,16 +67,21 @@ def init(
         if display_list:
             print_names_list(context_names)
 
-    full_session_path = path.get_full_session_path(session_name, base_path)
+    if not base_path:
+        base_path = path.get_tracing_directory()
+    full_session_path = os.path.join(base_path, session_name)
     print(f'writing tracing session to: {full_session_path}')
+
     input('press enter to start...')
-    lttng.lttng_init(
+    trace_directory = lttng.lttng_init(
         session_name,
         base_path=base_path,
         ros_events=ros_events,
         kernel_events=kernel_events,
         context_names=context_names,
     )
+    # Simple sanity check
+    assert trace_directory == full_session_path
 
 
 def fini(

@@ -43,12 +43,11 @@ except ImportError:
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_KERNEL
 from .names import DEFAULT_EVENTS_ROS
-from .path import DEFAULT_BASE_PATH
 
 
 def lttng_init(
     session_name: str,
-    base_path: str = DEFAULT_BASE_PATH,
+    base_path: str,
     ros_events: List[str] = DEFAULT_EVENTS_ROS,
     kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
     context_names: List[str] = DEFAULT_CONTEXT,

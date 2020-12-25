@@ -15,6 +15,7 @@
 """Implementation of the interface for tracing with LTTng."""
 
 from distutils.version import StrictVersion
+import os
 import re
 import subprocess
 from typing import List
@@ -28,8 +29,6 @@ from .names import CONTEXT_TYPE_CONSTANTS_MAP
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_KERNEL
 from .names import DEFAULT_EVENTS_ROS
-from .path import DEFAULT_BASE_PATH
-from .path import get_full_session_path
 
 
 def get_version() -> Union[StrictVersion, None]:
@@ -54,7 +53,7 @@ def get_version() -> Union[StrictVersion, None]:
 
 def setup(
     session_name: str,
-    base_path: str = DEFAULT_BASE_PATH,
+    base_path: str,
     ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
     kernel_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_KERNEL,
     context_names: Union[List[str], Set[str]] = DEFAULT_CONTEXT,
@@ -91,7 +90,7 @@ def setup(
         context_names = set(context_names)
 
     # Resolve full tracing directory path
-    full_path = get_full_session_path(session_name, base_path=base_path)
+    full_path = os.path.join(base_path, session_name)
 
     ust_enabled = ros_events is not None and len(ros_events) > 0
     kernel_enabled = kernel_events is not None and len(kernel_events) > 0

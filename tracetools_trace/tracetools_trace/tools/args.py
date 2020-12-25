@@ -45,8 +45,9 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
         help='the name of the tracing session (default: session-YYYYMMDDHHMMSS)')
     parser.add_argument(
         '-p', '--path', dest='path',
-        default=path.DEFAULT_BASE_PATH,
-        help='path of the base directory for trace data (default: %(default)s)')
+        help='path of the base directory for trace data (default: '
+             '$ROS_TRACE_DIR if ROS_TRACE_DIR is set and not empty, or '
+             '$ROS_HOME/tracing, using ~/.ros for ROS_HOME if not set or if empty)')
     events_ust_arg = parser.add_argument(  # type: ignore
         '-u', '--ust', nargs='*', dest='events_ust', metavar='EVENT',
         default=names.DEFAULT_EVENTS_UST,
