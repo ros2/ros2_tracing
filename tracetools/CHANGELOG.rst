@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.5 (2020-12-22)
+------------------
+* Bring tracetools up to quality level 1
+* Contributors: Christophe Bedard
+
 1.0.4 (2020-09-20)
 ------------------
 * Allow disabling tracetools status app

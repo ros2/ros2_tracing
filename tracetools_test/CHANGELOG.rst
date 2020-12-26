@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.5 (2020-12-22)
+------------------
+* Increased code coverage > 94% as part of QL1
+* Contributors: Christophe Bedard, Alejandro Hernández Cordero
+
 1.0.0 (2020-04-24)
 ------------------
 * Add test_depend on python3-pytest-cov for tracetools_test
