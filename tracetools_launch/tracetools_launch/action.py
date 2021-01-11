@@ -49,7 +49,7 @@ class Trace(Action):
         *,
         session_name: str,
         append_timestamp: bool = False,
-        base_path: str = path.DEFAULT_BASE_PATH,
+        base_path: Optional[str] = None,
         events_ust: List[str] = names.DEFAULT_EVENTS_ROS,
         events_kernel: List[str] = names.DEFAULT_EVENTS_KERNEL,
         context_names: List[str] = names.DEFAULT_CONTEXT,
@@ -61,7 +61,8 @@ class Trace(Action):
 
         :param session_name: the name of the tracing session
         :param append_timestamp: whether to append timestamp to the session name
-        :param base_path: the path to the base directory in which to create the session directory
+        :param base_path: the path to the base directory in which to create the session directory,
+        or `None` for default
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
         :param context_names: the list of context names to enable
@@ -71,7 +72,7 @@ class Trace(Action):
         if append_timestamp:
             session_name = path.append_timestamp(session_name)
         self.__session_name = session_name
-        self.__base_path = base_path
+        self.__base_path = base_path or path.get_tracing_directory()
         self.__events_ust = events_ust
         self.__events_kernel = events_kernel
         self.__context_names = context_names
