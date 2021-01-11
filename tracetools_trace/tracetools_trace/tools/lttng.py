@@ -113,6 +113,6 @@ def is_lttng_installed() -> bool:
         if 0 != process.returncode:
             raise RuntimeError(stderr.decode())
         return True
-    except Exception as e:
+    except (RuntimeError, FileNotFoundError) as e:
         print(f'LTTng not found: {e}\n{message_doc}', file=sys.stderr)
         return False
