@@ -24,6 +24,7 @@ from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import path
 from tracetools_trace.tools import print_names_list
+from tracetools_trace.tools import signals
 
 
 def init(
@@ -92,9 +93,14 @@ def fini(
 
     :param session_name: the name of the session
     """
-    input('press enter to stop...')
-    print('stopping & destroying tracing session')
-    lttng.lttng_fini(session_name)
+    def _run() -> None:
+        input('press enter to stop...')
+
+    def _fini() -> None:
+        print('stopping & destroying tracing session')
+        lttng.lttng_fini(session_name)
+
+    signals.execute_and_handle_sigint(_run, _fini)
 
 
 def main():
