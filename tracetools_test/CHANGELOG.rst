@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2021-01-13)
+------------------
 * Allow skipping test trace cleanup by setting an environment variable
 * Add test for timer-node linking instrumentation
 * Increased code coverage > 94% as part of QL1

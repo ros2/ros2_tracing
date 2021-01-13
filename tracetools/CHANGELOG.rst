@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2021-01-13)
+------------------
 * Add instrumentation support for linking a timer to a node
 * Bring tracetools up to quality level 1
 * Contributors: Christophe Bedard

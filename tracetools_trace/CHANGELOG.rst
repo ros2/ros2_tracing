@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2021-01-13)
+------------------
 * Fix flake8 blind except error by using more concrete types
 * Allow configuring tracing directory through environment variables
 * Cleanly stop ros2trace/tracetools_trace tracing on SIGINT
