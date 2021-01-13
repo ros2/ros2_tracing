@@ -230,6 +230,18 @@ DECLARE_TRACEPOINT(
   const void * timer_handle,
   const void * callback)
 
+/// `rclcpp_timer_link_node`
+/**
+ * Link a timer to a node.
+ *
+ * \param[in] timer_handle pointer to the timer's `rcl_timer_t` handle
+ * \param[in] node_handle pointer to the `rcl_node_t` handle of the node the timer belongs to
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_timer_link_node,
+  const void * timer_handle,
+  const void * node_handle)
+
 /// `rclcpp_callback_register`
 /**
  * Register a demangled function symbol with a callback.

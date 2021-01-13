@@ -186,6 +186,17 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
+  rclcpp_timer_link_node,
+  const void * timer_handle,
+  const void * node_handle)
+{
+  CONDITIONAL_TP(
+    rclcpp_timer_link_node,
+    timer_handle,
+    node_handle);
+}
+
+void TRACEPOINT(
   rclcpp_callback_register,
   const void * callback,
   const char * function_symbol)

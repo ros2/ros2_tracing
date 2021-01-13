@@ -200,6 +200,19 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
+  rclcpp_timer_link_node,
+  TP_ARGS(
+    const void *, timer_handle_arg,
+    const void *, node_handle_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, timer_handle, timer_handle_arg)
+    ctf_integer_hex(const void *, node_handle, node_handle_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
   rclcpp_callback_register,
   TP_ARGS(
     const void *, callback_arg,
