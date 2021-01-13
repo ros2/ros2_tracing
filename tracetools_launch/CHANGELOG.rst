@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Allow configuring tracing directory through environment variables
+* Contributors: Christophe Bedard
+
 1.0.1 (2020-05-27)
 ------------------
 * Deprecation fixes

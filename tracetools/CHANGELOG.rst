@@ -2,6 +2,12 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add instrumentation support for linking a timer to a node
+* Bring tracetools up to quality level 1
+* Contributors: Christophe Bedard
+
 2.0.0 (2020-10-12)
 ------------------
 * Add lifecycle node state transition instrumentation
