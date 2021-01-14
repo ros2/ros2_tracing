@@ -2,6 +2,14 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.1.0 (2021-01-13)
+------------------
+* Fix flake8 blind except error by using more concrete types
+* Allow configuring tracing directory through environment variables
+* Cleanly stop ros2trace/tracetools_trace tracing on SIGINT
+* Add instrumentation support for linking a timer to a node
+* Contributors: Christophe Bedard
+
 2.0.0 (2020-10-12)
 ------------------
 * Add lifecycle node state transition instrumentation
