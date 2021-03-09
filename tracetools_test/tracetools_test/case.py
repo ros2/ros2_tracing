@@ -209,16 +209,14 @@ class TraceTestCase(unittest.TestCase):
 
     def assertEventOrder(
         self,
-        first_event: DictEvent,
-        second_event: DictEvent,
+        events: List[DictEvent],
     ) -> None:
         """
         Check that the first event was generated before the second event.
 
-        :param first_event: the first event
-        :param second_event: the second event
+        :param events: the events in the expected order
         """
-        self.assertTrue(self.are_events_ordered(first_event, second_event))
+        self.assertTrue(self.are_events_ordered(events), 'unexpected events order')
 
     def assertNumEventsEqual(
         self,
@@ -287,7 +285,7 @@ class TraceTestCase(unittest.TestCase):
             # Check order
             # Since matching pairs might repeat, we need to check
             # that there is at least one match that comes after
-            matches_ordered = [e for e in matches if self.are_events_ordered(initial_event, e)]
+            matches_ordered = [e for e in matches if self.are_events_ordered([initial_event, e])]
             self.assertGreaterEqual(
                 len(matches_ordered),
                 1,
@@ -420,15 +418,15 @@ class TraceTestCase(unittest.TestCase):
 
     def are_events_ordered(
         self,
-        first_event: DictEvent,
-        second_event: DictEvent,
+        events: List[DictEvent],
     ) -> bool:
         """
-        Check that the first event was generated before the second event.
+        Check that the events were generated in the expected order.
 
-        :param first_event: the first event
-        :param second_event: the second event
+        :param events: the events in the expected order
         """
-        first_timestamp = get_event_timestamp(first_event)
-        second_timestamp = get_event_timestamp(second_event)
-        return first_timestamp < second_timestamp
+        orders = [
+            get_event_timestamp(events[i]) < get_event_timestamp(events[i + 1])
+            for i in range(len(events) - 1)
+        ]
+        return all(orders)
