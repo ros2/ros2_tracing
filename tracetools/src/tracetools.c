@@ -84,6 +84,28 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
+  rcl_publish,
+  const void * publisher_handle,
+  const void * message)
+{
+  CONDITIONAL_TP(
+    rcl_publish,
+    publisher_handle,
+    message);
+}
+
+void TRACEPOINT(
+  rclcpp_publish,
+  const void * publisher_handle,
+  const void * message)
+{
+  CONDITIONAL_TP(
+    rclcpp_publish,
+    publisher_handle,
+    message);
+}
+
+void TRACEPOINT(
   rcl_subscription_init,
   const void * subscription_handle,
   const void * node_handle,
