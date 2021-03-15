@@ -72,6 +72,14 @@ coverage:
   allow_failure: true
   <<: *global_artifacts
 
+dco:
+  stage: report
+  image: $BASE_IMAGE_ID:$DISTRO-base
+  before_script: []
+  script:
+    - pip3 install -U dco-check
+    - CI_DEFAULT_BRANCH=foxy dco-check --verbose --default-branch foxy
+
 trigger_gen_docs:
   stage: report
   only:
