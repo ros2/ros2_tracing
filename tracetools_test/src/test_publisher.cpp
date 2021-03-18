@@ -1,4 +1,5 @@
 // Copyright 2019 Robert Bosch GmbH
+// Copyright 2021 Christophe Bedard
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +31,10 @@ public:
     pub_ = this->create_publisher<std_msgs::msg::String>(
       TOPIC_NAME,
       rclcpp::QoS(QUEUE_DEPTH));
+
+    auto msg = std::make_shared<std_msgs::msg::String>();
+    msg->data = "some random string";
+    pub_->publish(*msg);
   }
 
 private:

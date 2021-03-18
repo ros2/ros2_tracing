@@ -128,6 +128,7 @@ if(BUILD_TESTING)
       test/test_intra.py
       test/test_lifecycle_node.py
       test/test_node.py
+      test/test_pub_sub.py
       test/test_publisher.py
       test/test_service.py
       test/test_subscription.py
