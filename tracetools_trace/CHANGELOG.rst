@@ -2,6 +2,11 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.0 (2021-03-29)
+------------------
+* Add support for rcl_publish and rclcpp_publish tracepoints
+* Contributors: Christophe Bedard
+
 2.1.0 (2021-01-13)
 ------------------
 * Fix flake8 blind except error by using more concrete types
