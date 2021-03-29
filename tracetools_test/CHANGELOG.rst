@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2021-03-29)
+------------------
 * Add tests for rcl_publish and rclcpp_publish tracepoints
 * Allow asserting order of list of events
 * Contributors: Christophe Bedard

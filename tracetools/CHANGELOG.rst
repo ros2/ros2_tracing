@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2021-03-29)
+------------------
 * Add support for rcl_publish and rclcpp_publish tracepoints
 * Contributors: Christophe Bedard
 
