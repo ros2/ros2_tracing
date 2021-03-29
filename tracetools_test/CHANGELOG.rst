@@ -2,6 +2,12 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add tests for rcl_publish and rclcpp_publish tracepoints
+* Allow asserting order of list of events
+* Contributors: Christophe Bedard
+
 2.1.0 (2021-01-13)
 ------------------
 * Allow skipping test trace cleanup by setting an environment variable
