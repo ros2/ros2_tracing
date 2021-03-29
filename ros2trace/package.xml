@@ -12,13 +12,13 @@
   <url type="bugtracker">https://gitlab.com/ros-tracing/ros2_tracing/-/issues</url>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
+  <build_depend>ament_package</build_depend>
   <depend>ros2cli</depend>
   <depend>tracetools_trace</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_mypy</test_depend>
-  <test_depend>ament_package</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>ament_xmllint</test_depend>
   <test_depend>python3-pytest</test_depend>
