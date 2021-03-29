@@ -57,16 +57,24 @@ Instrumentation should be built around the main uses of ROS 2, and should includ
 1. Overall
     1. When creating a publisher/subscriber/service/client/etc., appropriate references should be kept in order to correlate with other tracepoints related to the same instance.
 1. Publishers & subscriptions
-    1. When creating a publisher/subscription, the effective topic name should be included (i.e. including namespace and after remapping).
-    2. When publishing a message, some sort of message identifier should be included in the tracepoint so it can be tracked through DDS up to the subscriber's side.
-3. Callbacks (subscription, service, client, timer)
+    1. When creating a publisher/subscription:
+        1. the effective topic name should be included (i.e. including namespace and after remapping).
+        1. information about the publisher/subscription instances should be included, to be correlated with other tracepoints later.
+    1. When publishing a message:
+        1. it should be linked to its publisher.
+        1. some sort of message identifier(s) should be included in the tracepoint so it can be tracked through DDS up to the subscriber's side.
+            * A pointer to the message can be used to track it through the ROS abstraction layers.
+            * Same for DDS, making sure to track any copies being made, if any.
+            * Some logic, e.g. network packet matching or some sort of unique message identifier, can then be used to link a published message to a message received by a subscription.
+1. Callbacks (subscription, service, client, timer)
     1. Callback function symbol should be included, whenever possible.
-    2. Information about callback execution (e.g. start & end) should be available.
-4. Timers
+    1. Callback instances should be linked to a specific message or request, when applicable.
+    1. Information about callback execution (e.g. start & end) should be available.
+1. Timers
     1. Information about the period should be available.
-5. Executors
+1. Executors
     1. Information about spin cycles & periods should be available.
-6. Others
+1. Others
     1. Provide generic tracepoints for user code.
 
 ### Requirements: analysis & visualization
@@ -539,7 +547,7 @@ This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever 
 
 ### Notes on client libraries
 
-ROS offer a client library (`rcl`) written in C as the base for any language-specific implementation, such as `rclcpp` and `rclpy`.
+ROS offers a client library (`rcl`) written in C as the base for any language-specific implementation, such as `rclcpp` and `rclpy`.
 
 However, `rcl` is obviously fairly basic, and still does leave a fair amount of implementation work up to the client libraries. For example, callbacks are not handled in `rcl`, and are left to the client library implementations.
 

@@ -1,4 +1,5 @@
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,10 +23,12 @@ class TestPublisher(TraceTestCase):
     def __init__(self, *args) -> None:
         super().__init__(
             *args,
-            session_name_prefix='session-test-publisher-creation',
+            session_name_prefix='session-test-publisher',
             events_ros=[
                 'ros2:rcl_node_init',
                 'ros2:rcl_publisher_init',
+                'ros2:rcl_publish',
+                'ros2:rclcpp_publish',
             ],
             nodes=['test_publisher'],
         )
@@ -43,6 +46,20 @@ class TestPublisher(TraceTestCase):
             )
             self.assertValidQueueDepth(event, 'queue_depth')
             self.assertStringFieldNotEmpty(event, 'topic_name')
+        rcl_publish_events = self.get_events_with_name('ros2:rcl_publish')
+        for event in rcl_publish_events:
+            # Message is a pointer (aka a handle)
+            self.assertValidHandle(
+                event,
+                ['publisher_handle', 'message'],
+            )
+        rclcpp_publish_events = self.get_events_with_name('ros2:rclcpp_publish')
+        for event in rcl_publish_events:
+            # Message is a pointer (aka a handle)
+            self.assertValidHandle(
+                event,
+                ['publisher_handle', 'message'],
+            )
 
         # Check that the test topic name exists
         test_pub_init_events = self.get_events_with_procname('test_publisher', pub_init_events)
@@ -84,6 +101,37 @@ class TestPublisher(TraceTestCase):
             None,
             test_pub_init_events,
         )
+
+        # Check publish events
+        # Get publisher_handle of publisher and find related rcl/rclcpp_publish events
+        publisher_handle = self.get_field(test_pub_init_topic_event, 'publisher_handle')
+        rclcpp_publish_topic_events = self.get_events_with_field_value(
+            'publisher_handle',
+            publisher_handle,
+            rclcpp_publish_events,
+        )
+        rcl_publish_topic_events = self.get_events_with_field_value(
+            'publisher_handle',
+            publisher_handle,
+            rcl_publish_events,
+        )
+        self.assertNumEventsEqual(
+            rclcpp_publish_topic_events,
+            1,
+            'none or more than 1 rclcpp_publish event for test topic',
+        )
+        self.assertNumEventsEqual(
+            rcl_publish_topic_events,
+            1,
+            'none or more than 1 rcl_publish event for test topic',
+        )
+        rclcpp_publish_topic_event = rclcpp_publish_topic_events[0]
+        rcl_publish_topic_event = rcl_publish_topic_events[0]
+        # Make sure the message field matches and check the order
+        rclcpp_publish_topic_msg = self.get_field(rclcpp_publish_topic_event, 'message')
+        rcl_publish_topic_msg = self.get_field(rcl_publish_topic_event, 'message')
+        self.assertEqual(rclcpp_publish_topic_msg, rcl_publish_topic_msg)
+        self.assertEventOrder([rclcpp_publish_topic_event, rcl_publish_topic_event])
 
 
 if __name__ == '__main__':
