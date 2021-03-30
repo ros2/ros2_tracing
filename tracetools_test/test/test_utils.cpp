@@ -42,15 +42,15 @@ public:
  */
 TEST(TestUtils, valid_symbol_funcptr) {
   std::function<void(std::shared_ptr<int>)> f = &function_shared;
-  EXPECT_STREQ(get_symbol(f), "function_shared(std::shared_ptr<int>)") <<
+  EXPECT_STREQ(tracetools::get_symbol(f), "function_shared(std::shared_ptr<int>)") <<
     "invalid symbol";
 }
 
 /*
-   Testing _get_symbol_funcptr from a null pointer.
+   Testing get_symbol_funcptr from a null pointer.
  */
 TEST(TestUtils, invalid_get_symbol_funcptr) {
-  EXPECT_STREQ(_get_symbol_funcptr(nullptr), SYMBOL_UNKNOWN);
+  EXPECT_STREQ(tracetools::detail::get_symbol_funcptr(nullptr), TRACETOOLS_SYMBOL_UNKNOWN);
 }
 
 /*
@@ -59,7 +59,7 @@ TEST(TestUtils, invalid_get_symbol_funcptr) {
 TEST(TestUtils, valid_symbol_lambda) {
   std::function<int(int)> l = [](int num) {return num + 1;};
   EXPECT_STREQ(
-    get_symbol(l),
+    tracetools::get_symbol(l),
     "TestUtils_valid_symbol_lambda_Test::TestBody()::{lambda(int)#1}") <<
     "invalid symbol";
 }
@@ -72,13 +72,13 @@ TEST(TestUtils, valid_symbol_lambda_capture) {
 
   auto l = [ = ]() {return num + 1;};
   EXPECT_STREQ(
-    get_symbol(l),
+    tracetools::get_symbol(l),
     "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda()#1}") <<
     "invalid symbol";
 
   auto m = [&](int other_num) {return num + other_num;};
   EXPECT_STREQ(
-    get_symbol(m),
+    tracetools::get_symbol(m),
     "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#2}") <<
     "invalid symbol";
 }
@@ -95,7 +95,7 @@ TEST(TestUtils, valid_symbol_bind) {
     std::placeholders::_2
   );
   EXPECT_STREQ(
-    get_symbol(
+    tracetools::get_symbol(
       fscwc),
     "std::_Bind<void (SomeClassWithCallback::*(SomeClassWithCallback*, "
     "std::_Placeholder<1>, std::_Placeholder<2>))(int, std::__cxx11::basic_string"

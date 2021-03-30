@@ -22,7 +22,13 @@
 #endif
 #include "tracetools/utils.hpp"
 
-const char * _demangle_symbol(const char * mangled)
+namespace tracetools
+{
+
+namespace detail
+{
+
+const char * demangle_symbol(const char * mangled)
 {
 #ifdef TRACETOOLS_LTTNG_ENABLED
   char * demangled = nullptr;
@@ -30,25 +36,29 @@ const char * _demangle_symbol(const char * mangled)
   demangled = abi::__cxa_demangle(mangled, NULL, 0, &status);
   // Use demangled symbol if possible
   const char * demangled_val = (status == 0 ? demangled : mangled);
-  return demangled_val != 0 ? demangled_val : "UNKNOWN_demangling_failed";
+  return demangled_val != 0 ? demangled_val : TRACETOOLS_SYMBOL_UNKNOWN "_demangling_failed";
 #else
   (void)mangled;
   return "DISABLED__demangle_symbol";
 #endif
 }
 
-const char * _get_symbol_funcptr(void * funcptr)
+const char * get_symbol_funcptr(void * funcptr)
 {
 #ifdef TRACETOOLS_LTTNG_ENABLED
   Dl_info info;
   if (dladdr(funcptr, &info) == 0) {
-    return SYMBOL_UNKNOWN;
+    return TRACETOOLS_SYMBOL_UNKNOWN;
   }
-  return _demangle_symbol(info.dli_sname);
+  return demangle_symbol(info.dli_sname);
 #else
   (void)funcptr;
   return "DISABLED__get_symbol_funcptr";
 #endif
 }
+
+}  // namespace detail
+
+}  // namespace tracetools
 
 #endif  // TRACETOOLS_DISABLED

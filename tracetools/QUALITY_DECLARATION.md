@@ -18,7 +18,7 @@ Below are the rationales, notes, and caveats for this claim, organized by each r
 
 ### Public API Declaration [1.iii]
 
-All symbols in the installed headers are considered part of the public API.
+All symbols in the installed headers that are not part of a `::detail` namespace and that do not have a leading underscore are considered part of the public API.
 
 All installed headers are in the `include` directory of the package, headers in any other folders are not installed and considered private.
 
