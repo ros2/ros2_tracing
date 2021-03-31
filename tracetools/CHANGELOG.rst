@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.3.0 (2021-03-31)
+------------------
 * Update QD to be more specific about public API
 * Namespace tracetools C++ functions and macros and deprecate current ones
 * Contributors: Christophe Bedard

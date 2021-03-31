@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.3.0 (2021-03-31)
+------------------
 * Update after namespacing C++ tracetools functions and macros
 * Contributors: Christophe Bedard
 
