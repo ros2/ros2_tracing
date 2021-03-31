@@ -22,6 +22,7 @@ PREDEFINED             = \
 
 EXCLUDE_SYMBOLS        = \
     "DECLARE_TRACEPOINT" \
+    "tracetools::detail*" \
     "_demangle_symbol" \
     "_get_symbol_funcptr"
 
