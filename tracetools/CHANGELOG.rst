@@ -2,6 +2,12 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.3.0 (2021-03-31)
+------------------
+* Update QD to be more specific about public API
+* Namespace tracetools C++ functions and macros and deprecate current ones
+* Contributors: Christophe Bedard
+
 2.2.0 (2021-03-29)
 ------------------
 * Add support for rcl_publish and rclcpp_publish tracepoints

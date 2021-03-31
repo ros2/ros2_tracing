@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.3.0 (2021-03-31)
+------------------
+* Update after namespacing C++ tracetools functions and macros
+* Contributors: Christophe Bedard
+
 2.2.0 (2021-03-29)
 ------------------
 * Add tests for rcl_publish and rclcpp_publish tracepoints
