@@ -10,7 +10,7 @@ Below are the rationales, notes, and caveats for this claim, organized by each r
 
 ### Version Scheme [1.i]
 
-`tracetools` uses `semver` according to the recommendation for ROS Core packages in the [ROS 2 Developer Guide](https://index.ros.org/doc/ros2/Contributing/Developer-Guide/#versioning).
+`tracetools` uses `semver` according to the recommendation for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#versioning).
 
 ### Version Stability [1.ii]
 
@@ -32,7 +32,7 @@ All installed headers are in the `include` directory of the package, headers in 
 
 ## Change Control Process [2]
 
-`tracetools` follows the recommended guidelines for ROS Core packages in the [ROS 2 Developer Guide](https://index.ros.org/doc/ros2/Contributing/Developer-Guide/#change-control-process).
+`tracetools` follows the recommended guidelines for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#change-control-process).
 
 ### Change Requests [2.i]
 
@@ -101,7 +101,7 @@ The tests aim to cover both typical usage and corner cases, but are quantified b
 
 ### Coverage [4.iii]
 
-`tracetools` follows the recommendations for ROS Core packages in the [ROS 2 Developer Guide](https://index.ros.org/doc/ros2/Contributing/Developer-Guide/#code-coverage).
+`tracetools` follows the recommendations for ROS Core packages in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#code-coverage).
 
 This includes:
 
@@ -122,7 +122,7 @@ However, since it is simply an interface and does not contain much logic (or act
 
 ### Linters and Static Analysis [4.v]
 
-`tracetools` uses and passes all the standard linters and static analysis tools as described in the [ROS 2 Developer Guide](https://index.ros.org/doc/ros2/Contributing/Developer-Guide/#linters-and-static-analysis).
+`tracetools` uses and passes all the standard linters and static analysis tools as described in the [ROS 2 Developer Guide](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#linters-and-static-analysis).
 
 ## Dependencies [5]
 
