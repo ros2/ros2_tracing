@@ -5,13 +5,22 @@ variables:
   DISTRO: rolling
 
 stages:
-  - build_test
+  - build
+  - test
   - report
 
-.global_artifacts: &global_artifacts
+.before_script_build: &before_script_build
+  before_script:
+    - vcs import < instrumented.repos
+    - . /root/ws/install/local_setup.sh
+.build_artifacts: &build_artifacts
   artifacts:
     paths:
-      - install
+      - install/
+      - build/
+.test_artifacts: &test_artifacts
+  artifacts:
+    paths:
       - build/*/test_results/*/*.xunit.xml
       - build/*/pytest.xml
     reports:
@@ -19,67 +28,104 @@ stages:
         - build/*/test_results/*/*.xunit.xml
         - build/*/pytest.xml
 
-before_script:
-  - vcs import < instrumented.repos
-  - . /root/ws/install/local_setup.sh
-
-tracing_enabled:
-  stage: build_test
+# Normal build with LTTng installed
+tracing_enabled:build:
+  stage: build
   image: $BASE_IMAGE_ID:$DISTRO
+  <<: *before_script_build
   script:
     - lttng --version && apt list lttng-tools liblttng-ust-dev python3-lttng python3-babeltrace
     - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
-    - . install/setup.sh
-    - ./build/tracetools/status
+  <<: *build_artifacts
+
+tracing_enabled:test:
+  stage: test
+  image: $BASE_IMAGE_ID:$DISTRO
+  needs:
+    - tracing_enabled:build
+  dependencies:
+    - tracing_enabled:build
+  script:
+    - (source install/setup.sh && ./build/tracetools/status)
+    - . /root/ws/install/local_setup.sh
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
-  <<: *global_artifacts
+  <<: *test_artifacts
 
-tracing_disabled:
-  stage: build_test
+# Build with LTTng installed but tracing disabled
+tracing_disabled:build:
+  stage: build
   image: $BASE_IMAGE_ID:$DISTRO
+  <<: *before_script_build
   script:
     - colcon build --symlink-install --event-handlers console_cohesion+ --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
-    - (! ./build/tracetools/status)
+  <<: *build_artifacts
+
+tracing_disabled:test:
+  stage: test
+  image: $BASE_IMAGE_ID:$DISTRO
+  needs:
+    - tracing_disabled:build
+  dependencies:
+    - tracing_disabled:build
+  script:
+    - (source install/setup.sh && (! ./build/tracetools/status))
+    - . /root/ws/install/local_setup.sh
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
-  <<: *global_artifacts
+  <<: *test_artifacts
 
-no_lttng:
-  stage: build_test
+# Normal build without LTTng being installed
+no_lttng:build:
+  stage: build
   image: $BASE_IMAGE_ID:$DISTRO-base
+  <<: *before_script_build
   script:
     - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
-    - . install/setup.sh
-    - (! ./build/tracetools/status)
-    - (! ros2 trace)
+  <<: *build_artifacts
+
+no_lttng:test:
+  stage: test
+  image: $BASE_IMAGE_ID:$DISTRO-base
+  needs:
+    - no_lttng:build
+  dependencies:
+    - no_lttng:build
+  script:
+    - (source install/setup.sh && (! ./build/tracetools/status))
+    - (source install/setup.sh && (! ros2 trace))
+    - . /root/ws/install/local_setup.sh
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
-  <<: *global_artifacts
+  <<: *test_artifacts
 
+# Coverage job (with LTTng)
 coverage:
   stage: report
   image: $BASE_IMAGE_ID:$DISTRO
+  needs:
+    - tracing_enabled:test
+  <<: *before_script_build
   script:
-    - pip3 install -U codecov
     - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST --mixin coverage-gcc coverage-pytest --cmake-args -DBUILD_TESTING=ON --no-warn-unused-cli
     - colcon lcov-result --initial
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST --mixin coverage-pytest
     - colcon test-result --all --verbose
     - colcon lcov-result --packages-select tracetools tracetools_test --filter **/tracetools/test/* **/tracetools_test/test/* --verbose
     - colcon coveragepy-result --packages-select $PACKAGES_LIST --verbose --coverage-report-args -m
+    - pip3 install -U codecov
     - codecov -X gcovout --file lcov/total_coverage.info coveragepy/.coverage
   allow_failure: true
-  <<: *global_artifacts
 
+# DCO-checking job (see CONTRIBUTING.md)
 dco:
   stage: report
   image: $BASE_IMAGE_ID:$DISTRO-base
-  before_script: []
   script:
     - pip3 install -U dco-check
     - dco-check --verbose
 
+# Trigger docs generation
 trigger_gen_docs:
   stage: report
   only:
