@@ -2,7 +2,7 @@ variables:
   DOCKER_DRIVER: overlay2
   PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
   BASE_IMAGE_ID: registry.gitlab.com/ros-tracing/ci_base
-  DISTRO: rolling
+  DISTRO: galactic
 
 stages:
   - build
@@ -123,7 +123,7 @@ dco:
   image: $BASE_IMAGE_ID:$DISTRO-base
   script:
     - pip3 install -U dco-check
-    - dco-check --verbose
+    - CI_DEFAULT_BRANCH=$DISTRO dco-check --verbose --default-branch $DISTRO
 
 # Trigger docs generation
 trigger_gen_docs:
@@ -131,5 +131,6 @@ trigger_gen_docs:
   only:
     refs:
       - master
+      - galactic
       - foxy
   trigger: ros-tracing/ros2_tracing-api
