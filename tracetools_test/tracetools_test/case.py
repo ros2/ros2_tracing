@@ -53,10 +53,10 @@ class TraceTestCase(unittest.TestCase):
         *args,
         session_name_prefix: str,
         events_ros: List[str],
+        package: str,
         nodes: List[str],
         base_path: str = '/tmp',
         events_kernel: List[str] = [],
-        package: str = 'tracetools_test',
     ) -> None:
         """Create a TraceTestCase."""
         super().__init__(methodName=args[0])
