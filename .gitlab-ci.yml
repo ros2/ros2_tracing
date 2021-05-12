@@ -1,6 +1,6 @@
 variables:
   DOCKER_DRIVER: overlay2
-  PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
+  PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace test_tracetools
   BASE_IMAGE_ID: registry.gitlab.com/ros-tracing/ci_base
   DISTRO: rolling
 
