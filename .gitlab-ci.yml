@@ -114,7 +114,7 @@ coverage:
     - colcon lcov-result --packages-select tracetools tracetools_test --filter **/tracetools/test/* **/tracetools_test/test/* --verbose
     - colcon coveragepy-result --packages-select $PACKAGES_LIST --verbose --coverage-report-args -m
     - pip3 install -U codecov
-    - codecov -X gcovout --file lcov/total_coverage.info coveragepy/.coverage
+    - codecov --no-gcov-out --file lcov/total_coverage.info coveragepy/.coverage
   allow_failure: true
 
 # DCO-checking job (see CONTRIBUTING.md)
