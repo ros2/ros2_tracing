@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -75,7 +76,7 @@ def init(
 
     input('press enter to start...')
     trace_directory = lttng.lttng_init(
-        session_name,
+        session_name=session_name,
         base_path=base_path,
         ros_events=ros_events,
         kernel_events=kernel_events,
@@ -98,7 +99,7 @@ def fini(
 
     def _fini() -> None:
         print('stopping & destroying tracing session')
-        lttng.lttng_fini(session_name)
+        lttng.lttng_fini(session_name=session_name)
 
     signals.execute_and_handle_sigint(_run, _fini)
 
