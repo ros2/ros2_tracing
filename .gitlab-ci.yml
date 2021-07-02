@@ -12,7 +12,7 @@ stages:
 .before_script_build: &before_script_build
   before_script:
     - vcs import < instrumented.repos
-    - . /root/ws/install/local_setup.sh
+    - . /root/ws/install/setup.sh
 .build_artifacts: &build_artifacts
   artifacts:
     paths:
@@ -35,7 +35,7 @@ tracing_enabled:build:
   <<: *before_script_build
   script:
     - lttng --version && apt list lttng-tools liblttng-ust-dev python3-lttng python3-babeltrace
-    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
+    - colcon build --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
   <<: *build_artifacts
 
 tracing_enabled:test:
@@ -58,7 +58,7 @@ tracing_disabled:build:
   image: $BASE_IMAGE_ID:$DISTRO
   <<: *before_script_build
   script:
-    - colcon build --symlink-install --event-handlers console_cohesion+ --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
+    - colcon build --event-handlers console_cohesion+ --cmake-args " -DTRACETOOLS_DISABLED=ON" --packages-up-to $PACKAGES_LIST
   <<: *build_artifacts
 
 tracing_disabled:test:
@@ -81,7 +81,7 @@ no_lttng:build:
   image: $BASE_IMAGE_ID:$DISTRO-base
   <<: *before_script_build
   script:
-    - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
+    - colcon build --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST
   <<: *build_artifacts
 
 no_lttng:test:
