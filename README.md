@@ -5,6 +5,13 @@
 
 Tracing tools for ROS 2.
 
+## Overview
+
+`ros2_tracing` provides [tracing instrumentation](#tracetools) for the core ROS 2 packages.
+It also provides [tools to configure tracing](#tracing) through [a launch action](#launch-file-trace-action) and a [`ros2` CLI command](#trace-command).
+
+`ros2_tracing` currently only supports the [LTTng](https://lttng.org/) tracer.
+
 ## Building
 
 As of Foxy, these instructions also apply to an installation from the Debian packages; it will not work out-of-the-box. Also, note that tracing using `ros2_tracing` is not supported on non-Linux systems.
