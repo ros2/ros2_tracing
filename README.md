@@ -44,6 +44,8 @@ Alternatively, to build and disable tracing, use `TRACETOOLS_DISABLED`:
 $ colcon build --cmake-args " -DTRACETOOLS_DISABLED=ON"
 ```
 
+This will remove all instrumentation from the core ROS 2 packages, and thus they will not depend on or link against the shared library provided by the [`tracetools` package](#tracetools).
+
 ## Tracing
 
 The steps above will not lead to trace data being generated, and thus they will have no impact on execution. LTTng has to be configured for tracing. The packages in this repo provide two options: a [command](#Trace-command) and a [launch file action](#Launch-file-trace-action).
