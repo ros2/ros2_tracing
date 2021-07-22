@@ -27,6 +27,7 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
 4. [Design & implementation notes](#design-implementation-notes)
     1. [Targeted tools/dependencies](#targeted-toolsdependencies)
     2. [Design](#design)
+    3. [Adding instrumentation](#adding-instrumentation)
 5. [Architecture](#architecture)
     1. [Timeline](#timeline)
     2. [Notes on client libraries](#notes-on-client-libraries)
@@ -529,11 +530,40 @@ The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
 * a tracing package (e.g. `tracetools`) wraps calls to LTTng
 * ROS 2 is instrumented with calls to the tracing package, therefore it becomes a dependency and ships with the core stack
 * by default, the tracing package's functions are empty -- they do not do anything
-* if users wants to enable tracing, they need to
+* if users want to enable tracing, they need to
     * install LTTng
     * compile the tracing package from source, setting the right compile flag(s)
     * overlay it on top of their ROS 2 installation
 * use other package(s) for analysis and visualization
+
+### Adding instrumentation
+
+The process for adding instrumentation to the ROS 2 core and supporting it in `ros2_tracing` is as follows:
+
+1. Add LTTng tracepoint definition to the [`tp_call.h`](../tracetools/include/tracetools/tp_call.h) file
+    * tracepoint name, arguments, and fields
+    * arguments and fields are usually the same
+    * refer to the [LTTng documentation](https://lttng.org/docs/#doc-defining-tracepoints)
+1. Add corresponding instrumentation function definition to the [`tracetools.c`](../tracetools/src/tracetools.c) file
+1. Add corresponding instrumentation function declaration to the [`racetools.h`](../tracetools/include/tracetools/tracetools.h) file
+1. Add/use instrumentation in ROS 2 core package(s)
+    1. If the package does not already have instrumentation
+        1. Add `<depend>tracetools</depend>` in the package's `package.xml`
+        1. Add `find_package(tracetools REQUIRED)` in the package's `CMakeLists.txt`
+        1. Add `tracetools` to the list of dependencies in `ament_target_dependencies(...)` for the right executable/library in the package's `CMakeLists.txt`
+        1. Add `ament_export_dependencies(tracetools)` in the package's `CMakeLists.txt` (if applicable)
+    1. In the instrumented source code file
+        1. Add call to tracepoint: `TRACEPOINT(tracepoint_name, arg1, arg2);`
+        1. Add an include for the main `tracetools` header: `#include "tracetools/tracetools.h"`
+1. Add tracepoint name to the [list of ROS 2 events in `tracetools_trace`](../tracetools_trace/tracetools_trace/tools/names.py)
+1. Add/modify test in [`tracetools_test`](../tracetools_test/test) to cover the new tracepoint
+
+Additional considerations:
+
+* The merge request with the necessary changes in `ros2_tracing` is usually merged first, then a new release of the `ros2_tracing` is created before merging the pull request(s) for the corresponding downstream package(s) in the ROS 2 core
+* For the `ros2_tracing` MR and until the PRs for the ROS 2 core package(s) are merged, CI here will need to use the modified version(s) of the core package(s) using the [`instrumented.repos`](../instrumented.repos) file so that end-to-end tests pass (`tracetools_test`)
+* Add support for the new instrumentation in [`tracetools_analysis`](https://gitlab.com/ros-tracing/tracetools_analysis)
+    * Along with the end-to-end tests, this is usually a good way to demonstrate how the tracing data resulting from the new instrumentation is used and how useful it is
 
 ## Architecture
 
