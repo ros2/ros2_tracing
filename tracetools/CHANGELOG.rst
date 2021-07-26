@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.0 (2021-07-26)
+------------------
 * Export target on Windows and export an interface if TRACETOOLS_DISABLED
 * Remove deprecated utility functions
 * Contributors: Christophe Bedard, Ivan Santiago Paunovic
