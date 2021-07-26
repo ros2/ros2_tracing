@@ -62,7 +62,12 @@ if(TRACETOOLS_LTTNG_ENABLED)
   )
 endif()
 
-add_library(${PROJECT_NAME} ${SOURCES})
+if(NOT TRACETOOLS_DISABLED)
+  add_library(${PROJECT_NAME} ${SOURCES})
+else()
+  # only export a target with headers when disabled
+  add_library(${PROJECT_NAME} INTERFACE)
+endif()
 if(TRACETOOLS_LTTNG_ENABLED)
   target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
   # Export -rdynamic for downtream packages to use when calling
@@ -75,20 +80,25 @@ if(TRACETOOLS_LTTNG_ENABLED)
     target_link_libraries(${PROJECT_NAME} "-rdynamic")
   endif()
 endif()
-if(WIN32)
-  # Causes the visibility macros to use dllexport rather than dllimport
-  # which is appropriate when building the dll but not consuming it.
-  target_compile_definitions(${PROJECT_NAME} PRIVATE "TRACETOOLS_BUILDING_DLL")
+
+if(NOT TRACETOOLS_DISABLED)
+  # Only use output/binary include directory
+  target_include_directories(${PROJECT_NAME} PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+    "$<INSTALL_INTERFACE:include>"
+  )
+else()
+  target_include_directories(${PROJECT_NAME} INTERFACE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+    "$<INSTALL_INTERFACE:include>"
+  )
 endif()
 
-# Only use output/binary include directory
-target_include_directories(${PROJECT_NAME} PUBLIC
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-  "$<INSTALL_INTERFACE:include>"
-)
+set(export_target_options)
 if(NOT TRACETOOLS_DISABLED)
-  ament_export_targets(${PROJECT_NAME}_export HAS_LIBRARY_TARGET)
+  set(export_target_options "HAS_LIBRARY_TARGET")
 endif()
+ament_export_targets(${PROJECT_NAME}_export ${export_target_options})
 
 if(TRACETOOLS_STATUS_CHECKING_TOOL)
   # Lib for status checking
@@ -174,4 +184,6 @@ endif()
 
 ament_package()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_VERSION="${${PROJECT_NAME}_VERSION}")
+if(NOT TRACETOOLS_DISABLED)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_VERSION="${${PROJECT_NAME}_VERSION}")
+endif()
