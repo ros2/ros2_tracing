@@ -107,23 +107,19 @@ void TRACEPOINT(
 
 void TRACEPOINT(
   rcl_publish,
-  const void * publisher_handle,
   const void * message)
 {
   CONDITIONAL_TP(
     rcl_publish,
-    publisher_handle,
     message);
 }
 
 void TRACEPOINT(
   rmw_publish,
-  const void * rmw_publisher_handle,
   const void * message)
 {
   CONDITIONAL_TP(
     rmw_publish,
-    rmw_publisher_handle,
     message);
 }
 

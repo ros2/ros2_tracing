@@ -136,29 +136,23 @@ DECLARE_TRACEPOINT(
 /// `rcl_publish`
 /**
  * Message publication.
- * Links a `rcl_publisher_t` handle to a pointer to
- * a message being published at the `rcl` level.
+ * Notes the pointer to the message being published at the `rcl` level.
  *
- * \param[in] publisher_handle pointer to the publisher's `rcl_publisher_t` handle
  * \param[in] message pointer to the message being published
  */
 DECLARE_TRACEPOINT(
   rcl_publish,
-  const void * publisher_handle,
   const void * message)
 
 /// `rmw_publish`
 /**
  * Message publication.
- * Links a `rmw_publisher_t` handle to a pointer to
- * a message being published at the `rmw` level.
+ * Notes the pointer to the message being published at the `rmw` level.
  *
- * \param[in] rmw_publisher_handle pointer to the publisher's `rmw_publisher_t` handle
  * \param[in] message pointer to the message being published
  */
 DECLARE_TRACEPOINT(
   rmw_publish,
-  const void * rmw_publisher_handle,
   const void * message)
 
 /// `rmw_subscription_init`
