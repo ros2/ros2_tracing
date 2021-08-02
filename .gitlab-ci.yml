@@ -47,7 +47,8 @@ tracing_enabled:test:
     - tracing_enabled:build
   script:
     - (source install/setup.sh && ./build/tracetools/status)
-    - . /root/ws/install/local_setup.sh
+    # - . /root/ws/install/local_setup.sh
+    - source install/setup.sh
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
   <<: *test_artifacts
@@ -70,7 +71,8 @@ tracing_disabled:test:
     - tracing_disabled:build
   script:
     - (source install/setup.sh && (! ./build/tracetools/status))
-    - . /root/ws/install/local_setup.sh
+    # - . /root/ws/install/local_setup.sh
+    - source install/setup.sh
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
   <<: *test_artifacts
@@ -94,7 +96,8 @@ no_lttng:test:
   script:
     - (source install/setup.sh && (! ./build/tracetools/status))
     - (source install/setup.sh && (! ros2 trace))
-    - . /root/ws/install/local_setup.sh
+    # - . /root/ws/install/local_setup.sh
+    - source install/setup.sh
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
   <<: *test_artifacts
