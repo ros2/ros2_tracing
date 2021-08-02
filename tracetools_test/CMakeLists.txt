@@ -125,6 +125,7 @@ if(BUILD_TESTING)
 
     find_package(ament_cmake_pytest REQUIRED)
     set(_tracetools_test_pytest_tests
+      test/test_executor.py
       test/test_intra.py
       test/test_lifecycle_node.py
       test/test_node.py
