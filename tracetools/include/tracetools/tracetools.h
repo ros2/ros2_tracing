@@ -86,6 +86,19 @@ DECLARE_TRACEPOINT(
   const char * node_name,
   const char * node_namespace)
 
+/// `rmw_publisher_init`
+/**
+ * RMW publisher initialisation.
+ * Links a `rmw_publisher_t` handle to its DDS/rmw GID.
+ *
+ * \param[in] rmw_publisher_handle pointer to the publisher's `rmw_publisher_t` handle
+ * \param[in] gid pointer to the publisher's DDS/rmw GID
+ */
+DECLARE_TRACEPOINT(
+  rmw_publisher_init,
+  const void * rmw_publisher_handle,
+  const uint8_t * gid)
+
 /// `rcl_publisher_init`
 /**
  * Publisher initialisation.
@@ -106,6 +119,20 @@ DECLARE_TRACEPOINT(
   const char * topic_name,
   const size_t queue_depth)
 
+/// `rclcpp_publish`
+/**
+ * Message publication.
+ * Links a `rcl_publisher_t` handle to a pointer to
+ * a message being published at the `rclcpp` level.
+ *
+ * \param[in] publisher_handle pointer to the publisher's `rcl_publisher_t` handle
+ * \param[in] message pointer to the message being published
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_publish,
+  const void * publisher_handle,
+  const void * message)
+
 /// `rcl_publish`
 /**
  * Message publication.
@@ -120,19 +147,32 @@ DECLARE_TRACEPOINT(
   const void * publisher_handle,
   const void * message)
 
-/// `rclcpp_publish`
+/// `rmw_publish`
 /**
  * Message publication.
- * Links a `rcl_publisher_t` handle to a pointer to
- * a message being published at the `rclcpp` level.
+ * Links a `rmw_publisher_t` handle to a pointer to
+ * a message being published at the `rmw` level.
  *
- * \param[in] publisher_handle pointer to the publisher's `rcl_publisher_t` handle
+ * \param[in] rmw_publisher_handle pointer to the publisher's `rmw_publisher_t` handle
  * \param[in] message pointer to the message being published
  */
 DECLARE_TRACEPOINT(
-  rclcpp_publish,
-  const void * publisher_handle,
+  rmw_publish,
+  const void * rmw_publisher_handle,
   const void * message)
+
+/// `rmw_subscription_init`
+/**
+ * RMW subscription initialisation.
+ * Links a `rmw_subscription_handle` handle to its DDS/rmw GID.
+ *
+ * \param[in] rmw_subscription_handle pointer to the publisher's `rmw_subscription_t` handle
+ * \param[in] gid pointer to the subscription's DDS/rmw GID
+ */
+DECLARE_TRACEPOINT(
+  rmw_subscription_init,
+  const void * rmw_subscription_handle,
+  const uint8_t * gid)
 
 /// `rcl_subscription_init`
 /**
@@ -182,6 +222,47 @@ DECLARE_TRACEPOINT(
   rclcpp_subscription_callback_added,
   const void * subscription,
   const void * callback)
+
+/// `rmw_take`
+/**
+ * Message taking.
+ * Links a `rmw_subscription_t` handle to a pointer
+ * to a message being taken at the `rmw` level.
+ *
+ * \param[in] rmw_subscription_handle pointer to the subscription's `rmw_subscription_t` handle
+ * \param[in] message pointer to the message being taken
+ * \param[in] source_timestamp the source timestamp of the received message,
+ *  or 0 (if no message or no info)
+ * \param[in] taken whether a message was taken
+ */
+DECLARE_TRACEPOINT(
+  rmw_take,
+  const void * rmw_subscription_handle,
+  const void * message,
+  int64_t source_timestamp,
+  const bool taken)
+
+/// `rcl_take`
+/**
+ * Message taking.
+ * Notes the pointer to the message being taken at the `rcl` level.
+ *
+ * \param[in] message pointer to the message being taken
+ */
+DECLARE_TRACEPOINT(
+  rcl_take,
+  const void * message)
+
+/// `rclcpp_take`
+/**
+ * Message taking.
+ * Notes the pointer to the message being taken at the `rclcpp` level.
+ *
+ * \param[in] message pointer to the message being taken
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_take,
+  const void * message)
 
 /// `rcl_service_init`
 /**
@@ -337,6 +418,36 @@ DECLARE_TRACEPOINT(
   const void * state_machine,
   const char * start_label,
   const char * goal_label)
+
+/// `rclcpp_executor_get_next_ready`
+/**
+ * Notes the start time of the executor phase that gets the next executable that's ready.
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_executor_get_next_ready)
+
+/// `rclcpp_executor_wait_for_work`
+/**
+ * Notes the start time of the executor phase that waits for work and notes the timeout value.
+ *
+ * \param[in] timeout the timeout value for the wait call
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_executor_wait_for_work,
+  const int64_t timeout)
+
+/// `rclcpp_executor_execute`
+/**
+ * Executable execution.
+ * Notes an executable being executed using its `rcl` handle, which can be a:
+ *   * timer
+ *   * subscription
+ *
+ * \param[in] handle pointer to the `rcl` handle of the executable being executed
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_executor_execute,
+  const void * handle)
 
 #ifdef __cplusplus
 }

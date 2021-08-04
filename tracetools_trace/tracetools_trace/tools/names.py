@@ -1,4 +1,5 @@
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -61,12 +62,18 @@ DEFAULT_EVENTS_KERNEL = [
 DEFAULT_EVENTS_ROS = [
     'ros2:rcl_init',
     'ros2:rcl_node_init',
+    'ros2:rmw_publisher_init',
     'ros2:rcl_publisher_init',
-    'ros2:rcl_publish',
     'ros2:rclcpp_publish',
+    'ros2:rcl_publish',
+    'ros2:rmw_publish',
+    'ros2:rmw_subscription_init',
     'ros2:rcl_subscription_init',
     'ros2:rclcpp_subscription_init',
     'ros2:rclcpp_subscription_callback_added',
+    'ros2:rmw_take',
+    'ros2:rcl_take',
+    'ros2:rclcpp_take',
     'ros2:rcl_service_init',
     'ros2:rclcpp_service_callback_added',
     'ros2:rcl_client_init',
@@ -78,6 +85,9 @@ DEFAULT_EVENTS_ROS = [
     'ros2:callback_end',
     'ros2:rcl_lifecycle_state_machine_init',
     'ros2:rcl_lifecycle_transition',
+    'ros2:rclcpp_executor_get_next_ready',
+    'ros2:rclcpp_executor_wait_for_work',
+    'ros2:rclcpp_executor_execute',
 ]
 
 DEFAULT_EVENTS_UST = DEFAULT_EVENTS_ROS
