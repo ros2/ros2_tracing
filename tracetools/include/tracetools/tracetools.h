@@ -30,22 +30,59 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
+
 #include "tracetools/config.h"
 #include "tracetools/visibility_control.hpp"
 
 #ifndef TRACETOOLS_DISABLED
+/**
+ * This allows us to select between two versions of each macro
+ * to avoid the 'gnu-zero-variadic-macro-arguments' warning:
+ *    1. Only one macro argument for tracepoints without any arguments.
+ *    2. Up to 10 macro arguments for tracepoints with up to 9 arguments.
+ * We can easily support more than 10 macro arguments if needed.
+ */
+#  define _GET_MACRO(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, NAME, ...) NAME
+
+#  define _TRACEPOINT_NOARGS(event_name) \
+  (ros_trace_ ## event_name)()
+#  define _TRACEPOINT_ARGS(event_name, ...) \
+  (ros_trace_ ## event_name)(__VA_ARGS__)
+#  define _DECLARE_TRACEPOINT_NOARGS(event_name) \
+  TRACETOOLS_PUBLIC void ros_trace_ ## event_name();
+#  define _DECLARE_TRACEPOINT_ARGS(event_name, ...) \
+  TRACETOOLS_PUBLIC void ros_trace_ ## event_name(__VA_ARGS__);
+
+#  define _GET_MACRO_TRACEPOINT(...) \
+  _GET_MACRO( \
+    __VA_ARGS__, \
+    _TRACEPOINT_ARGS, _TRACEPOINT_ARGS, _TRACEPOINT_ARGS, _TRACEPOINT_ARGS, _TRACEPOINT_ARGS, \
+    _TRACEPOINT_ARGS, _TRACEPOINT_ARGS, _TRACEPOINT_ARGS, _TRACEPOINT_ARGS, _TRACEPOINT_NOARGS, \
+    shoud_not_be_called_without_any_arguments)
+#  define _GET_MACRO_DECLARE_TRACEPOINT(...) \
+  _GET_MACRO( \
+    __VA_ARGS__, \
+    _DECLARE_TRACEPOINT_ARGS, _DECLARE_TRACEPOINT_ARGS, _DECLARE_TRACEPOINT_ARGS, \
+    _DECLARE_TRACEPOINT_ARGS, _DECLARE_TRACEPOINT_ARGS, _DECLARE_TRACEPOINT_ARGS, \
+    _DECLARE_TRACEPOINT_ARGS, _DECLARE_TRACEPOINT_ARGS, _DECLARE_TRACEPOINT_ARGS, \
+    _DECLARE_TRACEPOINT_NOARGS, shoud_not_be_called_without_any_arguments)
+
 /// Call a tracepoint.
 /**
+ * The first argument is mandatory and should be the tracepoint event name.
+ * The other arguments should be the tracepoint arguments.
  * This is the preferred method over calling the actual function directly.
+ *
+ * This macro currently supports up to 9 tracepoint arguments after the event name.
  */
-#  define TRACEPOINT(event_name, ...) \
-  (ros_trace_ ## event_name)(__VA_ARGS__)
-#  define DECLARE_TRACEPOINT(event_name, ...) \
-  TRACETOOLS_PUBLIC void ros_trace_ ## event_name(__VA_ARGS__);
+#  define TRACEPOINT(...) \
+  _GET_MACRO_TRACEPOINT(__VA_ARGS__)(__VA_ARGS__)
+#  define DECLARE_TRACEPOINT(...) \
+  _GET_MACRO_DECLARE_TRACEPOINT(__VA_ARGS__)(__VA_ARGS__)
 #else
-#  define TRACEPOINT(event_name, ...) ((void) (0))
-#  define DECLARE_TRACEPOINT(event_name, ...)
-#endif
+#  define TRACEPOINT(...) ((void) (0))
+#  define DECLARE_TRACEPOINT(...)
+#endif  // TRACETOOLS_DISABLED
 
 #ifdef __cplusplus
 extern "C"
