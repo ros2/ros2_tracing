@@ -62,7 +62,7 @@ public:
   }
 
 private:
-  void callback(const std_msgs::msg::String::SharedPtr msg)
+  void callback(const std_msgs::msg::String::ConstSharedPtr msg)
   {
     RCLCPP_INFO(this->get_logger(), "[output] %s", msg->data.c_str());
     rclcpp::shutdown();
