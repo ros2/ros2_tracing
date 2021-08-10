@@ -122,10 +122,9 @@ DECLARE_TRACEPOINT(
 /// `rclcpp_publish`
 /**
  * Message publication.
- * Links a `rcl_publisher_t` handle to a pointer to
- * a message being published at the `rclcpp` level.
+ * Notes the pointer to the message being published at the `rclcpp` level.
  *
- * \param[in] publisher_handle pointer to the publisher's `rcl_publisher_t` handle
+ * \param[in] publisher_handle not used, but kept for API/ABI stability
  * \param[in] message pointer to the message being published
  */
 DECLARE_TRACEPOINT(
@@ -136,12 +135,15 @@ DECLARE_TRACEPOINT(
 /// `rcl_publish`
 /**
  * Message publication.
- * Notes the pointer to the message being published at the `rcl` level.
+ * Links a `rcl_publisher_t` handle to a pointer to
+ * a message being published at the `rcl` level.
  *
+ * \param[in] publisher_handle pointer to the publisher's `rcl_publisher_t` handle
  * \param[in] message pointer to the message being published
  */
 DECLARE_TRACEPOINT(
   rcl_publish,
+  const void * publisher_handle,
   const void * message)
 
 /// `rmw_publish`

@@ -99,18 +99,20 @@ void TRACEPOINT(
   const void * publisher_handle,
   const void * message)
 {
+  (void)publisher_handle;
   CONDITIONAL_TP(
     rclcpp_publish,
-    publisher_handle,
     message);
 }
 
 void TRACEPOINT(
   rcl_publish,
+  const void * publisher_handle,
   const void * message)
 {
   CONDITIONAL_TP(
     rcl_publish,
+    publisher_handle,
     message);
 }
 

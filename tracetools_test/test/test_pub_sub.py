@@ -82,7 +82,7 @@ class TestPubSub(TraceTestCase):
         ping_rmw_pub_init_event = ping_rmw_pub_init_events[0]
         pong_rmw_pub_init_event = pong_rmw_pub_init_events[0]
 
-        # Check publisher init order
+        # Check publisher init order (rmw then rcl)
         self.assertEventOrder([
             ping_rmw_pub_init_event,
             ping_publisher_init_event,
@@ -93,36 +93,36 @@ class TestPubSub(TraceTestCase):
         ])
 
         # Get corresponding rmw/rcl/rclcpp publish events for ping & pong
-        rclcpp_publish_events = self.get_events_with_name('ros2:rclcpp_publish')
-        ping_rclcpp_pub_events = self.get_events_with_field_value(
+        rcl_publish_events = self.get_events_with_name('ros2:rcl_publish')
+        ping_rcl_pub_events = self.get_events_with_field_value(
             'publisher_handle',
             ping_pub_handle,
-            rclcpp_publish_events,
-        )
-        pong_rclcpp_pub_events = self.get_events_with_field_value(
-            'publisher_handle',
-            pong_pub_handle,
-            rclcpp_publish_events,
-        )
-        self.assertNumEventsEqual(ping_rclcpp_pub_events, 1)
-        self.assertNumEventsEqual(pong_rclcpp_pub_events, 1)
-        ping_rclcpp_pub_event = ping_rclcpp_pub_events[0]
-        pong_rclcpp_pub_event = pong_rclcpp_pub_events[0]
-
-        rcl_publish_events = self.get_events_with_name('ros2:rcl_publish')
-        rmw_publish_events = self.get_events_with_name('ros2:rmw_publish')
-        ping_pub_message = self.get_field(ping_rclcpp_pub_event, 'message')
-        pong_pub_message = self.get_field(pong_rclcpp_pub_event, 'message')
-
-        ping_rcl_pub_events = self.get_events_with_field_value(
-            'message',
-            ping_pub_message,
             rcl_publish_events,
         )
         pong_rcl_pub_events = self.get_events_with_field_value(
+            'publisher_handle',
+            pong_pub_handle,
+            rcl_publish_events,
+        )
+        self.assertNumEventsEqual(ping_rcl_pub_events, 1)
+        self.assertNumEventsEqual(pong_rcl_pub_events, 1)
+        ping_rcl_pub_event = ping_rcl_pub_events[0]
+        pong_rcl_pub_event = pong_rcl_pub_events[0]
+
+        rclcpp_publish_events = self.get_events_with_name('ros2:rclcpp_publish')
+        rmw_publish_events = self.get_events_with_name('ros2:rmw_publish')
+        ping_pub_message = self.get_field(ping_rcl_pub_event, 'message')
+        pong_pub_message = self.get_field(pong_rcl_pub_event, 'message')
+
+        ping_rclcpp_pub_events = self.get_events_with_field_value(
+            'message',
+            ping_pub_message,
+            rclcpp_publish_events,
+        )
+        pong_rclcpp_pub_events = self.get_events_with_field_value(
             'message',
             pong_pub_message,
-            rcl_publish_events,
+            rclcpp_publish_events,
         )
         ping_rmw_pub_events = self.get_events_with_field_value(
             'message',
@@ -134,12 +134,12 @@ class TestPubSub(TraceTestCase):
             pong_pub_message,
             rmw_publish_events,
         )
-        self.assertNumEventsEqual(ping_rcl_pub_events, 1)
-        self.assertNumEventsEqual(pong_rcl_pub_events, 1)
+        self.assertNumEventsEqual(ping_rclcpp_pub_events, 1)
+        self.assertNumEventsEqual(pong_rclcpp_pub_events, 1)
         self.assertNumEventsEqual(ping_rmw_pub_events, 1)
         self.assertNumEventsEqual(pong_rmw_pub_events, 1)
-        ping_rcl_pub_event = ping_rcl_pub_events[0]
-        pong_rcl_pub_event = pong_rcl_pub_events[0]
+        ping_rclcpp_pub_event = ping_rclcpp_pub_events[0]
+        pong_rclcpp_pub_event = pong_rclcpp_pub_events[0]
         ping_rmw_pub_event = ping_rmw_pub_events[0]
         pong_rmw_pub_event = pong_rmw_pub_events[0]
 
