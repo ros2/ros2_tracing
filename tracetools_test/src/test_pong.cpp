@@ -40,7 +40,7 @@ public:
   : PongNode(options, true) {}
 
 private:
-  void callback(const std_msgs::msg::String::SharedPtr msg)
+  void callback(const std_msgs::msg::String::ConstSharedPtr msg)
   {
     RCLCPP_INFO(this->get_logger(), "[output] %s", msg->data.c_str());
     auto next_msg = std::make_shared<std_msgs::msg::String>();
