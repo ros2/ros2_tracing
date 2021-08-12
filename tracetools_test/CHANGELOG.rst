@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.1.0 (2021-08-11)
+------------------
 * Add tests for rmw init/pub, take, and executor instrumentation
 * Add field type assertion utilities to TraceTestCase
 * Fixing deprecated subscriber callback warnings

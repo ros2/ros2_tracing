@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.1.0 (2021-08-11)
+------------------
 * Add support for rmw init/pub, take, and executor tracepoints
 * Contributors: Christophe Bedard
 
