@@ -2,6 +2,13 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.1.0 (2021-08-11)
+------------------
+* Add tests for rmw init/pub, take, and executor instrumentation
+* Add field type assertion utilities to TraceTestCase
+* Fixing deprecated subscriber callback warnings
+* Contributors: Abrar Rahman Protyasha, Christophe Bedard
+
 2.3.0 (2021-03-31)
 ------------------
 * Update after namespacing C++ tracetools functions and macros

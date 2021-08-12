@@ -2,6 +2,13 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.1.0 (2021-08-11)
+------------------
+* Correctly handle calls to TRACEPOINT() macro with no tracepoint args
+* Move publisher handle tracepoint argument from rclcpp_publish to rcl_publish
+* Add support for rmw init/pub, take, and executor instrumentation
+* Contributors: Christophe Bedard
+
 3.0.0 (2021-07-26)
 ------------------
 * Export target on Windows and export an interface if TRACETOOLS_DISABLED
