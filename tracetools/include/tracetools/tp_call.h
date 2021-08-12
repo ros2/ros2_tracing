@@ -32,6 +32,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/// See RMW_GID_STORAGE_SIZE in rmw.
+#define TRACETOOLS_GID_STORAGE_SIZE 24u
+
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
   rcl_init,
@@ -63,6 +66,19 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
+  rmw_publisher_init,
+  TP_ARGS(
+    const void *, rmw_publisher_handle_arg,
+    const uint8_t *, gid_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, rmw_publisher_handle, rmw_publisher_handle_arg)
+    ctf_array(uint8_t, gid, gid_arg, TRACETOOLS_GID_STORAGE_SIZE)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
   rcl_publisher_init,
   TP_ARGS(
     const void *, publisher_handle_arg,
@@ -82,6 +98,17 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
+  rclcpp_publish,
+  TP_ARGS(
+    const void *, message_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, message, message_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
   rcl_publish,
   TP_ARGS(
     const void *, publisher_handle_arg,
@@ -95,14 +122,25 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
-  rclcpp_publish,
+  rmw_publish,
   TP_ARGS(
-    const void *, publisher_handle_arg,
     const void *, message_arg
   ),
   TP_FIELDS(
-    ctf_integer_hex(const void *, publisher_handle, publisher_handle_arg)
     ctf_integer_hex(const void *, message, message_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rmw_subscription_init,
+  TP_ARGS(
+    const void *, rmw_subscription_handle_arg,
+    const uint8_t *, gid_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, rmw_subscription_handle, rmw_subscription_handle_arg)
+    ctf_array(uint8_t, gid, gid_arg, TRACETOOLS_GID_STORAGE_SIZE)
   )
 )
 
@@ -148,6 +186,45 @@ TRACEPOINT_EVENT(
   TP_FIELDS(
     ctf_integer_hex(const void *, subscription, subscription_arg)
     ctf_integer_hex(const void *, callback, callback_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rmw_take,
+  TP_ARGS(
+    const void *, rmw_subscription_handle_arg,
+    const void *, message_arg,
+    int64_t, source_timestamp_arg,
+    const bool, taken_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, rmw_subscription_handle, rmw_subscription_handle_arg)
+    ctf_integer_hex(const void *, message, message_arg)
+    ctf_integer(int64_t, source_timestamp, source_timestamp_arg)
+    ctf_integer(int, taken, (taken_arg ? 1 : 0))
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rcl_take,
+  TP_ARGS(
+    const void *, message_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, message, message_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_take,
+  TP_ARGS(
+    const void *, message_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, message, message_arg)
   )
 )
 
@@ -299,6 +376,35 @@ TRACEPOINT_EVENT(
     ctf_integer_hex(const void *, state_machine, state_machine_arg)
     ctf_string(start_label, start_label_arg)
     ctf_string(goal_label, goal_label_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_executor_get_next_ready,
+  TP_ARGS(),
+  TP_FIELDS()
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_executor_wait_for_work,
+  TP_ARGS(
+    const int64_t, timeout_arg
+  ),
+  TP_FIELDS(
+    ctf_integer(int64_t, timeout, timeout_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_executor_execute,
+  TP_ARGS(
+    const void *, handle_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, handle, handle_arg)
   )
 )
 

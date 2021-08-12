@@ -67,6 +67,17 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
+  rmw_publisher_init,
+  const void * rmw_publisher_handle,
+  const uint8_t * gid)
+{
+  CONDITIONAL_TP(
+    rmw_publisher_init,
+    rmw_publisher_handle,
+    gid);
+}
+
+void TRACEPOINT(
   rcl_publisher_init,
   const void * publisher_handle,
   const void * node_handle,
@@ -84,6 +95,17 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
+  rclcpp_publish,
+  const void * publisher_handle,
+  const void * message)
+{
+  (void)publisher_handle;
+  CONDITIONAL_TP(
+    rclcpp_publish,
+    message);
+}
+
+void TRACEPOINT(
   rcl_publish,
   const void * publisher_handle,
   const void * message)
@@ -95,14 +117,23 @@ void TRACEPOINT(
 }
 
 void TRACEPOINT(
-  rclcpp_publish,
-  const void * publisher_handle,
+  rmw_publish,
   const void * message)
 {
   CONDITIONAL_TP(
-    rclcpp_publish,
-    publisher_handle,
+    rmw_publish,
     message);
+}
+
+void TRACEPOINT(
+  rmw_subscription_init,
+  const void * rmw_subscription_handle,
+  const uint8_t * gid)
+{
+  CONDITIONAL_TP(
+    rmw_subscription_init,
+    rmw_subscription_handle,
+    gid);
 }
 
 void TRACEPOINT(
@@ -142,6 +173,39 @@ void TRACEPOINT(
     rclcpp_subscription_callback_added,
     subscription,
     callback);
+}
+
+void TRACEPOINT(
+  rmw_take,
+  const void * rmw_subscription_handle,
+  const void * message,
+  int64_t source_timestamp,
+  const bool taken)
+{
+  CONDITIONAL_TP(
+    rmw_take,
+    rmw_subscription_handle,
+    message,
+    source_timestamp,
+    taken);
+}
+
+void TRACEPOINT(
+  rcl_take,
+  const void * message)
+{
+  CONDITIONAL_TP(
+    rcl_take,
+    message);
+}
+
+void TRACEPOINT(
+  rclcpp_take,
+  const void * message)
+{
+  CONDITIONAL_TP(
+    rclcpp_take,
+    message);
 }
 
 void TRACEPOINT(
@@ -271,6 +335,31 @@ void TRACEPOINT(
     state_machine,
     start_label,
     goal_label);
+}
+
+void TRACEPOINT(
+  rclcpp_executor_get_next_ready)
+{
+  CONDITIONAL_TP(
+    rclcpp_executor_get_next_ready);
+}
+
+void TRACEPOINT(
+  rclcpp_executor_wait_for_work,
+  const int64_t timeout)
+{
+  CONDITIONAL_TP(
+    rclcpp_executor_wait_for_work,
+    timeout);
+}
+
+void TRACEPOINT(
+  rclcpp_executor_execute,
+  const void * handle)
+{
+  CONDITIONAL_TP(
+    rclcpp_executor_execute,
+    handle);
 }
 
 #ifndef _WIN32

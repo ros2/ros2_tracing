@@ -1,4 +1,5 @@
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +19,8 @@ import os
 import time
 from typing import Any
 from typing import List
+from typing import Optional
+from typing import Type
 from typing import Union
 import unittest
 
@@ -131,6 +134,29 @@ class TraceTestCase(unittest.TestCase):
             name_trimmed = name[:15]
             self.assertTrue(name_trimmed in procnames, 'node name not found in tracepoints')
 
+    def assertFieldType(
+        self,
+        event: DictEvent,
+        field_names: Union[str, List[str]],
+        field_type: Type,
+    ) -> None:
+        """
+        Check that the type of a field value corresponds to the given type.
+
+        :param event: the event
+        :param field_names: the name(s) of field(s) to check
+        :param field_type: the expected field value type
+        """
+        if not isinstance(field_names, list):
+            field_names = [field_names]
+        for field_name in field_names:
+            field_value = self.get_field(event, field_name)
+            self.assertIsInstance(
+                field_value,
+                field_type,
+                f'expected {field_name} field type {field_type.__name__}, '
+                f'got {type(field_value).__name__}')
+
     def assertValidHandle(
         self,
         event: DictEvent,
@@ -165,6 +191,35 @@ class TraceTestCase(unittest.TestCase):
             self.assertIsInstance(pointer_value, int, 'pointer value not int')
             self.assertGreater(pointer_value, 0, f'invalid pointer value: {field_name}')
 
+    def assertValidArray(
+        self,
+        event: DictEvent,
+        array_field_names: Union[str, List[str]],
+        array_type: Optional[Type] = None,
+    ) -> None:
+        """
+        Check that the array associated to a field name is valid.
+
+        Optionally check the type of its elements.
+
+        :param event: the event which has has an array field
+        :param array_field_names: the aray field name(s) to check
+        :param array_type: the expected type of elements in the array
+        """
+        if not isinstance(array_field_names, list):
+            array_field_names = [array_field_names]
+        for field_name in array_field_names:
+            array_value = self.get_field(event, field_name)
+            self.assertIsInstance(
+                array_value,
+                list,
+                f'{field_name} value not array: {array_value}')
+            if array_type and len(array_value) > 0:
+                self.assertIsInstance(
+                    array_value[0],
+                    array_type,
+                    f'{field_name} array element not {array_type.__name__}: {array_value}')
+
     def assertValidQueueDepth(
         self,
         event: DictEvent,
@@ -176,7 +231,7 @@ class TraceTestCase(unittest.TestCase):
         :param event: the event with the queue depth field
         :param queue_depth_field_name: the field name for queue depth
         """
-        queue_depth_value = self.get_field(event, 'queue_depth')
+        queue_depth_value = self.get_field(event, queue_depth_field_name)
         self.assertIsInstance(queue_depth_value, int, 'invalid queue depth type')
         self.assertGreater(queue_depth_value, 0, 'invalid queue depth')
 

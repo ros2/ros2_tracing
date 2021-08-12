@@ -1,4 +1,5 @@
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,6 +29,7 @@ class TestTimer(TraceTestCase):
                 'ros2:rcl_timer_init',
                 'ros2:rclcpp_timer_callback_added',
                 'ros2:rclcpp_timer_link_node',
+                'ros2:rclcpp_executor_execute',
                 'ros2:callback_start',
                 'ros2:callback_end',
             ],
@@ -54,6 +56,10 @@ class TestTimer(TraceTestCase):
         for event in link_node_events:
             self.assertValidHandle(event, ['timer_handle', 'node_handle'])
 
+        executor_execute_events = self.get_events_with_name('ros2:rclcpp_executor_execute')
+        for event in executor_execute_events:
+            self.assertValidHandle(event, ['handle'])
+
         start_events = self.get_events_with_name('ros2:callback_start')
         for event in start_events:
             self.assertValidHandle(event, 'callback')
@@ -74,6 +80,7 @@ class TestTimer(TraceTestCase):
         self.assertNumEventsEqual(test_timer_init_event, 1, 'none or more test timer init events')
         test_init_event = test_timer_init_event[0]
         self.assertFieldEquals(test_init_event, 'period', 1000000, 'invalid period')
+        timer_handle = self.get_field(test_init_event, 'timer_handle')
 
         # Check that the timer_init:callback_added pair exists and has a common timer handle
         self.assertMatchingField(
@@ -101,6 +108,14 @@ class TestTimer(TraceTestCase):
             None,
             link_node_events,
         )
+
+        # Check that there are 2 executor execute events for the timer
+        timer_execute_events = self.get_events_with_field_value(
+            'handle',
+            timer_handle,
+            executor_execute_events,
+        )
+        self.assertNumEventsEqual(timer_execute_events, 2)
 
         # Check that the callback events correspond to the registered timer callback
         self.assertMatchingField(
