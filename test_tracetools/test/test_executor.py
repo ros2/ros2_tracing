@@ -28,6 +28,7 @@ class TestExecutor(TraceTestCase):
                 'ros2:rclcpp_executor_wait_for_work',
                 'ros2:rclcpp_executor_execute',
             ],
+            package='test_tracetools',
             nodes=['test_ping', 'test_pong'],
         )
 

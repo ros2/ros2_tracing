@@ -30,6 +30,7 @@ class TestNode(TraceTestCase):
                 'ros2:rcl_init',
                 'ros2:rcl_node_init',
             ],
+            package='test_tracetools',
             nodes=['test_publisher'],
         )
 

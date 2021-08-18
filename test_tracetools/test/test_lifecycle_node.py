@@ -28,6 +28,7 @@ class TestLifecycleNode(TraceTestCase):
                 'ros2:rcl_lifecycle_state_machine_init',
                 'ros2:rcl_lifecycle_transition',
             ],
+            package='test_tracetools',
             nodes=['test_lifecycle_node', 'test_lifecycle_client'],
         )
 

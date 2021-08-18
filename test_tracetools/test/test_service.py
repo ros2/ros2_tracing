@@ -31,6 +31,7 @@ class TestService(TraceTestCase):
                 'ros2:callback_start',
                 'ros2:callback_end',
             ],
+            package='test_tracetools',
             nodes=['test_service_ping', 'test_service_pong'],
         )
 
