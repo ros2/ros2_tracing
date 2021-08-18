@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(tracetools_test)
+project(test_tracetools)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -124,7 +124,7 @@ if(BUILD_TESTING)
     endif()
 
     find_package(ament_cmake_pytest REQUIRED)
-    set(_tracetools_test_pytest_tests
+    set(_test_tracetools_pytest_tests
       test/test_executor.py
       test/test_intra.py
       test/test_lifecycle_node.py
@@ -135,7 +135,7 @@ if(BUILD_TESTING)
       test/test_subscription.py
       test/test_timer.py
     )
-    foreach(_test_path ${_tracetools_test_pytest_tests})
+    foreach(_test_path ${_test_tracetools_pytest_tests})
       get_filename_component(_test_name ${_test_path} NAME_WE)
       ament_add_pytest_test(${_test_name} ${_test_path}
         APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}

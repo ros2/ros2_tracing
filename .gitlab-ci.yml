@@ -1,6 +1,6 @@
 variables:
   DOCKER_DRIVER: overlay2
-  PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
+  PACKAGES_LIST: ros2trace tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace test_tracetools
   BASE_IMAGE_ID: registry.gitlab.com/ros-tracing/ci_base
   DISTRO: rolling
 
@@ -111,10 +111,10 @@ coverage:
     - colcon lcov-result --initial
     - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST --mixin coverage-pytest
     - colcon test-result --all --verbose
-    - colcon lcov-result --packages-select tracetools tracetools_test --filter **/tracetools/test/* **/tracetools_test/test/* --verbose
-    - colcon coveragepy-result --packages-select $PACKAGES_LIST --verbose --coverage-report-args -m
+    - colcon lcov-result --packages-select tracetools --filter **/tracetools/test/* --verbose
+    - colcon coveragepy-result --packages-select ros2trace tracetools_launch tracetools_read tracetools_test tracetools_trace --verbose --coverage-report-args -m
     - pip3 install -U codecov
-    - codecov -X gcovout --file lcov/total_coverage.info coveragepy/.coverage
+    - codecov --no-gcov-out --file lcov/total_coverage.info coveragepy/.coverage
   allow_failure: true
 
 # DCO-checking job (see CONTRIBUTING.md)

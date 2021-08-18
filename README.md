@@ -103,11 +103,15 @@ Package containing tools to read traces.
 
 ### tracetools_test
 
-Package containing system tests for `tracetools` and the tools to support them.
+Package containing tools for tracing-related tests.
 
 ### tracetools_trace
 
 Package containing tools to enable tracing.
+
+### test_tracetools
+
+Package containing unit and system tests for `tracetools`.
 
 ## Analysis
 
