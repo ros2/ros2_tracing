@@ -1,4 +1,5 @@
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -128,8 +129,8 @@ class Trace(Action):
 
     def _setup(self) -> None:
         trace_directory = lttng.lttng_init(
-            self.__session_name,
-            self.__base_path,
+            session_name=self.__session_name,
+            base_path=self.__base_path,
             ros_events=self.__events_ust,
             kernel_events=self.__events_kernel,
             context_names=self.__context_names,
@@ -138,7 +139,7 @@ class Trace(Action):
 
     def _destroy(self, event: Event, context: LaunchContext) -> None:
         self.__logger.debug(f'Finalizing tracing session: {self.__session_name}')
-        lttng.lttng_fini(self.__session_name)
+        lttng.lttng_fini(session_name=self.__session_name)
 
     def __repr__(self):
         return (

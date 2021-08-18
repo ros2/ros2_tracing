@@ -1,4 +1,5 @@
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +18,6 @@
 import platform
 import subprocess
 import sys
-from typing import List
 from typing import Optional
 
 try:
@@ -40,49 +40,28 @@ except ImportError:
 
     _lttng = lttng_stub  # type: ignore
 
-from .names import DEFAULT_CONTEXT
-from .names import DEFAULT_EVENTS_KERNEL
-from .names import DEFAULT_EVENTS_ROS
 
-
-def lttng_init(
-    session_name: str,
-    base_path: str,
-    ros_events: List[str] = DEFAULT_EVENTS_ROS,
-    kernel_events: List[str] = DEFAULT_EVENTS_KERNEL,
-    context_names: List[str] = DEFAULT_CONTEXT,
-) -> Optional[str]:
+def lttng_init(**kwargs) -> Optional[str]:
     """
     Set up and start LTTng session.
 
-    :param session_name: the name of the session
-    :param base_path: the path to the directory in which to create the tracing session directory
-    :param ros_events: list of ROS events to enable
-    :param kernel_events: list of kernel events to enable
-    :param context_names: list of context elements to enable
+    For the full list of kwargs, see `lttng_impl.setup()`.
+
     :return: the full path to the trace directory
     """
-    trace_directory = _lttng.setup(
-        session_name,
-        base_path,
-        ros_events,
-        kernel_events,
-        context_names,
-    )
-    _lttng.start(session_name)
+    trace_directory = _lttng.setup(**kwargs)
+    _lttng.start(**kwargs)
     return trace_directory
 
 
-def lttng_fini(
-    session_name: str,
-) -> None:
+def lttng_fini(**kwargs) -> None:
     """
     Stop and destroy LTTng session.
 
     :param session_name: the name of the session
     """
-    _lttng.stop(session_name)
-    _lttng.destroy(session_name)
+    _lttng.stop(**kwargs)
+    _lttng.destroy(**kwargs)
 
 
 def is_lttng_installed() -> bool:

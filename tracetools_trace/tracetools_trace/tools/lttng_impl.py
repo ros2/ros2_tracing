@@ -1,4 +1,5 @@
 # Copyright 2019 Robert Bosch GmbH
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +32,7 @@ from .names import DEFAULT_EVENTS_KERNEL
 from .names import DEFAULT_EVENTS_ROS
 
 
-def get_version() -> Union[StrictVersion, None]:
+def get_version() -> Optional[StrictVersion]:
     """
     Get the version of the lttng module.
 
@@ -52,6 +53,7 @@ def get_version() -> Union[StrictVersion, None]:
 
 
 def setup(
+    *,
     session_name: str,
     base_path: str,
     ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
@@ -161,7 +163,9 @@ def setup(
 
 
 def start(
+    *,
     session_name: str,
+    **kwargs,
 ) -> None:
     """
     Start LTTng session, and check for errors.
@@ -174,7 +178,9 @@ def start(
 
 
 def stop(
+    *,
     session_name: str,
+    **kwargs,
 ) -> None:
     """
     Stop LTTng session, and check for errors.
@@ -187,7 +193,9 @@ def stop(
 
 
 def destroy(
+    *,
     session_name: str,
+    **kwargs,
 ) -> None:
     """
     Destroy LTTng session, and check for errors.
@@ -229,11 +237,11 @@ def _create_session(
     :param full_path: the full path to the main directory to write trace data to
     """
     result = lttng.create(session_name, full_path)
-    LTTNG_ERR_EXIST_SESS = 28
-    if result == -LTTNG_ERR_EXIST_SESS:
+    # See lttng-tools/include/lttng/lttng-error.h
+    if -28 == result:
         # Sessions seem to persist, so if it already exists,
         # just destroy it and try again
-        destroy(session_name)
+        destroy(session_name=session_name)
         result = lttng.create(session_name, full_path)
     if result < 0:
         raise RuntimeError(f'session creation failed: {lttng.strerror(result)}')
@@ -298,7 +306,7 @@ context_map = {
 
 def _context_name_to_type(
     context_name: str,
-) -> Union[int, None]:
+) -> Optional[int]:
     """
     Convert from context name to LTTng enum/constant type.
 
