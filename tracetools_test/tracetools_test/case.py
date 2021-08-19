@@ -46,6 +46,8 @@ class TraceTestCase(unittest.TestCase):
 
     If the TRACETOOLS_TEST_DEBUG environment variable is set (and
     non-empty), the resulting trace will not be removed after the test.
+
+    The assert*() functions are specifically in mixedCase to match the unittest functions.
     """
 
     def __init__(
@@ -108,7 +110,7 @@ class TraceTestCase(unittest.TestCase):
         if not os.environ.get('TRACETOOLS_TEST_DEBUG', None):
             cleanup_trace(self._full_path)
 
-    def assertEventsSet(
+    def assertEventsSet(  # noqa: N802
         self,
         event_names: List[str],
     ) -> None:
@@ -119,7 +121,7 @@ class TraceTestCase(unittest.TestCase):
         """
         self.assertSetEqual(set(self._event_names), set(event_names), 'wrong events')
 
-    def assertProcessNamesExist(
+    def assertProcessNamesExist(  # noqa: N802
         self,
         names: List[str],
     ) -> None:
@@ -134,7 +136,7 @@ class TraceTestCase(unittest.TestCase):
             name_trimmed = name[:15]
             self.assertTrue(name_trimmed in procnames, 'node name not found in tracepoints')
 
-    def assertFieldType(
+    def assertFieldType(  # noqa: N802
         self,
         event: DictEvent,
         field_names: Union[str, List[str]],
@@ -157,7 +159,7 @@ class TraceTestCase(unittest.TestCase):
                 f'expected {field_name} field type {field_type.__name__}, '
                 f'got {type(field_value).__name__}')
 
-    def assertValidHandle(
+    def assertValidHandle(  # noqa: N802
         self,
         event: DictEvent,
         handle_field_names: Union[str, List[str]],
@@ -173,7 +175,7 @@ class TraceTestCase(unittest.TestCase):
             handle_field_names,
         )
 
-    def assertValidPointer(
+    def assertValidPointer(  # noqa: N802
         self,
         event: DictEvent,
         pointer_field_names: Union[str, List[str]],
@@ -191,7 +193,7 @@ class TraceTestCase(unittest.TestCase):
             self.assertIsInstance(pointer_value, int, 'pointer value not int')
             self.assertGreater(pointer_value, 0, f'invalid pointer value: {field_name}')
 
-    def assertValidArray(
+    def assertValidArray(  # noqa: N802
         self,
         event: DictEvent,
         array_field_names: Union[str, List[str]],
@@ -220,7 +222,7 @@ class TraceTestCase(unittest.TestCase):
                     array_type,
                     f'{field_name} array element not {array_type.__name__}: {array_value}')
 
-    def assertValidQueueDepth(
+    def assertValidQueueDepth(  # noqa: N802
         self,
         event: DictEvent,
         queue_depth_field_name: str = 'queue_depth',
@@ -235,7 +237,7 @@ class TraceTestCase(unittest.TestCase):
         self.assertIsInstance(queue_depth_value, int, 'invalid queue depth type')
         self.assertGreater(queue_depth_value, 0, 'invalid queue depth')
 
-    def assertStringFieldNotEmpty(
+    def assertStringFieldNotEmpty(  # noqa: N802
         self,
         event: DictEvent,
         string_field_name: str,
@@ -249,7 +251,7 @@ class TraceTestCase(unittest.TestCase):
         string_field = self.get_field(event, string_field_name)
         self.assertGreater(len(string_field), 0, 'empty string')
 
-    def assertEventAfterTimestamp(
+    def assertEventAfterTimestamp(  # noqa: N802
         self,
         event: DictEvent,
         timestamp: int,
@@ -262,7 +264,7 @@ class TraceTestCase(unittest.TestCase):
         """
         self.assertGreater(get_event_timestamp(event), timestamp, 'event not after timestamp')
 
-    def assertEventOrder(
+    def assertEventOrder(  # noqa: N802
         self,
         events: List[DictEvent],
     ) -> None:
@@ -273,7 +275,7 @@ class TraceTestCase(unittest.TestCase):
         """
         self.assertTrue(self.are_events_ordered(events), 'unexpected events order')
 
-    def assertNumEventsEqual(
+    def assertNumEventsEqual(  # noqa: N802
         self,
         events: List[DictEvent],
         expected_number: int,
@@ -288,7 +290,7 @@ class TraceTestCase(unittest.TestCase):
         """
         self.assertEqual(len(events), expected_number, msg)
 
-    def assertNumEventsGreaterEqual(
+    def assertNumEventsGreaterEqual(  # noqa: N802
         self,
         events: List[DictEvent],
         min_expected_number: int,
@@ -303,7 +305,7 @@ class TraceTestCase(unittest.TestCase):
         """
         self.assertGreaterEqual(len(events), min_expected_number, msg)
 
-    def assertMatchingField(
+    def assertMatchingField(  # noqa: N802
         self,
         initial_event: DictEvent,
         field_name: str,
@@ -346,7 +348,7 @@ class TraceTestCase(unittest.TestCase):
                 1,
                 'matching field event not after initial event')
 
-    def assertFieldEquals(
+    def assertFieldEquals(  # noqa: N802
         self,
         event: DictEvent,
         field_name: str,
