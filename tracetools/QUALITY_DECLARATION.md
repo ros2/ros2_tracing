@@ -91,7 +91,7 @@ There is an automated test which runs a linter that ensures each file has at lea
 
 ### Feature Testing [4.i]
 
-Each feature in `tracetools` has corresponding system tests which simulate typical usage, and they are located in the `tracetools_test` package.
+Each feature in `tracetools` has corresponding system tests which simulate typical usage, and they are located in the `test_tracetools` package.
 New features are required to have tests before being added.
 
 ### Public API Testing [4.ii]

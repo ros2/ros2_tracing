@@ -556,12 +556,12 @@ The process for adding instrumentation to the ROS 2 core and supporting it in `r
         1. Add call to tracepoint: `TRACEPOINT(tracepoint_name, arg1, arg2);`
         1. Add an include for the main `tracetools` header: `#include "tracetools/tracetools.h"`
 1. Add tracepoint name to the [list of ROS 2 events in `tracetools_trace`](../tracetools_trace/tracetools_trace/tools/names.py)
-1. Add/modify test in [`tracetools_test`](../tracetools_test/test) to cover the new tracepoint
+1. Add/modify test in [`test_tracetools`](../test_tracetools/test) to cover the new tracepoint
 
 Additional considerations:
 
 * The merge request with the necessary changes in `ros2_tracing` is usually merged first, then a new release of the `ros2_tracing` is created before merging the pull request(s) for the corresponding downstream package(s) in the ROS 2 core
-* For the `ros2_tracing` MR and until the PRs for the ROS 2 core package(s) are merged, CI here will need to use the modified version(s) of the core package(s) using the [`instrumented.repos`](../instrumented.repos) file so that end-to-end tests pass (`tracetools_test`)
+* For the `ros2_tracing` MR and until the PRs for the ROS 2 core package(s) are merged, CI here will need to use the modified version(s) of the core package(s) using the [`instrumented.repos`](../instrumented.repos) file so that end-to-end tests pass (`test_tracetools`)
 * Add support for the new instrumentation in [`tracetools_analysis`](https://gitlab.com/ros-tracing/tracetools_analysis)
     * Along with the end-to-end tests, this is usually a good way to demonstrate how the tracing data resulting from the new instrumentation is used and how useful it is
 
