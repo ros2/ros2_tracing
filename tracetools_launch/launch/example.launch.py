@@ -25,12 +25,12 @@ def generate_launch_description():
             session_name='my-tracing-session',
         ),
         Node(
-            package='tracetools_test',
+            package='test_tracetools',
             executable='test_ping',
             output='screen',
         ),
         Node(
-            package='tracetools_test',
+            package='test_tracetools',
             executable='test_pong',
             output='screen',
         ),
