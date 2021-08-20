@@ -35,4 +35,9 @@ setup(
     ),
     license='Apache 2.0',
     tests_require=['pytest'],
+    entry_points={
+        'launch.frontend.launch_extension': [
+            'tracetools_launch = tracetools_launch',
+        ],
+    },
 )
