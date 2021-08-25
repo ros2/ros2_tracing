@@ -55,6 +55,15 @@ The tracing directory can be configured using command/launch action parameters, 
 * Use `$ROS_TRACE_DIR` if `ROS_TRACE_DIR` is set and not empty.
 * Otherwise, use `$ROS_HOME/tracing`, using `~/.ros` for `ROS_HOME` if not set or if empty.
 
+Additionally, make sure that the `tracing` group exists and your user is added to it.
+
+```
+# Create group if it doesn't exist
+$ sudo groupadd -r tracing
+# Add user to the group
+$ sudo usermod -aG tracing $USER
+```
+
 ### Trace command
 
 The first option is to use the `ros2 trace` command.
@@ -62,6 +71,8 @@ The first option is to use the `ros2 trace` command.
 ```
 $ ros2 trace
 ```
+
+**If you encounter an error here, make sure to [add your user to the `tracing` group](#tracing).**
 
 By default, it will enable all ROS tracepoints and a few kernel tracepoints. The trace will be written to `~/.ros/tracing/session-YYYYMMDDHHMMSS`. Run the command with `-h` for more information.
 
