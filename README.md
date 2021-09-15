@@ -11,10 +11,11 @@ Tracing tools for ROS 2.
 It also provides [tools to configure tracing](#tracing) through [a launch action](#launch-file-trace-action) and a [`ros2` CLI command](#trace-command).
 
 `ros2_tracing` currently only supports the [LTTng](https://lttng.org/) tracer.
+Consequently, it currently only supports Linux.
 
 ## Building
 
-As of Foxy, these instructions also apply to an installation from the Debian packages; it will not work out-of-the-box. Also, note that tracing using `ros2_tracing` is not supported on non-Linux systems.
+As of Foxy, these instructions also apply to an installation from the Debian packages; it will not work out-of-the-box.
 
 If LTTng is not found during build, or if the [`TRACETOOLS_DISABLED` option is enabled](#disabling-tracing), then this package will not do anything.
 
@@ -26,14 +27,23 @@ To enable tracing:
     $ sudo apt-get install lttng-tools lttng-modules-dkms liblttng-ust-dev
     $ sudo apt-get install python3-babeltrace python3-lttng
     ```
-2. Build (at least up to `rcl` & `rclcpp`):
-    ```
-    $ colcon build
-    ```
+2. Build:
+    *  If you've already built ROS 2 from source before installing LTTng, you will need to re-build at least up to `tracetools`:
+        ```
+        $ colcon build --packages-up-to tracetools --cmake-force-configure
+        ```
+    * If you rely on the ROS 2 binaries (Debian packages, release binaries, or prerelease binaries), you will need to clone this repo into your workspace and build at least up to `tracetools`:
+        ```
+        $ cd src/
+        $ git clone https://gitlab.com/ros-tracing/ros2_tracing.git
+        $ cd ../
+        $ colcon build --packages-up-to tracetools
+        ```
 3. Source and check that tracing is enabled:
     ```
-    $ source ./install/local_setup.bash
+    $ source ./install/setup.bash
     $ ros2 run tracetools status
+    Tracing enabled
     ```
 
 ### Disabling tracing
@@ -55,7 +65,7 @@ The tracing directory can be configured using command/launch action parameters, 
 * Use `$ROS_TRACE_DIR` if `ROS_TRACE_DIR` is set and not empty.
 * Otherwise, use `$ROS_HOME/tracing`, using `~/.ros` for `ROS_HOME` if not set or if empty.
 
-Additionally, make sure that the `tracing` group exists and your user is added to it.
+Additionally, make sure that the `tracing` group exists and that your user is added to it.
 
 ```
 # Create group if it doesn't exist
