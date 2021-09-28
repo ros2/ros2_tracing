@@ -19,6 +19,7 @@ from distutils.version import StrictVersion
 import os
 import re
 import subprocess
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Set
@@ -58,7 +59,7 @@ def setup(
     base_path: str,
     ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
     kernel_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_KERNEL,
-    context_names: Union[List[str], Set[str]] = DEFAULT_CONTEXT,
+    context_names: Union[List[str], Set[str], Dict[str, List[str]]] = DEFAULT_CONTEXT,
     channel_name_ust: str = 'ros2',
     channel_name_kernel: str = 'kchan',
 ) -> Optional[str]:
@@ -71,7 +72,9 @@ def setup(
     :param base_path: the path to the directory in which to create the tracing session directory
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
-    :param context_names: list of context elements to enable
+    :param context_names: the names of context fields to enable
+        if it's a list or a set, the context fields are enabled for both kernel and userspace;
+        if it's a dictionary: { domain type string -> context fields list }
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
     :return: the full path to the trace directory
@@ -88,7 +91,7 @@ def setup(
         ros_events = set(ros_events)
     if not isinstance(kernel_events, set):
         kernel_events = set(kernel_events)
-    if not isinstance(context_names, set):
+    if isinstance(context_names, list):
         context_names = set(context_names)
 
     # Resolve full tracing directory path
@@ -152,12 +155,9 @@ def setup(
         _enable_events(handle_kernel, events_list_kernel, channel_kernel.name)
 
     # Context
-    context_list = _create_context_list(context_names)
-    # TODO make it possible to add context in userspace and kernel separately, since some context
-    # types might only apply to userspace OR kernel; only consider userspace contexts for now
-    handles_context = [handle_ust]
-    enabled_handles: List[lttng.Handle] = list(filter(None, handles_context))
-    _add_context(enabled_handles, context_list)
+    contexts_dict = _normalize_contexts_dict(
+        {'kernel': handle_kernel, 'userspace': handle_ust}, context_names)
+    _add_context(contexts_dict)
 
     return full_path
 
@@ -337,18 +337,39 @@ def _create_context_list(
     return context_list
 
 
+def _normalize_contexts_dict(
+    handles: Dict[str, Optional[lttng.Handle]],
+    contexts: Union[Set[str], Dict[str, List[str]]],
+) -> Dict[lttng.Handle, List[lttng.EventContext]]:
+    """
+    Normalize context list/set/dict to dict.
+
+    :param handles: the mapping from domain type name to handle
+    :param contexts: the set of context field names,
+        or mapping from domain type name to list of context field names
+    :return: a dictionary of handle to list of event contexts
+    """
+    handles = {domain: handle for domain, handle in handles.items() if handle is not None}
+    contexts_dict = {}
+    if isinstance(contexts, set):
+        contexts_dict = {h: _create_context_list(contexts) for _, h in handles.items()}
+    elif isinstance(contexts, dict):
+        contexts_dict = {h: _create_context_list(set(contexts[d])) for d, h in handles.items()}
+    else:
+        assert False
+    return contexts_dict
+
+
 def _add_context(
-    handles: List[lttng.Handle],
-    context_list: List[lttng.EventContext],
+    contexts: Dict[lttng.Handle, List[lttng.EventContext]],
 ) -> None:
     """
-    Add context list to given handles, and check for errors.
+    Add context lists to given handles, and check for errors.
 
-    :param handles: the list of handles for which to add context
-    :param context_list: the list of event contexts to add to the handles
+    :param contexts: the dictionay of context handles -> event contexts
     """
-    for handle in handles:
-        for contex in context_list:
+    for handle, contexts_list in contexts.items():
+        for contex in contexts_list:
             result = lttng.add_context(handle, contex, None, None)
             if result < 0:
                 raise RuntimeError(f'failed to add context: {lttng.strerror(result)}')

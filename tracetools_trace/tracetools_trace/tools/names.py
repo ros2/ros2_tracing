@@ -116,6 +116,7 @@ CONTEXT_TYPE_CONSTANTS_MAP = {
 
 CONTEXT = list(CONTEXT_TYPE_CONSTANTS_MAP.keys())
 
+# These apply to both kernel & userspace domains
 DEFAULT_CONTEXT = [
     'procname',
     'vpid',

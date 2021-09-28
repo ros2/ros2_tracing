@@ -17,6 +17,7 @@
 
 import re
 import shlex
+from typing import Dict
 from typing import Iterable
 from typing import List
 from typing import Optional
@@ -80,7 +81,9 @@ class Trace(Action):
         base_path: Optional[SomeSubstitutionsType] = None,
         events_ust: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_ROS,
         events_kernel: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_KERNEL,
-        context_names: Iterable[SomeSubstitutionsType] = names.DEFAULT_CONTEXT,
+        context_names:
+            Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
+            = names.DEFAULT_CONTEXT,
         profile_fast: bool = True,
         **kwargs,
     ) -> None:
@@ -103,7 +106,10 @@ class Trace(Action):
         or `None` for default
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
-        :param context_names: the list of context names to enable
+        :param context_names: the names of context fields to enable
+            if it's a list or a set, the context fields are enabled for both kernel and userspace;
+            if it's a dictionary: { domain type string -> context fields list }
+                with the domain type string being either 'kernel' or 'userspace'
         :param profile_fast: `True` to use fast profiling, `False` for normal (only if necessary)
         """
         super().__init__(**kwargs)
@@ -114,7 +120,13 @@ class Trace(Action):
         self.__trace_directory = None
         self.__events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self.__events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
-        self.__context_names = [normalize_to_list_of_substitutions(x) for x in context_names]
+        self.__context_names = \
+            {
+                d: [normalize_to_list_of_substitutions(n) for n in names]
+                for d, names in context_names.items()
+            } \
+            if isinstance(context_names, dict) \
+            else [normalize_to_list_of_substitutions(x) for x in context_names]
         self.__profile_fast = profile_fast
         self.__logger = logging.get_logger(__name__)
         self.__ld_preload_actions: List[LdPreload] = []
@@ -285,7 +297,13 @@ class Trace(Action):
             if self.__base_path else path.get_tracing_directory()
         self.__events_ust = [perform_substitutions(context, x) for x in self.__events_ust]
         self.__events_kernel = [perform_substitutions(context, x) for x in self.__events_kernel]
-        self.__context_names = [perform_substitutions(context, x) for x in self.__context_names]
+        self.__context_names = \
+            {
+                d: [perform_substitutions(context, n) for n in names]
+                for d, names in self.__context_names.items()
+            } \
+            if isinstance(self.__context_names, dict) \
+            else [perform_substitutions(context, x) for x in self.__context_names]
 
         # Add LD_PRELOAD actions if corresponding events are enabled
         if self.has_profiling_events(self.__events_ust):
