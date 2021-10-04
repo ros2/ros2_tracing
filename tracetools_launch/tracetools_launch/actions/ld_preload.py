@@ -56,6 +56,14 @@ class LdPreload(Action):
         else:
             self.__logger.warn(f'Could not find shared library: {self.__lib_name}')
 
+    @property
+    def lib_name(self) -> str:
+        return self.__lib_name
+
+    @property
+    def lib_path(self) -> Optional[str]:
+        return self.__lib_path
+
     def lib_found(self) -> bool:
         return self.__set_env_action is not None
 

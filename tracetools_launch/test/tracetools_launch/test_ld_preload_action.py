@@ -54,11 +54,14 @@ class TestLdPreloadAction(unittest.TestCase):
         self.assertIsNone(os.environ.get('LD_PRELOAD', None))
 
         ldpreload_action = LdPreload('random_lib_that_does_not_exist_I_hope.so')
+        self.assertEqual('random_lib_that_does_not_exist_I_hope.so', ldpreload_action.lib_name)
         self._assert_launch_no_errors([ldpreload_action])
         self.assertFalse(ldpreload_action.lib_found())
+        self.assertIsNone(ldpreload_action.lib_path)
         self.assertIsNone(os.environ.get('LD_PRELOAD', None))
 
         ldpreload_action = LdPreload('libc.so')
+        self.assertEqual('libc.so', ldpreload_action.lib_name)
         self._assert_launch_no_errors([ldpreload_action])
         self.assertTrue(ldpreload_action.lib_found())
         path_env = os.environ.get('LD_PRELOAD', None)
@@ -66,6 +69,7 @@ class TestLdPreloadAction(unittest.TestCase):
         path = pathlib.Path(path_env)
         self.assertTrue(path.exists())
         self.assertEqual('libc.so', path.name)
+        self.assertEqual(str(path.absolute()), ldpreload_action.lib_path)
         del os.environ['LD_PRELOAD']
 
 
