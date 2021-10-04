@@ -54,7 +54,7 @@ class LdPreload(Action):
                 self.__lib_path,
             )
         else:
-            self.__logger.warn(f'Could not find shared library: {self.__lib_name}')
+            self.__logger.warning(f'Could not find shared library: {self.__lib_name}')
 
     @property
     def lib_name(self) -> str:
