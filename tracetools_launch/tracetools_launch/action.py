@@ -95,12 +95,41 @@ class Trace(Action):
         self.__session_name = normalize_to_list_of_substitutions(session_name)
         self.__base_path = base_path \
             if base_path is None else normalize_to_list_of_substitutions(base_path)
+        self.__trace_directory = None
         self.__events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self.__events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
         self.__context_names = [normalize_to_list_of_substitutions(x) for x in context_names]
         self.__profile_fast = profile_fast
         self.__logger = logging.get_logger(__name__)
         self.__ld_preload_actions: List[LdPreload] = []
+
+    @property
+    def session_name(self):
+        return self.__session_name
+
+    @property
+    def base_path(self):
+        return self.__base_path
+
+    @property
+    def trace_directory(self):
+        return self.__trace_directory
+
+    @property
+    def events_ust(self):
+        return self.__events_ust
+
+    @property
+    def events_kernel(self):
+        return self.__events_kernel
+
+    @property
+    def context_names(self):
+        return self.__context_names
+
+    @property
+    def profile_fast(self):
+        return self.__profile_fast
 
     @classmethod
     def _parse_cmdline(
@@ -257,14 +286,14 @@ class Trace(Action):
         return self.__ld_preload_actions
 
     def _setup(self) -> None:
-        trace_directory = lttng.lttng_init(
+        self.__trace_directory = lttng.lttng_init(
             session_name=self.__session_name,
             base_path=self.__base_path,
             ros_events=self.__events_ust,
             kernel_events=self.__events_kernel,
             context_names=self.__context_names,
         )
-        self.__logger.info(f'Writing tracing session to: {trace_directory}')
+        self.__logger.info(f'Writing tracing session to: {self.__trace_directory}')
         self.__logger.debug(f'UST events: {self.__events_ust}')
         self.__logger.debug(f'Kernel events: {self.__events_kernel}')
         self.__logger.debug(f'Context names: {self.__context_names}')
@@ -279,6 +308,7 @@ class Trace(Action):
             'Trace('
             f'session_name={self.__session_name}, '
             f'base_path={self.__base_path}, '
+            f'trace_directory={self.__trace_directory}, '
             f'events_ust={self.__events_ust}, '
             f'events_kernel={self.__events_kernel}, '
             f'context_names={self.__context_names}, '
