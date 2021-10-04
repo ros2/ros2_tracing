@@ -17,7 +17,6 @@ from typing import List
 import unittest
 
 from tracetools_launch.action import Trace
-from tracetools_launch.actions.ld_preload import LdPreload
 
 
 class TestTraceAction(unittest.TestCase):
@@ -96,12 +95,6 @@ class TestTraceAction(unittest.TestCase):
             self.assertTrue(Trace.has_ust_memory_events(events))
         for events in events_lists_no_match:
             self.assertFalse(Trace.has_ust_memory_events(events))
-
-    def test_get_shared_lib_path(self) -> None:
-        # Only test not finding a lib for now
-        self.assertIsNone(
-            LdPreload.get_shared_lib_path('random_lib_that_does_not_exist_I_hope.so')
-        )
 
 
 if __name__ == '__main__':
