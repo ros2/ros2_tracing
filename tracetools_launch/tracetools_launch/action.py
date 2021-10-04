@@ -21,6 +21,7 @@ from typing import Iterable
 from typing import List
 from typing import Optional
 from typing import Text
+from typing import Union
 
 from launch import logging
 from launch.action import Action
@@ -47,14 +48,29 @@ class Trace(Action):
     Tracing action for launch.
 
     Sets up and enables tracing through a launch file description.
+
+    It also automatically makes sure that instrumented shared libraries are LD_PRELOADed if the
+    corresponding events are enabled:
+        * liblttng-ust-cyg-profile.so for 'lttng_ust_cyg_profile:func_{entry,exit}' events
+            * also applies to the 'fast' variant
+            * see https://lttng.org/docs/#doc-liblttng-ust-cyg-profile
+        * liblttng-ust-libc-wrapper.so for 'lttng_ust_libc:*' events
+            * see https://lttng.org/docs/#doc-liblttng-ust-libc-pthread-wrapper
     """
 
     LIB_PROFILE_NORMAL = 'liblttng-ust-cyg-profile.so'
     LIB_PROFILE_FAST = 'liblttng-ust-cyg-profile-fast.so'
     LIB_MEMORY_UST = 'liblttng-ust-libc-wrapper.so'
 
-    PROFILE_EVENT_PATTERN = '^lttng_ust_cyg_profile.*:func_.*'
-    MEMORY_UST_EVENT_PATTERN = '^lttng_ust_libc:.*'
+    PROFILE_EVENT_PATTERNS = [
+        r'^\*$',
+        r'^lttng_ust_cyg_profile.*:\*$',
+        r'^lttng_ust_cyg_profile.*:func_.*',
+    ]
+    MEMORY_UST_EVENT_PATTERNS = [
+        r'^\*$',
+        r'^lttng_ust_libc:.*',
+    ]
 
     def __init__(
         self,
@@ -228,17 +244,22 @@ class Trace(Action):
 
     @staticmethod
     def any_events_match(
-        name_pattern: str,
+        name_patterns: Union[str, List[str]],
         events: List[str],
     ) -> bool:
         """
         Check if any event name in the list matches the given pattern.
 
-        :param name_pattern: the pattern to use for event names
+        :param name_patterns: the pattern(s) to use for event names
         :param events: the list of event names
         :return true if there is a match, false otherwise
         """
-        return any(re.match(name_pattern, event_name) for event_name in events)
+        if not isinstance(name_patterns, list):
+            name_patterns = [name_patterns]
+        return any(
+            any(re.match(name_pattern, event_name) for name_pattern in name_patterns)
+            for event_name in events
+        )
 
     @classmethod
     def has_profiling_events(
@@ -246,7 +267,7 @@ class Trace(Action):
         events_ust: List[str],
     ) -> bool:
         """Check if the UST events list contains at least one profiling event."""
-        return cls.any_events_match(cls.PROFILE_EVENT_PATTERN, events_ust)
+        return cls.any_events_match(cls.PROFILE_EVENT_PATTERNS, events_ust)
 
     @classmethod
     def has_ust_memory_events(
@@ -254,7 +275,7 @@ class Trace(Action):
         events_ust: List[str],
     ) -> bool:
         """Check if the UST events list contains at least one userspace memory event."""
-        return cls.any_events_match(cls.MEMORY_UST_EVENT_PATTERN, events_ust)
+        return cls.any_events_match(cls.MEMORY_UST_EVENT_PATTERNS, events_ust)
 
     def __perform_substitutions(self, context: LaunchContext) -> None:
         self.__session_name = perform_substitutions(context, self.__session_name)
