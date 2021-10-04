@@ -17,7 +17,6 @@
 import subprocess
 from typing import List
 from typing import Optional
-from typing import Union
 
 from launch import logging
 from launch.action import Action
@@ -66,7 +65,7 @@ class LdPreload(Action):
         return None
 
     @staticmethod
-    def get_shared_lib_path(lib_name: str) -> Union[str, None]:
+    def get_shared_lib_path(lib_name: str) -> Optional[str]:
         """
         Get the full path to a given shared lib, if possible.
 
@@ -79,12 +78,18 @@ class LdPreload(Action):
         if exit_code != 0:
             return None
         # Output of whereis is
-        # <input_lib_name>: <full path, if found>
+        # <input_lib_name>: <full path, if found>[ <alternative lib path (like a static lib .a)>]
         # Filter out empty strings, in case lib is not found
         output_split = [split_part for split_part in output.split(':') if len(split_part) > 0]
         if len(output_split) != 2:
             return None
-        return output_split[1].strip()
+        output_paths = output_split[1].strip()
+        # Assuming that there are no spaces in paths (which should be valid for Linux shared libs),
+        # and assuming that the shared lib (.so) will be first and the static lib (.a) second
+        paths = output_paths.split(' ')
+        lib_path = paths[0]
+        assert lib_path.endswith('.so')
+        return lib_path
 
     def __repr__(self):
         return (
