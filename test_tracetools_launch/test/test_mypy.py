@@ -1,4 +1,4 @@
-# Copyright 2019 Robert Bosch GmbH
+# Copyright 2019 Canonical Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Main entry point for the `tracetools_launch` package."""
+from ament_mypy.main import main
+import pytest
 
-from . import action
 
-__all__ = [
-    'action',
-]
+@pytest.mark.mypy
+@pytest.mark.linter
+def test_mypy():
+    assert main(argv=[]) == 0, 'Found errors'
