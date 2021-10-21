@@ -14,7 +14,6 @@
 # limitations under the License.
 
 import os
-import pathlib
 import platform
 import unittest
 
@@ -43,13 +42,6 @@ class TestLdPreloadAction(unittest.TestCase):
             LdPreload.get_shared_lib_path('random_lib_that_does_not_exist_I_hope.so')
         )
 
-        libc_path = LdPreload.get_shared_lib_path('libc.so')
-        assert libc_path is not None
-        print('path:', libc_path)
-        path = pathlib.Path(libc_path)
-        self.assertTrue(path.exists())
-        self.assertEqual('libc.so', path.name)
-
     def test_action(self) -> None:
         self.assertIsNone(os.environ.get('LD_PRELOAD', None))
 
@@ -59,18 +51,6 @@ class TestLdPreloadAction(unittest.TestCase):
         self.assertFalse(ldpreload_action.lib_found())
         self.assertIsNone(ldpreload_action.lib_path)
         self.assertIsNone(os.environ.get('LD_PRELOAD', None))
-
-        ldpreload_action = LdPreload('libc.so')
-        self.assertEqual('libc.so', ldpreload_action.lib_name)
-        self._assert_launch_no_errors([ldpreload_action])
-        self.assertTrue(ldpreload_action.lib_found())
-        path_env = os.environ.get('LD_PRELOAD', None)
-        assert path_env is not None
-        path = pathlib.Path(path_env)
-        self.assertTrue(path.exists())
-        self.assertEqual('libc.so', path.name)
-        self.assertEqual(str(path.absolute()), ldpreload_action.lib_path)
-        del os.environ['LD_PRELOAD']
 
 
 if __name__ == '__main__':
