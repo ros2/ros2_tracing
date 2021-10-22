@@ -48,7 +48,7 @@ tracing_enabled:test:
   script:
     - (source install/setup.sh && ./build/tracetools/status)
     - . /root/ws/install/local_setup.sh
-    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
+    - colcon test --event-handlers console_direct+ --executor sequential --retest-until-pass 2 --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
   <<: *test_artifacts
 
@@ -71,7 +71,7 @@ tracing_disabled:test:
   script:
     - (source install/setup.sh && (! ./build/tracetools/status))
     - . /root/ws/install/local_setup.sh
-    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
+    - colcon test --event-handlers console_direct+ --executor sequential --retest-until-pass 2 --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
   <<: *test_artifacts
 
@@ -95,7 +95,7 @@ no_lttng:test:
     - (source install/setup.sh && (! ./build/tracetools/status))
     - (source install/setup.sh && (! ros2 trace))
     - . /root/ws/install/local_setup.sh
-    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST
+    - colcon test --event-handlers console_direct+ --executor sequential --retest-until-pass 2 --packages-select $PACKAGES_LIST
     - colcon test-result --all --verbose
   <<: *test_artifacts
 
@@ -109,7 +109,7 @@ coverage:
   script:
     - colcon build --symlink-install --event-handlers console_cohesion+ --packages-up-to $PACKAGES_LIST --mixin coverage-gcc coverage-pytest --cmake-args -DBUILD_TESTING=ON --no-warn-unused-cli
     - colcon lcov-result --initial
-    - colcon test --event-handlers console_cohesion+ --packages-select $PACKAGES_LIST --mixin coverage-pytest
+    - colcon test --event-handlers console_direct+ --executor sequential --retest-until-pass 2 --packages-select $PACKAGES_LIST --mixin coverage-pytest
     - colcon test-result --all --verbose
     - colcon lcov-result --packages-select tracetools --filter **/tracetools/test/* --verbose
     - colcon coveragepy-result --packages-select ros2trace tracetools_launch tracetools_read tracetools_test tracetools_trace --verbose --coverage-report-args -m
