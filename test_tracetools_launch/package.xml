@@ -18,9 +18,11 @@
   <test_depend>ament_pep257</test_depend>
   <test_depend>ament_xmllint</test_depend>
   <test_depend>launch</test_depend>
+  <test_depend>launch_ros</test_depend>
   <test_depend>launch_xml</test_depend>
   <test_depend>launch_yaml</test_depend>
   <test_depend>python3-pytest</test_depend>
+  <test_depend>test_tracetools</test_depend>
   <test_depend>tracetools_launch</test_depend>
   <test_depend>tracetools_trace</test_depend>
 

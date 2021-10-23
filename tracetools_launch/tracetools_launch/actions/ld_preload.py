@@ -1,4 +1,5 @@
 # Copyright 2019 Apex.AI, Inc.
+# Copyright 2021 Christophe Bedard
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,13 +21,13 @@ from typing import Optional
 
 from launch import logging
 from launch.action import Action
-from launch.actions import SetEnvironmentVariable
+from launch.actions import AppendEnvironmentVariable
 from launch.launch_context import LaunchContext
 from tracetools_trace.tools import tracing_supported
 
 
 class LdPreload(Action):
-    """Action that adds a SetEnvironmentVariable action to preload a library."""
+    """Action that adds an AppendEnvironmentVariable action to preload a library."""
 
     ENV_VAR_LD_PRELOAD = 'LD_PRELOAD'
 
@@ -38,18 +39,18 @@ class LdPreload(Action):
         """
         Create an LdPreload action.
 
-        :param lib_name: the name of the library (e.g. 'lib.so')
+        :param lib_name: the name of the library (e.g., 'lib.so')
         """
         super().__init__(**kwargs)
         self.__lib_name = lib_name
-        self.__set_env_action = None
+        self.__env_action = None
         self.__logger = logging.get_logger(__name__)
         # Try to find lib
         self.__lib_path = self.get_shared_lib_path(self.__lib_name)
         # And create action if found
         if self.__lib_path is not None:
             self.__logger.debug(f'Shared library found at: {self.__lib_path}')
-            self.__set_env_action = SetEnvironmentVariable(
+            self.__env_action = AppendEnvironmentVariable(
                 self.ENV_VAR_LD_PRELOAD,
                 self.__lib_path,
             )
@@ -65,11 +66,11 @@ class LdPreload(Action):
         return self.__lib_path
 
     def lib_found(self) -> bool:
-        return self.__set_env_action is not None
+        return self.__env_action is not None
 
     def execute(self, context: LaunchContext) -> Optional[List[Action]]:
         if self.lib_found():
-            return [self.__set_env_action]
+            return [self.__env_action]
         return None
 
     @staticmethod
