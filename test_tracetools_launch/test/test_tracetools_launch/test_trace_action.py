@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import io
+import os
 import pathlib
 import shutil
 import tempfile
@@ -22,7 +23,11 @@ import unittest
 
 from launch import LaunchDescription
 from launch import LaunchService
+from launch.actions import DeclareLaunchArgument
 from launch.frontend import Parser
+from launch.substitutions import EnvironmentVariable
+from launch.substitutions import LaunchConfiguration
+from launch.substitutions import TextSubstitution
 
 from tracetools_launch.action import Trace
 from tracetools_trace.tools.lttng import is_lttng_installed
@@ -124,6 +129,81 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(trace_action, tmpdir)
 
         shutil.rmtree(tmpdir)
+
+    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
+    def test_action_context_per_domain(self) -> None:
+        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_context_per_domain')
+
+        action = Trace(
+            session_name='my-session-name',
+            base_path=tmpdir,
+            events_kernel=[],
+            events_ust=[
+                'ros2:*',
+                '*',
+            ],
+            context_names={
+                'kernel': [],
+                'userspace': ['vpid', 'vtid'],
+            },
+        )
+        self._assert_launch_no_errors([action])
+        self._check_trace_action(action, tmpdir)
+
+        self.assertDictEqual(
+            action.context_names,
+            {
+                'kernel': [],
+                'userspace': ['vpid', 'vtid'],
+            },
+        )
+
+        shutil.rmtree(tmpdir)
+
+    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
+    def test_action_substitutions(self) -> None:
+        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_substitutions')
+
+        self.assertIsNone(os.environ.get('TestTraceAction__event_ust', None))
+        os.environ['TestTraceAction__event_ust'] = 'ros2:*'
+        self.assertIsNone(os.environ.get('TestTraceAction__context_field', None))
+        os.environ['TestTraceAction__context_field'] = 'vpid'
+
+        session_name_arg = DeclareLaunchArgument(
+            'session-name',
+            default_value='my-session-name',
+            description='the session name',
+        )
+        action = Trace(
+            session_name=LaunchConfiguration(session_name_arg.name),
+            base_path=TextSubstitution(text=tmpdir),
+            events_kernel=[],
+            events_ust=[
+                EnvironmentVariable(name='TestTraceAction__event_ust'),
+                TextSubstitution(text='*'),
+            ],
+            context_names={
+                'kernel': [],
+                'userspace': [
+                    EnvironmentVariable(name='TestTraceAction__context_field'),
+                    TextSubstitution(text='vtid'),
+                ],
+            },
+        )
+        self._assert_launch_no_errors([session_name_arg, action])
+        self._check_trace_action(action, tmpdir)
+
+        self.assertDictEqual(
+            action.context_names,
+            {
+                'kernel': [],
+                'userspace': ['vpid', 'vtid'],
+            },
+        )
+
+        shutil.rmtree(tmpdir)
+        del os.environ['TestTraceAction__event_ust']
+        del os.environ['TestTraceAction__context_field']
 
 
 if __name__ == '__main__':
