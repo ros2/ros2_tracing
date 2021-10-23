@@ -81,9 +81,14 @@ class Trace(Action):
         base_path: Optional[SomeSubstitutionsType] = None,
         events_ust: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_ROS,
         events_kernel: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_KERNEL,
-        context_names:
+        context_fields:
             Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
             = names.DEFAULT_CONTEXT,
+        context_names:
+            Optional[
+                Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
+            ]
+            = None,
         profile_fast: bool = True,
         **kwargs,
     ) -> None:
@@ -91,7 +96,7 @@ class Trace(Action):
         Create a Trace.
 
         Substitutions are supported for the session name,
-        base path, and the lists of events and context names.
+        base path, and the lists of events and context fields.
 
         For the lists of events, wildcards can be used, e.g., 'ros2:*' for
         all events from the 'ros2' tracepoint provider or '*' for all events.
@@ -106,13 +111,15 @@ class Trace(Action):
         or `None` for default
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
-        :param context_names: the names of context fields to enable
+        :param context_fields: the names of context fields to enable
             if it's a list or a set, the context fields are enabled for both kernel and userspace;
             if it's a dictionary: { domain type string -> context fields list }
                 with the domain type string being either 'kernel' or 'userspace'
+        :param context_names: DEPRECATED, use context_fields instead
         :param profile_fast: `True` to use fast profiling, `False` for normal (only if necessary)
         """
         super().__init__(**kwargs)
+        self.__logger = logging.get_logger(__name__)
         self.__append_timestamp = append_timestamp
         self.__session_name = normalize_to_list_of_substitutions(session_name)
         self.__base_path = base_path \
@@ -120,15 +127,19 @@ class Trace(Action):
         self.__trace_directory = None
         self.__events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self.__events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
-        self.__context_names = \
+        # Use value from deprecated param if it is provided
+        # TODO(christophebedard) remove context_names param in Rolling after Humble release
+        if context_names is not None:
+            context_fields = context_names
+            self.__logger.warning('context_names parameter is deprecated, use context_fields')
+        self.__context_fields = \
             {
-                d: [normalize_to_list_of_substitutions(n) for n in names]
-                for d, names in context_names.items()
+                domain: [normalize_to_list_of_substitutions(field) for field in fields]
+                for domain, fields in context_fields.items()
             } \
-            if isinstance(context_names, dict) \
-            else [normalize_to_list_of_substitutions(x) for x in context_names]
+            if isinstance(context_fields, dict) \
+            else [normalize_to_list_of_substitutions(field) for field in context_fields]
         self.__profile_fast = profile_fast
-        self.__logger = logging.get_logger(__name__)
         self.__ld_preload_actions: List[LdPreload] = []
 
     @property
@@ -152,8 +163,13 @@ class Trace(Action):
         return self.__events_kernel
 
     @property
+    def context_fields(self):
+        return self.__context_fields
+
+    @property
     def context_names(self):
-        return self.__context_names
+        self.__logger.warning('context_names parameter is deprecated, use context_fields')
+        return self.__context_fields
 
     @property
     def profile_fast(self):
@@ -243,6 +259,10 @@ class Trace(Action):
         if events_kernel is not None:
             kwargs['events_kernel'] = cls._parse_cmdline(events_kernel, parser) \
                 if events_kernel else []
+        context_fields = entity.get_attr('context-fields', optional=True)
+        if context_fields is not None:
+            kwargs['context_fields'] = cls._parse_cmdline(context_fields, parser) \
+                if context_fields else []
         context_names = entity.get_attr('context-names', optional=True)
         if context_names is not None:
             kwargs['context_names'] = cls._parse_cmdline(context_names, parser) \
@@ -297,13 +317,13 @@ class Trace(Action):
             if self.__base_path else path.get_tracing_directory()
         self.__events_ust = [perform_substitutions(context, x) for x in self.__events_ust]
         self.__events_kernel = [perform_substitutions(context, x) for x in self.__events_kernel]
-        self.__context_names = \
+        self.__context_fields = \
             {
-                d: [perform_substitutions(context, n) for n in names]
-                for d, names in self.__context_names.items()
+                domain: [perform_substitutions(context, field) for field in fields]
+                for domain, fields in self.__context_fields.items()
             } \
-            if isinstance(self.__context_names, dict) \
-            else [perform_substitutions(context, x) for x in self.__context_names]
+            if isinstance(self.__context_fields, dict) \
+            else [perform_substitutions(context, field) for field in self.__context_fields]
 
         # Add LD_PRELOAD actions if corresponding events are enabled
         if self.has_profiling_events(self.__events_ust):
@@ -330,12 +350,12 @@ class Trace(Action):
             base_path=self.__base_path,
             ros_events=self.__events_ust,
             kernel_events=self.__events_kernel,
-            context_names=self.__context_names,
+            context_fields=self.__context_fields,
         )
         self.__logger.info(f'Writing tracing session to: {self.__trace_directory}')
         self.__logger.debug(f'UST events: {self.__events_ust}')
         self.__logger.debug(f'Kernel events: {self.__events_kernel}')
-        self.__logger.debug(f'Context names: {self.__context_names}')
+        self.__logger.debug(f'Context fields: {self.__context_fields}')
         self.__logger.debug(f'LD_PRELOAD: {self.__ld_preload_actions}')
 
     def _destroy(self, event: Event, context: LaunchContext) -> None:
@@ -350,7 +370,7 @@ class Trace(Action):
             f'trace_directory={self.__trace_directory}, '
             f'events_ust={self.__events_ust}, '
             f'events_kernel={self.__events_kernel}, '
-            f'context_names={self.__context_names}, '
+            f'context_fields={self.__context_fields}, '
             f'profile_fast={self.__profile_fast}, '
             f'ld_preload_actions={self.__ld_preload_actions})'
         )

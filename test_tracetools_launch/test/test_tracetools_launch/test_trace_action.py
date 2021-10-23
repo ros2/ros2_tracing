@@ -142,7 +142,7 @@ class TestTraceAction(unittest.TestCase):
                 'ros2:*',
                 '*',
             ],
-            context_names={
+            context_fields={
                 'kernel': [],
                 'userspace': ['vpid', 'vtid'],
             },
@@ -151,7 +151,7 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(action, tmpdir)
 
         self.assertDictEqual(
-            action.context_names,
+            action.context_fields,
             {
                 'kernel': [],
                 'userspace': ['vpid', 'vtid'],
@@ -182,7 +182,7 @@ class TestTraceAction(unittest.TestCase):
                 EnvironmentVariable(name='TestTraceAction__event_ust'),
                 TextSubstitution(text='*'),
             ],
-            context_names={
+            context_fields={
                 'kernel': [],
                 'userspace': [
                     EnvironmentVariable(name='TestTraceAction__context_field'),
@@ -194,7 +194,7 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(action, tmpdir)
 
         self.assertDictEqual(
-            action.context_names,
+            action.context_fields,
             {
                 'kernel': [],
                 'userspace': ['vpid', 'vtid'],

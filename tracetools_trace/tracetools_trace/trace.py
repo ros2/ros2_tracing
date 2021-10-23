@@ -20,6 +20,7 @@ import os
 import sys
 from typing import List
 from typing import Optional
+import warnings
 
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
@@ -33,7 +34,8 @@ def init(
     base_path: Optional[str],
     ros_events: List[str],
     kernel_events: List[str],
-    context_names: List[str],
+    context_fields: List[str],
+    context_names: Optional[List[str]] = None,
     display_list: bool = False,
 ) -> None:
     """
@@ -44,9 +46,16 @@ def init(
     or `None` for default
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
-    :param context_names: list of context names to enable
+    :param context_fields: list of context fields to enable
+    :param context_names: DEPRECATED, use context_fields instead
     :param display_list: whether to display list(s) of enabled events and context names
     """
+    # Use value from deprecated param if it is provided
+    # TODO(christophebedard) remove context_names param in Rolling after Humble release
+    if context_names is not None:
+        context_fields = context_names
+        warnings.warn('context_names parameter is deprecated, use context_fields', stacklevel=4)
+
     if not lttng.is_lttng_installed():
         sys.exit(2)
 
@@ -64,10 +73,10 @@ def init(
             print_names_list(kernel_events)
     else:
         print('kernel tracing disabled')
-    if len(context_names) > 0:
-        print(f'context ({len(context_names)} names)')
+    if len(context_fields) > 0:
+        print(f'context ({len(context_fields)} names)')
         if display_list:
-            print_names_list(context_names)
+            print_names_list(context_fields)
 
     if not base_path:
         base_path = path.get_tracing_directory()
@@ -80,7 +89,7 @@ def init(
         base_path=base_path,
         ros_events=ros_events,
         kernel_events=kernel_events,
-        context_names=context_names,
+        context_fields=context_fields,
     )
     # Simple sanity check
     assert trace_directory == full_session_path
@@ -112,7 +121,7 @@ def main():
         params.path,
         params.events_ust,
         params.events_kernel,
-        params.context_names,
+        params.context_fields,
         params.list,
     )
     fini(
