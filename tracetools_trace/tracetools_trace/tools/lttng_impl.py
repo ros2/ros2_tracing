@@ -19,10 +19,12 @@ from distutils.version import StrictVersion
 import os
 import re
 import subprocess
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Set
 from typing import Union
+import warnings
 
 import lttng
 
@@ -58,7 +60,8 @@ def setup(
     base_path: str,
     ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
     kernel_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_KERNEL,
-    context_names: Union[List[str], Set[str]] = DEFAULT_CONTEXT,
+    context_fields: Union[List[str], Set[str], Dict[str, List[str]]] = DEFAULT_CONTEXT,
+    context_names: Optional[Union[List[str], Set[str], Dict[str, List[str]]]] = None,
     channel_name_ust: str = 'ros2',
     channel_name_kernel: str = 'kchan',
 ) -> Optional[str]:
@@ -71,11 +74,20 @@ def setup(
     :param base_path: the path to the directory in which to create the tracing session directory
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
-    :param context_names: list of context elements to enable
+    :param context_fields: the names of context fields to enable
+        if it's a list or a set, the context fields are enabled for both kernel and userspace;
+        if it's a dictionary: { domain type string -> context fields list }
+    :param context_names: DEPRECATED, use context_fields instead
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
     :return: the full path to the trace directory
     """
+    # Use value from deprecated param if it is provided
+    # TODO(christophebedard) remove context_names param in Rolling after Humble release
+    if context_names is not None:
+        context_fields = context_names
+        warnings.warn('context_names parameter is deprecated, use context_fields', stacklevel=4)
+
     # Check if there is a session daemon running
     if lttng.session_daemon_alive() == 0:
         # Otherwise spawn one without doing any error checks
@@ -88,8 +100,8 @@ def setup(
         ros_events = set(ros_events)
     if not isinstance(kernel_events, set):
         kernel_events = set(kernel_events)
-    if not isinstance(context_names, set):
-        context_names = set(context_names)
+    if isinstance(context_fields, list):
+        context_fields = set(context_fields)
 
     # Resolve full tracing directory path
     full_path = os.path.join(base_path, session_name)
@@ -152,12 +164,9 @@ def setup(
         _enable_events(handle_kernel, events_list_kernel, channel_kernel.name)
 
     # Context
-    context_list = _create_context_list(context_names)
-    # TODO make it possible to add context in userspace and kernel separately, since some context
-    # types might only apply to userspace OR kernel; only consider userspace contexts for now
-    handles_context = [handle_ust]
-    enabled_handles: List[lttng.Handle] = list(filter(None, handles_context))
-    _add_context(enabled_handles, context_list)
+    contexts_dict = _normalize_contexts_dict(
+        {'kernel': handle_kernel, 'userspace': handle_ust}, context_fields)
+    _add_context(contexts_dict)
 
     return full_path
 
@@ -304,51 +313,74 @@ context_map = {
 }
 
 
-def _context_name_to_type(
-    context_name: str,
+def _context_field_name_to_type(
+    context_field_name: str,
 ) -> Optional[int]:
     """
     Convert from context name to LTTng enum/constant type.
 
-    :param context_name: the generic name for the context
+    :param context_field_name: the generic name for the context field
     :return: the associated type, or `None` if it cannot be found
     """
-    return context_map.get(context_name, None)
+    return context_map.get(context_field_name, None)
 
 
 def _create_context_list(
-    context_names: Set[str],
+    context_fields: Set[str],
 ) -> List[lttng.EventContext]:
     """
-    Create context list from names, and check for errors.
+    Create context list from field names, and check for errors.
 
-    :param context_names: the set of context names
+    :param context_fields: the set of context fields
     :return: the event context list
     """
     context_list = []
-    for context_name in context_names:
+    for context_field_name in context_fields:
         ec = lttng.EventContext()
-        context_type = _context_name_to_type(context_name)
+        context_type = _context_field_name_to_type(context_field_name)
         if context_type is not None:
             ec.ctx = context_type
             context_list.append(ec)
         else:
-            raise RuntimeError(f'failed to find context type: {context_name}')
+            raise RuntimeError(f'failed to find context type: {context_field_name}')
     return context_list
 
 
+def _normalize_contexts_dict(
+    handles: Dict[str, Optional[lttng.Handle]],
+    context_fields: Union[Set[str], Dict[str, List[str]]],
+) -> Dict[lttng.Handle, List[lttng.EventContext]]:
+    """
+    Normalize context list/set/dict to dict.
+
+    :param handles: the mapping from domain type name to handle
+    :param context_fields: the set of context field names,
+        or mapping from domain type name to list of context field names
+    :return: a dictionary of handle to list of event contexts
+    """
+    handles = {domain: handle for domain, handle in handles.items() if handle is not None}
+    contexts_dict = {}
+    if isinstance(context_fields, set):
+        contexts_dict = {h: _create_context_list(context_fields) for _, h in handles.items()}
+    elif isinstance(context_fields, dict):
+        contexts_dict = \
+            {h: _create_context_list(set(context_fields[d])) for d, h in handles.items()}
+    else:
+        assert False
+    return contexts_dict
+
+
 def _add_context(
-    handles: List[lttng.Handle],
-    context_list: List[lttng.EventContext],
+    contexts: Dict[lttng.Handle, List[lttng.EventContext]],
 ) -> None:
     """
-    Add context list to given handles, and check for errors.
+    Add context lists to given handles, and check for errors.
 
-    :param handles: the list of handles for which to add context
-    :param context_list: the list of event contexts to add to the handles
+    :param contexts: the dictionay of context handles -> event contexts
     """
-    for handle in handles:
-        for contex in context_list:
-            result = lttng.add_context(handle, contex, None, None)
+    for handle, contexts_list in contexts.items():
+        for context in contexts_list:
+            result = lttng.add_context(handle, context, None, None)
             if result < 0:
-                raise RuntimeError(f'failed to add context: {lttng.strerror(result)}')
+                raise RuntimeError(
+                    f'failed to add context field {str(context)}: {lttng.strerror(result)}')

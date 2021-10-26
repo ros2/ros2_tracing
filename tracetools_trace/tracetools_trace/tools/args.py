@@ -63,11 +63,11 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
              'provide this flag without any event name]')
     events_kernel_arg.completer = DefaultArgValueCompleter(events_kernel_arg)  # type: ignore
     context_arg = parser.add_argument(  # type: ignore
-        '-c', '--context', nargs='*', dest='context_names', metavar='CONTEXT',
+        '-c', '--context', nargs='*', dest='context_fields', metavar='CONTEXT',
         default=names.DEFAULT_CONTEXT,
-        help='the context names to enable (default: see tracetools_trace.tools.names) '
-             '[to disable all context names, '
-             'provide this flag without any name]')
+        help='the context fields to enable (default: see tracetools_trace.tools.names) '
+             '[to disable all context fields, '
+             'provide this flag without any field names]')
     context_arg.completer = DefaultArgValueCompleter(context_arg)  # type: ignore
     parser.add_argument(
         '-l', '--list', dest='list', action='store_true',
