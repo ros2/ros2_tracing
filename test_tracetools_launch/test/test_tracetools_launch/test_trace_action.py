@@ -19,6 +19,7 @@ import pathlib
 import shutil
 import tempfile
 import textwrap
+from typing import List
 import unittest
 
 from launch import LaunchDescription
@@ -28,6 +29,7 @@ from launch.frontend import Parser
 from launch.substitutions import EnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import TextSubstitution
+from launch_ros.actions import Node
 
 from tracetools_launch.action import Trace
 from tracetools_trace.tools.lttng import is_lttng_installed
@@ -55,16 +57,23 @@ class TestTraceAction(unittest.TestCase):
         trace_action = ld.describe_sub_entities()[0]
         return trace_action
 
-    def _check_trace_action(self, action, tmpdir) -> None:
-        self.assertEqual('my-session-name', action.session_name)
+    def _check_trace_action(
+        self,
+        action,
+        tmpdir,
+        session_name: str = 'my-session-name',
+        events_ust: List[str] = ['ros2:*', '*'],
+    ) -> None:
+        self.assertEqual(session_name, action.session_name)
         self.assertEqual(tmpdir, action.base_path)
         self.assertTrue(action.trace_directory.startswith(tmpdir))
         self.assertEqual([], action.events_kernel)
-        self.assertEqual(['ros2:*', '*'], action.events_ust)
+        self.assertEqual(events_ust, action.events_ust)
         self.assertTrue(pathlib.Path(tmpdir).exists())
 
     @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action(self) -> None:
+        self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action')
 
         # Disable kernel events just to not require kernel tracing for the test
@@ -81,9 +90,11 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(action, tmpdir)
 
         shutil.rmtree(tmpdir)
+        del os.environ['LD_PRELOAD']
 
     @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_frontend_xml(self) -> None:
+        self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_frontend_xml')
 
         xml_file = textwrap.dedent(
@@ -106,9 +117,11 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(trace_action, tmpdir)
 
         shutil.rmtree(tmpdir)
+        del os.environ['LD_PRELOAD']
 
     @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_frontend_yaml(self) -> None:
+        self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_frontend_yaml')
 
         yaml_file = textwrap.dedent(
@@ -129,9 +142,11 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(trace_action, tmpdir)
 
         shutil.rmtree(tmpdir)
+        del os.environ['LD_PRELOAD']
 
     @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_context_per_domain(self) -> None:
+        self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_context_per_domain')
 
         action = Trace(
@@ -159,9 +174,11 @@ class TestTraceAction(unittest.TestCase):
         )
 
         shutil.rmtree(tmpdir)
+        del os.environ['LD_PRELOAD']
 
     @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_substitutions(self) -> None:
+        self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_substitutions')
 
         self.assertIsNone(os.environ.get('TestTraceAction__event_ust', None))
@@ -204,6 +221,47 @@ class TestTraceAction(unittest.TestCase):
         shutil.rmtree(tmpdir)
         del os.environ['TestTraceAction__event_ust']
         del os.environ['TestTraceAction__context_field']
+        del os.environ['LD_PRELOAD']
+
+    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
+    def test_action_ld_preload(self) -> None:
+        self.assertIsNone(os.environ.get('LD_PRELOAD'))
+        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_ld_preload')
+
+        action = Trace(
+            session_name='my-session-name',
+            base_path=tmpdir,
+            events_kernel=[],
+            events_ust=[
+                'lttng_ust_cyg_profile_fast:*',
+                'lttng_ust_libc:*',
+            ],
+        )
+        node_ping_action = Node(
+            package='test_tracetools',
+            executable='test_ping',
+            output='screen',
+        )
+        node_pong_action = Node(
+            package='test_tracetools',
+            executable='test_pong',
+            output='screen',
+        )
+        self._assert_launch_no_errors([action, node_ping_action, node_pong_action])
+        self._check_trace_action(
+            action, tmpdir, events_ust=['lttng_ust_cyg_profile_fast:*', 'lttng_ust_libc:*'])
+        self.assertTrue(action.profile_fast)
+
+        # Check that LD_PRELOAD was set accordingly
+        ld_preload = os.environ.get('LD_PRELOAD')
+        assert ld_preload is not None
+        paths = ld_preload.split(':')
+        self.assertEqual(2, len(paths))
+        self.assertTrue(any(p.endswith('liblttng-ust-cyg-profile-fast.so') for p in paths))
+        self.assertTrue(any(p.endswith('liblttng-ust-libc-wrapper.so') for p in paths))
+
+        shutil.rmtree(tmpdir)
+        del os.environ['LD_PRELOAD']
 
 
 if __name__ == '__main__':
