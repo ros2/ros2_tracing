@@ -15,6 +15,7 @@
 
 """Module for the Trace action."""
 
+import fnmatch
 import re
 import shlex
 from typing import Dict
@@ -61,16 +62,21 @@ class Trace(Action):
 
     LIB_PROFILE_NORMAL = 'liblttng-ust-cyg-profile.so'
     LIB_PROFILE_FAST = 'liblttng-ust-cyg-profile-fast.so'
-    LIB_MEMORY_UST = 'liblttng-ust-libc-wrapper.so'
+    LIB_LIBC_WRAPPER = 'liblttng-ust-libc-wrapper.so'
 
-    PROFILE_EVENT_PATTERNS = [
-        r'^\*$',
-        r'^lttng_ust_cyg_profile.*:\*$',
-        r'^lttng_ust_cyg_profile.*:func_.*',
+    EVENTS_PROFILE = [
+        'lttng_ust_cyg_profile:func_entry',
+        'lttng_ust_cyg_profile:func_exit',
+        'lttng_ust_cyg_profile_fast:func_entry',
+        'lttng_ust_cyg_profile_fast:func_exit',
     ]
-    MEMORY_UST_EVENT_PATTERNS = [
-        r'^\*$',
-        r'^lttng_ust_libc:.*',
+    EVENTS_LIBC_WRAPPER = [
+        'lttng_ust_libc:malloc',
+        'lttng_ust_libc:calloc',
+        'lttng_ust_libc:realloc',
+        'lttng_ust_libc:free',
+        'lttng_ust_libc:memalign',
+        'lttng_ust_libc:posix_memalign',
     ]
 
     def __init__(
@@ -187,7 +193,7 @@ class Trace(Action):
         :param: cmd a space (' ') delimited command line arguments list.
            All found `TextSubstitution` items are split and added to the
            list again as a `TextSubstitution`.
-        :returns: a list of command line arguments.
+        :return: a list of command line arguments.
         """
         result_args = []
         arg: List[SomeSubstitutionsType] = []
@@ -276,38 +282,40 @@ class Trace(Action):
 
     @staticmethod
     def any_events_match(
-        name_patterns: Union[str, List[str]],
+        event_patterns: List[str],
         events: List[str],
     ) -> bool:
         """
-        Check if any event name in the list matches the given pattern.
+        Check if the given event names or patterns match any event names in the given list.
 
-        :param name_patterns: the pattern(s) to use for event names
-        :param events: the list of event names
-        :return true if there is a match, false otherwise
+        Users can provide exact event names or UNIX-style patterns with wildcards (i.e., asterisk).
+
+        :param event_patterns: the pattern(s) to use for event names
+        :param events: the list of event names against which to check for match
+        :return: `True` if any of the event patterns matches any of the events, `False` otherwise
         """
-        if not isinstance(name_patterns, list):
-            name_patterns = [name_patterns]
+        # Translate UNIX-style event patterns into regexes
+        event_pattern_regexes = [fnmatch.translate(pattern) for pattern in event_patterns]
         return any(
-            any(re.match(name_pattern, event_name) for name_pattern in name_patterns)
-            for event_name in events
+            any(re.match(event_pattern_regex, event_name) for event_name in events)
+            for event_pattern_regex in event_pattern_regexes
         )
 
     @classmethod
     def has_profiling_events(
         cls,
-        events_ust: List[str],
+        events: List[str],
     ) -> bool:
-        """Check if the UST events list contains at least one profiling event."""
-        return cls.any_events_match(cls.PROFILE_EVENT_PATTERNS, events_ust)
+        """Check if the events list contains at least one profiling event."""
+        return cls.any_events_match(events, cls.EVENTS_PROFILE)
 
     @classmethod
-    def has_ust_memory_events(
+    def has_libc_wrapper_events(
         cls,
-        events_ust: List[str],
+        events: List[str],
     ) -> bool:
-        """Check if the UST events list contains at least one userspace memory event."""
-        return cls.any_events_match(cls.MEMORY_UST_EVENT_PATTERNS, events_ust)
+        """Check if the events list contains at least one libc wrapper event."""
+        return cls.any_events_match(events, cls.EVENTS_LIBC_WRAPPER)
 
     def __perform_substitutions(self, context: LaunchContext) -> None:
         self.__session_name = perform_substitutions(context, self.__session_name)
@@ -331,9 +339,9 @@ class Trace(Action):
                 LdPreload(
                     self.LIB_PROFILE_FAST if self.__profile_fast else self.LIB_PROFILE_NORMAL)
             )
-        if self.has_ust_memory_events(self.__events_ust):
+        if self.has_libc_wrapper_events(self.__events_ust):
             self.__ld_preload_actions.append(
-                LdPreload(self.LIB_MEMORY_UST)
+                LdPreload(self.LIB_LIBC_WRAPPER)
             )
 
     def execute(self, context: LaunchContext) -> Optional[List[Action]]:
