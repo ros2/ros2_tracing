@@ -53,20 +53,25 @@ class Trace(Action):
 
     It also automatically makes sure that instrumented shared libraries are LD_PRELOADed if the
     corresponding events are enabled:
-        * liblttng-ust-cyg-profile.so for 'lttng_ust_cyg_profile:func_{entry,exit}' events
-            * also applies to the 'fast' variant
+        * liblttng-ust-cyg-profile-fast.so: lttng_ust_cyg_profile_fast:func_{entry,exit}' events
             * see https://lttng.org/docs/#doc-liblttng-ust-cyg-profile
-        * liblttng-ust-libc-wrapper.so for 'lttng_ust_libc:*' events
+        * liblttng-ust-cyg-profile.so: 'lttng_ust_cyg_profile:func_{entry,exit}' events
+            * see https://lttng.org/docs/#doc-liblttng-ust-cyg-profile
+        * liblttng-ust-libc-wrapper.so: 'lttng_ust_libc:*' events
             * see https://lttng.org/docs/#doc-liblttng-ust-libc-pthread-wrapper
+    Note that, if the user provides events or patterns that match both the normal AND the fast
+    profiling library, the fast profiling library will be used in practice.
     """
 
     LIB_PROFILE_NORMAL = 'liblttng-ust-cyg-profile.so'
     LIB_PROFILE_FAST = 'liblttng-ust-cyg-profile-fast.so'
     LIB_LIBC_WRAPPER = 'liblttng-ust-libc-wrapper.so'
 
-    EVENTS_PROFILE = [
+    EVENTS_PROFILE_NORMAL = [
         'lttng_ust_cyg_profile:func_entry',
         'lttng_ust_cyg_profile:func_exit',
+    ]
+    EVENTS_PROFILE_FAST = [
         'lttng_ust_cyg_profile_fast:func_entry',
         'lttng_ust_cyg_profile_fast:func_exit',
     ]
@@ -95,7 +100,6 @@ class Trace(Action):
                 Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
             ]
             = None,
-        profile_fast: bool = True,
         **kwargs,
     ) -> None:
         """
@@ -122,7 +126,6 @@ class Trace(Action):
             if it's a dictionary: { domain type string -> context fields list }
                 with the domain type string being either 'kernel' or 'userspace'
         :param context_names: DEPRECATED, use context_fields instead
-        :param profile_fast: `True` to use fast profiling, `False` for normal (only if necessary)
         """
         super().__init__(**kwargs)
         self.__logger = logging.get_logger(__name__)
@@ -145,7 +148,6 @@ class Trace(Action):
             } \
             if isinstance(context_fields, dict) \
             else [normalize_to_list_of_substitutions(field) for field in context_fields]
-        self.__profile_fast = profile_fast
         self.__ld_preload_actions: List[LdPreload] = []
 
     @property
@@ -176,10 +178,6 @@ class Trace(Action):
     def context_names(self):
         self.__logger.warning('context_names parameter is deprecated, use context_fields')
         return self.__context_fields
-
-    @property
-    def profile_fast(self):
-        return self.__profile_fast
 
     @classmethod
     def _parse_cmdline(
@@ -273,10 +271,6 @@ class Trace(Action):
         if context_names is not None:
             kwargs['context_names'] = cls._parse_cmdline(context_names, parser) \
                 if context_names else []
-        profile_fast = entity.get_attr(
-            'profile-fast', data_type=bool, optional=True, can_be_str=False)
-        if profile_fast is not None:
-            kwargs['profile_fast'] = profile_fast
 
         return cls, kwargs
 
@@ -305,9 +299,12 @@ class Trace(Action):
     def has_profiling_events(
         cls,
         events: List[str],
+        fast: bool,
     ) -> bool:
-        """Check if the events list contains at least one profiling event."""
-        return cls.any_events_match(events, cls.EVENTS_PROFILE)
+        """Check if the events list contains at least one profiling event, fast or normal."""
+        return cls.any_events_match(
+            events,
+            cls.EVENTS_PROFILE_NORMAL if not fast else cls.EVENTS_PROFILE_FAST)
 
     @classmethod
     def has_libc_wrapper_events(
@@ -334,15 +331,18 @@ class Trace(Action):
             else [perform_substitutions(context, field) for field in self.__context_fields]
 
         # Add LD_PRELOAD actions if corresponding events are enabled
-        if self.has_profiling_events(self.__events_ust):
-            self.__ld_preload_actions.append(
-                LdPreload(
-                    self.LIB_PROFILE_FAST if self.__profile_fast else self.LIB_PROFILE_NORMAL)
-            )
         if self.has_libc_wrapper_events(self.__events_ust):
-            self.__ld_preload_actions.append(
-                LdPreload(self.LIB_LIBC_WRAPPER)
-            )
+            self.__ld_preload_actions.append(LdPreload(self.LIB_LIBC_WRAPPER))
+        # Warn if events match both normal AND fast profiling libs
+        has_fast_profiling_events = self.has_profiling_events(self.__events_ust, True)
+        has_normal_profiling_events = self.has_profiling_events(self.__events_ust, False)
+        # In practice, the first lib in the LD_PRELOAD list will be used, so the fast one here
+        if has_fast_profiling_events:
+            self.__ld_preload_actions.append(LdPreload(self.LIB_PROFILE_FAST))
+        if has_normal_profiling_events:
+            self.__ld_preload_actions.append(LdPreload(self.LIB_PROFILE_NORMAL))
+        if has_normal_profiling_events and has_fast_profiling_events:
+            self.__logger.warning('events match both normal and fast profiling shared libraries')
 
     def execute(self, context: LaunchContext) -> Optional[List[Action]]:
         self.__perform_substitutions(context)
@@ -379,6 +379,5 @@ class Trace(Action):
             f'events_ust={self.__events_ust}, '
             f'events_kernel={self.__events_kernel}, '
             f'context_fields={self.__context_fields}, '
-            f'profile_fast={self.__profile_fast}, '
             f'ld_preload_actions={self.__ld_preload_actions})'
         )
