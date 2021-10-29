@@ -235,6 +235,9 @@ class TestTraceAction(unittest.TestCase):
             events_ust=[
                 'lttng_ust_cyg_profile_fast:*',
                 'lttng_ust_libc:*',
+                'ros2:*',
+                'lttng_ust_pthread:*',
+                'lttng_ust_dl:*',
             ],
         )
         node_ping_action = Node(
@@ -249,15 +252,26 @@ class TestTraceAction(unittest.TestCase):
         )
         self._assert_launch_no_errors([action, node_ping_action, node_pong_action])
         self._check_trace_action(
-            action, tmpdir, events_ust=['lttng_ust_cyg_profile_fast:*', 'lttng_ust_libc:*'])
+            action,
+            tmpdir,
+            events_ust=[
+                'lttng_ust_cyg_profile_fast:*',
+                'lttng_ust_libc:*',
+                'ros2:*',
+                'lttng_ust_pthread:*',
+                'lttng_ust_dl:*',
+            ],
+        )
 
         # Check that LD_PRELOAD was set accordingly
         ld_preload = os.environ.get('LD_PRELOAD')
         assert ld_preload is not None
         paths = ld_preload.split(':')
-        self.assertEqual(2, len(paths))
+        self.assertEqual(4, len(paths))
         self.assertTrue(any(p.endswith('liblttng-ust-cyg-profile-fast.so') for p in paths))
         self.assertTrue(any(p.endswith('liblttng-ust-libc-wrapper.so') for p in paths))
+        self.assertTrue(any(p.endswith('liblttng-ust-pthread-wrapper.so') for p in paths))
+        self.assertTrue(any(p.endswith('liblttng-ust-dl.so') for p in paths))
 
         shutil.rmtree(tmpdir)
         del os.environ['LD_PRELOAD']

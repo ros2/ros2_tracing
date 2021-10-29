@@ -110,6 +110,72 @@ class TestTraceAction(unittest.TestCase):
         for events in events_lists_no_match:
             self.assertFalse(Trace.has_libc_wrapper_events(events), events)
 
+    def test_has_pthread_wrapper_events(self) -> None:
+        events_lists_match: List[List[str]] = [
+            [
+                '*',
+                'ros2:*',
+            ],
+            [
+                'lttng_ust_pthread:*',
+            ],
+            [
+                'hashtag:yopo',
+                'lttng_ust_pthread:pthread_mutex_trylock',
+                'lttng_ust_pthread:pthread_mutex_unlock',
+            ],
+        ]
+        events_lists_no_match: List[List[str]] = [
+            [
+                'ros2:*',
+            ],
+            [
+                'my_random:event',
+                'lttng_ust_whatever'
+            ],
+            [
+                'lttng_ust_pthread:not_a_match',
+            ],
+            [],
+        ]
+        for events in events_lists_match:
+            self.assertTrue(Trace.has_pthread_wrapper_events(events), events)
+        for events in events_lists_no_match:
+            self.assertFalse(Trace.has_pthread_wrapper_events(events), events)
+
+    def test_has_dl_events(self) -> None:
+        events_lists_match: List[List[str]] = [
+            [
+                '*',
+                'ros2:*',
+            ],
+            [
+                'lttng_ust_dl:*',
+            ],
+            [
+                'hashtag:yopo',
+                'lttng_ust_dl:dlopen',
+                'lttng_ust_dl:dlmopen',
+            ],
+        ]
+        events_lists_no_match: List[List[str]] = [
+            [
+                'ros2:*',
+            ],
+            [
+                'my_random:event',
+                'lttng_ust_whatever'
+            ],
+            [
+                'lttng_ust_dl:not_a_match',
+            ],
+            [],
+        ]
+        for events in events_lists_match:
+            self.assertTrue(Trace.has_dl_events(events), events)
+        for events in events_lists_no_match:
+            self.assertFalse(Trace.has_dl_events(events), events)
+
 
 if __name__ == '__main__':
     unittest.main()
