@@ -110,7 +110,7 @@ class Trace(Action):
         append_timestamp: bool = False,
         base_path: Optional[SomeSubstitutionsType] = None,
         events_ust: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_ROS,
-        events_kernel: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_KERNEL,
+        events_kernel: Iterable[SomeSubstitutionsType] = [],
         context_fields:
             Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
             = names.DEFAULT_CONTEXT,

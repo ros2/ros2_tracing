@@ -124,8 +124,8 @@ By default, it will enable all ROS tracepoints and a few kernel tracepoints.
 The trace will be written to `~/.ros/tracing/session-YYYYMMDDHHMMSS`.
 Run the command with `-h` for more information.
 
-If you have not installed the kernel tracer, you must disable kernel tracing by providing the `-k` option.
-If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
+You must [install the kernel tracer](#building) if you want to enable kernel events (using the `-k`/`--kernel-events` option).
+If have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ### Launch file trace action
 
@@ -139,8 +139,8 @@ $ ros2 launch tracetools_launch example.launch.py
 The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
 For more information, see [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py).
 
-If you have not installed the kernel tracer, you must disable kernel tracing: `events_kernel=[]` in Python, `events-kernel=""` in XML, or `events-kernel:` in YAML.
-If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
+You must [install the kernel tracer](#building) if you want to enable kernel events (`events_kernel` in Python, `events-kernel` in XML or YAML).
+If have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ## Design
 

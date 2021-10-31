@@ -20,15 +20,21 @@ from . import names
 from . import path
 
 
-class DefaultArgValueCompleter:
+class ArgCompleter:
+    """Callable return given value."""
+
+    def __init__(self, value):
+        self.value = value
+
+    def __call__(self, **kwargs):
+        return self.value
+
+
+class DefaultArgValueCompleter(ArgCompleter):
     """Callable returning an arg's default value."""
 
     def __init__(self, arg):
-        default = arg.default
-        self.list = default if isinstance(default, list) else [default]
-
-    def __call__(self, **kwargs):
-        return self.list
+        super().__init__(arg.default if isinstance(arg.default, list) else [arg.default])
 
 
 def parse_args() -> argparse.Namespace:
@@ -57,11 +63,9 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     events_ust_arg.completer = DefaultArgValueCompleter(events_ust_arg)  # type: ignore
     events_kernel_arg = parser.add_argument(  # type: ignore
         '-k', '--kernel', nargs='*', dest='events_kernel', metavar='EVENT',
-        default=names.DEFAULT_EVENTS_KERNEL,
-        help='the kernel events to enable (default: see tracetools_trace.tools.names) '
-             '[to disable all kernel events, '
-             'provide this flag without any event name]')
-    events_kernel_arg.completer = DefaultArgValueCompleter(events_kernel_arg)  # type: ignore
+        default=[],
+        help='the kernel events to enable (default: no kernel events)')
+    events_kernel_arg.completer = ArgCompleter(names.EVENTS_KERNEL)  # type: ignore
     context_arg = parser.add_argument(  # type: ignore
         '-c', '--context', nargs='*', dest='context_fields', metavar='CONTEXT',
         default=names.DEFAULT_CONTEXT,

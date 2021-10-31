@@ -31,7 +31,6 @@ import lttng
 
 from .names import CONTEXT_TYPE_CONSTANTS_MAP
 from .names import DEFAULT_CONTEXT
-from .names import DEFAULT_EVENTS_KERNEL
 from .names import DEFAULT_EVENTS_ROS
 
 
@@ -71,7 +70,7 @@ def setup(
     session_name: str,
     base_path: str,
     ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
-    kernel_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_KERNEL,
+    kernel_events: Union[List[str], Set[str]] = [],
     context_fields: Union[List[str], Set[str], Dict[str, List[str]]] = DEFAULT_CONTEXT,
     context_names: Optional[Union[List[str], Set[str], Dict[str, List[str]]]] = None,
     channel_name_ust: str = 'ros2',
@@ -120,10 +119,11 @@ def setup(
         if not kernel_tracer_available:
             print(
                 f'error: kernel tracer is not available: {message}\n'
-                "  either disable all kernel events:\n"
-                "    'ros2 trace' command: use '-k' with nothing afterwards\n"
-                "    'Trace' action: use empty 'events_kernel' list\n"
-                '  or install the kernel tracer, e.g., on Ubuntu, install lttng-modules-dkms'
+                '  cannot use kernel events:\n'
+                "    'ros2 trace' command: cannot use '-k' option\n"
+                "    'Trace' action: cannot set 'events_kernel'/'events-kernel' list\n"
+                '  install the kernel tracer, e.g., on Ubuntu, install lttng-modules-dkms\n'
+                '  see: https://gitlab.com/ros-tracing/ros2_tracing#building'
             )
             return None
 
