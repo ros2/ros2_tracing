@@ -20,7 +20,6 @@ import os
 import sys
 from typing import List
 from typing import Optional
-import warnings
 
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
@@ -30,12 +29,12 @@ from tracetools_trace.tools import signals
 
 
 def init(
+    *,
     session_name: str,
     base_path: Optional[str],
     ros_events: List[str],
     kernel_events: List[str],
     context_fields: List[str],
-    context_names: Optional[List[str]] = None,
     display_list: bool = False,
 ) -> bool:
     """
@@ -47,16 +46,9 @@ def init(
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_fields: list of context fields to enable
-    :param context_names: DEPRECATED, use context_fields instead
     :param display_list: whether to display list(s) of enabled events and context names
     :return: True if successful, False otherwise
     """
-    # Use value from deprecated param if it is provided
-    # TODO(christophebedard) remove context_names param in Rolling after Humble release
-    if context_names is not None:
-        context_fields = context_names
-        warnings.warn('context_names parameter is deprecated, use context_fields', stacklevel=4)
-
     # Check if LTTng is installed right away before printing anything
     if not lttng.is_lttng_installed():
         sys.exit(2)
@@ -101,6 +93,7 @@ def init(
 
 
 def fini(
+    *,
     session_name: str,
 ) -> None:
     """
@@ -118,19 +111,19 @@ def fini(
     signals.execute_and_handle_sigint(_run, _fini)
 
 
-def main():
+def main() -> int:
     params = args.parse_args()
 
     if not init(
-        params.session_name,
-        params.path,
-        params.events_ust,
-        params.events_kernel,
-        params.context_fields,
-        params.list,
+        session_name=params.session_name,
+        base_path=params.path,
+        ros_events=params.events_ust,
+        kernel_events=params.events_kernel,
+        context_fields=params.context_fields,
+        display_list=params.list,
     ):
         return 1
     fini(
-        params.session_name,
+        session_name=params.session_name,
     )
     return 0
