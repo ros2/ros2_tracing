@@ -37,7 +37,7 @@ def init(
     context_fields: List[str],
     context_names: Optional[List[str]] = None,
     display_list: bool = False,
-) -> None:
+) -> bool:
     """
     Init and start tracing.
 
@@ -49,6 +49,7 @@ def init(
     :param context_fields: list of context fields to enable
     :param context_names: DEPRECATED, use context_fields instead
     :param display_list: whether to display list(s) of enabled events and context names
+    :return: True if successful, False otherwise
     """
     # Use value from deprecated param if it is provided
     # TODO(christophebedard) remove context_names param in Rolling after Humble release
@@ -56,6 +57,7 @@ def init(
         context_fields = context_names
         warnings.warn('context_names parameter is deprecated, use context_fields', stacklevel=4)
 
+    # Check if LTTng is installed right away before printing anything
     if not lttng.is_lttng_installed():
         sys.exit(2)
 
@@ -91,8 +93,11 @@ def init(
         kernel_events=kernel_events,
         context_fields=context_fields,
     )
+    if trace_directory is None:
+        return False
     # Simple sanity check
     assert trace_directory == full_session_path
+    return True
 
 
 def fini(
@@ -116,14 +121,16 @@ def fini(
 def main():
     params = args.parse_args()
 
-    init(
+    if not init(
         params.session_name,
         params.path,
         params.events_ust,
         params.events_kernel,
         params.context_fields,
         params.list,
-    )
+    ):
+        return 1
     fini(
         params.session_name,
     )
+    return 0

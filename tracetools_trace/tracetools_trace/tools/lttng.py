@@ -47,9 +47,14 @@ def lttng_init(**kwargs) -> Optional[str]:
 
     For the full list of kwargs, see `lttng_impl.setup()`.
 
-    :return: the full path to the trace directory
+    :return: the full path to the trace directory, or `None` if initialization failed
     """
+    if not is_lttng_installed():
+        return None
+
     trace_directory = _lttng.setup(**kwargs)
+    if trace_directory is None:
+        return None
     _lttng.start(**kwargs)
     return trace_directory
 

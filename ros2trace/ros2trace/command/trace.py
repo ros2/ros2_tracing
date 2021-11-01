@@ -27,14 +27,15 @@ class TraceCommand(CommandExtension):
         args.add_arguments(parser)
 
     def main(self, *, parser, args):
-        init(
+        if not init(
             args.session_name,
             args.path,
             args.events_ust,
             args.events_kernel,
             args.context_fields,
             args.list,
-        )
+        ):
+            return 1
         fini(
             args.session_name,
         )

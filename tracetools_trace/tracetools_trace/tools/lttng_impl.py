@@ -23,6 +23,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Set
+from typing import Tuple
 from typing import Union
 import warnings
 
@@ -54,6 +55,17 @@ def get_version() -> Optional[StrictVersion]:
     return StrictVersion(version_string)
 
 
+def is_kernel_tracer_available() -> Tuple[bool, Optional[str]]:
+    process = subprocess.run(
+        ['lttng', 'list', '-k'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if 0 != process.returncode:
+        return False, process.stderr.decode().strip('\n')
+    return True, None
+
+
 def setup(
     *,
     session_name: str,
@@ -70,6 +82,9 @@ def setup(
 
     See: https://lttng.org/docs/#doc-core-concepts
 
+    Initialization will fail if the list of kernel events to be
+    enabled is not empty and if the kernel tracer is not installed.
+
     :param session_name: the name of the session
     :param base_path: the path to the directory in which to create the tracing session directory
     :param ros_events: list of ROS events to enable
@@ -80,7 +95,7 @@ def setup(
     :param context_names: DEPRECATED, use context_fields instead
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
-    :return: the full path to the trace directory
+    :return: the full path to the trace directory, or `None` if initialization failed
     """
     # Use value from deprecated param if it is provided
     # TODO(christophebedard) remove context_names param in Rolling after Humble release
@@ -90,10 +105,27 @@ def setup(
 
     # Check if there is a session daemon running
     if lttng.session_daemon_alive() == 0:
-        # Otherwise spawn one without doing any error checks
+        # Otherwise spawn one and check if it worked
         subprocess.run(
             ['lttng-sessiond', '--daemonize'],
         )
+        if lttng.session_daemon_alive() == 0:
+            print('error: failed to start lttng session daemon')
+            return None
+
+    # Make sure the kernel tracer is available if there are kernel events
+    # Do this after spawning a session daemon, otherwise we can't detect the kernel tracer
+    if 0 < len(kernel_events):
+        kernel_tracer_available, message = is_kernel_tracer_available()
+        if not kernel_tracer_available:
+            print(
+                f'error: kernel tracer is not available: {message}\n'
+                "  either disable all kernel events:\n"
+                "    'ros2 trace' command: use '-k' with nothing afterwards\n"
+                "    'Trace' action: use empty 'events_kernel' list\n"
+                '  or install the kernel tracer, e.g., on Ubuntu, install lttng-modules-dkms'
+            )
+            return None
 
     # Convert lists to sets
     if not isinstance(ros_events, set):

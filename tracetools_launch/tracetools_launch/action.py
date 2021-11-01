@@ -385,13 +385,15 @@ class Trace(Action):
 
     def execute(self, context: LaunchContext) -> Optional[List[Action]]:
         self.__perform_substitutions(context)
+        # TODO make sure this is done as early as possible
+        if not self._setup():
+            # Fail right away if tracing setup fails
+            raise RuntimeError('tracing setup failed, see errors above')
         # TODO make sure this is done as late as possible
         context.register_event_handler(OnShutdown(on_shutdown=self._destroy))
-        # TODO make sure this is done as early as possible
-        self._setup()
         return self.__ld_preload_actions
 
-    def _setup(self) -> None:
+    def _setup(self) -> bool:
         self.__trace_directory = lttng.lttng_init(
             session_name=self.__session_name,
             base_path=self.__base_path,
@@ -399,11 +401,14 @@ class Trace(Action):
             kernel_events=self.__events_kernel,
             context_fields=self.__context_fields,
         )
+        if self.__trace_directory is None:
+            return False
         self.__logger.info(f'Writing tracing session to: {self.__trace_directory}')
         self.__logger.debug(f'UST events: {self.__events_ust}')
         self.__logger.debug(f'Kernel events: {self.__events_kernel}')
         self.__logger.debug(f'Context fields: {self.__context_fields}')
         self.__logger.debug(f'LD_PRELOAD: {self.__ld_preload_actions}')
+        return True
 
     def _destroy(self, event: Event, context: LaunchContext) -> None:
         self.__logger.debug(f'Finalizing tracing session: {self.__session_name}')
