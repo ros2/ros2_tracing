@@ -60,7 +60,7 @@ This will remove all instrumentation from the core ROS 2 packages, and thus they
 
 The steps above will not lead to trace data being generated, and thus they will have no impact on execution.
 LTTng has to be configured for tracing.
-The packages in this repo provide two options: a [command](#Trace-command) and a [launch file action](#Launch-file-trace-action).
+The packages in this repo provide two options: a [command](#trace-command) and a [launch file action](#launch-file-trace-action).
 
 The tracing directory can be configured using command/launch action parameters, or through environment variables with the following logic:
 
@@ -104,6 +104,36 @@ See [this example launch file](./tracetools_launch/launch/example.launch.py) and
 ## Design
 
 See the [design document](./doc/design_ros_2.md).
+
+## Real-time
+
+LTTng-UST, the current default userspace tracer used for [tracing ROS 2](#overview), was designed for real-time production applications.
+It is a low-overhead tracer with many important real-time compatible features:
+
+* userspace tracer completely implemented in userspace, independent from the kernel
+* reentrant, thread-safe, signal-safe, non-blocking
+* no system calls in the fast path
+* no copies of the trace data
+
+However, some settings need to be tuned for it to be fully real-time safe and for performance to be optimal for your use-case:
+
+* timers[^rt-1]: use [read timer](https://lttng.org/docs/v2.11/#doc-channel-read-timer) to avoid a write(2) call
+* sub-buffer[^rt-1] count and size:
+    * see [documentation](https://lttng.org/docs/v2.11/#doc-channel-subbuf-size-vs-subbuf-count) for sub-buffer count and size tuning tips based on your use-case
+    * minimize sub-buffer count to minimize sub-buffer switching overhead
+* one-time memory allocation/lock/syscall per thread:
+    * usually done the first time a tracepoint is executed within a thread for URCU thread registration, but registration can be manually performed to force it to be done during your application's initialization
+    * see [this LTTng mailing list message](https://lists.lttng.org/pipermail/lttng-dev/2019-November/029409.html)
+
+[^rt-1]: this setting cannot currently be set through the [`Trace` launch file action](#launch-file-trace-action) or the [`ros2 trace` command](#trace-command), see [!129](https://gitlab.com/ros-tracing/ros2_tracing/-/issues/129)
+
+For further reading:
+
+* [LTTng documentation](https://lttng.org/docs/v2.11/)
+* [Combined Tracing of the Kernel and Applications with LTTng](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.641.1965&rep=rep1&type=pdf#page=87): LTTng-UST architecture and design goals (section 3)
+* [Survey and Analysis of Kernel and Userspace Tracers on Linux: Design, Implementation, and Overhead](https://dl.acm.org/doi/abs/10.1145/3158644): LTTng-UST overhead and design compared to other kernel and userspace tracers (table 6: average latency overhead per tracepoint of 158 ns)
+
+The LTTng kernel tracer has a similar implementation, but is separate from the userspace tracer.
 
 ## Packages
 
