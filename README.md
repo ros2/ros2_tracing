@@ -19,6 +19,11 @@ Check out the ROS World 2021 presentation titled "Tracing ROS 2 with ros2_tracin
 Reference:
 * C. Bédard, "Tracing ROS 2 with ros2_tracing," in *ROS World 2021*. Open Robotics, October 2021. [Online]. Available: https://vimeo.com/652633418, [(pdf)](https://gitlab.com/ros-tracing/ros2_tracing/-/raw/master/doc/2021-10-20_ROS_World_2021_-_Tracing_ROS_2_with_ros2_tracing.pdf)
 
+## Tutorials & demos
+
+* Real-Time Working Group documentation tutorial: [How to use `ros2_tracing` to trace and analyze an application](https://real-time-working-group.readthedocs.io/en/latest/Guides/ros2_tracing_trace_and_analyze.html)
+* ROS World 2021 demo: [github.com/christophebedard/ros-world-2021-demo](https://github.com/christophebedard/ros-world-2021-demo)
+
 ## Building
 
 As of Foxy, these instructions also apply to an installation from the Debian packages; it will not work out-of-the-box.
