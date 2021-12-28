@@ -33,19 +33,26 @@ class TestTraceAction(unittest.TestCase):
                 'ros2:*',
             ],
             [
+                'lttng_ust_cyg_profile*:*',
+            ],
+        ]
+        events_lists_match_normal: List[List[str]] = [
+            [
                 'lttng_ust_cyg_profile:*',
             ],
+            [
+                'lttng_ust_cyg_profile:func_entry',
+                'some_other_event',
+                'lttng_ust_cyg_profile:func_exit',
+            ],
+        ]
+        events_lists_match_fast: List[List[str]] = [
             [
                 'lttng_ust_cyg_profile_fast:*',
             ],
             [
                 'lttng_ust_cyg_profile_fast:func_entry',
                 'hashtag:yopo',
-            ],
-            [
-                'lttng_ust_cyg_profile:func_entry',
-                'some_other_event',
-                'lttng_ust_cyg_profile:func_exit',
             ],
         ]
         events_lists_no_match: List[List[str]] = [
@@ -56,14 +63,21 @@ class TestTraceAction(unittest.TestCase):
                 'lttng_ust_statedump:bin_info',
                 'ros2:event',
             ],
+            [
+                'lttng_ust_cyg_profile:fake_event',
+                'lttng_ust_cyg_profile_fast:fake_event',
+            ],
             [],
         ]
-        for events in events_lists_match:
-            self.assertTrue(Trace.has_profiling_events(events))
+        for events in events_lists_match + events_lists_match_normal:
+            self.assertTrue(Trace.has_profiling_events(events, False), events)
+        for events in events_lists_match + events_lists_match_fast:
+            self.assertTrue(Trace.has_profiling_events(events, True), events)
         for events in events_lists_no_match:
-            self.assertFalse(Trace.has_profiling_events(events))
+            self.assertFalse(Trace.has_profiling_events(events, False), events)
+            self.assertFalse(Trace.has_profiling_events(events, True), events)
 
-    def test_has_ust_memory_events(self) -> None:
+    def test_has_libc_wrapper_events(self) -> None:
         events_lists_match: List[List[str]] = [
             [
                 '*',
@@ -77,9 +91,6 @@ class TestTraceAction(unittest.TestCase):
                 'lttng_ust_libc:malloc',
                 'lttng_ust_libc:realloc',
             ],
-            [
-                'lttng_ust_libc:still_a_match',
-            ],
         ]
         events_lists_no_match: List[List[str]] = [
             [
@@ -89,12 +100,15 @@ class TestTraceAction(unittest.TestCase):
                 'my_random:event',
                 'lttng_ust_whatever'
             ],
+            [
+                'lttng_ust_libc:not_a_match',
+            ],
             [],
         ]
         for events in events_lists_match:
-            self.assertTrue(Trace.has_ust_memory_events(events))
+            self.assertTrue(Trace.has_libc_wrapper_events(events), events)
         for events in events_lists_no_match:
-            self.assertFalse(Trace.has_ust_memory_events(events))
+            self.assertFalse(Trace.has_libc_wrapper_events(events), events)
 
 
 if __name__ == '__main__':

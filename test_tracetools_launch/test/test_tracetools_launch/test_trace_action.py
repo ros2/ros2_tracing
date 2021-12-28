@@ -250,7 +250,6 @@ class TestTraceAction(unittest.TestCase):
         self._assert_launch_no_errors([action, node_ping_action, node_pong_action])
         self._check_trace_action(
             action, tmpdir, events_ust=['lttng_ust_cyg_profile_fast:*', 'lttng_ust_libc:*'])
-        self.assertTrue(action.profile_fast)
 
         # Check that LD_PRELOAD was set accordingly
         ld_preload = os.environ.get('LD_PRELOAD')
