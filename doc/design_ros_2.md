@@ -1,4 +1,4 @@
-# ROS 2 tracing
+# `ros2_tracing`
 
 Design document for ROS 2 tracing, instrumentation, and analysis effort.
 
