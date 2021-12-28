@@ -40,7 +40,7 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
 ## Introduction
 
 Tracing allows to record run-time data from a system, both for system data (e.g., when a process is being scheduled, or when I/O occurs) and for user-defined data.
-This package helps with user-defined trace data within the ROS 2 framework, e.g. to trace when messages arrive, when timers fire, when callbacks are being run, etc.
+This package helps with user-defined trace data within the ROS 2 framework, e.g., to trace when messages arrive, when timers fire, when callbacks are being run, etc.
 
 ## Goals and requirements
 
@@ -57,18 +57,18 @@ Instrumentation should be built around the main uses of ROS 2, and should includ
     1. When creating a publisher/subscriber/service/client/etc., appropriate references should be kept in order to correlate with other tracepoints related to the same instance.
 1. Publishers & subscriptions
     1. When creating a publisher/subscription:
-        1. the effective topic name should be included (i.e. including namespace and after remapping).
+        1. the effective topic name should be included (i.e., including namespace and after remapping).
         1. information about the publisher/subscription instances should be included, to be correlated with other tracepoints later.
     1. When publishing a message:
         1. it should be linked to its publisher.
         1. some sort of message identifier(s) should be included in the tracepoint so it can be tracked through DDS up to the subscriber's side.
             * A pointer to the message can be used to track it through the ROS abstraction layers.
             * Same for DDS, making sure to track any copies being made, if any.
-            * Some logic, e.g. network packet matching or some sort of unique message identifier, can then be used to link a published message to a message received by a subscription.
+            * Some logic, e.g., network packet matching or some sort of unique message identifier, can then be used to link a published message to a message received by a subscription.
 1. Callbacks (subscription, service, client, timer)
     1. Callback function symbol should be included, whenever possible.
     1. Callback instances should be linked to a specific message or request, when applicable.
-    1. Information about callback execution (e.g. start & end) should be available.
+    1. Information about callback execution (e.g., start & end) should be available.
 1. Timers
     1. Information about the period should be available.
 1. Executors
@@ -267,8 +267,8 @@ Components are instanciated, usually as a `shared_ptr` through `std::make_shared
 
 After all the components have been added, `Executor::spin()` is called.
 `SingleThreadedExecutor::spin()` simply loops forever until the process' context isn't valid anymore.
-It fetches the next `rclcpp::AnyExecutable` (e.g. subscription, timer, service, client), and calls `Executor::execute_any_executable()` with it.
-This then calls the relevant `execute*()` method (e.g. `execute_timer()`, `execute_subscription()`, `execute_intra_process_subscription()`, `execute_service()`, `execute_client()`).
+It fetches the next `rclcpp::AnyExecutable` (e.g., subscription, timer, service, client), and calls `Executor::execute_any_executable()` with it.
+This then calls the relevant `execute*()` method (e.g., `execute_timer()`, `execute_subscription()`, `execute_intra_process_subscription()`, `execute_service()`, `execute_client()`).
 
 ```mermaid
 sequenceDiagram
@@ -297,7 +297,7 @@ Callbacks are wrapped by an `rclcpp::AnySubscriptionCallback` object, which is r
 In `execute_*subscription()`, the `Executor` asks the `Subscription` to allocate a message though `Subscription::create_message()`.
 It then calls `rcl_take*()`, which calls `rmw_take_with_info()`.
 If that is successful, the `Executor` then passes that on to the subscription through `rclcpp::SubscriptionBase::handle_message()`.
-This checks if it's the right type of subscription (i.e. inter vs. intra process), then it calls `dispatch()` on the `rclcpp::AnySubscriptionCallback` object with the message (cast to the actual type).
+This checks if it's the right type of subscription (i.e., inter vs. intra process), then it calls `dispatch()` on the `rclcpp::AnySubscriptionCallback` object with the message (cast to the actual type).
 This calls the actual `std::function` with the right signature.
 
 Finally, it returns the message object through `Subscription::return_message()`.
@@ -583,7 +583,7 @@ The targeted tools or dependencies are:
 The plan is to use LTTng with a ROS wrapper package like `tracetools` for ROS 1.
 The suggested setup is:
 
-* a tracing package (e.g. `tracetools`) wraps calls to LTTng
+* a tracing package (e.g., `tracetools`) wraps calls to LTTng
 * ROS 2 is instrumented with calls to the tracing package, therefore it becomes a dependency and ships with the core stack
 * by default, the tracing package's functions are empty -- they do not do anything
 * if users want to enable tracing, they need to
@@ -667,7 +667,7 @@ We could look into making analyses work on both ROS 1 and ROS 2, through a commo
 * `tracetools_test`
     * provides a `TraceTestCase` class extending `unittest.TestCase`
         * uses the `Trace` action with `launch` to trace the test nodes
-        * provides trace-specific utility functions (e.g. assert)
+        * provides trace-specific utility functions (e.g., assert)
 * `tracetools_analysis`
     * uses `tracetools_read` to read traces
     * provides utilities to:
@@ -757,7 +757,7 @@ Those callbacks get called by the `Processor`, and end up putting slightly-proce
 
 Meaningful data can be extracted from the `DataModel`.
 However, a `DataModelUtil` can provide common utility functions so that users don't have to re-write them.
-This meaningful output data can then be presented through a Jupyter notebook (e.g. plots) or a normal Python script (e.g. tables).
+This meaningful output data can then be presented through a Jupyter notebook (e.g., plots) or a normal Python script (e.g., tables).
 
 ### Analysis architecture
 
