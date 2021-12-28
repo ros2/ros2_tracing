@@ -53,20 +53,40 @@ class Trace(Action):
 
     It also automatically makes sure that instrumented shared libraries are LD_PRELOADed if the
     corresponding events are enabled:
+        * liblttng-ust-libc-wrapper.so: 'lttng_ust_libc:*' events
+            * see https://lttng.org/docs/#doc-liblttng-ust-libc-pthread-wrapper
+        * liblttng-ust-pthread-wrapper.so: 'lttng_ust_pthread:*' events
+            * see https://lttng.org/docs/#doc-liblttng-ust-libc-pthread-wrapper
         * liblttng-ust-cyg-profile-fast.so: lttng_ust_cyg_profile_fast:func_{entry,exit}' events
             * see https://lttng.org/docs/#doc-liblttng-ust-cyg-profile
         * liblttng-ust-cyg-profile.so: 'lttng_ust_cyg_profile:func_{entry,exit}' events
             * see https://lttng.org/docs/#doc-liblttng-ust-cyg-profile
-        * liblttng-ust-libc-wrapper.so: 'lttng_ust_libc:*' events
-            * see https://lttng.org/docs/#doc-liblttng-ust-libc-pthread-wrapper
+        * liblttng-ust-dl.so: 'lttng_ust_dl:*' events
+            * see https://lttng.org/docs/#doc-liblttng-ust-dl
     Note that, if the user provides events or patterns that match both the normal AND the fast
     profiling library, the fast profiling library will be used in practice.
     """
 
+    LIB_LIBC_WRAPPER = 'liblttng-ust-libc-wrapper.so'
+    LIB_PTHREAD_WRAPPER = 'liblttng-ust-pthread-wrapper.so'
     LIB_PROFILE_NORMAL = 'liblttng-ust-cyg-profile.so'
     LIB_PROFILE_FAST = 'liblttng-ust-cyg-profile-fast.so'
-    LIB_LIBC_WRAPPER = 'liblttng-ust-libc-wrapper.so'
+    LIB_DL = 'liblttng-ust-dl.so'
 
+    EVENTS_LIBC_WRAPPER = [
+        'lttng_ust_libc:malloc',
+        'lttng_ust_libc:calloc',
+        'lttng_ust_libc:realloc',
+        'lttng_ust_libc:free',
+        'lttng_ust_libc:memalign',
+        'lttng_ust_libc:posix_memalign',
+    ]
+    EVENTS_PTHREAD_WRAPPER = [
+        'lttng_ust_pthread:pthread_mutex_lock_req',
+        'lttng_ust_pthread:pthread_mutex_lock_acq',
+        'lttng_ust_pthread:pthread_mutex_trylock',
+        'lttng_ust_pthread:pthread_mutex_unlock',
+    ]
     EVENTS_PROFILE_NORMAL = [
         'lttng_ust_cyg_profile:func_entry',
         'lttng_ust_cyg_profile:func_exit',
@@ -75,13 +95,12 @@ class Trace(Action):
         'lttng_ust_cyg_profile_fast:func_entry',
         'lttng_ust_cyg_profile_fast:func_exit',
     ]
-    EVENTS_LIBC_WRAPPER = [
-        'lttng_ust_libc:malloc',
-        'lttng_ust_libc:calloc',
-        'lttng_ust_libc:realloc',
-        'lttng_ust_libc:free',
-        'lttng_ust_libc:memalign',
-        'lttng_ust_libc:posix_memalign',
+    EVENTS_DL = [
+        'lttng_ust_dl:dlopen',
+        'lttng_ust_dl:dlmopen',
+        'lttng_ust_dl:dlclose',
+        'lttng_ust_dl:debug_link',
+        'lttng_ust_dl:build_id',
     ]
 
     def __init__(
@@ -296,6 +315,22 @@ class Trace(Action):
         )
 
     @classmethod
+    def has_libc_wrapper_events(
+        cls,
+        events: List[str],
+    ) -> bool:
+        """Check if the events list contains at least one libc wrapper event."""
+        return cls.any_events_match(events, cls.EVENTS_LIBC_WRAPPER)
+
+    @classmethod
+    def has_pthread_wrapper_events(
+        cls,
+        events: List[str],
+    ) -> bool:
+        """Check if the events list contains at least one pthread event."""
+        return cls.any_events_match(events, cls.EVENTS_PTHREAD_WRAPPER)
+
+    @classmethod
     def has_profiling_events(
         cls,
         events: List[str],
@@ -307,12 +342,12 @@ class Trace(Action):
             cls.EVENTS_PROFILE_NORMAL if not fast else cls.EVENTS_PROFILE_FAST)
 
     @classmethod
-    def has_libc_wrapper_events(
+    def has_dl_events(
         cls,
         events: List[str],
     ) -> bool:
-        """Check if the events list contains at least one libc wrapper event."""
-        return cls.any_events_match(events, cls.EVENTS_LIBC_WRAPPER)
+        """Check if the events list contains at least one dl event."""
+        return cls.any_events_match(events, cls.EVENTS_DL)
 
     def __perform_substitutions(self, context: LaunchContext) -> None:
         self.__session_name = perform_substitutions(context, self.__session_name)
@@ -333,6 +368,10 @@ class Trace(Action):
         # Add LD_PRELOAD actions if corresponding events are enabled
         if self.has_libc_wrapper_events(self.__events_ust):
             self.__ld_preload_actions.append(LdPreload(self.LIB_LIBC_WRAPPER))
+        if self.has_pthread_wrapper_events(self.__events_ust):
+            self.__ld_preload_actions.append(LdPreload(self.LIB_PTHREAD_WRAPPER))
+        if self.has_dl_events(self.__events_ust):
+            self.__ld_preload_actions.append(LdPreload(self.LIB_DL))
         # Warn if events match both normal AND fast profiling libs
         has_fast_profiling_events = self.has_profiling_events(self.__events_ust, True)
         has_normal_profiling_events = self.has_profiling_events(self.__events_ust, False)

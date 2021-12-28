@@ -104,13 +104,14 @@ Run the command with `-h` for more information.
 ### Launch file trace action
 
 Another option is to use the `Trace` action in a launch file along with your `Node` action(s).
-This way, tracing happens when launching the launch file.
+This way, tracing automatically starts when launching the launch file and ends when it exits or when terminated.
 
 ```
 $ ros2 launch tracetools_launch example.launch.py
 ```
 
-See [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py) for more information.
+The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
+For more information, see [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py).
 
 ## Design
 
