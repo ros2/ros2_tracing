@@ -1,49 +1,48 @@
 # `ros2_tracing`
 
-Design document for ROS 2 tracing, instrumentation, and analysis effort.
+Design document for the general ROS 2 instrumentation, tracing, and analysis effort, which includes [`ros2_tracing`](https://gitlab.com/ros-tracing/ros2_tracing), a collection of flexible tracing tools and multipurpose instrumentation for ROS 2.
 
 **Table of contents**
 1. [Introduction](#introduction)
-2. [Goals and requirements](#goals-and-requirements)
+1. [Goals and requirements](#goals-and-requirements)
     1. [Goals](#goals)
-    2. [Requirements: instrumentation](#requirements-instrumentation)
-    3. [Requirements: analysis & visualization](#requirements-analysis-visualization)
-    4. [Tools/accessibility](#toolsaccessibility)
-3. [Instrumentation design](#instrumentation-design)
+    1. [Requirements: instrumentation](#requirements-instrumentation)
+    1. [Requirements: analysis & visualization](#requirements-analysis-visualization)
+    1. [Tools/accessibility](#toolsaccessibility)
+1. [Instrumentation design](#instrumentation-design)
     1. [General guidelines](#general-guidelines)
-    2. [Flow description](#flow-description)
+    1. [Flow description](#flow-description)
         1. [Process creation](#process-creation)
-        2. [Node/component creation](#nodecomponent-creation)
-        3. [Publisher creation](#publisher-creation)
-        4. [Subscription creation](#subscription-creation)
-        5. [Executors](#executors)
-        6. [Subscription callbacks](#subscription-callbacks)
-        7. [Message publishing](#message-publishing)
-        8. [Service creation](#service-creation)
-        9. [Service callbacks](#service-callbacks)
-        10. [Client creation](#client-creation)
-        11. [Client request/response](#client-requestresponse)
-        12. [Timer creation](#timer-creation)
-        13. [Timer callbacks](#timer-callbacks)
-        14. [State machine creation](#state-machine-creation)
-        15. [State machine transitions](#state-machine-transitions)
-4. [Design & implementation notes](#design-implementation-notes)
+        1. [Node/component creation](#nodecomponent-creation)
+        1. [Publisher creation](#publisher-creation)
+        1. [Subscription creation](#subscription-creation)
+        1. [Executors](#executors)
+        1. [Subscription callbacks](#subscription-callbacks)
+        1. [Message publishing](#message-publishing)
+        1. [Service creation](#service-creation)
+        1. [Service callbacks](#service-callbacks)
+        1. [Client creation](#client-creation)
+        1. [Client request/response](#client-requestresponse)
+        1. [Timer creation](#timer-creation)
+        1. [Timer callbacks](#timer-callbacks)
+        1. [State machine creation](#state-machine-creation)
+        1. [State machine transitions](#state-machine-transitions)
+1. [Design & implementation notes](#design-implementation-notes)
     1. [Targeted tools/dependencies](#targeted-toolsdependencies)
-    2. [Design](#design)
-    3. [Adding instrumentation](#adding-instrumentation)
-5. [Architecture](#architecture)
-    1. [Timeline](#timeline)
-    2. [Notes on client libraries](#notes-on-client-libraries)
-    3. [ROS 1/2 compatibility](#ros-12-compatibility)
-6. [Tools packages](#tools-packages)
-7. [Analysis](#analysis)
+    1. [Design](#design)
+    1. [Adding instrumentation](#adding-instrumentation)
+1. [Architecture](#architecture)
+    1. [Notes on client libraries](#notes-on-client-libraries)
+    1. [ROS 1/2 compatibility](#ros-12-compatibility)
+1. [Tools packages](#tools-packages)
+1. [Analysis](#analysis)
     1. [Analysis design](#analysis-design)
     1. [Analysis architecture](#analysis-architecture)
 
 ## Introduction
 
 Tracing allows to record run-time data from a system, both for system data (e.g., when a process is being scheduled, or when I/O occurs) and for user-defined data.
-This package helps with user-defined trace data within the ROS 2 framework, e.g., to trace when messages arrive, when timers fire, when callbacks are being run, etc.
+This tool helps with user-defined trace data within the ROS 2 framework, e.g., to trace when messages arrive, when timers fire, when callbacks are being run, etc.
 
 ## Goals and requirements
 
@@ -827,24 +826,17 @@ Additional considerations:
 
 ![](img/tracing_architecture.png)
 
-### Timeline
-
-The first goal is to statically instrument ROS 2, aiming for it to be in the ROS 2 E-turtle release (Nov 2019).
-
-This includes transposing the existing ROS 1 instrumentation to ROS 2, wherever applicable.
-This step may not include instrumenting DDS implementations, and thus may be limited to the layer(s) right before `rmw`.
-
 ### Notes on client libraries
 
-ROS offers a client library (`rcl`) written in C as the base for any language-specific implementation, such as `rclcpp` and `rclpy`.
-
+ROS 2 offers a client library written in C (`rcl`) as the base for any language-specific implementation, such as `rclcpp` and `rclpy`.
 However, `rcl` is obviously fairly basic, and still does leave a fair amount of implementation work up to the client libraries.
 For example, callbacks are not handled in `rcl`, and are left to the client library implementations.
 
 This means that some instrumentation work will have to be re-done for every client library that we want to trace.
 We cannot simply instrument `rcl`, nor can we only instrument the base `rmw` interface if we want to dig into that.
 
-This effort should first focus on `rcl` and `rclcpp` , but `rclpy` should eventually be added and supported.
+This effort should first focus on `rcl` and `rclcpp`.
+`rclpy` could eventually be added and supported, although it is not used for the kind of applications that `ros2_tracing` targets.
 
 ### ROS 1/2 compatibility
 
@@ -876,6 +868,7 @@ We could look into making analyses work on both ROS 1 and ROS 2, through a commo
         * convert CTF traces to pickle files
         * wrap trace events in Python `dict`
         * handle and process trace events to gather data
+    * see [*Analysis*](#analysis)
 * `ros2trace_analysis`
     * provides a `ros2cli` extension with verbs
         * `$ ros2 trace-analysis`
@@ -949,6 +942,9 @@ tracetools_analysis <-- ros2trace_analysis
 ```
 
 ## Analysis
+
+A number of existing tools or libraries could be leveraged to perform analysis on the trace data collected using `ros2_tracing` and LTTng.
+This section presents a minimal analysis library architecture as a working proof-of-concept: [`tracetools_analysis`](https://gitlab.com/ros-tracing/tracetools_analysis).
 
 ### Analysis design
 
