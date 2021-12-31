@@ -15,6 +15,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 class TestExecutor(TraceTestCase):
@@ -24,9 +25,9 @@ class TestExecutor(TraceTestCase):
             *args,
             session_name_prefix='session-test-executor',
             events_ros=[
-                'ros2:rclcpp_executor_get_next_ready',
-                'ros2:rclcpp_executor_wait_for_work',
-                'ros2:rclcpp_executor_execute',
+                tp.rclcpp_executor_get_next_ready,
+                tp.rclcpp_executor_wait_for_work,
+                tp.rclcpp_executor_execute,
             ],
             package='test_tracetools',
             nodes=['test_ping', 'test_pong'],
@@ -37,9 +38,9 @@ class TestExecutor(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check fields
-        get_next_ready_events = self.get_events_with_name('ros2:rclcpp_executor_get_next_ready')
-        wait_for_work_events = self.get_events_with_name('ros2:rclcpp_executor_wait_for_work')
-        execute_events = self.get_events_with_name('ros2:rclcpp_executor_execute')
+        get_next_ready_events = self.get_events_with_name(tp.rclcpp_executor_get_next_ready)
+        wait_for_work_events = self.get_events_with_name(tp.rclcpp_executor_wait_for_work)
+        execute_events = self.get_events_with_name(tp.rclcpp_executor_execute)
         for event in wait_for_work_events:
             self.assertFieldType(event, 'timeout', int)
         for event in execute_events:

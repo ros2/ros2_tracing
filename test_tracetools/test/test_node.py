@@ -15,6 +15,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 VERSION_REGEX = r'^[0-9]+\.[0-9]+\.[0-9]+$'
@@ -27,8 +28,8 @@ class TestNode(TraceTestCase):
             *args,
             session_name_prefix='session-test-node-creation',
             events_ros=[
-                'ros2:rcl_init',
-                'ros2:rcl_node_init',
+                tp.rcl_init,
+                tp.rcl_node_init,
             ],
             package='test_tracetools',
             nodes=['test_publisher'],
@@ -39,14 +40,14 @@ class TestNode(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check fields
-        rcl_init_events = self.get_events_with_name('ros2:rcl_init')
+        rcl_init_events = self.get_events_with_name(tp.rcl_init)
         for event in rcl_init_events:
             self.assertValidHandle(event, 'context_handle')
             # TODO actually compare to version fetched from the tracetools package?
             version_field = self.get_field(event, 'version')
             self.assertRegex(version_field, VERSION_REGEX, 'invalid version number')
 
-        rcl_node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        rcl_node_init_events = self.get_events_with_name(tp.rcl_node_init)
         for event in rcl_node_init_events:
             self.assertValidHandle(event, ['node_handle', 'rmw_handle'])
             self.assertStringFieldNotEmpty(event, 'node_name')

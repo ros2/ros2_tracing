@@ -15,6 +15,8 @@
 
 """Lists of names (events, context) for tracing."""
 
+from . import tracepoints
+
 EVENTS_KERNEL = [
     'block_rq_complete',
     'block_rq_insert',
@@ -60,34 +62,34 @@ DEFAULT_EVENTS_KERNEL = [
 ]
 
 DEFAULT_EVENTS_ROS = [
-    'ros2:rcl_init',
-    'ros2:rcl_node_init',
-    'ros2:rmw_publisher_init',
-    'ros2:rcl_publisher_init',
-    'ros2:rclcpp_publish',
-    'ros2:rcl_publish',
-    'ros2:rmw_publish',
-    'ros2:rmw_subscription_init',
-    'ros2:rcl_subscription_init',
-    'ros2:rclcpp_subscription_init',
-    'ros2:rclcpp_subscription_callback_added',
-    'ros2:rmw_take',
-    'ros2:rcl_take',
-    'ros2:rclcpp_take',
-    'ros2:rcl_service_init',
-    'ros2:rclcpp_service_callback_added',
-    'ros2:rcl_client_init',
-    'ros2:rcl_timer_init',
-    'ros2:rclcpp_timer_callback_added',
-    'ros2:rclcpp_timer_link_node',
-    'ros2:rclcpp_callback_register',
-    'ros2:callback_start',
-    'ros2:callback_end',
-    'ros2:rcl_lifecycle_state_machine_init',
-    'ros2:rcl_lifecycle_transition',
-    'ros2:rclcpp_executor_get_next_ready',
-    'ros2:rclcpp_executor_wait_for_work',
-    'ros2:rclcpp_executor_execute',
+    tracepoints.rcl_init,
+    tracepoints.rcl_node_init,
+    tracepoints.rmw_publisher_init,
+    tracepoints.rcl_publisher_init,
+    tracepoints.rclcpp_publish,
+    tracepoints.rcl_publish,
+    tracepoints.rmw_publish,
+    tracepoints.rmw_subscription_init,
+    tracepoints.rcl_subscription_init,
+    tracepoints.rclcpp_subscription_init,
+    tracepoints.rclcpp_subscription_callback_added,
+    tracepoints.rmw_take,
+    tracepoints.rcl_take,
+    tracepoints.rclcpp_take,
+    tracepoints.rcl_service_init,
+    tracepoints.rclcpp_service_callback_added,
+    tracepoints.rcl_client_init,
+    tracepoints.rcl_timer_init,
+    tracepoints.rclcpp_timer_callback_added,
+    tracepoints.rclcpp_timer_link_node,
+    tracepoints.rclcpp_callback_register,
+    tracepoints.callback_start,
+    tracepoints.callback_end,
+    tracepoints.rcl_lifecycle_state_machine_init,
+    tracepoints.rcl_lifecycle_transition,
+    tracepoints.rclcpp_executor_get_next_ready,
+    tracepoints.rclcpp_executor_wait_for_work,
+    tracepoints.rclcpp_executor_execute,
 ]
 
 DEFAULT_EVENTS_UST = DEFAULT_EVENTS_ROS

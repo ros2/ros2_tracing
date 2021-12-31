@@ -17,6 +17,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 class TestSubscription(TraceTestCase):
@@ -26,17 +27,17 @@ class TestSubscription(TraceTestCase):
             *args,
             session_name_prefix='session-test-subscription',
             events_ros=[
-                'ros2:rcl_node_init',
-                'ros2:rmw_subscription_init',
-                'ros2:rcl_subscription_init',
-                'ros2:rclcpp_subscription_init',
-                'ros2:rclcpp_subscription_callback_added',
-                'ros2:rclcpp_executor_execute',
-                'ros2:rmw_take',
-                'ros2:rcl_take',
-                'ros2:rclcpp_take',
-                'ros2:callback_start',
-                'ros2:callback_end',
+                tp.rcl_node_init,
+                tp.rmw_subscription_init,
+                tp.rcl_subscription_init,
+                tp.rclcpp_subscription_init,
+                tp.rclcpp_subscription_callback_added,
+                tp.rclcpp_executor_execute,
+                tp.rmw_take,
+                tp.rcl_take,
+                tp.rclcpp_take,
+                tp.callback_start,
+                tp.callback_end,
             ],
             package='test_tracetools',
             nodes=['test_ping', 'test_pong'],
@@ -47,18 +48,18 @@ class TestSubscription(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check fields
-        rmw_sub_init_events = self.get_events_with_name('ros2:rmw_subscription_init')
-        rcl_sub_init_events = self.get_events_with_name('ros2:rcl_subscription_init')
-        rclcpp_sub_init_events = self.get_events_with_name('ros2:rclcpp_subscription_init')
+        rmw_sub_init_events = self.get_events_with_name(tp.rmw_subscription_init)
+        rcl_sub_init_events = self.get_events_with_name(tp.rcl_subscription_init)
+        rclcpp_sub_init_events = self.get_events_with_name(tp.rclcpp_subscription_init)
         callback_added_events = self.get_events_with_name(
-            'ros2:rclcpp_subscription_callback_added',
+            tp.rclcpp_subscription_callback_added,
         )
-        execute_events = self.get_events_with_name('ros2:rclcpp_executor_execute')
-        rmw_take_events = self.get_events_with_name('ros2:rmw_take')
-        rcl_take_events = self.get_events_with_name('ros2:rcl_take')
-        rclcpp_take_events = self.get_events_with_name('ros2:rclcpp_take')
-        start_events = self.get_events_with_name('ros2:callback_start')
-        end_events = self.get_events_with_name('ros2:callback_end')
+        execute_events = self.get_events_with_name(tp.rclcpp_executor_execute)
+        rmw_take_events = self.get_events_with_name(tp.rmw_take)
+        rcl_take_events = self.get_events_with_name(tp.rcl_take)
+        rclcpp_take_events = self.get_events_with_name(tp.rclcpp_take)
+        start_events = self.get_events_with_name(tp.callback_start)
+        end_events = self.get_events_with_name(tp.callback_end)
 
         for event in rmw_sub_init_events:
             self.assertValidHandle(event, ['rmw_subscription_handle'])
@@ -115,7 +116,7 @@ class TestSubscription(TraceTestCase):
         )
 
         # Check that the node handle matches the node_init event
-        node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        node_init_events = self.get_events_with_name(tp.rcl_node_init)
         test_sub_node_init_events = self.get_events_with_procname(
             'test_ping',
             node_init_events,
@@ -129,7 +130,7 @@ class TestSubscription(TraceTestCase):
         self.assertMatchingField(
             test_sub_node_init_event,
             'node_handle',
-            'ros2:rcl_subscription_init',
+            tp.rcl_subscription_init,
             rcl_sub_init_events,
         )
 
@@ -235,20 +236,20 @@ class TestSubscription(TraceTestCase):
         # Check that each start:end pair has a common callback handle
         ping_events = self.get_events_with_procname('test_ping')
         pong_events = self.get_events_with_procname('test_pong')
-        ping_events_start = self.get_events_with_name('ros2:callback_start', ping_events)
-        pong_events_start = self.get_events_with_name('ros2:callback_start', pong_events)
+        ping_events_start = self.get_events_with_name(tp.callback_start, ping_events)
+        pong_events_start = self.get_events_with_name(tp.callback_start, pong_events)
         for ping_start in ping_events_start:
             self.assertMatchingField(
                 ping_start,
                 'callback',
-                'ros2:callback_end',
+                tp.callback_end,
                 ping_events,
             )
         for pong_start in pong_events_start:
             self.assertMatchingField(
                 pong_start,
                 'callback',
-                'ros2:callback_end',
+                tp.callback_end,
                 pong_events,
             )
 
@@ -267,7 +268,7 @@ class TestSubscription(TraceTestCase):
             'none or more than 1 callback_start event for topic callback',
         )
         callback_start_matching_event = callback_start_matching_events[0]
-        ping_events_end = self.get_events_with_name('ros2:callback_end', ping_events)
+        ping_events_end = self.get_events_with_name(tp.callback_end, ping_events)
         callback_end_matching_events = self.get_events_with_field_value(
             'callback',
             callback_pointer,

@@ -15,6 +15,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 class TestService(TraceTestCase):
@@ -24,12 +25,12 @@ class TestService(TraceTestCase):
             *args,
             session_name_prefix='session-test-service',
             events_ros=[
-                'ros2:rcl_node_init',
-                'ros2:rcl_service_init',
-                'ros2:rclcpp_service_callback_added',
-                'ros2:rclcpp_callback_register',
-                'ros2:callback_start',
-                'ros2:callback_end',
+                tp.rcl_node_init,
+                tp.rcl_service_init,
+                tp.rclcpp_service_callback_added,
+                tp.rclcpp_callback_register,
+                tp.callback_start,
+                tp.callback_end,
             ],
             package='test_tracetools',
             nodes=['test_service_ping', 'test_service_pong'],
@@ -40,11 +41,11 @@ class TestService(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check fields
-        srv_init_events = self.get_events_with_name('ros2:rcl_service_init')
-        callback_added_events = self.get_events_with_name('ros2:rclcpp_service_callback_added')
-        callback_register_events = self.get_events_with_name('ros2:rclcpp_callback_register')
-        start_events = self.get_events_with_name('ros2:callback_start')
-        end_events = self.get_events_with_name('ros2:callback_end')
+        srv_init_events = self.get_events_with_name(tp.rcl_service_init)
+        callback_added_events = self.get_events_with_name(tp.rclcpp_service_callback_added)
+        callback_register_events = self.get_events_with_name(tp.rclcpp_callback_register)
+        start_events = self.get_events_with_name(tp.callback_start)
+        end_events = self.get_events_with_name(tp.callback_end)
 
         for event in srv_init_events:
             self.assertValidHandle(event, ['service_handle', 'node_handle', 'rmw_service_handle'])
@@ -98,7 +99,7 @@ class TestService(TraceTestCase):
         )
 
         # Check that the service init events have a matching node handle (with node_init events)
-        node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        node_init_events = self.get_events_with_name(tp.rcl_node_init)
 
         ping_node_test_srv_init_event = ping_node_test_srv_init_events[0]
         self.assertMatchingField(
