@@ -10,7 +10,8 @@ Design document for ROS 2 tracing, instrumentation, and analysis effort.
     3. [Requirements: analysis & visualization](#requirements-analysis-visualization)
     4. [Tools/accessibility](#toolsaccessibility)
 3. [Instrumentation design](#instrumentation-design)
-    1. [Flow description](#flow-description)
+    1. [General guidelines](#general-guidelines)
+    2. [Flow description](#flow-description)
         1. [Process creation](#process-creation)
         2. [Node/component creation](#nodecomponent-creation)
         3. [Publisher creation](#publisher-creation)
@@ -142,7 +143,25 @@ The following table summarizes the instrumentation and links to the correspondin
 |          | `rmw_publish`                        | [*Message publishing*](#message-publishing) |
 |          | `rmw_take`                           | [*Subscription callbacks*](#subscription-callbacks) |
 
+### General guidelines
+
+Instrumentation points can be split into two types: initialization events and runtime events.
+The former collect one-time information about the state of objects, e.g., creation of publishers, subscriptions, and services.
+The latter collect information about events throughout the runtime, e.g., message publication and callback execution.
+The former are therefore predominantly triggered on system initialization and are used to minimize the payload size of the latter to minimize overhead in the runtime phase.
+The information that is collected to form the trace data can then be used to build a model of the execution.
+Due to the very abstractional nature of the ROS 2 architecture, multiple instrumentation points are sometimes needed to gather the necessary information.
+Both the instrumentation point name and the payload can be meaningful: some instrumentation points only differ by their names and are used to indicate the originating layer.
+
 ### Flow description
+
+This subsection contains descriptions of the main execution flows using text and sequence diagrams.
+These diagrams include the instrumentation points as calls to `tracetools`.
+Instrumentation point calls with a question mark (`TP?()`) are not currently implemented.
+
+Each execution flow also has a list of important information that should be collected.
+These lists roughly correspond to and fulfill the [instrumentation requirements](#requirements-instrumentation) and follows the [guidelines](#general-guidelines).
+All of this therefore serves as support for instrumentation design decisions.
 
 #### Process creation
 
