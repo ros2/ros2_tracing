@@ -16,6 +16,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 class TestPublisher(TraceTestCase):
@@ -25,12 +26,12 @@ class TestPublisher(TraceTestCase):
             *args,
             session_name_prefix='session-test-publisher',
             events_ros=[
-                'ros2:rcl_node_init',
-                'ros2:rmw_publisher_init',
-                'ros2:rcl_publisher_init',
-                'ros2:rclcpp_publish',
-                'ros2:rcl_publish',
-                'ros2:rmw_publish',
+                tp.rcl_node_init,
+                tp.rmw_publisher_init,
+                tp.rcl_publisher_init,
+                tp.rclcpp_publish,
+                tp.rcl_publish,
+                tp.rmw_publish,
             ],
             package='test_tracetools',
             nodes=['test_publisher'],
@@ -41,11 +42,11 @@ class TestPublisher(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check fields
-        rmw_pub_init_events = self.get_events_with_name('ros2:rmw_publisher_init')
+        rmw_pub_init_events = self.get_events_with_name(tp.rmw_publisher_init)
         for event in rmw_pub_init_events:
             self.assertValidHandle(event, ['rmw_publisher_handle'])
             self.assertValidArray(event, 'gid', int)
-        pub_init_events = self.get_events_with_name('ros2:rcl_publisher_init')
+        pub_init_events = self.get_events_with_name(tp.rcl_publisher_init)
         for event in pub_init_events:
             self.assertValidHandle(
                 event,
@@ -53,21 +54,21 @@ class TestPublisher(TraceTestCase):
             )
             self.assertValidQueueDepth(event, 'queue_depth')
             self.assertStringFieldNotEmpty(event, 'topic_name')
-        rmw_publish_events = self.get_events_with_name('ros2:rmw_publish')
+        rmw_publish_events = self.get_events_with_name(tp.rmw_publish)
         for event in rmw_publish_events:
             # Message is a pointer (aka a handle)
             self.assertValidHandle(
                 event,
                 'message',
             )
-        rcl_publish_events = self.get_events_with_name('ros2:rcl_publish')
+        rcl_publish_events = self.get_events_with_name(tp.rcl_publish)
         for event in rcl_publish_events:
             # Message is a pointer (aka a handle)
             self.assertValidHandle(
                 event,
                 ['publisher_handle', 'message'],
             )
-        rclcpp_publish_events = self.get_events_with_name('ros2:rclcpp_publish')
+        rclcpp_publish_events = self.get_events_with_name(tp.rclcpp_publish)
         for event in rclcpp_publish_events:
             # Message is a pointer (aka a handle)
             self.assertValidHandle(
@@ -98,7 +99,7 @@ class TestPublisher(TraceTestCase):
         )
 
         # Check that the node handle matches with the node_init event
-        node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        node_init_events = self.get_events_with_name(tp.rcl_node_init)
         test_pub_node_init_events = self.get_events_with_procname(
             'test_publisher',
             node_init_events,

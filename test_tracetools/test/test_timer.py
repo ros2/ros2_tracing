@@ -16,6 +16,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 class TestTimer(TraceTestCase):
@@ -25,13 +26,13 @@ class TestTimer(TraceTestCase):
             *args,
             session_name_prefix='session-test-timer-all',
             events_ros=[
-                'ros2:rcl_node_init',
-                'ros2:rcl_timer_init',
-                'ros2:rclcpp_timer_callback_added',
-                'ros2:rclcpp_timer_link_node',
-                'ros2:rclcpp_executor_execute',
-                'ros2:callback_start',
-                'ros2:callback_end',
+                tp.rcl_node_init,
+                tp.rcl_timer_init,
+                tp.rclcpp_timer_callback_added,
+                tp.rclcpp_timer_link_node,
+                tp.rclcpp_executor_execute,
+                tp.callback_start,
+                tp.callback_end,
             ],
             package='test_tracetools',
             nodes=['test_timer'],
@@ -42,26 +43,26 @@ class TestTimer(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check fields
-        init_events = self.get_events_with_name('ros2:rcl_timer_init')
+        init_events = self.get_events_with_name(tp.rcl_timer_init)
         for event in init_events:
             self.assertValidHandle(event, 'timer_handle')
             period_value = self.get_field(event, 'period')
             self.assertIsInstance(period_value, int)
             self.assertGreaterEqual(period_value, 0, f'invalid period value: {period_value}')
 
-        callback_added_events = self.get_events_with_name('ros2:rclcpp_timer_callback_added')
+        callback_added_events = self.get_events_with_name(tp.rclcpp_timer_callback_added)
         for event in callback_added_events:
             self.assertValidHandle(event, ['timer_handle', 'callback'])
 
-        link_node_events = self.get_events_with_name('ros2:rclcpp_timer_link_node')
+        link_node_events = self.get_events_with_name(tp.rclcpp_timer_link_node)
         for event in link_node_events:
             self.assertValidHandle(event, ['timer_handle', 'node_handle'])
 
-        executor_execute_events = self.get_events_with_name('ros2:rclcpp_executor_execute')
+        executor_execute_events = self.get_events_with_name(tp.rclcpp_executor_execute)
         for event in executor_execute_events:
             self.assertValidHandle(event, ['handle'])
 
-        start_events = self.get_events_with_name('ros2:callback_start')
+        start_events = self.get_events_with_name(tp.callback_start)
         for event in start_events:
             self.assertValidHandle(event, 'callback')
             # Should not be 1 for timer
@@ -72,7 +73,7 @@ class TestTimer(TraceTestCase):
                 'invalid value for is_intra_process',
             )
 
-        end_events = self.get_events_with_name('ros2:callback_end')
+        end_events = self.get_events_with_name(tp.callback_end)
         for event in end_events:
             self.assertValidHandle(event, 'callback')
 
@@ -100,7 +101,7 @@ class TestTimer(TraceTestCase):
             link_node_events,
         )
         # And that the node from that node handle exists
-        node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        node_init_events = self.get_events_with_name(tp.rcl_node_init)
         self.assertNumEventsEqual(node_init_events, 1)
         node_init_event = node_init_events[0]
         self.assertMatchingField(

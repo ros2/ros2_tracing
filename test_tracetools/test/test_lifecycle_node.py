@@ -15,6 +15,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 class TestLifecycleNode(TraceTestCase):
@@ -24,9 +25,9 @@ class TestLifecycleNode(TraceTestCase):
             *args,
             session_name_prefix='session-test-lifecycle-node',
             events_ros=[
-                'ros2:rcl_node_init',
-                'ros2:rcl_lifecycle_state_machine_init',
-                'ros2:rcl_lifecycle_transition',
+                tp.rcl_node_init,
+                tp.rcl_lifecycle_state_machine_init,
+                tp.rcl_lifecycle_transition,
             ],
             package='test_tracetools',
             nodes=['test_lifecycle_node', 'test_lifecycle_client'],
@@ -37,7 +38,7 @@ class TestLifecycleNode(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check that the lifecycle node has an init event just like a normal node
-        rcl_node_init_events = self.get_events_with_name('ros2:rcl_node_init')
+        rcl_node_init_events = self.get_events_with_name(tp.rcl_node_init)
         lifecycle_node_matches = self.get_events_with_field_value(
             'node_name',
             'test_lifecycle_node',
@@ -52,7 +53,7 @@ class TestLifecycleNode(TraceTestCase):
 
         # Check the state machine init event
         rcl_lifecycle_state_machine_init_events = self.get_events_with_name(
-            'ros2:rcl_lifecycle_state_machine_init',
+            tp.rcl_lifecycle_state_machine_init,
         )
         self.assertEqual(
             len(rcl_lifecycle_state_machine_init_events),
@@ -97,7 +98,7 @@ class TestLifecycleNode(TraceTestCase):
         ]
         # Check transitions
         rcl_lifecycle_transition_events = self.get_events_with_name(
-            'ros2:rcl_lifecycle_transition')
+            tp.rcl_lifecycle_transition)
         lifecycle_state_transitions = [
             (self.get_field(event, 'start_label'), self.get_field(event, 'goal_label'))
             for event in rcl_lifecycle_transition_events

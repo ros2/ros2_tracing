@@ -15,6 +15,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 class TestIntra(TraceTestCase):
@@ -24,11 +25,11 @@ class TestIntra(TraceTestCase):
             *args,
             session_name_prefix='session-test-intra',
             events_ros=[
-                'ros2:rcl_subscription_init',
-                'ros2:rclcpp_subscription_init',
-                'ros2:rclcpp_subscription_callback_added',
-                'ros2:callback_start',
-                'ros2:callback_end',
+                tp.rcl_subscription_init,
+                tp.rclcpp_subscription_init,
+                tp.rclcpp_subscription_callback_added,
+                tp.callback_start,
+                tp.callback_end,
             ],
             package='test_tracetools',
             nodes=['test_intra'],
@@ -41,7 +42,7 @@ class TestIntra(TraceTestCase):
         print('EVENTS: ', self._events)
 
         # Check rcl_subscription_init events
-        rcl_sub_init_events = self.get_events_with_name('ros2:rcl_subscription_init')
+        rcl_sub_init_events = self.get_events_with_name(tp.rcl_subscription_init)
         rcl_sub_init_topic_events = self.get_events_with_field_value(
             'topic_name',
             '/the_topic',
@@ -59,7 +60,7 @@ class TestIntra(TraceTestCase):
         sub_handle_intra = self.get_field(rcl_sub_init_topic_event, 'subscription_handle')
 
         # Check rclcpp_subscription_init events
-        rclcpp_sub_init_events = self.get_events_with_name('ros2:rclcpp_subscription_init')
+        rclcpp_sub_init_events = self.get_events_with_name(tp.rclcpp_subscription_init)
         rclcpp_sub_init_topic_events = self.get_events_with_field_value(
             'subscription_handle',
             sub_handle_intra,
@@ -79,7 +80,7 @@ class TestIntra(TraceTestCase):
 
         # Get the corresponding callback pointers
         rclcpp_sub_callback_added_events = self.get_events_with_name(
-            'ros2:rclcpp_subscription_callback_added',
+            tp.rclcpp_subscription_callback_added,
         )
         rclcpp_sub_callback_added_topic_events = self.get_events_with_field_value(
             'subscription',
@@ -90,8 +91,8 @@ class TestIntra(TraceTestCase):
         callback_pointers = [self.get_field(e, 'callback') for e in events]
 
         # Get corresponding callback start/end pairs
-        start_events = self.get_events_with_name('ros2:callback_start')
-        end_events = self.get_events_with_name('ros2:callback_end')
+        start_events = self.get_events_with_name(tp.callback_start)
+        end_events = self.get_events_with_name(tp.callback_end)
         # Should have at least one start:end pair
         self.assertNumEventsGreaterEqual(
             start_events,

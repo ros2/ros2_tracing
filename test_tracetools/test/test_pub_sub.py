@@ -15,6 +15,7 @@
 import unittest
 
 from tracetools_test.case import TraceTestCase
+from tracetools_trace.tools import tracepoints as tp
 
 
 class TestPubSub(TraceTestCase):
@@ -24,17 +25,17 @@ class TestPubSub(TraceTestCase):
             *args,
             session_name_prefix='session-test-pub-sub',
             events_ros=[
-                'ros2:rmw_publisher_init',
-                'ros2:rcl_publisher_init',
-                'ros2:rmw_publish',
-                'ros2:rcl_publish',
-                'ros2:rclcpp_publish',
-                'ros2:rmw_subscription_init',
-                'ros2:rcl_subscription_init',
-                'ros2:rclcpp_subscription_init',
-                'ros2:rclcpp_subscription_callback_added',
-                'ros2:callback_start',
-                'ros2:callback_end',
+                tp.rmw_publisher_init,
+                tp.rcl_publisher_init,
+                tp.rmw_publish,
+                tp.rcl_publish,
+                tp.rclcpp_publish,
+                tp.rmw_subscription_init,
+                tp.rcl_subscription_init,
+                tp.rclcpp_subscription_init,
+                tp.rclcpp_subscription_callback_added,
+                tp.callback_start,
+                tp.callback_end,
             ],
             package='test_tracetools',
             nodes=['test_ping', 'test_pong'],
@@ -45,9 +46,9 @@ class TestPubSub(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Get publisher init events & publisher handles of test topics
-        rmw_pub_init_events = self.get_events_with_name('ros2:rmw_publisher_init')
-        rmw_sub_init_events = self.get_events_with_name('ros2:rmw_subscription_init')
-        publisher_init_events = self.get_events_with_name('ros2:rcl_publisher_init')
+        rmw_pub_init_events = self.get_events_with_name(tp.rmw_publisher_init)
+        rmw_sub_init_events = self.get_events_with_name(tp.rmw_subscription_init)
+        publisher_init_events = self.get_events_with_name(tp.rcl_publisher_init)
         ping_publisher_init_events = self.get_events_with_field_value(
             'topic_name',
             '/ping',
@@ -94,7 +95,7 @@ class TestPubSub(TraceTestCase):
         ])
 
         # Get corresponding rmw/rcl/rclcpp publish events for ping & pong
-        rcl_publish_events = self.get_events_with_name('ros2:rcl_publish')
+        rcl_publish_events = self.get_events_with_name(tp.rcl_publish)
         ping_rcl_pub_events = self.get_events_with_field_value(
             'publisher_handle',
             ping_pub_handle,
@@ -110,8 +111,8 @@ class TestPubSub(TraceTestCase):
         ping_rcl_pub_event = ping_rcl_pub_events[0]
         pong_rcl_pub_event = pong_rcl_pub_events[0]
 
-        rclcpp_publish_events = self.get_events_with_name('ros2:rclcpp_publish')
-        rmw_publish_events = self.get_events_with_name('ros2:rmw_publish')
+        rclcpp_publish_events = self.get_events_with_name(tp.rclcpp_publish)
+        rmw_publish_events = self.get_events_with_name(tp.rmw_publish)
         ping_pub_message = self.get_field(ping_rcl_pub_event, 'message')
         pong_pub_message = self.get_field(pong_rcl_pub_event, 'message')
 
@@ -145,7 +146,7 @@ class TestPubSub(TraceTestCase):
         pong_rmw_pub_event = pong_rmw_pub_events[0]
 
         # Get subscription init events & subscription handles of test topics
-        rcl_subscription_init_events = self.get_events_with_name('ros2:rcl_subscription_init')
+        rcl_subscription_init_events = self.get_events_with_name(tp.rcl_subscription_init)
         ping_rcl_subscription_init_events = self.get_events_with_field_value(
             'topic_name',
             '/ping',
@@ -185,7 +186,7 @@ class TestPubSub(TraceTestCase):
 
         # Get corresponding subscription objects
         rclcpp_subscription_init_events = self.get_events_with_name(
-            'ros2:rclcpp_subscription_init',
+            tp.rclcpp_subscription_init,
         )
         ping_rclcpp_subscription_init_events = self.get_events_with_field_value(
             'subscription_handle',
@@ -206,7 +207,7 @@ class TestPubSub(TraceTestCase):
 
         # Get corresponding subscription callback objects
         rclcpp_subscription_callback_events = self.get_events_with_name(
-            'ros2:rclcpp_subscription_callback_added',
+            tp.rclcpp_subscription_callback_added,
         )
         ping_rclcpp_subscription_callback_events = self.get_events_with_field_value(
             'subscription',
@@ -240,8 +241,8 @@ class TestPubSub(TraceTestCase):
         ])
 
         # Get corresponding callback start/end events
-        callback_start_events = self.get_events_with_name('ros2:callback_start')
-        callback_end_events = self.get_events_with_name('ros2:callback_end')
+        callback_start_events = self.get_events_with_name(tp.callback_start)
+        callback_end_events = self.get_events_with_name(tp.callback_end)
         ping_callback_start_events = self.get_events_with_field_value(
             'callback',
             ping_callback_object,
