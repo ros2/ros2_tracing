@@ -362,6 +362,36 @@ void TRACEPOINT(
     handle);
 }
 
+void TRACEPOINT(
+  message_link_periodic_async,
+  const void ** subs,
+  const size_t num_subs,
+  const void ** pubs,
+  const size_t num_pubs)
+{
+  CONDITIONAL_TP(
+    message_link_periodic_async,
+    subs,
+    num_subs,
+    pubs,
+    num_pubs);
+}
+
+void TRACEPOINT(
+  message_link_partial_sync,
+  const void ** subs,
+  const size_t num_subs,
+  const void ** pubs,
+  const size_t num_pubs)
+{
+  CONDITIONAL_TP(
+    message_link_partial_sync,
+    subs,
+    num_subs,
+    pubs,
+    num_pubs);
+}
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #else

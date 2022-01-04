@@ -408,6 +408,36 @@ TRACEPOINT_EVENT(
   )
 )
 
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  message_link_periodic_async,
+  TP_ARGS(
+    const void **, subs_arg,
+    const size_t, num_subs_arg,
+    const void **, pubs_arg,
+    const size_t, num_pubs_arg
+  ),
+  TP_FIELDS(
+    ctf_sequence_hex(const void *, subs, subs_arg, size_t, num_subs_arg)
+    ctf_sequence_hex(const void *, pubs, pubs_arg, size_t, num_pubs_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  message_link_partial_sync,
+  TP_ARGS(
+    const void **, subs_arg,
+    const size_t, num_subs_arg,
+    const void **, pubs_arg,
+    const size_t, num_pubs_arg
+  ),
+  TP_FIELDS(
+    ctf_sequence_hex(const void *, subs, subs_arg, size_t, num_subs_arg)
+    ctf_sequence_hex(const void *, pubs, pubs_arg, size_t, num_pubs_arg)
+  )
+)
+
 #endif  // _TRACETOOLS__TP_CALL_H_
 
 #include <lttng/tracepoint-event.h>
