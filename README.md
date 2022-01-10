@@ -54,9 +54,15 @@ To enable tracing:
 1. Install [LTTng](https://lttng.org/docs/v2.11/) (`>=2.11.1`) with the Python bindings to control tracing and read traces:
     ```
     $ sudo apt-get update
-    $ sudo apt-get install lttng-tools lttng-modules-dkms liblttng-ust-dev
+    $ sudo apt-get install lttng-tools liblttng-ust-dev
     $ sudo apt-get install python3-babeltrace python3-lttng
     ```
+    * The above commands will only install the LTTng userspace tracer, LTTng-UST. You only need the userspace tracer to trace ROS 2.
+    * To install the [LTTng kernel tracer](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel):
+        ```
+        $ sudo apt-get install lttng-modules-dkms
+        ```
+    * For more information about LTTng, [see its documentation](https://lttng.org/docs/v2.11/).
 2. Build:
     *  If you've already built ROS 2 from source before installing LTTng, you will need to re-build at least up to `tracetools`:
         ```
@@ -97,7 +103,7 @@ The tracing directory can be configured using command/launch action parameters, 
 * Use `$ROS_TRACE_DIR` if `ROS_TRACE_DIR` is set and not empty.
 * Otherwise, use `$ROS_HOME/tracing`, using `~/.ros` for `ROS_HOME` if not set or if empty.
 
-Additionally, make sure that the `tracing` group exists and that your user is added to it.
+Additionally, **if you're using kernel tracing with a non-root user, make sure that the [`tracing` group exists and that your user is added to it](https://lttng.org/docs/v2.11/#doc-tracing-group)**.
 
 ```
 # Create group if it doesn't exist
@@ -114,15 +120,16 @@ The first option is to use the `ros2 trace` command.
 $ ros2 trace
 ```
 
-**If you encounter an error here, make sure to [add your user to the `tracing` group](#tracing).**
-
 By default, it will enable all ROS tracepoints and a few kernel tracepoints.
 The trace will be written to `~/.ros/tracing/session-YYYYMMDDHHMMSS`.
 Run the command with `-h` for more information.
 
+You must [install the kernel tracer](#building) if you want to enable kernel events (using the `-k`/`--kernel-events` option).
+If have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
+
 ### Launch file trace action
 
-Another option is to use the `Trace` action in a launch file along with your `Node` action(s).
+Another option is to use the `Trace` action in a Python, XML, or YAML launch file along with your `Node` action(s).
 This way, tracing automatically starts when launching the launch file and ends when it exits or when terminated.
 
 ```
@@ -131,6 +138,9 @@ $ ros2 launch tracetools_launch example.launch.py
 
 The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
 For more information, see [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py).
+
+You must [install the kernel tracer](#building) if you want to enable kernel events (`events_kernel` in Python, `events-kernel` in XML or YAML).
+If have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ## Design
 
