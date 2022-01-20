@@ -2,8 +2,8 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2022-01-20)
+------------------
 * Don't require kernel tracer and detect when it's not installed
 * Deprecate 'context_names' param and replace with 'context_fields'
 * Contributors: Christophe Bedard

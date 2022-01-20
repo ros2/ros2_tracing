@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2022-01-20)
+------------------
 * Merge branch 'update-mentions-of-tracetools-test' into 'master'
   Update applicable mentions of tracetools_test to test_tracetools
   See merge request `ros-tracing/ros2_tracing!259 <https://gitlab.com/ros-tracing/ros2_tracing/-/merge_requests/259>`_

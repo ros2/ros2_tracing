@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2022-01-20)
+------------------
 * Remove default value for 'package' kwarg for TraceTestCase
 * Move actual tests out of tracetools_test to new test_tracetools package
 * Contributors: Christophe Bedard

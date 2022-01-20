@@ -2,8 +2,8 @@
 Changelog for package test_tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2022-01-20)
+------------------
 * Add support for preloading pthread and dl instrumentation shared libs
 * Remove profile_fast option and consider LD_PRELOADing both libs
 * Fix multiple LdPreload actions not working and add test

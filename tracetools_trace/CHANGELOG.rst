@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.0.0 (2022-01-20)
+------------------
 * Disable kernel tracing by default
 * Don't require kernel tracer and detect when it's not installed
 * Introduce constants for tracepoint names
