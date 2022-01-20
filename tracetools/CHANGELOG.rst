@@ -2,6 +2,17 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2022-01-20)
+------------------
+* Merge branch 'update-mentions-of-tracetools-test' into 'master'
+  Update applicable mentions of tracetools_test to test_tracetools
+  See merge request `ros-tracing/ros2_tracing!259 <https://gitlab.com/ros-tracing/ros2_tracing/-/merge_requests/259>`_
+* Update applicable mentions of tracetools_test to test_tracetools
+* Merge branch 'version-3-1-0' into 'master'
+  Version 3.1.0
+  See merge request `ros-tracing/ros2_tracing!256 <https://gitlab.com/ros-tracing/ros2_tracing/-/merge_requests/256>`_
+* Contributors: Christophe Bedard
+
 3.1.0 (2021-08-11)
 ------------------
 * Correctly handle calls to TRACEPOINT() macro with no tracepoint args

@@ -2,6 +2,22 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2022-01-20)
+------------------
+* Disable kernel tracing by default
+* Don't require kernel tracer and detect when it's not installed
+* Add support for preloading pthread and dl instrumentation shared libs
+* Remove profile_fast option and consider LD_PRELOADing both libs
+* Improve event matching for shared lib preloading
+* Improve LdPreload action's lib-finding function and add proper tests
+* Fix multiple LdPreload actions not working and add test
+* Deprecate 'context_names' param and replace with 'context_fields'
+* Support per-domain context fields for the Trace action
+* Improve LdPreload.get_shared_lib_path() for when a static lib may exist
+* Move some tests from tracetools_launch to test_tracetools_launch
+* Expose Trace action as frontend action and support substitutions
+* Contributors: Christophe Bedard, Ingo Lütkebohle
+
 2.1.0 (2021-01-13)
 ------------------
 * Allow configuring tracing directory through environment variables

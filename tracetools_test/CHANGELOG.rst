@@ -2,6 +2,12 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2022-01-20)
+------------------
+* Remove default value for 'package' kwarg for TraceTestCase
+* Move actual tests out of tracetools_test to new test_tracetools package
+* Contributors: Christophe Bedard
+
 3.1.0 (2021-08-11)
 ------------------
 * Add tests for rmw init/pub, take, and executor instrumentation

@@ -2,6 +2,16 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2022-01-20)
+------------------
+* Disable kernel tracing by default
+* Don't require kernel tracer and detect when it's not installed
+* Introduce constants for tracepoint names
+* Optimize default tracing session channel config values
+* Deprecate 'context_names' param and replace with 'context_fields'
+* Support per-domain context fields for the Trace action
+* Contributors: Christophe Bedard
+
 3.1.0 (2021-08-11)
 ------------------
 * Add support for rmw init/pub, take, and executor tracepoints
