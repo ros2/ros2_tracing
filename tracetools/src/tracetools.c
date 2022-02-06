@@ -24,46 +24,46 @@
  */
 #ifndef TRACETOOLS_TRACEPOINTS_EXCLUDED
 # include "tracetools/tp_call.h"
-# define CONDITIONAL_TP(...) \
+# define _CONDITIONAL_TP(...) \
   tracepoint(TRACEPOINT_PROVIDER, __VA_ARGS__)
-# define CONDITIONAL_TP_ENABLED(event_name) \
+# define _CONDITIONAL_TP_ENABLED(event_name) \
   0 != tracepoint_enabled(ros2, event_name)
-# define CONDITIONAL_DO_TP(...) \
+# define _CONDITIONAL_DO_TP(...) \
   do_tracepoint(ros2, __VA_ARGS__)
 #else
-# define CONDITIONAL_TP(...) ((void) (0))
-# define CONDITIONAL_TP_ENABLED(...) false
-# define CONDITIONAL_DO_TP(...) ((void) (0))
+# define _CONDITIONAL_TP(...) ((void) (0))
+# define _CONDITIONAL_TP_ENABLED(...) false
+# define _CONDITIONAL_DO_TP(...) ((void) (0))
 #endif
 
 #define TRACEPOINT_ARGS(...) __VA_ARGS__
 #define TRACEPOINT_PARAMS(...) __VA_ARGS__
 
 #define DEFINE_TRACEPOINT(event_name, _TP_PARAMS, _TP_ARGS) \
-  void TRACEPOINT(event_name, _TP_PARAMS) \
+  void TRACETOOLS_TRACEPOINT(event_name, _TP_PARAMS) \
   { \
-    CONDITIONAL_TP(event_name, _TP_ARGS); \
+    _CONDITIONAL_TP(event_name, _TP_ARGS); \
   } \
-  bool TRACEPOINT_ENABLED(event_name) \
+  bool TRACETOOLS_TRACEPOINT_ENABLED(event_name) \
   { \
-    return CONDITIONAL_TP_ENABLED(event_name); \
+    return _CONDITIONAL_TP_ENABLED(event_name); \
   } \
-  void DO_TRACEPOINT(event_name, _TP_PARAMS) \
+  void TRACETOOLS_DO_TRACEPOINT(event_name, _TP_PARAMS) \
   { \
-    CONDITIONAL_DO_TP(event_name, _TP_ARGS); \
+    _CONDITIONAL_DO_TP(event_name, _TP_ARGS); \
   }
 #define DEFINE_TRACEPOINT_NO_ARGS(event_name) \
-  void TRACEPOINT(event_name) \
+  void TRACETOOLS_TRACEPOINT(event_name) \
   { \
-    CONDITIONAL_TP(event_name); \
+    _CONDITIONAL_TP(event_name); \
   } \
-  bool TRACEPOINT_ENABLED(event_name) \
+  bool TRACETOOLS_TRACEPOINT_ENABLED(event_name) \
   { \
-    return CONDITIONAL_TP_ENABLED(event_name); \
+    return _CONDITIONAL_TP_ENABLED(event_name); \
   } \
-  void DO_TRACEPOINT(event_name) \
+  void TRACETOOLS_DO_TRACEPOINT(event_name) \
   { \
-    CONDITIONAL_DO_TP(event_name); \
+    _CONDITIONAL_DO_TP(event_name); \
   }
 
 bool ros_trace_compile_status()
