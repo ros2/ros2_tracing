@@ -14,6 +14,7 @@
 
 import unittest
 
+from launch.actions import SetEnvironmentVariable
 from tracetools_test.case import TraceTestCase
 from tracetools_trace.tools import tracepoints as tp
 
@@ -39,6 +40,8 @@ class TestPubSub(TraceTestCase):
             ],
             package='test_tracetools',
             nodes=['test_ping', 'test_pong'],
+            # Need rmw_cyclonedds_cpp for the rmw instrumentation
+            additional_actions=SetEnvironmentVariable('RMW_IMPLEMENTATION', 'rmw_cyclonedds_cpp'),
         )
 
     def test_all(self):

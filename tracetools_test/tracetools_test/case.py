@@ -24,6 +24,7 @@ from typing import Type
 from typing import Union
 import unittest
 
+from launch import Action
 from tracetools_read import DictEvent
 from tracetools_read import get_event_name
 from tracetools_read import get_event_timestamp
@@ -59,6 +60,7 @@ class TraceTestCase(unittest.TestCase):
         nodes: List[str],
         base_path: str = '/tmp',
         events_kernel: List[str] = [],
+        additional_actions: Union[List[Action], Action] = [],
     ) -> None:
         """Create a TraceTestCase."""
         super().__init__(methodName=args[0])
@@ -68,6 +70,7 @@ class TraceTestCase(unittest.TestCase):
         self._events_kernel = events_kernel
         self._package = package
         self._nodes = nodes
+        self._additional_actions = additional_actions
 
     def setUp(self):
         # Get timestamp before trace (ns)
@@ -80,6 +83,7 @@ class TraceTestCase(unittest.TestCase):
             self._events_kernel,
             self._package,
             self._nodes,
+            self._additional_actions,
         )
 
         print(f'TRACE DIRECTORY: {full_path}')
