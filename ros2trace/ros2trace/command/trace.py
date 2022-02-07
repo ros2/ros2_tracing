@@ -37,6 +37,6 @@ class TraceCommand(CommandExtension):
         ):
             return 1
         fini(
-            args.session_name,
+            session_name=args.session_name,
         )
         return 0
