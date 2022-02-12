@@ -51,6 +51,8 @@ class TraceTestCase(unittest.TestCase):
     The assert*() functions are specifically in mixedCase to match the unittest functions.
     """
 
+    ENV_VAR_DEBUG = 'TRACETOOLS_TEST_DEBUG'
+
     def __init__(
         self,
         *args,
@@ -111,7 +113,7 @@ class TraceTestCase(unittest.TestCase):
         self.assertProcessNamesExist(self._nodes)
 
     def tearDown(self):
-        if not os.environ.get('TRACETOOLS_TEST_DEBUG', None):
+        if not os.environ.get(self.ENV_VAR_DEBUG, None):
             cleanup_trace(self._full_path)
 
     def assertEventsSet(  # noqa: N802
