@@ -24,13 +24,11 @@ If you use or refer to `ros2_tracing`, please cite:
 BibTeX:
 
 ```bibtex
-@misc{bedard2022ros2tracing,
-    title={ros2_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2},
-    author={Christophe Bédard and Ingo Lütkebohle and Michel Dagenais},
-    year={2022},
-    eprint={2201.00393},
-    archivePrefix={arXiv},
-    primaryClass={cs.RO}
+@article{bedard2022ros2tracing,
+  title={ros2\_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2},
+  author={B{\'e}dard, Christophe and L{\"u}tkebohle, Ingo and Dagenais, Michel},
+  journal={arXiv preprint arXiv:2201.00393},
+  year={2022}
 }
 ```
 
