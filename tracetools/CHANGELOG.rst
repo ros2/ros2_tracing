@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.1.0 (2022-03-29)
+------------------
 * Install headers to include/${PROJECT_NAME}
 * Contributors: Christophe Bedard, Shane Loretz
 
