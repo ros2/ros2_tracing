@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.0 (2022-03-29)
+------------------
+* Install headers to include/${PROJECT_NAME}
+* Contributors: Christophe Bedard, Shane Loretz
+
 4.0.0 (2022-01-20)
 ------------------
 * Merge branch 'update-mentions-of-tracetools-test' into 'master'

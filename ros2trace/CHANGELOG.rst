@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.0 (2022-03-29)
+------------------
+* Fix 'ros2 trace' fini() error
+* Contributors: Christophe Bedard
+
 4.0.0 (2022-01-20)
 ------------------
 * Don't require kernel tracer and detect when it's not installed
