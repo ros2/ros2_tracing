@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Allow providing additional actions for TraceTestCase
+* Contributors: Christophe Bedard
+
 4.0.0 (2022-01-20)
 ------------------
 * Remove default value for 'package' kwarg for TraceTestCase
