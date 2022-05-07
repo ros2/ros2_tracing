@@ -13,6 +13,8 @@ It also provides [tools to configure tracing](#tracing) through [a launch action
 `ros2_tracing` currently only supports the [LTTng](https://lttng.org/) tracer.
 Consequently, it currently only supports Linux.
 
+**Note**: make sure to use the right branch, depending on the ROS 2 distro: [use `master` for Rolling, `galactic` for Galactic, etc.](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#branches)
+
 ## Publications & presentations
 
 [Read the `ros2_tracing` paper!](https://arxiv.org/abs/2201.00393)
