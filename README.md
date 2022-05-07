@@ -40,7 +40,7 @@ Reference:
 
 ## Tutorials & demos
 
-* Real-Time Working Group documentation tutorial: [How to use `ros2_tracing` to trace and analyze an application](https://real-time-working-group.readthedocs.io/en/latest/Guides/ros2_tracing_trace_and_analyze.html)
+* Real-Time Working Group documentation tutorial: [How to use `ros2_tracing` to trace and analyze an application](https://ros-realtime.github.io/Guides/ros2_tracing_trace_and_analyze.html)
 * ROS World 2021 demo: [github.com/christophebedard/ros-world-2021-demo](https://github.com/christophebedard/ros-world-2021-demo)
 
 ## Building
