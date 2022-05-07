@@ -13,6 +13,8 @@ It also provides [tools to configure tracing](#tracing) through [a launch action
 `ros2_tracing` currently only supports the [LTTng](https://lttng.org/) tracer.
 Consequently, it currently only supports Linux.
 
+**Note**: make sure to use the right branch, depending on the ROS 2 distro: [use `master` for Rolling, `galactic` for Galactic, etc.](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html#branches)
+
 ## Publications & presentations
 
 [Read the `ros2_tracing` paper!](https://arxiv.org/abs/2201.00393)
@@ -38,7 +40,7 @@ Reference:
 
 ## Tutorials & demos
 
-* Real-Time Working Group documentation tutorial: [How to use `ros2_tracing` to trace and analyze an application](https://real-time-working-group.readthedocs.io/en/latest/Guides/ros2_tracing_trace_and_analyze.html)
+* Real-Time Working Group documentation tutorial: [How to use `ros2_tracing` to trace and analyze an application](https://ros-realtime.github.io/Guides/ros2_tracing_trace_and_analyze.html)
 * ROS World 2021 demo: [github.com/christophebedard/ros-world-2021-demo](https://github.com/christophebedard/ros-world-2021-demo)
 
 ## Building
