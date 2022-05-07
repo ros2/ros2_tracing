@@ -51,7 +51,7 @@ If LTTng is not found during build, or if the [`TRACETOOLS_DISABLED` option is e
 
 To enable tracing:
 
-1. Install [LTTng](https://lttng.org/docs/v2.11/) (`>=2.11.1`) with the Python bindings to control tracing and read traces:
+1. Install [LTTng](https://lttng.org/docs/v2.13/) (`>=2.11.1`) with the Python bindings to control tracing and read traces:
     ```
     $ sudo apt-get update
     $ sudo apt-get install lttng-tools liblttng-ust-dev
@@ -62,7 +62,7 @@ To enable tracing:
         ```
         $ sudo apt-get install lttng-modules-dkms
         ```
-    * For more information about LTTng, [see its documentation](https://lttng.org/docs/v2.11/).
+    * For more information about LTTng, [see its documentation](https://lttng.org/docs/v2.13/).
 2. Build:
     *  If you've already built ROS 2 from source before installing LTTng, you will need to re-build at least up to `tracetools`:
         ```
@@ -103,7 +103,7 @@ The tracing directory can be configured using command/launch action parameters, 
 * Use `$ROS_TRACE_DIR` if `ROS_TRACE_DIR` is set and not empty.
 * Otherwise, use `$ROS_HOME/tracing`, using `~/.ros` for `ROS_HOME` if not set or if empty.
 
-Additionally, **if you're using kernel tracing with a non-root user, make sure that the [`tracing` group exists and that your user is added to it](https://lttng.org/docs/v2.11/#doc-tracing-group)**.
+Additionally, **if you're using kernel tracing with a non-root user, make sure that the [`tracing` group exists and that your user is added to it](https://lttng.org/docs/v2.13/#doc-tracing-group)**.
 
 ```
 # Create group if it doesn't exist
@@ -136,7 +136,7 @@ This way, tracing automatically starts when launching the launch file and ends w
 $ ros2 launch tracetools_launch example.launch.py
 ```
 
-The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
+The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/v2.13/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
 For more information, see [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py).
 
 You must [install the kernel tracer](#building) if you want to enable kernel events (`events_kernel` in Python, `events-kernel` in XML or YAML).
@@ -158,9 +158,9 @@ It is a low-overhead tracer with many important real-time compatible features:
 
 However, some settings need to be tuned for it to be fully real-time safe and for performance to be optimal for your use-case:
 
-* timers[^rt-1]: use [read timer](https://lttng.org/docs/v2.11/#doc-channel-read-timer) to avoid a write(2) call
+* timers[^rt-1]: use [read timer](https://lttng.org/docs/v2.13/#doc-channel-read-timer) to avoid a write(2) call
 * sub-buffer[^rt-1] count and size:
-    * see [documentation](https://lttng.org/docs/v2.11/#doc-channel-subbuf-size-vs-subbuf-count) for sub-buffer count and size tuning tips based on your use-case
+    * see [documentation](https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count) for sub-buffer count and size tuning tips based on your use-case
     * minimize sub-buffer count to minimize sub-buffer switching overhead
 * one-time memory allocation/lock/syscall per thread:
     * usually done the first time a tracepoint is executed within a thread for URCU thread registration, but registration can be manually performed to force it to be done during your application's initialization
@@ -170,7 +170,7 @@ However, some settings need to be tuned for it to be fully real-time safe and fo
 
 For further reading:
 
-* [LTTng documentation](https://lttng.org/docs/v2.11/)
+* [LTTng documentation](https://lttng.org/docs/v2.13/)
 * [Combined Tracing of the Kernel and Applications with LTTng](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.641.1965&rep=rep1&type=pdf#page=87): LTTng-UST architecture and design goals (section 3)
 * [Survey and Analysis of Kernel and Userspace Tracers on Linux: Design, Implementation, and Overhead](https://dl.acm.org/doi/abs/10.1145/3158644): LTTng-UST overhead and design compared to other kernel and userspace tracers (table 6: average latency overhead per tracepoint of 158 ns)
 
