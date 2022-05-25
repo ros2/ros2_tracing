@@ -18,21 +18,25 @@ Consequently, it currently only supports Linux.
 ## Publications & presentations
 
 [Read the `ros2_tracing` paper!](https://arxiv.org/abs/2201.00393)
-
 If you use or refer to `ros2_tracing`, please cite:
-<!-- TODO replace with early access/published version when available -->
-* C. Bédard, I. Lütkebohle, and M. Dagenais, "ros2_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2," *arXiv preprint arXiv:2201.00393*, 2022.
+* C. Bédard, I. Lütkebohle, and M. Dagenais, "ros2_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2," *IEEE Robotics and Automation Letters*, vol. 7, no. 3, pp. 6511–6518, 2022.
 
-BibTeX:
+<details>
+<summary>BibTeX</summary>
 
 ```bibtex
 @article{bedard2022ros2tracing,
   title={ros2\_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2},
   author={B{\'e}dard, Christophe and L{\"u}tkebohle, Ingo and Dagenais, Michel},
-  journal={arXiv preprint arXiv:2201.00393},
-  year={2022}
+  journal={IEEE Robotics and Automation Letters},
+  year={2022},
+  volume={7},
+  number={3},
+  pages={6511--6518},
+  doi={10.1109/LRA.2022.3174346}
 }
 ```
+</details>
 
 Also, check out the ROS World 2021 presentation titled "Tracing ROS 2 with ros2_tracing" ([video](https://vimeo.com/652633418), [slides](https://gitlab.com/ros-tracing/ros2_tracing/-/raw/master/doc/2021-10-20_ROS_World_2021_-_Tracing_ROS_2_with_ros2_tracing.pdf)).
 Reference:
