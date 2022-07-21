@@ -51,7 +51,7 @@ All merge requests must have at least one peer review.
 
 All merge requests must pass CI on Ubuntu amd64.
 
-Nightly results for all [tier 1 platforms as defined in REP-2000](https://www.ros.org/reps/rep-2000.html#support-tiers) can be found here (note that only the tagged release used in the [`ros2.repos`](https://github.com/ros2/ros2/blob/master/ros2.repos) file is tested nightly):
+Nightly results for all [tier 1 platforms as defined in REP-2000](https://www.ros.org/reps/rep-2000.html#support-tiers) can be found here (note that only the tagged release used in the [`ros2.repos`](https://github.com/ros2/ros2/blob/rolling/ros2.repos) file is tested nightly):
 * [linux-aarch64_release](https://ci.ros2.org/view/nightly/job/nightly_linux-aarch64_release/lastBuild/testReport/tracetools/)
 * [linux-amd64_release](https://ci.ros2.org/view/nightly/job/nightly_linux_release/lastBuild/testReport/tracetools/)
 * [macos_release](https://ci.ros2.org/view/nightly/job/nightly_osx_release/lastBuild/testReport/tracetools/)
@@ -111,7 +111,7 @@ This includes:
 
 Changes are required to make a best effort to keep or increase coverage before being accepted, but decreases are allowed if properly justified and accepted by reviewers.
 
-Current coverage statistics can be viewed [on codecov.io](https://codecov.io/gl/ros-tracing/ros2_tracing) or in the [results of the latest `coverage` CI job](https://gitlab.com/ros-tracing/ros2_tracing/pipelines/latest).
+Current coverage statistics can be viewed [on codecov.io](https://codecov.io/gh/ros2/ros2_tracing) or in the [results of the latest `coverage` CI job](https://github.com/ros2/ros2_tracing/actions).
 
 `tracetools` might not reach the 95% goal because it uses `#ifdef` in case LTTng is not installed, but, when using and enabling LTTng, the line coverage is above 95%.
 

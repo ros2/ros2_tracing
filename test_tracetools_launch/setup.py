@@ -23,7 +23,7 @@ setup(
     ),
     author='Christophe Bedard',
     author_email='fixed-term.christophe.bourquebedard@de.bosch.com',
-    url='https://gitlab.com/ros-tracing/ros2_tracing',
+    url='https://github.com/ros2/ros2_tracing',
     keywords=[],
     description='Tests for the tracetools_launch package.',
     license='Apache 2.0',

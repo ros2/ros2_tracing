@@ -1,8 +1,8 @@
 repositories:
-  ros-tracing/ros2_tracing:
+  ros2/ros2_tracing:
     type: git
-    url: https://gitlab.com/ros-tracing/ros2_tracing.git
-    version: master
+    url: https://github.com/ros2/ros2_tracing.git
+    version: rolling
   tracetools_analysis:
     type: git
     url: https://gitlab.com/ros-tracing/tracetools_analysis.git
