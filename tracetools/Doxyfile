@@ -1,7 +1,7 @@
 # All settings not listed here will use the Doxygen default values.
 
 PROJECT_NAME           = "tracetools"
-PROJECT_NUMBER         = master
+PROJECT_NUMBER         = rolling
 PROJECT_BRIEF          = "Tracing tools and instrumentation for ROS 2"
 
 INPUT                  = ./include

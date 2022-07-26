@@ -123,7 +123,7 @@ def setup(
                 "    'ros2 trace' command: cannot use '-k' option\n"
                 "    'Trace' action: cannot set 'events_kernel'/'events-kernel' list\n"
                 '  install the kernel tracer, e.g., on Ubuntu, install lttng-modules-dkms\n'
-                '  see: https://gitlab.com/ros-tracing/ros2_tracing#building'
+                '  see: https://github.com/ros2/ros2_tracing#building'
             )
             return None
 

@@ -1,6 +1,6 @@
 # `ros2_tracing`
 
-Design document for the general ROS 2 instrumentation, tracing, and analysis effort, which includes [`ros2_tracing`](https://gitlab.com/ros-tracing/ros2_tracing), a collection of flexible tracing tools and multipurpose instrumentation for ROS 2.
+Design document for the general ROS 2 instrumentation, tracing, and analysis effort, which includes [`ros2_tracing`](https://github.com/ros2/ros2_tracing), a collection of flexible tracing tools and multipurpose instrumentation for ROS 2.
 
 **Table of contents**
 1. [Introduction](#introduction)

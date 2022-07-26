@@ -130,6 +130,5 @@ trigger_gen_docs:
   stage: report
   only:
     refs:
-      - master
-      - foxy
+      - rolling
   trigger: ros-tracing/ros2_tracing-api
