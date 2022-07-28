@@ -123,7 +123,7 @@ dco:
   image: $BASE_IMAGE_ID:$DISTRO-base
   script:
     - pip3 install -U dco-check
-    - dco-check --verbose
+    - dco-check --verbose --default-branch $DISTRO
 
 # Trigger docs generation
 trigger_gen_docs:

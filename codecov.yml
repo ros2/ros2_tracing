@@ -1,3 +1,5 @@
 fixes:
   - "/builds/ros-tracing/ros2_tracing/::"
   - "/builds/ros-tracing/ros2_tracing/install/tracetools/::tracetools/"
+  - "/home/runner/work/ros2_tracing/ros2_tracing/ros_ws/src/ros2_tracing/::"
+  - "/home/runner/work/ros2_tracing/ros2_tracing/ros_ws/install/tracetools/::tracetools/"
