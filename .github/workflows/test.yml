@@ -65,7 +65,11 @@ jobs:
             "test": {
               "mixin": [
                 "coverage-pytest"
-              ]
+              ],
+              "executor": "sequential",
+              "retest-until-pass": 2,
+              "ctest-args": ["-LE", "xfail"],
+              "pytest-args": ["-m", "not xfail"]
             }
           }
     - name: Make sure tracing instrumentation is available
