@@ -1,9 +1,6 @@
 name: DCO
 on:
   pull_request:
-  push:
-    branches:
-      - rolling
 jobs:
   check:
     runs-on: ubuntu-latest
