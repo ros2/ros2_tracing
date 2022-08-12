@@ -24,6 +24,7 @@ jobs:
     - uses: ros-tooling/setup-ros@master
       with:
         required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
+        use-ros2-testing: true
     - name: Pre-build (source)
       run: |
         cd $GITHUB_WORKSPACE/ws
