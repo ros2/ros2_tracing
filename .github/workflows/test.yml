@@ -43,6 +43,7 @@ jobs:
     - uses: ros-tooling/setup-ros@master
       with:
         required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
+        use-ros2-testing: true
     - name: Install LTTng
       run: |
         sudo apt-get update
