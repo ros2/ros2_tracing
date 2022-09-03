@@ -9,7 +9,9 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.build-type == 'binary' }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           # Normal build with LTTng installed (binary)
