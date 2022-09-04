@@ -10,6 +10,7 @@ on:
 jobs:
   tracing:
     runs-on: ubuntu-22.04
+    continue-on-error: ${{ matrix.build-type == 'binary' }}
     strategy:
       fail-fast: false
       matrix:
