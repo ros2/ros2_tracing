@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.1 (2022-11-07)
+------------------
+* Merge branch 'clalancette/release-4.1.0' into 'master'
+* Contributors: Christophe Bedard
+
 0.2.11 (2019-12-09)
 -------------------
 * Register Python packages in the ament index

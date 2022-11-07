@@ -2,6 +2,11 @@
 Changelog for package test_tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.1 (2022-11-07)
+------------------
+* Merge branch 'clalancette/release-4.1.0' into 'master'
+* Contributors: Christophe Bedard
+
 4.0.0 (2022-01-20)
 ------------------
 * Add support for preloading pthread and dl instrumentation shared libs

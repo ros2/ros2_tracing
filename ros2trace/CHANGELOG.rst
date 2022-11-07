@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.1 (2022-11-07)
+------------------
+* Merge branch 'clalancette/release-4.1.0' into 'master'
+* Contributors: Christophe Bedard
+
 4.1.0 (2022-03-29)
 ------------------
 * Fix 'ros2 trace' fini() error

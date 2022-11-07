@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.1 (2022-11-07)
+------------------
+* Merge branch 'clalancette/release-4.1.0' into 'master'
+* Contributors: Christophe Bedard
+
 4.1.0 (2022-03-29)
 ------------------
 * Allow providing additional actions for TraceTestCase
