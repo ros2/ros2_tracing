@@ -134,8 +134,10 @@ if(BUILD_TESTING)
   if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
     find_package(ament_cmake_pytest REQUIRED)
     set(_test_tracetools_pytest_tests
+      test/test_buffer.py
       test/test_executor.py
       test/test_intra.py
+      test/test_intra_pub_sub.py
       test/test_lifecycle_node.py
       test/test_node.py
       test/test_pub_sub.py

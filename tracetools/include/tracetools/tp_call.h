@@ -109,6 +109,19 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
+  rclcpp_intra_publish,
+  TP_ARGS(
+    const void *, publisher_handle_arg,
+    const void *, message_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, publisher_handle, publisher_handle_arg)
+    ctf_integer_hex(const void *, message, message_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
   rcl_publish,
   TP_ARGS(
     const void *, publisher_handle_arg,
@@ -405,6 +418,88 @@ TRACEPOINT_EVENT(
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, handle, handle_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_ipb_to_subscription,
+  TP_ARGS(
+    const void *, ipb_arg,
+    const void *, subscription_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, ipb, ipb_arg)
+    ctf_integer_hex(const void *, subscription, subscription_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_buffer_to_ipb,
+  TP_ARGS(
+    const void *, buffer_arg,
+    const void *, ipb_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, buffer, buffer_arg)
+    ctf_integer_hex(const void *, ipb, ipb_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_construct_ring_buffer,
+  TP_ARGS(
+    const void *, buffer_arg,
+    const uint64_t, capacity_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, buffer, buffer_arg)
+    ctf_integer(const uint64_t, capacity, capacity_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_ring_buffer_enqueue,
+  TP_ARGS(
+    const void *, buffer_arg,
+    const uint64_t, index_arg,
+    const uint64_t, size_arg,
+    const bool, overwritten_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, buffer, buffer_arg)
+    ctf_integer(const uint64_t *, index, index_arg)
+    ctf_integer(const uint64_t, size, size_arg)
+    ctf_integer(const int, overwritten, (overwritten_arg ? 1 : 0))
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_ring_buffer_dequeue,
+  TP_ARGS(
+    const void *, buffer_arg,
+    const uint64_t, index_arg,
+    const uint64_t, size_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, buffer, buffer_arg)
+    ctf_integer(const uint64_t, index, index_arg)
+    ctf_integer(const uint64_t, size, size_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rclcpp_ring_buffer_clear,
+  TP_ARGS(
+    const void *, buffer_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, buffer, buffer_arg)
   )
 )
 

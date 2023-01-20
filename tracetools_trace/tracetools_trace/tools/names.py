@@ -67,6 +67,7 @@ DEFAULT_EVENTS_ROS = [
     tracepoints.rmw_publisher_init,
     tracepoints.rcl_publisher_init,
     tracepoints.rclcpp_publish,
+    tracepoints.rclcpp_intra_publish,
     tracepoints.rcl_publish,
     tracepoints.rmw_publish,
     tracepoints.rmw_subscription_init,
@@ -90,6 +91,12 @@ DEFAULT_EVENTS_ROS = [
     tracepoints.rclcpp_executor_get_next_ready,
     tracepoints.rclcpp_executor_wait_for_work,
     tracepoints.rclcpp_executor_execute,
+    tracepoints.rclcpp_ipb_to_subscription,
+    tracepoints.rclcpp_buffer_to_ipb,
+    tracepoints.rclcpp_construct_ring_buffer,
+    tracepoints.rclcpp_ring_buffer_enqueue,
+    tracepoints.rclcpp_ring_buffer_dequeue,
+    tracepoints.rclcpp_ring_buffer_clear
 ]
 
 DEFAULT_EVENTS_UST = DEFAULT_EVENTS_ROS
