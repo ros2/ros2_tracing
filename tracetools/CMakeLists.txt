@@ -28,13 +28,12 @@ option(TRACETOOLS_STATUS_CHECKING_TOOL "Enable the status checking tool" ${STATU
 
 if(NOT TRACETOOLS_DISABLED)
   # Set TRACETOOLS_LTTNG_ENABLED if we can find lttng-ust
-  find_package(PkgConfig)
-  if(PkgConfig_FOUND)
-    pkg_check_modules(LTTNG lttng-ust)
-    if(LTTNG_FOUND)
-      set(TRACETOOLS_LTTNG_ENABLED TRUE)
-      message("LTTng found: tracing enabled")
-    endif()
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(LTTNG lttng-ust)
+  if(LTTNG_FOUND)
+    set(TRACETOOLS_LTTNG_ENABLED TRUE)
+  else()
+    message(FATAL_ERROR "LTTng-UST not found")
   endif()
 endif()
 
