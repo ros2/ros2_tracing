@@ -22,7 +22,7 @@
  * places here due to a bug with LTTng. Try again when bumping to a newer LTTng-UST version once
  * this fix gets merged: https://review.lttng.org/c/lttng-ust/+/9001
  */
-#ifdef TRACETOOLS_LTTNG_ENABLED
+#ifndef TRACETOOLS_TRACEPOINTS_EXCLUDED
 # include "tracetools/tp_call.h"
 # define CONDITIONAL_TP(...) \
   tracepoint(TRACEPOINT_PROVIDER, __VA_ARGS__)
@@ -68,7 +68,7 @@
 
 bool ros_trace_compile_status()
 {
-#ifdef TRACETOOLS_LTTNG_ENABLED
+#ifndef TRACETOOLS_TRACEPOINTS_EXCLUDED
   return true;
 #else
   return false;

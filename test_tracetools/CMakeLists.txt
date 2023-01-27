@@ -19,15 +19,15 @@ else()
   set(DISABLED_DEFAULT OFF)
 endif()
 option(TRACETOOLS_DISABLED "Explicitly disable support for tracing" ${DISABLED_DEFAULT})
-if(NOT TRACETOOLS_DISABLED)
-  # Set TRACING_ENABLED if we can find lttng-ust
+option(TRACETOOLS_TRACEPOINTS_EXCLUDED "Do not include tracepoints" OFF)
+
+if(TRACETOOLS_DISABLED)
+  set(TRACETOOLS_TRACEPOINTS_EXCLUDED TRUE)
+endif()
+
+if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(LTTNG lttng-ust)
-  if(LTTNG_FOUND)
-    set(TRACING_ENABLED TRUE)
-  else()
-    message(FATAL_ERROR "LTTng-UST not found")
-  endif()
+  pkg_check_modules(LTTNG REQUIRED lttng-ust)
 endif()
 
 # Tests
@@ -118,8 +118,8 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
-  # Only build tracing tests if LTTng is enabled and found
-  if(TRACING_ENABLED)
+  # Utils do not exist if TRACETOOLS_DISABLED
+  if(NOT TRACETOOLS_DISABLED)
     find_package(tracetools REQUIRED)
     find_package(ament_cmake_gtest REQUIRED)
     ament_add_gtest(test_utils test/test_utils.cpp)
@@ -128,7 +128,10 @@ if(BUILD_TESTING)
         tracetools
       )
     endif()
+  endif()
 
+  # Only run tracing tests if instrumentation and tracepoints are included
+  if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
     find_package(ament_cmake_pytest REQUIRED)
     set(_test_tracetools_pytest_tests
       test/test_executor.py
