@@ -315,8 +315,8 @@ class TraceTestCase(unittest.TestCase):
         self,
         initial_event: DictEvent,
         field_name: str,
-        matching_event_name: str = None,
-        events: List[DictEvent] = None,
+        matching_event_name: Optional[str] = None,
+        events: Optional[List[DictEvent]] = None,
         check_order: bool = True,
     ) -> None:
         """
@@ -407,7 +407,7 @@ class TraceTestCase(unittest.TestCase):
     def get_events_with_name(
         self,
         event_name: str,
-        events: List[DictEvent] = None,
+        events: Optional[List[DictEvent]] = None,
     ) -> List[DictEvent]:
         """
         Get all events with the given name.
@@ -423,7 +423,7 @@ class TraceTestCase(unittest.TestCase):
     def get_events_with_procname(
         self,
         procname: str,
-        events: List[DictEvent] = None,
+        events: Optional[List[DictEvent]] = None,
     ) -> List[DictEvent]:
         """
         Get all events with the given procname.
@@ -443,7 +443,7 @@ class TraceTestCase(unittest.TestCase):
         self,
         field_name: str,
         field_values: Any,
-        events: List[DictEvent] = None,
+        events: Optional[List[DictEvent]] = None,
     ) -> List[DictEvent]:
         """
         Get all events with the given field:value.
@@ -463,7 +463,7 @@ class TraceTestCase(unittest.TestCase):
         self,
         field_name: str,
         field_values: Any,
-        events: List[DictEvent] = None,
+        events: Optional[List[DictEvent]] = None,
     ) -> List[DictEvent]:
         """
         Get all events with the given field but not the value.
