@@ -114,11 +114,6 @@ class Trace(Action):
         context_fields:
             Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
             = names.DEFAULT_CONTEXT,
-        context_names:
-            Optional[
-                Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
-            ]
-            = None,
         **kwargs,
     ) -> None:
         """
@@ -144,7 +139,6 @@ class Trace(Action):
             if it's a list or a set, the context fields are enabled for both kernel and userspace;
             if it's a dictionary: { domain type string -> context fields list }
                 with the domain type string being either 'kernel' or 'userspace'
-        :param context_names: DEPRECATED, use context_fields instead
         """
         super().__init__(**kwargs)
         self.__logger = logging.get_logger(__name__)
@@ -155,11 +149,6 @@ class Trace(Action):
         self.__trace_directory = None
         self.__events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self.__events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
-        # Use value from deprecated param if it is provided
-        # TODO(christophebedard) remove context_names param in Rolling after Humble release
-        if context_names is not None:
-            context_fields = context_names
-            self.__logger.warning('context_names parameter is deprecated, use context_fields')
         self.__context_fields = \
             {
                 domain: [normalize_to_list_of_substitutions(field) for field in fields]
@@ -191,11 +180,6 @@ class Trace(Action):
 
     @property
     def context_fields(self):
-        return self.__context_fields
-
-    @property
-    def context_names(self):
-        self.__logger.warning('context_names parameter is deprecated, use context_fields')
         return self.__context_fields
 
     @classmethod
@@ -286,10 +270,6 @@ class Trace(Action):
         if context_fields is not None:
             kwargs['context_fields'] = cls._parse_cmdline(context_fields, parser) \
                 if context_fields else []
-        context_names = entity.get_attr('context-names', optional=True)
-        if context_names is not None:
-            kwargs['context_names'] = cls._parse_cmdline(context_names, parser) \
-                if context_names else []
 
         return cls, kwargs
 
