@@ -5,5 +5,5 @@ repositories:
     version: rolling
   tracetools_analysis:
     type: git
-    url: https://gitlab.com/ros-tracing/tracetools_analysis.git
-    version: master
+    url: https://github.com/ros-tracing/tracetools_analysis.git
+    version: rolling

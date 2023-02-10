@@ -819,7 +819,7 @@ Additional considerations:
 
 * The merge request with the necessary changes in `ros2_tracing` is usually merged first, then a new release of the `ros2_tracing` is created before merging the pull request(s) for the corresponding downstream package(s) in the ROS 2 core
 * For the `ros2_tracing` MR and until the PRs for the ROS 2 core package(s) are merged, CI here will need to use the modified version(s) of the core package(s) using the [`instrumented.repos`](../instrumented.repos) file so that end-to-end tests pass (`test_tracetools`)
-* Add support for the new instrumentation in [`tracetools_analysis`](https://gitlab.com/ros-tracing/tracetools_analysis)
+* Add support for the new instrumentation in [`tracetools_analysis`](https://github.com/ros-tracing/tracetools_analysis)
     * Along with the end-to-end tests, this is usually a good way to demonstrate how the tracing data resulting from the new instrumentation is used and how useful it is
 
 ## Architecture
@@ -944,7 +944,7 @@ tracetools_analysis <-- ros2trace_analysis
 ## Analysis
 
 A number of existing tools or libraries could be leveraged to perform analysis on the trace data collected using `ros2_tracing` and LTTng.
-This section presents a minimal analysis library architecture as a working proof-of-concept: [`tracetools_analysis`](https://gitlab.com/ros-tracing/tracetools_analysis).
+This section presents a minimal analysis library architecture as a working proof-of-concept: [`tracetools_analysis`](https://github.com/ros-tracing/tracetools_analysis).
 
 ### Analysis design
 
