@@ -68,7 +68,7 @@ def init(
     else:
         print('kernel tracing disabled')
     if len(context_fields) > 0:
-        print(f'context ({len(context_fields)} names)')
+        print(f'context ({len(context_fields)} fields)')
         if display_list:
             print_names_list(context_fields)
 
