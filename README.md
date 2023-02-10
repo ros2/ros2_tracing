@@ -216,4 +216,4 @@ Package containing unit and system tests for `tracetools`.
 
 ## Analysis
 
-See [`tracetools_analysis`](https://gitlab.com/ros-tracing/tracetools_analysis).
+See [`tracetools_analysis`](https://github.com/ros-tracing/tracetools_analysis).
