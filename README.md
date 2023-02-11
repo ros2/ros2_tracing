@@ -102,6 +102,12 @@ The steps above will not lead to trace data being generated, and thus they will 
 LTTng has to be configured for tracing.
 The packages in this repo provide two options: a [command](#trace-command) and a [launch file action](#launch-file-trace-action).
 
+**Note**: tracing must be started before the application is launched.
+Metadata is recorded during the initialization phase of the application.
+This metadata is needed to understand the rest of the trace data, so if tracing is started after the application started executing, then the trace data might be unusable.
+For more information, refer to the [design document](./doc/design_ros_2.md#general-guidelines).
+The [launch file action](#launch-file-trace-action) is designed to automatically start tracing before the application launches.
+
 The tracing directory can be configured using command/launch action parameters, or through environment variables with the following logic:
 
 * Use `$ROS_TRACE_DIR` if `ROS_TRACE_DIR` is set and not empty.
