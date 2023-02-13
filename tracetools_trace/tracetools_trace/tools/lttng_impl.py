@@ -15,7 +15,6 @@
 
 """Implementation of the interface for tracing with LTTng."""
 
-from distutils.version import StrictVersion
 import os
 import re
 import subprocess
@@ -27,20 +26,21 @@ from typing import Tuple
 from typing import Union
 
 import lttng
+from packaging.version import Version
 
 from .names import CONTEXT_TYPE_CONSTANTS_MAP
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_ROS
 
 
-def get_version() -> Optional[StrictVersion]:
+def get_version() -> Optional[Version]:
     """
     Get the version of the lttng module.
 
     The module does not have a __version__ attribute, but the version is mentioned in its __doc__,
     and seems to be written in a consistent way across versions.
 
-    :return: the version as a StrictVersion object, or `None` if it cannot be extracted
+    :return: the version as a Version object, or `None` if it cannot be extracted
     """
     doc_lines = lttng.__doc__.split('\n')
     filtered_doc_lines: List[str] = list(filter(None, doc_lines))
@@ -50,7 +50,7 @@ def get_version() -> Optional[StrictVersion]:
     version_string = first_line.split(' ')[1]
     if not re.compile(r'^[0-9]+\.[0-9]+\.[0-9]+$').match(version_string):
         return None
-    return StrictVersion(version_string)
+    return Version(version_string)
 
 
 def is_kernel_tracer_available() -> Tuple[bool, Optional[str]]:
