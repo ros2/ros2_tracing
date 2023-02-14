@@ -37,54 +37,62 @@ public:
   }
 };
 
-/*
-   Testing symbol resolution for std::function object created from a function pointer.
+/**
+ * Testing symbol resolution for std::function object created from a function pointer.
  */
 TEST(TestUtils, valid_symbol_funcptr) {
   std::function<void(std::shared_ptr<int>)> f = &function_shared;
-  EXPECT_STREQ(tracetools::get_symbol(f), "function_shared(std::shared_ptr<int>)") <<
+  char * symbol = tracetools::get_symbol(f);
+  EXPECT_STREQ(symbol, "function_shared(std::shared_ptr<int>)") <<
     "invalid symbol";
+  std::free(symbol);
 }
 
-/*
-   Testing get_symbol_funcptr from a null pointer.
+/**
+ * Testing get_symbol_funcptr from a null pointer.
  */
 TEST(TestUtils, invalid_get_symbol_funcptr) {
-  EXPECT_STREQ(tracetools::detail::get_symbol_funcptr(nullptr), TRACETOOLS_SYMBOL_UNKNOWN);
+  EXPECT_EQ(tracetools::detail::get_symbol_funcptr(nullptr), nullptr);
 }
 
-/*
-   Testing symbol resolution for std::function object created from a lambda.
+/**
+ * Testing symbol resolution for std::function object created from a lambda.
  */
 TEST(TestUtils, valid_symbol_lambda) {
   std::function<int(int)> l = [](int num) {return num + 1;};
+  char * symbol = tracetools::get_symbol(l);
   EXPECT_STREQ(
-    tracetools::get_symbol(l),
+    symbol,
     "TestUtils_valid_symbol_lambda_Test::TestBody()::{lambda(int)#1}") <<
     "invalid symbol";
+  std::free(symbol);
 }
 
-/*
-   Testing symbol resolution lambdas with capture.
+/**
+ * Testing symbol resolution lambdas with capture.
  */
 TEST(TestUtils, valid_symbol_lambda_capture) {
   int num = 1;
 
   auto l = [ = ]() {return num + 1;};
+  char * symbol = tracetools::get_symbol(l);
   EXPECT_STREQ(
-    tracetools::get_symbol(l),
+    symbol,
     "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda()#1}") <<
     "invalid symbol";
+  std::free(symbol);
 
   auto m = [&](int other_num) {return num + other_num;};
+  symbol = tracetools::get_symbol(m);
   EXPECT_STREQ(
-    tracetools::get_symbol(m),
+    symbol,
     "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#2}") <<
     "invalid symbol";
+  std::free(symbol);
 }
 
-/*
-   Testing symbol resolution for std::function object created from std::bind.
+/**
+ * Testing symbol resolution for std::function object created from std::bind.
  */
 TEST(TestUtils, valid_symbol_bind) {
   SomeClassWithCallback scwc;
@@ -94,12 +102,13 @@ TEST(TestUtils, valid_symbol_bind) {
     std::placeholders::_1,
     std::placeholders::_2
   );
+  char * symbol = tracetools::get_symbol(fscwc);
   EXPECT_STREQ(
-    tracetools::get_symbol(
-      fscwc),
+    symbol,
     "std::_Bind<void (SomeClassWithCallback::*(SomeClassWithCallback*, "
     "std::_Placeholder<1>, std::_Placeholder<2>))(int, std::__cxx11::basic_string"
     "<char, std::char_traits<char>, std::allocator<char> >)>")
     <<
     "invalid symbol";
+  std::free(symbol);
 }
