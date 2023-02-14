@@ -2,6 +2,12 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replace distutils.version.StrictVersion with packaging.version.Version (`#42 <https://github.com/ros2/ros2_tracing/issues/42>`_)
+* Remove deprecated context_names parameter (`#38 <https://github.com/ros2/ros2_tracing/issues/38>`_)
+* Contributors: Christophe Bedard
+
 4.0.0 (2022-01-20)
 ------------------
 * Disable kernel tracing by default
