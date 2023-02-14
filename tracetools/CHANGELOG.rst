@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+5.0.0 (2023-02-14)
+------------------
 * Update tracing to C++17. (`#33 <https://github.com/ros2/ros2_tracing/issues/33>`_)
 * Contributors: Chris Lalancette
 
