@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update tracing to C++17. (`#33 <https://github.com/ros2/ros2_tracing/issues/33>`_)
+* Contributors: Chris Lalancette
+
 4.1.0 (2022-03-29)
 ------------------
 * Install headers to include/${PROJECT_NAME}
