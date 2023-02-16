@@ -17,13 +17,54 @@
 
 #ifndef TRACETOOLS_DISABLED
 
+/**
+ * TODO(christophebedard) need to use "ros2" directly instead of "TRACEPOINT_PROVIDER" in some
+ * places here due to a bug with LTTng. Try again when bumping to a newer LTTng-UST version once
+ * this fix gets merged: https://review.lttng.org/c/lttng-ust/+/9001
+ */
 #ifdef TRACETOOLS_LTTNG_ENABLED
 # include "tracetools/tp_call.h"
 # define CONDITIONAL_TP(...) \
   tracepoint(TRACEPOINT_PROVIDER, __VA_ARGS__)
+# define CONDITIONAL_TP_ENABLED(event_name) \
+  0 != tracepoint_enabled(ros2, event_name)
+# define CONDITIONAL_DO_TP(...) \
+  do_tracepoint(ros2, __VA_ARGS__)
 #else
-# define CONDITIONAL_TP(...)
+# define CONDITIONAL_TP(...) ((void) (0))
+# define CONDITIONAL_TP_ENABLED(...) false
+# define CONDITIONAL_DO_TP(...) ((void) (0))
 #endif
+
+#define TRACEPOINT_ARGS(...) __VA_ARGS__
+#define TRACEPOINT_PARAMS(...) __VA_ARGS__
+
+#define DEFINE_TRACEPOINT(event_name, _TP_PARAMS, _TP_ARGS) \
+  void TRACEPOINT(event_name, _TP_PARAMS) \
+  { \
+    CONDITIONAL_TP(event_name, _TP_ARGS); \
+  } \
+  bool TRACEPOINT_ENABLED(event_name) \
+  { \
+    return CONDITIONAL_TP_ENABLED(event_name); \
+  } \
+  void DO_TRACEPOINT(event_name, _TP_PARAMS) \
+  { \
+    CONDITIONAL_DO_TP(event_name, _TP_ARGS); \
+  }
+#define DEFINE_TRACEPOINT_NO_ARGS(event_name) \
+  void TRACEPOINT(event_name) \
+  { \
+    CONDITIONAL_TP(event_name); \
+  } \
+  bool TRACEPOINT_ENABLED(event_name) \
+  { \
+    return CONDITIONAL_TP_ENABLED(event_name); \
+  } \
+  void DO_TRACEPOINT(event_name) \
+  { \
+    CONDITIONAL_DO_TP(event_name); \
+  }
 
 bool ros_trace_compile_status()
 {
@@ -42,325 +83,266 @@ bool ros_trace_compile_status()
 # pragma warning(disable: 4100)
 #endif
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_init,
-  const void * context_handle)
-{
-  CONDITIONAL_TP(
-    rcl_init,
-    context_handle);
-}
+  TRACEPOINT_PARAMS(
+    const void * context_handle),
+  TRACEPOINT_ARGS(
+    context_handle))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_node_init,
-  const void * node_handle,
-  const void * rmw_handle,
-  const char * node_name,
-  const char * node_namespace)
-{
-  CONDITIONAL_TP(
-    rcl_node_init,
+  TRACEPOINT_PARAMS(
+    const void * node_handle,
+    const void * rmw_handle,
+    const char * node_name,
+    const char * node_namespace),
+  TRACEPOINT_ARGS(
     node_handle,
     rmw_handle,
     node_name,
-    node_namespace);
-}
+    node_namespace))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rmw_publisher_init,
-  const void * rmw_publisher_handle,
-  const uint8_t * gid)
-{
-  CONDITIONAL_TP(
-    rmw_publisher_init,
+  TRACEPOINT_PARAMS(
+    const void * rmw_publisher_handle,
+    const uint8_t * gid),
+  TRACEPOINT_ARGS(
     rmw_publisher_handle,
-    gid);
-}
+    gid))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_publisher_init,
-  const void * publisher_handle,
-  const void * node_handle,
-  const void * rmw_publisher_handle,
-  const char * topic_name,
-  const size_t queue_depth)
-{
-  CONDITIONAL_TP(
-    rcl_publisher_init,
+  TRACEPOINT_PARAMS(
+    const void * publisher_handle,
+    const void * node_handle,
+    const void * rmw_publisher_handle,
+    const char * topic_name,
+    const size_t queue_depth),
+  TRACEPOINT_ARGS(
     publisher_handle,
     node_handle,
     rmw_publisher_handle,
     topic_name,
-    queue_depth);
-}
+    queue_depth))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_publish,
-  const void * publisher_handle,
-  const void * message)
-{
-  (void)publisher_handle;
-  CONDITIONAL_TP(
-    rclcpp_publish,
-    message);
-}
+  TRACEPOINT_PARAMS(
+    const void * publisher_handle,
+    const void * message),
+  TRACEPOINT_ARGS(
+    message))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_publish,
-  const void * publisher_handle,
-  const void * message)
-{
-  CONDITIONAL_TP(
-    rcl_publish,
+  TRACEPOINT_PARAMS(
+    const void * publisher_handle,
+    const void * message),
+  TRACEPOINT_ARGS(
     publisher_handle,
-    message);
-}
+    message))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rmw_publish,
-  const void * message)
-{
-  CONDITIONAL_TP(
-    rmw_publish,
-    message);
-}
+  TRACEPOINT_PARAMS(
+    const void * message),
+  TRACEPOINT_ARGS(
+    message))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rmw_subscription_init,
-  const void * rmw_subscription_handle,
-  const uint8_t * gid)
-{
-  CONDITIONAL_TP(
-    rmw_subscription_init,
+  TRACEPOINT_PARAMS(
+    const void * rmw_subscription_handle,
+    const uint8_t * gid),
+  TRACEPOINT_ARGS(
     rmw_subscription_handle,
-    gid);
-}
+    gid))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_subscription_init,
-  const void * subscription_handle,
-  const void * node_handle,
-  const void * rmw_subscription_handle,
-  const char * topic_name,
-  const size_t queue_depth)
-{
-  CONDITIONAL_TP(
-    rcl_subscription_init,
+  TRACEPOINT_PARAMS(
+    const void * subscription_handle,
+    const void * node_handle,
+    const void * rmw_subscription_handle,
+    const char * topic_name,
+    const size_t queue_depth),
+  TRACEPOINT_ARGS(
     subscription_handle,
     node_handle,
     rmw_subscription_handle,
     topic_name,
-    queue_depth);
-}
+    queue_depth))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_subscription_init,
-  const void * subscription_handle,
-  const void * subscription)
-{
-  CONDITIONAL_TP(
-    rclcpp_subscription_init,
+  TRACEPOINT_PARAMS(
+    const void * subscription_handle,
+    const void * subscription),
+  TRACEPOINT_ARGS(
     subscription_handle,
-    subscription);
-}
+    subscription))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_subscription_callback_added,
-  const void * subscription,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    rclcpp_subscription_callback_added,
+  TRACEPOINT_PARAMS(
+    const void * subscription,
+    const void * callback),
+  TRACEPOINT_ARGS(
     subscription,
-    callback);
-}
+    callback))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rmw_take,
-  const void * rmw_subscription_handle,
-  const void * message,
-  int64_t source_timestamp,
-  const bool taken)
-{
-  CONDITIONAL_TP(
-    rmw_take,
+  TRACEPOINT_PARAMS(
+    const void * rmw_subscription_handle,
+    const void * message,
+    int64_t source_timestamp,
+    const bool taken),
+  TRACEPOINT_ARGS(
     rmw_subscription_handle,
     message,
     source_timestamp,
-    taken);
-}
+    taken))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_take,
-  const void * message)
-{
-  CONDITIONAL_TP(
-    rcl_take,
-    message);
-}
+  TRACEPOINT_PARAMS(
+    const void * message),
+  TRACEPOINT_ARGS(
+    message))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_take,
-  const void * message)
-{
-  CONDITIONAL_TP(
-    rclcpp_take,
-    message);
-}
+  TRACEPOINT_PARAMS(
+    const void * message),
+  TRACEPOINT_ARGS(
+    message))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_service_init,
-  const void * service_handle,
-  const void * node_handle,
-  const void * rmw_service_handle,
-  const char * service_name)
-{
-  CONDITIONAL_TP(
-    rcl_service_init,
+  TRACEPOINT_PARAMS(
+    const void * service_handle,
+    const void * node_handle,
+    const void * rmw_service_handle,
+    const char * service_name),
+  TRACEPOINT_ARGS(
     service_handle,
     node_handle,
     rmw_service_handle,
-    service_name);
-}
+    service_name))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_service_callback_added,
-  const void * service_handle,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    rclcpp_service_callback_added,
+  TRACEPOINT_PARAMS(
+    const void * service_handle,
+    const void * callback),
+  TRACEPOINT_ARGS(
     service_handle,
-    callback);
-}
+    callback))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_client_init,
-  const void * client_handle,
-  const void * node_handle,
-  const void * rmw_client_handle,
-  const char * service_name)
-{
-  CONDITIONAL_TP(
-    rcl_client_init,
+  TRACEPOINT_PARAMS(
+    const void * client_handle,
+    const void * node_handle,
+    const void * rmw_client_handle,
+    const char * service_name),
+  TRACEPOINT_ARGS(
     client_handle,
     node_handle,
     rmw_client_handle,
-    service_name);
-}
+    service_name))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_timer_init,
-  const void * timer_handle,
-  int64_t period)
-{
-  CONDITIONAL_TP(
-    rcl_timer_init,
+  TRACEPOINT_PARAMS(
+    const void * timer_handle,
+    int64_t period),
+  TRACEPOINT_ARGS(
     timer_handle,
-    period);
-}
+    period))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_timer_callback_added,
-  const void * timer_handle,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    rclcpp_timer_callback_added,
+  TRACEPOINT_PARAMS(
+    const void * timer_handle,
+    const void * callback),
+  TRACEPOINT_ARGS(
     timer_handle,
-    callback);
-}
+    callback))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_timer_link_node,
-  const void * timer_handle,
-  const void * node_handle)
-{
-  CONDITIONAL_TP(
-    rclcpp_timer_link_node,
+  TRACEPOINT_PARAMS(
+    const void * timer_handle,
+    const void * node_handle),
+  TRACEPOINT_ARGS(
     timer_handle,
-    node_handle);
-}
+    node_handle))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_callback_register,
-  const void * callback,
-  const char * function_symbol)
-{
-  CONDITIONAL_TP(
-    rclcpp_callback_register,
+  TRACEPOINT_PARAMS(
+    const void * callback,
+    const char * function_symbol),
+  TRACEPOINT_ARGS(
     callback,
-    function_symbol);
-}
+    function_symbol))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   callback_start,
-  const void * callback,
-  const bool is_intra_process)
-{
-  CONDITIONAL_TP(
-    callback_start,
+  TRACEPOINT_PARAMS(
+    const void * callback,
+    const bool is_intra_process),
+  TRACEPOINT_ARGS(
     callback,
-    is_intra_process);
-}
+    is_intra_process))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   callback_end,
-  const void * callback)
-{
-  CONDITIONAL_TP(
-    callback_end,
-    callback);
-}
+  TRACEPOINT_PARAMS(
+    const void * callback),
+  TRACEPOINT_ARGS(
+    callback))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_lifecycle_state_machine_init,
-  const void * node_handle,
-  const void * state_machine)
-{
-  CONDITIONAL_TP(
-    rcl_lifecycle_state_machine_init,
+  TRACEPOINT_PARAMS(
+    const void * node_handle,
+    const void * state_machine),
+  TRACEPOINT_ARGS(
     node_handle,
-    state_machine);
-}
+    state_machine))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rcl_lifecycle_transition,
-  const void * state_machine,
-  const char * start_label,
-  const char * goal_label)
-{
-  CONDITIONAL_TP(
-    rcl_lifecycle_transition,
+  TRACEPOINT_PARAMS(
+    const void * state_machine,
+    const char * start_label,
+    const char * goal_label),
+  TRACEPOINT_ARGS(
     state_machine,
     start_label,
-    goal_label);
-}
+    goal_label))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT_NO_ARGS(
   rclcpp_executor_get_next_ready)
-{
-  CONDITIONAL_TP(
-    rclcpp_executor_get_next_ready);
-}
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_executor_wait_for_work,
-  const int64_t timeout)
-{
-  CONDITIONAL_TP(
-    rclcpp_executor_wait_for_work,
-    timeout);
-}
+  TRACEPOINT_PARAMS(
+    const int64_t timeout),
+  TRACEPOINT_ARGS(
+    timeout))
 
-void TRACEPOINT(
+DEFINE_TRACEPOINT(
   rclcpp_executor_execute,
-  const void * handle)
-{
-  CONDITIONAL_TP(
-    rclcpp_executor_execute,
-    handle);
-}
+  TRACEPOINT_PARAMS(
+    const void * handle),
+  TRACEPOINT_ARGS(
+    handle))
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
