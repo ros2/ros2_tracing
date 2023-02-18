@@ -14,12 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # # Normal build with LTTng installed (binary)
-          # - os: ubuntu-22.04
-          #   distro: rolling
-          #   build-type: binary
-          #   lttng: lttng-enabled
-          #   instrumentation: instrumentation-enabled
+          # Normal build with LTTng installed (binary)
+          - os: ubuntu-22.04
+            distro: rolling
+            build-type: binary
+            lttng: lttng-enabled
+            instrumentation: instrumentation-enabled
           # Normal build with LTTng installed (source)
           - os: ubuntu-22.04
             distro: rolling
