@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v3
       with:
         path: ws/src/ros2/ros2_tracing
-    - uses: ros-tooling/setup-ros@master
+    - uses: ros-tooling/setup-ros@christophebedard/ubuntu-prefer-system-packages
       with:
         required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
         use-ros2-testing: true
