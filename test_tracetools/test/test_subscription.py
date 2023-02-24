@@ -34,6 +34,7 @@ class TestSubscription(TraceTestCase):
                 tp.rcl_subscription_init,
                 tp.rclcpp_subscription_init,
                 tp.rclcpp_subscription_callback_added,
+                tp.rclcpp_callback_register,
                 tp.rclcpp_executor_execute,
                 tp.rmw_take,
                 tp.rcl_take,
@@ -56,6 +57,7 @@ class TestSubscription(TraceTestCase):
         callback_added_events = self.get_events_with_name(
             tp.rclcpp_subscription_callback_added,
         )
+        callback_register_events = self.get_events_with_name(tp.rclcpp_callback_register)
         execute_events = self.get_events_with_name(tp.rclcpp_executor_execute)
         rmw_take_events = self.get_events_with_name(tp.rmw_take)
         rcl_take_events = self.get_events_with_name(tp.rcl_take)
@@ -80,6 +82,9 @@ class TestSubscription(TraceTestCase):
             )
         for event in callback_added_events:
             self.assertValidHandle(event, ['subscription', 'callback'])
+        for event in callback_register_events:
+            self.assertValidPointer(event, 'callback')
+            self.assertStringFieldNotEmpty(event, 'symbol')
         for event in rmw_take_events:
             self.assertValidHandle(event, ['rmw_subscription_handle'])
             self.assertValidPointer(event, ['message'])
@@ -179,12 +184,31 @@ class TestSubscription(TraceTestCase):
         )
         callback_added_matching_event = callback_added_matching_events[0]
 
+        # Check that callback pointer matches between callback_added and callback_register
+        callback_handle = self.get_field(callback_added_matching_event, 'callback')
+        test_sub_node_callback_register_events = self.get_events_with_procname(
+            'test_ping',
+            callback_register_events,
+        )
+        callback_register_matching_events = self.get_events_with_field_value(
+            'callback',
+            callback_handle,
+            test_sub_node_callback_register_events,
+        )
+        self.assertNumEventsEqual(
+            callback_register_matching_events,
+            1,
+            'none or more than 1 matching callback_register events for the test topic',
+        )
+        callback_register_matching_event = callback_register_matching_events[0]
+
         # Check susbcription creation events order
         self.assertEventOrder([
             rmw_sub_init_event,
             test_rcl_sub_init_event,
             rclcpp_sub_init_matching_event,
             callback_added_matching_event,
+            callback_register_matching_event,
         ])
 
         # Get executor_execute and *_take events, there should only be one message received

@@ -31,6 +31,7 @@ class TestTimer(TraceTestCase):
                 tp.rcl_node_init,
                 tp.rcl_timer_init,
                 tp.rclcpp_timer_callback_added,
+                tp.rclcpp_callback_register,
                 tp.rclcpp_timer_link_node,
                 tp.rclcpp_executor_execute,
                 tp.callback_start,
@@ -45,8 +46,8 @@ class TestTimer(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check fields
-        init_events = self.get_events_with_name(tp.rcl_timer_init)
-        for event in init_events:
+        timer_init_events = self.get_events_with_name(tp.rcl_timer_init)
+        for event in timer_init_events:
             self.assertValidHandle(event, 'timer_handle')
             period_value = self.get_field(event, 'period')
             self.assertIsInstance(period_value, int)
@@ -55,6 +56,11 @@ class TestTimer(TraceTestCase):
         callback_added_events = self.get_events_with_name(tp.rclcpp_timer_callback_added)
         for event in callback_added_events:
             self.assertValidHandle(event, ['timer_handle', 'callback'])
+
+        callback_register_events = self.get_events_with_name(tp.rclcpp_callback_register)
+        for event in callback_register_events:
+            self.assertValidPointer(event, 'callback')
+            self.assertStringFieldNotEmpty(event, 'symbol')
 
         link_node_events = self.get_events_with_name(tp.rclcpp_timer_link_node)
         for event in link_node_events:
@@ -80,38 +86,74 @@ class TestTimer(TraceTestCase):
             self.assertValidHandle(event, 'callback')
 
         # Find and check given timer period
-        test_timer_init_event = self.get_events_with_procname('test_timer', init_events)
-        self.assertNumEventsEqual(test_timer_init_event, 1, 'none or more test timer init events')
-        test_init_event = test_timer_init_event[0]
-        self.assertFieldEquals(test_init_event, 'period', 1000000, 'invalid period')
-        timer_handle = self.get_field(test_init_event, 'timer_handle')
+        self.assertNumEventsEqual(timer_init_events, 1, 'none or more test timer init events')
+        test_timer_init_event = timer_init_events[0]
+        self.assertFieldEquals(test_timer_init_event, 'period', 1000000, 'invalid period')
+        timer_handle = self.get_field(test_timer_init_event, 'timer_handle')
 
         # Check that the timer_init:callback_added pair exists and has a common timer handle
-        self.assertMatchingField(
-            test_init_event,
+        test_callback_added_events = self.get_events_with_field_value(
             'timer_handle',
-            None,
+            timer_handle,
             callback_added_events,
         )
-        callback_added_event = callback_added_events[0]
+        self.assertNumEventsEqual(
+            test_callback_added_events,
+            1,
+            'none or more than 1 matching callback_added events for the test timer',
+        )
+        test_callback_added_event = test_callback_added_events[0]
+
+        # Check that callback pointer matches between callback_added and callback_register
+        callback_handle = self.get_field(test_callback_added_event, 'callback')
+        test_callback_register_events = self.get_events_with_field_value(
+            'callback',
+            callback_handle,
+            callback_register_events,
+        )
+        self.assertNumEventsEqual(
+            test_callback_register_events,
+            1,
+            'none or more than 1 matching callback_register events for the test topic',
+        )
+        test_callback_register_event = test_callback_register_events[0]
 
         # Check that there is a link_node event for the timer
-        self.assertMatchingField(
-            test_init_event,
+        test_link_node_events = self.get_events_with_field_value(
             'timer_handle',
-            None,
+            timer_handle,
             link_node_events,
         )
+        self.assertNumEventsEqual(
+            test_link_node_events,
+            1,
+            'none or more than 1 matching timer_link_node events for the test timer',
+        )
+        test_link_node_event = test_link_node_events[0]
+
         # And that the node from that node handle exists
+        node_handle = self.get_field(test_link_node_event, 'node_handle')
         node_init_events = self.get_events_with_name(tp.rcl_node_init)
-        self.assertNumEventsEqual(node_init_events, 1)
-        node_init_event = node_init_events[0]
-        self.assertMatchingField(
-            node_init_event,
+        test_node_inits_events = self.get_events_with_field_value(
             'node_handle',
-            None,
-            link_node_events,
+            node_handle,
+            node_init_events,
         )
+        self.assertNumEventsEqual(
+            test_node_inits_events,
+            1,
+            'none or more than 1 matching node_init events for the test timer',
+        )
+        test_node_inits_event = test_node_inits_events[0]
+
+        # Check timer creation events order
+        self.assertEventOrder([
+            test_node_inits_event,
+            test_timer_init_event,
+            test_callback_added_event,
+            test_callback_register_event,
+            test_link_node_event,
+        ])
 
         # Check that there are 2 executor execute events for the timer
         timer_execute_events = self.get_events_with_field_value(
@@ -119,17 +161,21 @@ class TestTimer(TraceTestCase):
             timer_handle,
             executor_execute_events,
         )
-        self.assertNumEventsEqual(timer_execute_events, 2)
+        self.assertNumEventsEqual(
+            timer_execute_events,
+            2,
+            'not 2 executor_execute events for the test timer',
+        )
 
         # Check that the callback events correspond to the registered timer callback
         self.assertMatchingField(
-            callback_added_event,
+            test_callback_added_event,
             'callback',
             None,
             start_events,
         )
         self.assertMatchingField(
-            callback_added_event,
+            test_callback_added_event,
             'callback',
             None,
             end_events,
