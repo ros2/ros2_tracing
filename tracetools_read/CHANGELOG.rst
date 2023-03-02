@@ -2,6 +2,9 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.2.11 (2019-12-09)
 -------------------
 * Register Python packages in the ament index

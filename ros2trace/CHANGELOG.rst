@@ -2,6 +2,9 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 4.1.0 (2022-03-29)
 ------------------
 * Fix 'ros2 trace' fini() error
