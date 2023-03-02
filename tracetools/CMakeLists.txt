@@ -81,6 +81,10 @@ if(TRACETOOLS_LTTNG_ENABLED)
     target_link_libraries(${PROJECT_NAME} "-rdynamic")
   endif()
 endif()
+if(NOT TRACETOOLS_DISABLED)
+  # Explicitly linking against dl for dladdr() seems to be required for RHEL
+  target_link_libraries(${PROJECT_NAME} "${CMAKE_LINK_LIBRARY_FLAG}dl")
+endif()
 
 if(NOT TRACETOOLS_DISABLED)
   # Only use output/binary include directory
