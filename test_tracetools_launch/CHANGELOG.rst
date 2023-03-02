@@ -2,6 +2,9 @@
 Changelog for package test_tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+5.1.0 (2023-03-02)
+------------------
+
 4.0.0 (2022-01-20)
 ------------------
 * Add support for preloading pthread and dl instrumentation shared libs
