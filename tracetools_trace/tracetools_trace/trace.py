@@ -42,7 +42,7 @@ def init(
 
     :param session_name: the name of the session
     :param base_path: the path to the directory in which to create the tracing session directory,
-    or `None` for default
+        or `None` for default
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_fields: list of context fields to enable
