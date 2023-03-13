@@ -42,7 +42,7 @@ def get_version() -> Optional[Version]:
 
     :return: the version as a Version object, or `None` if it cannot be extracted
     """
-    doc_lines = lttng.__doc__.split('\n')
+    doc_lines = str(lttng.__doc__).split('\n')
     filtered_doc_lines: List[str] = list(filter(None, doc_lines))
     if len(filtered_doc_lines) == 0:
         return None
