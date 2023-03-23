@@ -23,6 +23,9 @@ jobs:
       with:
         required-ros-distributions: ${{ matrix.distro }}
         use-ros2-testing: true
+    - name: Pin mypy==0.942
+      run: |
+        python3 -m pip install 'mypy==0.942'
     - name: Install other dependencies
       run: |
         sudo apt-get update
@@ -60,6 +63,9 @@ jobs:
       with:
         path: ws/src/ros2/ros2_tracing
     - uses: ros-tooling/setup-ros@master
+    - name: Pin mypy==0.942
+      run: |
+        python3 -m pip install 'mypy==0.942'
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/ws
