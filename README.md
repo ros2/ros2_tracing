@@ -49,56 +49,54 @@ Reference:
 
 ## Building
 
-As of Foxy, these instructions also apply to an installation from the Debian packages; it will not work out-of-the-box.
+As of Iron, the LTTng tracer is a ROS 2 dependency.
+Therefore, ROS 2 can be traced out-of-the-box on Linux; this package does not need to be re-built.
 
-If LTTng is not found during build, or if the [`TRACETOOLS_DISABLED` option is enabled](#disabling-tracing), then this package will not do anything.
-
-To enable tracing:
-
-1. Install [LTTng](https://lttng.org/docs/v2.13/) (`>=2.11.1`) with the Python bindings to control tracing and read traces:
-    ```
-    $ sudo apt-get update
-    $ sudo apt-get install lttng-tools liblttng-ust-dev
-    $ sudo apt-get install python3-babeltrace python3-lttng
-    ```
-    * The above commands will only install the LTTng userspace tracer, LTTng-UST. You only need the userspace tracer to trace ROS 2.
-    * To install the [LTTng kernel tracer](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel):
-        ```
-        $ sudo apt-get install lttng-modules-dkms
-        ```
-    * For more information about LTTng, [see its documentation](https://lttng.org/docs/v2.13/).
-2. Build:
-    *  If you've already built ROS 2 from source before installing LTTng, you will need to re-build at least up to `tracetools`:
-        ```
-        $ colcon build --packages-up-to tracetools --cmake-force-configure
-        ```
-    * If you rely on the ROS 2 binaries (Debian packages, release binaries, or prerelease binaries), you will need to clone this repo into your workspace and build at least up to `tracetools`:
-        ```
-        $ cd src/
-        $ git clone https://github.com/ros2/ros2_tracing.git
-        $ cd ../
-        $ colcon build --packages-up-to tracetools
-        ```
-3. Source and check that tracing is enabled:
-    ```
-    $ source ./install/setup.bash
-    $ ros2 run tracetools status
-    Tracing enabled
-    ```
-
-### Disabling tracing
-
-Alternatively, to build and disable tracing, use `TRACETOOLS_DISABLED`:
+To make sure that the instrumentation and tracepoints are available:
 
 ```
-$ colcon build --cmake-args " -DTRACETOOLS_DISABLED=ON"
+$ source /opt/ros/rolling/setup.bash  # With a binary install
+$ source ./install/setup.bash  # When building from source
+$ ros2 run tracetools status
+Tracing enabled
+```
+
+A ROS 2 installation only includes the LTTng userspace tracer (LTTng-UST), which is all that is needed to trace ROS 2.
+To trace the Linux kernel, the [LTTng kernel tracer](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) must be installed separately:
+
+```
+$ sudo apt-get update
+$ sudo apt-get install lttng-modules-dkms
+```
+
+For more information about LTTng, [refer to its documentation](https://lttng.org/docs/v2.13/).
+
+### Removing the instrumentation
+
+To build and remove all instrumentation, use `TRACETOOLS_DISABLED`:
+
+```
+$ colcon build --cmake-args -DTRACETOOLS_DISABLED=ON
 ```
 
 This will remove all instrumentation from the core ROS 2 packages, and thus they will not depend on or link against the shared library provided by the [`tracetools` package](#tracetools).
+This also means that LTTng is not required at build-time or at runtime.
+
+### Excluding tracepoints
+
+Alternatively, to only exclude the actual tracepoints, use `TRACETOOLS_TRACEPOINTS_EXCLUDED`:
+
+```
+$ colcon build --packages-select tracetools --cmake-clean-cache --cmake-args -DTRACETOOLS_TRACEPOINTS_EXCLUDED=ON
+```
+
+This will keep the instrumentation but remove all tracepoints.
+This also means that LTTng is not required at build-time or at runtime.
+This option can be useful, since tracepoints can be added back in or removed by simply replacing/re-building the shared library provided by the [`tracetools` package](#tracetools).
 
 ## Tracing
 
-The steps above will not lead to trace data being generated, and thus they will have no impact on execution.
+By default, trace data will not be generated, and thus these packages will have virtually no impact on execution.
 LTTng has to be configured for tracing.
 The packages in this repo provide two options: a [command](#trace-command) and a [launch file action](#launch-file-trace-action).
 

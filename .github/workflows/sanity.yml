@@ -1,6 +1,5 @@
 name: Sanity checks
 on:
-  # TODO remove the line below
   pull_request:
   push:
     branches:
@@ -8,26 +7,66 @@ on:
   schedule:
     - cron: "0 5 * * *"
 jobs:
-  tracing:
+  binary:
     runs-on: ubuntu-22.04
-    continue-on-error: ${{ matrix.build-type == 'binary' }}
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
         distro:
           - rolling
-        build-type:
-          - binary
-          - source
     steps:
     - uses: actions/checkout@v3
       with:
         path: ws/src/ros2/ros2_tracing
     - uses: ros-tooling/setup-ros@master
       with:
-        required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
+        required-ros-distributions: ${{ matrix.distro }}
         use-ros2-testing: true
-    - name: Pre-build (source)
+    - name: Pin mypy==0.942
+      run: |
+        python3 -m pip install 'mypy==0.942'
+    - name: Install other dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y -q ros-${{ matrix.distro }}-*tracetools*
+    # TODO(christophebedard) uncomment lines when a binary ROS 2 installation includes tracepoints and LTTng
+    # - name: Make sure that tracing instrumentation is available
+    #   run: |
+    #     source /opt/ros/${{ matrix.distro }}/setup.bash
+    #     ros2 run tracetools status
+    # - name: Generate trace and make sure it is not empty
+    #   run: |
+    #     source /opt/ros/${{ matrix.distro }}/setup.bash
+    #     ros2 launch tracetools_launch example.launch.py
+    #     babeltrace ~/.ros/tracing/
+    - name: Build tracetools without tracepoints
+      run: |
+        cd $GITHUB_WORKSPACE/ws
+        source /opt/ros/${{ matrix.distro }}/setup.bash
+        colcon build --packages-select tracetools --cmake-args -DTRACETOOLS_TRACEPOINTS_EXCLUDED=ON
+    - name: Make sure that tracing instrumentation is not available
+      run: |
+        cd $GITHUB_WORKSPACE/ws
+        source install/setup.bash
+        (! ros2 run tracetools status)
+  source:
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - rolling
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        path: ws/src/ros2/ros2_tracing
+    - uses: ros-tooling/setup-ros@master
+    - name: Pin mypy==0.942
+      run: |
+        python3 -m pip install 'mypy==0.942'
+    - name: Build
       run: |
         cd $GITHUB_WORKSPACE/ws
         vcs import src/ --input https://raw.githubusercontent.com/ros2/ros2/${{ matrix.distro }}/ros2.repos --skip-existing
@@ -35,39 +74,7 @@ jobs:
         rosdep update
         rosdep install -r --from-paths src --ignore-src -y --rosdistro ${{ matrix.distro }} --skip-keys "fastcdr rti-connext-dds-6.0.1 urdfdom_headers"
         colcon build --packages-up-to tracetools ros2run ros2launch demo_nodes_cpp tracetools_launch test_tracetools
-      if: matrix.build-type == 'source'
-    - name: Install other dependencies (binary)
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y -q ros-${{ matrix.distro }}-*tracetools*
-      if: matrix.build-type == 'binary'
-    - name: Verify that tracing is disabled (binary)
-      run: |
-        source /opt/ros/${{ matrix.distro }}/setup.bash
-        (! ros2 run tracetools status)
-      if: matrix.build-type == 'binary'
-    - name: Verify that tracing is disabled (source)
-      run: |
-        cd $GITHUB_WORKSPACE/ws
-        source install/setup.bash
-        (! ros2 run tracetools status)
-      if: matrix.build-type == 'source'
-    - name: Install LTTng
-      run: |
-        sudo apt-get update
-        sudo apt-get install -q -y lttng-tools liblttng-ust-dev python3-lttng python3-babeltrace python3-pandas
-    - name: Build tracetools (binary)
-      run: |
-        cd $GITHUB_WORKSPACE/ws
-        source /opt/ros/${{ matrix.distro }}/setup.bash
-        colcon build --packages-up-to tracetools test_tracetools
-      if: matrix.build-type == 'binary'
-    - name: Build tracetools (source)
-      run: |
-        cd $GITHUB_WORKSPACE/ws
-        colcon build --packages-up-to tracetools --cmake-force-configure
-      if: matrix.build-type == 'source'
-    - name: Make sure tracing instrumentation is available
+    - name: Make sure that tracing instrumentation is available
       run: |
         cd $GITHUB_WORKSPACE/ws
         source install/setup.bash
@@ -78,3 +85,28 @@ jobs:
         source install/setup.bash
         ros2 launch tracetools_launch example.launch.py
         babeltrace ~/.ros/tracing/
+    - name: Build tracetools without tracepoints
+      run: |
+        cd $GITHUB_WORKSPACE/ws
+        colcon build --packages-select tracetools --cmake-clean-cache --cmake-args -DTRACETOOLS_TRACEPOINTS_EXCLUDED=ON
+    - name: Make sure that tracing instrumentation is not available
+      run: |
+        cd $GITHUB_WORKSPACE/ws
+        source install/setup.bash
+        (! ros2 run tracetools status)
+    - name: Remove LTTng-UST
+      run: |
+        sudo apt-get purge -y liblttng-ust-dev
+    - name: Make sure building tracetools without LTTng fails
+      run: |
+        cd $GITHUB_WORKSPACE/ws
+        (! colcon build --packages-select tracetools --cmake-clean-cache)
+    - name: Make sure building tracetools without LTTng and without tracepoints works
+      run: |
+        cd $GITHUB_WORKSPACE/ws
+        colcon build --packages-select tracetools --cmake-clean-cache --cmake-args -DTRACETOOLS_TRACEPOINTS_EXCLUDED=ON
+    - name: Make sure that tracing instrumentation is not available
+      run: |
+        cd $GITHUB_WORKSPACE/ws
+        source install/setup.bash
+        (! ros2 run tracetools status)

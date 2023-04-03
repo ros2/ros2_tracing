@@ -23,24 +23,22 @@ else()
   set(STATUS_CHECKING_TOOL_DEFAULT ON)
 endif()
 option(TRACETOOLS_DISABLED "Explicitly disable support for tracing" ${DISABLED_DEFAULT})
+option(TRACETOOLS_TRACEPOINTS_EXCLUDED "Do not include tracepoints" OFF)
 option(TRACETOOLS_NO_RDYNAMIC "Disable export of -rdynamic link flag" OFF)
 option(TRACETOOLS_STATUS_CHECKING_TOOL "Enable the status checking tool" ${STATUS_CHECKING_TOOL_DEFAULT})
 
-if(NOT TRACETOOLS_DISABLED)
-  # Set TRACETOOLS_LTTNG_ENABLED if we can find lttng-ust
-  find_package(PkgConfig)
-  if(PkgConfig_FOUND)
-    pkg_check_modules(LTTNG lttng-ust)
-    if(LTTNG_FOUND)
-      set(TRACETOOLS_LTTNG_ENABLED TRUE)
-      message("LTTng found: tracing enabled")
-    endif()
-  endif()
+if(TRACETOOLS_DISABLED)
+  set(TRACETOOLS_TRACEPOINTS_EXCLUDED TRUE)
 endif()
 
-# Store configuration variables for runtime use
+if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(LTTNG REQUIRED lttng-ust)
+endif()
+
+# Store configuration variables for buildtime use
 #   TRACETOOLS_DISABLED
-#   TRACETOOLS_LTTNG_ENABLED
+#   TRACETOOLS_TRACEPOINTS_EXCLUDED
 configure_file(include/${PROJECT_NAME}/config.h.in include/${PROJECT_NAME}/config.h)
 
 # Tracetools lib
@@ -53,7 +51,7 @@ set(HEADERS
   include/${PROJECT_NAME}/utils.hpp
   include/${PROJECT_NAME}/visibility_control.hpp
 )
-if(TRACETOOLS_LTTNG_ENABLED)
+if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
   # We only need these if we're using LTTng
   list(APPEND SOURCES
     src/tp_call.c
@@ -69,19 +67,19 @@ else()
   # only export a target with headers when disabled
   add_library(${PROJECT_NAME} INTERFACE)
 endif()
-if(TRACETOOLS_LTTNG_ENABLED)
+if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
   target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
+endif()
+if(NOT TRACETOOLS_DISABLED)
   # Export -rdynamic for downtream packages to use when calling
   #   ament_target_dependencies()
   # which is needed to resolve function addresses to symbols when
   # using function pointers directly/without std::bind()
-  # (the flag should not be used on Windows, but TRACETOOLS_LTTNG_ENABLED
-  # should never be true on Windows anyway, so there is no need to check)
+  # (the flag should not be used on Windows, but TRACETOOLS_DISABLED
+  # should never be false on Windows anyway, so there is no need to check)
   if(NOT TRACETOOLS_NO_RDYNAMIC)
     target_link_libraries(${PROJECT_NAME} "-rdynamic")
   endif()
-endif()
-if(NOT TRACETOOLS_DISABLED)
   # Explicitly linking against dl for dladdr() seems to be required for RHEL
   target_link_libraries(${PROJECT_NAME} "${CMAKE_LINK_LIBRARY_FLAG}dl")
 endif()
@@ -158,7 +156,7 @@ install(
 # Export old-style CMake variables
 ament_export_include_directories("include/${PROJECT_NAME}")
 
-if(TRACETOOLS_LTTNG_ENABLED)
+if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
   ament_export_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
   # Export -rdynamic for downstream packages using classic CMake variables
   if(NOT TRACETOOLS_NO_RDYNAMIC)
@@ -182,7 +180,7 @@ if(BUILD_TESTING)
 
     # Run status tool executable as test and set pass/fail expectation appropriately
     add_test(test_status_tool status)
-    if(NOT TRACETOOLS_LTTNG_ENABLED)
+    if(TRACETOOLS_TRACEPOINTS_EXCLUDED)
       set_tests_properties(test_status_tool PROPERTIES WILL_FAIL TRUE)
     endif()
   endif()
