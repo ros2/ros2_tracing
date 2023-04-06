@@ -16,8 +16,7 @@
 
 from ros2cli.command import CommandExtension
 from tracetools_trace.tools import args
-from tracetools_trace.trace import fini
-from tracetools_trace.trace import init
+from tracetools_trace.trace import trace
 
 
 class TraceCommand(CommandExtension):
@@ -27,16 +26,4 @@ class TraceCommand(CommandExtension):
         args.add_arguments(parser)
 
     def main(self, *, parser, args):
-        if not init(
-            session_name=args.session_name,
-            base_path=args.path,
-            ros_events=args.events_ust,
-            kernel_events=args.events_kernel,
-            context_fields=args.context_fields,
-            display_list=args.list,
-        ):
-            return 1
-        fini(
-            session_name=args.session_name,
-        )
-        return 0
+        return trace(args)

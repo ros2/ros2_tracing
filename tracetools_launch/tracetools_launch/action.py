@@ -134,7 +134,7 @@ class Trace(Action):
         :param session_name: the name of the tracing session
         :param append_timestamp: whether to append timestamp to the session name
         :param base_path: the path to the base directory in which to create the session directory,
-        or `None` for default
+            or `None` for default
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
         :param context_fields: the names of context fields to enable
@@ -398,25 +398,34 @@ class Trace(Action):
         return self.__ld_preload_actions
 
     def _setup(self) -> bool:
-        self.__trace_directory = lttng.lttng_init(
-            session_name=self.__session_name,
-            base_path=self.__base_path,
-            ros_events=self.__events_ust,
-            kernel_events=self.__events_kernel,
-            context_fields=self.__context_fields,
-            subbuffer_size_ust=self.__subbuffer_size_ust,
-            subbuffer_size_kernel=self.__subbuffer_size_kernel,
-        )
-        if self.__trace_directory is None:
+        try:
+            self.__trace_directory = lttng.lttng_init(
+                session_name=self.__session_name,
+                base_path=self.__base_path,
+                ros_events=self.__events_ust,
+                kernel_events=self.__events_kernel,
+                context_fields=self.__context_fields,
+                subbuffer_size_ust=self.__subbuffer_size_ust,
+                subbuffer_size_kernel=self.__subbuffer_size_kernel,
+            )
+            if self.__trace_directory is None:
+                return False
+            self.__logger.info(f'Writing tracing session to: {self.__trace_directory}')
+            self.__logger.debug(f'UST events: {self.__events_ust}')
+            self.__logger.debug(f'Kernel events: {self.__events_kernel}')
+            self.__logger.debug(f'Context fields: {self.__context_fields}')
+            self.__logger.debug(f'LD_PRELOAD: {self.__ld_preload_actions}')
+            self.__logger.debug(f'UST subbuffer size: {self.__subbuffer_size_ust}')
+            self.__logger.debug(f'Kernel subbuffer size: {self.__subbuffer_size_kernel}')
+            return True
+        except RuntimeError as e:
+            self.__logger.error(str(e))
+            # Make sure to clean up tracing session
+            lttng.lttng_fini(
+                session_name=self.__session_name,
+                ignore_error=True,
+            )
             return False
-        self.__logger.info(f'Writing tracing session to: {self.__trace_directory}')
-        self.__logger.debug(f'UST events: {self.__events_ust}')
-        self.__logger.debug(f'Kernel events: {self.__events_kernel}')
-        self.__logger.debug(f'Context fields: {self.__context_fields}')
-        self.__logger.debug(f'LD_PRELOAD: {self.__ld_preload_actions}')
-        self.__logger.debug(f'UST subbuffer size: {self.__subbuffer_size_ust}')
-        self.__logger.debug(f'Kernel subbuffer size: {self.__subbuffer_size_kernel}')
-        return True
 
     def _destroy(self, event: Event, context: LaunchContext) -> None:
         self.__logger.debug(f'Finalizing tracing session: {self.__session_name}')

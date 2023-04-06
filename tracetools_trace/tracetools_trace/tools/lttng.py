@@ -58,6 +58,8 @@ def lttng_init(**kwargs) -> Optional[str]:
 
     For the full list of kwargs, see `lttng_impl.setup()`.
 
+    Raises RuntimeError on failure, in which case the tracing session might still exist.
+
     :return: the full path to the trace directory, or `None` if initialization failed
     """
     if not is_lttng_installed():
@@ -73,6 +75,8 @@ def lttng_init(**kwargs) -> Optional[str]:
 def lttng_fini(**kwargs) -> None:
     """
     Stop and destroy LTTng session.
+
+    Raises RuntimeError on failure.
 
     :param session_name: the name of the session
     """
