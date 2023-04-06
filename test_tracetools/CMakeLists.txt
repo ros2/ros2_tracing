@@ -13,7 +13,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-if(WIN32)
+if(WIN32 OR APPLE)
   set(DISABLED_DEFAULT ON)
 else()
   set(DISABLED_DEFAULT OFF)
