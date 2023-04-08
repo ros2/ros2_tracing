@@ -36,7 +36,7 @@ All installed headers are in the `include` directory of the package, headers in 
 
 ### Change Requests [2.i]
 
-All changes occur through a merge request.
+All changes occur through a pull request.
 
 ### Contributor Origin [2.ii]
 
@@ -45,11 +45,11 @@ There is an automated DCO check for change requests.
 
 ### Peer Review Policy [2.iii]
 
-All merge requests must have at least one peer review.
+All pull requests must have at least one peer review.
 
 ### Continuous Integration [2.iv]
 
-All merge requests must pass CI on Ubuntu amd64.
+All pull requests must pass CI on Ubuntu amd64.
 
 Nightly results for all [tier 1 platforms as defined in REP-2000](https://www.ros.org/reps/rep-2000.html#support-tiers) can be found here (note that only the tagged release used in the [`ros2.repos`](https://github.com/ros2/ros2/blob/rolling/ros2.repos) file is tested nightly):
 * [linux-aarch64_release](https://ci.ros2.org/view/nightly/job/nightly_linux-aarch64_release/lastBuild/testReport/tracetools/)
@@ -59,7 +59,7 @@ Nightly results for all [tier 1 platforms as defined in REP-2000](https://www.ro
 
 ### Documentation Policy [2.v]
 
-All merge requests must resolve related documentation changes before merging.
+All pull requests must resolve related documentation changes before merging.
 
 ## Documentation [3]
 
@@ -71,7 +71,7 @@ It does not currently have a features list with links to the corresponding featu
 
 ### Public API Documentation [3.ii]
 
-`tracetools` has embedded API documentation which can be generated using doxygen. The latest version can be viewed [here](https://ros-tracing.gitlab.io/ros2_tracing-api/).
+`tracetools` has embedded API documentation which can be generated using doxygen. The latest version can be viewed [here](https://docs.ros.org/en/rolling/p/tracetools/).
 
 New additions to the public API require documentation before being added.
 
