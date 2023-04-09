@@ -817,8 +817,8 @@ The process for adding instrumentation to the ROS 2 core and supporting it in `r
 
 Additional considerations:
 
-* The merge request with the necessary changes in `ros2_tracing` is usually merged first, then a new release of the `ros2_tracing` is created before merging the pull request(s) for the corresponding downstream package(s) in the ROS 2 core
-* For the `ros2_tracing` MR and until the PRs for the ROS 2 core package(s) are merged, CI here will need to use the modified version(s) of the core package(s) using the [`instrumented.repos`](../instrumented.repos) file so that end-to-end tests pass (`test_tracetools`)
+* The pull request with the necessary changes in `ros2_tracing` is usually merged first, then a new release of the `ros2_tracing` is created before merging the pull request(s) for the corresponding downstream package(s) in the ROS 2 core
+* For the `ros2_tracing` PR and until the PRs for the ROS 2 core package(s) are merged, local GitHub CI may need to use the modified version(s) of the core package(s) using a `.repos` file so that end-to-end tests pass (see `test_tracetools`)
 * Add support for the new instrumentation in [`tracetools_analysis`](https://github.com/ros-tracing/tracetools_analysis)
     * Along with the end-to-end tests, this is usually a good way to demonstrate how the tracing data resulting from the new instrumentation is used and how useful it is
 

@@ -44,6 +44,7 @@ Reference:
 
 ## Tutorials & demos
 
+* ROS 2 documentation: [Building ROS 2 with tracing](https://docs.ros.org/en/rolling/How-To-Guides/Building-ROS-2-with-Tracing.html)
 * Real-Time Working Group documentation tutorial: [How to use `ros2_tracing` to trace and analyze an application](https://ros-realtime.github.io/Guides/ros2_tracing_trace_and_analyze.html)
 * ROS World 2021 demo: [github.com/christophebedard/ros-world-2021-demo](https://github.com/christophebedard/ros-world-2021-demo)
 
@@ -128,12 +129,12 @@ The first option is to use the `ros2 trace` command.
 $ ros2 trace
 ```
 
-By default, it will enable all ROS tracepoints and a few kernel tracepoints.
+By default, it will enable all ROS 2 tracepoints.
 The trace will be written to `~/.ros/tracing/session-YYYYMMDDHHMMSS`.
 Run the command with `-h` for more information.
 
 You must [install the kernel tracer](#building) if you want to enable kernel events (using the `-k`/`--kernel-events` option).
-If have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
+If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ### Launch file trace action
 
@@ -148,7 +149,7 @@ The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng'
 For more information, see [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py).
 
 You must [install the kernel tracer](#building) if you want to enable kernel events (`events_kernel` in Python, `events-kernel` in XML or YAML).
-If have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
+If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ## Design
 
@@ -174,7 +175,7 @@ However, some settings need to be tuned for it to be fully real-time safe and fo
     * usually done the first time a tracepoint is executed within a thread for URCU thread registration, but registration can be manually performed to force it to be done during your application's initialization
     * see [this LTTng mailing list message](https://lists.lttng.org/pipermail/lttng-dev/2019-November/029409.html)
 
-[^rt-1]: this setting cannot currently be set through the [`Trace` launch file action](#launch-file-trace-action) or the [`ros2 trace` command](#trace-command), see [!129](https://gitlab.com/ros-tracing/ros2_tracing/-/issues/129)
+[^rt-1]: this setting cannot currently be set through the [`Trace` launch file action](#launch-file-trace-action) or the [`ros2 trace` command](#trace-command), see [#20](https://github.com/ros2/ros2_tracing/issues/20)
 
 For further reading:
 
@@ -196,7 +197,7 @@ Library to support instrumenting ROS packages, including core packages.
 
 This package claims to be in the **Quality Level 1** category, see the [Quality Declaration](./tracetools/QUALITY_DECLARATION.md) for more details.
 
-See the [API documentation](https://ros-tracing.gitlab.io/ros2_tracing-api/).
+See the [API documentation](https://docs.ros.org/en/rolling/p/tracetools/).
 
 ### tracetools_launch
 
@@ -217,6 +218,10 @@ Package containing tools to enable tracing.
 ### test_tracetools
 
 Package containing unit and system tests for `tracetools`.
+
+### test_tracetools_launch
+
+Package containing system tests for `tracetools_launch`.
 
 ## Analysis
 
