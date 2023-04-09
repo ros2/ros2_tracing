@@ -85,14 +85,33 @@
 /**
  * The first argument is mandatory and should be the tracepoint event name.
  * The other arguments should be the tracepoint arguments.
- * This is the preferred method over calling the actual function directly.
+ * This is the preferred method over calling the underlying function directly.
  *
  * This macro currently supports up to 9 tracepoint arguments after the event name.
  */
 #  define TRACEPOINT(...) \
   _GET_MACRO_TRACEPOINT(__VA_ARGS__)(__VA_ARGS__)
+/// Check if a tracepoint is enabled at runtime.
+/**
+ * This can be useful to only compute tracepoint arguments if the tracepoint is actually enabled at
+ * runtime. Combine this with `DO_TRACEPOINT()` instead of `TRACEPOINT()` to trigger a tracepoint
+ * after checking if it is enabled and computing its arguments.
+ *
+ * This is the preferred method over calling the underlying function directly.
+ */
 #  define TRACEPOINT_ENABLED(event_name) \
   ros_trace_enabled_ ## event_name()
+/// Call a tracepoint, without checking if it is enabled.
+/**
+ * Combine this with `TRACEPOINT_ENABLED()` to check if a tracepoint is enabled before triggering
+ * it.
+ *
+ * The first argument is mandatory and should be the tracepoint event name.
+ * The other arguments should be the tracepoint arguments.
+ * This is the preferred method over calling the underlying function directly.
+ *
+ * This macro currently supports up to 9 tracepoint arguments after the event name.
+ */
 #  define DO_TRACEPOINT(...) \
   _GET_MACRO_DO_TRACEPOINT(__VA_ARGS__)(__VA_ARGS__)
 #  define DECLARE_TRACEPOINT(...) \
