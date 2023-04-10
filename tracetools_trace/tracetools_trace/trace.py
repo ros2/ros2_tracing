@@ -33,6 +33,7 @@ def init(
     *,
     session_name: str,
     base_path: Optional[str],
+    append_trace: bool,
     ros_events: List[str],
     kernel_events: List[str],
     context_fields: List[str],
@@ -46,6 +47,8 @@ def init(
     :param session_name: the name of the session
     :param base_path: the path to the directory in which to create the tracing session directory,
         or `None` for default
+    :param append_trace: whether to append to the trace directory if it already exists, otherwise
+        an error is reported
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_fields: list of context fields to enable
@@ -84,6 +87,7 @@ def init(
     trace_directory = lttng.lttng_init(
         session_name=session_name,
         base_path=base_path,
+        append_trace=append_trace,
         ros_events=ros_events,
         kernel_events=kernel_events,
         context_fields=context_fields,
@@ -137,6 +141,7 @@ def trace(args: argparse.Namespace) -> int:
         if not init(
             session_name=args.session_name,
             base_path=args.path,
+            append_trace=args.append_trace,
             ros_events=args.events_ust,
             kernel_events=args.events_kernel,
             context_fields=args.context_fields,

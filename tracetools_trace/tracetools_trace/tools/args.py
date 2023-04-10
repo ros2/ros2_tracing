@@ -76,3 +76,6 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '-l', '--list', dest='list', action='store_true',
         help='display lists of enabled events and context names (default: %(default)s)')
+    parser.add_argument(
+        '-a', '--append-trace', dest='append_trace', action='store_true',
+        help='append to trace if it already exists, otherwise error out (default: %(default)s)')

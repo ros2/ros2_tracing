@@ -109,6 +109,7 @@ class Trace(Action):
         session_name: SomeSubstitutionsType,
         append_timestamp: bool = False,
         base_path: Optional[SomeSubstitutionsType] = None,
+        append_trace: bool = False,
         events_ust: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_ROS,
         events_kernel: Iterable[SomeSubstitutionsType] = [],
         context_fields:
@@ -135,6 +136,8 @@ class Trace(Action):
         :param append_timestamp: whether to append timestamp to the session name
         :param base_path: the path to the base directory in which to create the session directory,
             or `None` for default
+        :param append_trace: whether to append to the trace directory if it already exists,
+            otherwise an error is reported
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
         :param context_fields: the names of context fields to enable
@@ -152,6 +155,7 @@ class Trace(Action):
         self.__session_name = normalize_to_list_of_substitutions(session_name)
         self.__base_path = base_path \
             if base_path is None else normalize_to_list_of_substitutions(base_path)
+        self.__append_trace = append_trace
         self.__trace_directory = None
         self.__events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self.__events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
@@ -173,6 +177,10 @@ class Trace(Action):
     @property
     def base_path(self):
         return self.__base_path
+
+    @property
+    def append_trace(self):
+        return self.__append_trace
 
     @property
     def trace_directory(self):
@@ -272,6 +280,10 @@ class Trace(Action):
         base_path = entity.get_attr('base-path', optional=True)
         if base_path:
             kwargs['base_path'] = parser.parse_substitution(base_path)
+        append_trace = entity.get_attr(
+            'append-trace', data_type=bool, optional=True, can_be_str=False)
+        if append_trace is not None:
+            kwargs['append_trace'] = append_trace
         # Make sure to handle empty strings and replace with empty lists,
         # otherwise an empty string enables all events
         events_ust = entity.get_attr('events-ust', optional=True)
@@ -402,6 +414,7 @@ class Trace(Action):
             self.__trace_directory = lttng.lttng_init(
                 session_name=self.__session_name,
                 base_path=self.__base_path,
+                append_trace=self.__append_trace,
                 ros_events=self.__events_ust,
                 kernel_events=self.__events_kernel,
                 context_fields=self.__context_fields,
@@ -436,6 +449,7 @@ class Trace(Action):
             'Trace('
             f'session_name={self.__session_name}, '
             f'base_path={self.__base_path}, '
+            f'append_trace={self.__append_trace}, '
             f'trace_directory={self.__trace_directory}, '
             f'events_ust={self.__events_ust}, '
             f'events_kernel={self.__events_kernel}, '
