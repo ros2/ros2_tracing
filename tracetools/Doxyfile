@@ -5,6 +5,7 @@ PROJECT_NUMBER         = rolling
 PROJECT_BRIEF          = "Tracing tools and instrumentation for ROS 2"
 
 INPUT                  = ./include
+EXCLUDE                = ./include/tracetools/tp_call.h
 
 RECURSIVE              = YES
 OUTPUT_DIRECTORY       = doc_output
@@ -18,13 +19,23 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 PREDEFINED             = \
-    "TRACETOOLS_PUBLIC="
+    "TRACETOOLS_LOCAL=" \
+    "TRACETOOLS_PUBLIC=" \
+    "TRACETOOLS_PUBLIC_TYPE="
 
 EXCLUDE_SYMBOLS        = \
+    "_GET_MACRO" \
+    "_TRACEPOINT_NOARGS" \
+    "_TRACEPOINT_ARGS" \
+    "_DO_TRACEPOINT_NOARGS" \
+    "_DO_TRACEPOINT_ARGS" \
+    "_DECLARE_TRACEPOINT_NOARGS" \
+    "_DECLARE_TRACEPOINT_ARGS" \
+    "_GET_MACRO_TRACEPOINT" \
+    "_GET_MACRO_DO_TRACEPOINT" \
+    "_GET_MACRO_DECLARE_TRACEPOINT" \
     "DECLARE_TRACEPOINT" \
-    "tracetools::detail*" \
-    "_demangle_symbol" \
-    "_get_symbol_funcptr"
+    "tracetools::detail*"
 
 # Tag files that do not exist will produce a warning and cross-project linking will not work.
 TAGFILES += "../../../../../doxygen_tag_files/cppreference-doxygen-web.tag.xml=http://en.cppreference.com/w/"
