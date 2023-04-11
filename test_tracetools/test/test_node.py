@@ -16,11 +16,13 @@ import unittest
 
 from tracetools_test.case import TraceTestCase
 from tracetools_trace.tools import tracepoints as tp
+from tracetools_trace.tools.lttng import is_lttng_installed
 
 
 VERSION_REGEX = r'^[0-9]+\.[0-9]+\.[0-9]+$'
 
 
+@unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
 class TestNode(TraceTestCase):
 
     def __init__(self, *args) -> None:

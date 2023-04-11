@@ -16,8 +16,10 @@ import unittest
 
 from tracetools_test.case import TraceTestCase
 from tracetools_trace.tools import tracepoints as tp
+from tracetools_trace.tools.lttng import is_lttng_installed
 
 
+@unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
 class TestService(TraceTestCase):
 
     def __init__(self, *args) -> None:
