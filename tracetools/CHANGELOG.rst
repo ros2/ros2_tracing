@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+6.0.0 (2023-04-12)
+------------------
 * Improve tracetools rosdoc2/doxygen output (`#57 <https://github.com/ros2/ros2_tracing/issues/57>`_)
 * Update README and other documentation (`#55 <https://github.com/ros2/ros2_tracing/issues/55>`_)
 * Disable tracing on macOS (`#53 <https://github.com/ros2/ros2_tracing/issues/53>`_)
