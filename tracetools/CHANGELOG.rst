@@ -2,6 +2,14 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Improve tracetools rosdoc2/doxygen output (`#57 <https://github.com/ros2/ros2_tracing/issues/57>`_)
+* Update README and other documentation (`#55 <https://github.com/ros2/ros2_tracing/issues/55>`_)
+* Disable tracing on macOS (`#53 <https://github.com/ros2/ros2_tracing/issues/53>`_)
+* Include tracepoints by default on Linux (`#31 <https://github.com/ros2/ros2_tracing/issues/31>`_)
+* Contributors: Christophe Bedard
+
 5.1.0 (2023-03-02)
 ------------------
 * Explicitly link against dl for dladdr() (`#48 <https://github.com/ros2/ros2_tracing/issues/48>`_)
