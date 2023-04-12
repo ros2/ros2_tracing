@@ -35,6 +35,7 @@ from tracetools_launch.action import Trace
 from tracetools_trace.tools.lttng import is_lttng_installed
 
 
+@unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
 class TestTraceAction(unittest.TestCase):
 
     def __init__(self, *args) -> None:
@@ -71,7 +72,6 @@ class TestTraceAction(unittest.TestCase):
         self.assertEqual(events_ust, action.events_ust)
         self.assertTrue(pathlib.Path(tmpdir).exists())
 
-    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action(self) -> None:
         self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action')
@@ -92,7 +92,6 @@ class TestTraceAction(unittest.TestCase):
         shutil.rmtree(tmpdir)
         del os.environ['LD_PRELOAD']
 
-    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_frontend_xml(self) -> None:
         self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_frontend_xml')
@@ -119,7 +118,6 @@ class TestTraceAction(unittest.TestCase):
         shutil.rmtree(tmpdir)
         del os.environ['LD_PRELOAD']
 
-    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_frontend_yaml(self) -> None:
         self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_frontend_yaml')
@@ -144,7 +142,6 @@ class TestTraceAction(unittest.TestCase):
         shutil.rmtree(tmpdir)
         del os.environ['LD_PRELOAD']
 
-    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_context_per_domain(self) -> None:
         self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_context_per_domain')
@@ -176,7 +173,6 @@ class TestTraceAction(unittest.TestCase):
         shutil.rmtree(tmpdir)
         del os.environ['LD_PRELOAD']
 
-    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_substitutions(self) -> None:
         self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_substitutions')
@@ -223,7 +219,6 @@ class TestTraceAction(unittest.TestCase):
         del os.environ['TestTraceAction__context_field']
         del os.environ['LD_PRELOAD']
 
-    @unittest.skipIf(not is_lttng_installed(), 'LTTng is required')
     def test_action_ld_preload(self) -> None:
         self.assertIsNone(os.environ.get('LD_PRELOAD'))
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_ld_preload')
