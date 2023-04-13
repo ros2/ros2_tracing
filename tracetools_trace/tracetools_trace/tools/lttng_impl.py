@@ -74,6 +74,7 @@ def setup(
     channel_name_ust: str = 'ros2',
     channel_name_kernel: str = 'kchan',
     ust_subbuffer_size: int = 8 * 4096,
+    kernel_subbuffer_size: int = 32 * 4096,
 ) -> Optional[str]:
     """
     Set up LTTng session, with events and context.
@@ -93,6 +94,8 @@ def setup(
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
     :param ust_subbuffer_size: the size of the subbuffers for user space events (defaults to 8 times the usual page size)
+    :param kernel_subbuffer_size: the size of the subbuffers for user space events (defaults to 32 times the usual page
+        size, since there can be way more kernel events than UST events)
     :return: the full path to the trace directory, or `None` if initialization failed
     """
     # Check if there is a session daemon running
@@ -163,9 +166,7 @@ def setup(
         channel_kernel.name = channel_name_kernel
         # Discard, do not overwrite
         channel_kernel.attr.overwrite = 0
-        # 2 sub-buffers of 32 times the usual page size, since
-        # there can be way more kernel events than UST events
-        channel_kernel.attr.subbuf_size = 32 * 4096
+        channel_kernel.attr.subbuf_size = kernel_subbuffer_size
         channel_kernel.attr.num_subbuf = 2
         # Ignore switch timer interval and use read timer instead
         channel_kernel.attr.switch_timer_interval = 0

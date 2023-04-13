@@ -115,6 +115,7 @@ class Trace(Action):
             Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
             = names.DEFAULT_CONTEXT,
         ust_subbuffer_size: int = 8 * 4096,
+        kernel_subbuffer_size: int = 32 * 4096,
         **kwargs,
     ) -> None:
         """
@@ -141,6 +142,7 @@ class Trace(Action):
             if it's a dictionary: { domain type string -> context fields list }
                 with the domain type string being either 'kernel' or 'userspace'
         :param ust_subbuffer_size: the size of the subbuffers (defaults to 8 times the usual page size)
+        :param kernel_subbuffer_size: the size of the subbuffers (defaults to 32 times the usual page size)
         """
         super().__init__(**kwargs)
         self.__logger = logging.get_logger(__name__)
@@ -160,6 +162,7 @@ class Trace(Action):
             else [normalize_to_list_of_substitutions(field) for field in context_fields]
         self.__ld_preload_actions: List[LdPreload] = []
         self.__ust_subbuffer_size = ust_subbuffer_size
+        self.__kernel_subbuffer_size = kernel_subbuffer_size
 
     @property
     def session_name(self):
@@ -188,6 +191,10 @@ class Trace(Action):
     @property
     def ust_subbuffer_size(self):
         return self.__ust_subbuffer_size
+
+    @property
+    def kernel_subbuffer_size(self):
+        return self.__kernel_subbuffer_size
 
     @classmethod
     def _parse_cmdline(
@@ -288,6 +295,10 @@ class Trace(Action):
             kwargs['ust_subbuffer_size'] = cls._parse_cmdline(context_fields, parser) \
                 if ust_subbuffer_size else 8 * 4096
 
+        kernel_subbuffer_size  = entity.get_attr('kernel_subbuffer_size', optional=True)
+        if kernel_subbuffer_size is not None:
+            kwargs['kernel_subbuffer_size'] = cls._parse_cmdline(context_fields, parser) \
+                if kernel_subbuffer_size else 8 * 4096
 
         return cls, kwargs
 
@@ -399,6 +410,7 @@ class Trace(Action):
             kernel_events=self.__events_kernel,
             context_fields=self.__context_fields,
             ust_subbuffer_size=self.__ust_subbuffer_size,
+            kernel_subbuffer_size=self.__kernel_subbuffer_size,
         )
         if self.__trace_directory is None:
             return False
@@ -424,5 +436,6 @@ class Trace(Action):
             f'events_kernel={self.__events_kernel}, '
             f'context_fields={self.__context_fields}, '
             f'ld_preload_actions={self.__ld_preload_actions},'
-            f'ust_subbuffer_size={self.__ust_subbuffer_size})'
+            f'ust_subbuffer_size={self.__ust_subbuffer_size},'
+            f'kernel_subbuffer_size={self.__kernel_subbuffer_size})'
         )
