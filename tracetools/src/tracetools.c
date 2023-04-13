@@ -136,6 +136,15 @@ DEFINE_TRACEPOINT(
     message))
 
 DEFINE_TRACEPOINT(
+  rclcpp_intra_publish,
+  TRACEPOINT_PARAMS(
+    const void * publisher_handle,
+    const void * message),
+  TRACEPOINT_ARGS(
+    publisher_handle,
+    message))
+
+DEFINE_TRACEPOINT(
   rcl_publish,
   TRACEPOINT_PARAMS(
     const void * publisher_handle,
@@ -343,6 +352,64 @@ DEFINE_TRACEPOINT(
     const void * handle),
   TRACEPOINT_ARGS(
     handle))
+
+DEFINE_TRACEPOINT(
+  rclcpp_ipb_to_subscription,
+  TRACEPOINT_PARAMS(
+    const void * ipb,
+    const void * subscription),
+  TRACEPOINT_ARGS(
+    ipb,
+    subscription))
+
+DEFINE_TRACEPOINT(
+  rclcpp_buffer_to_ipb,
+  TRACEPOINT_PARAMS(
+    const void * buffer,
+    const void * ipb),
+  TRACEPOINT_ARGS(
+    buffer,
+    ipb))
+
+DEFINE_TRACEPOINT(
+  rclcpp_construct_ring_buffer,
+  TRACEPOINT_PARAMS(
+    const void * buffer,
+    const uint64_t capacity),
+  TRACEPOINT_ARGS(
+    buffer,
+    capacity))
+
+DEFINE_TRACEPOINT(
+  rclcpp_ring_buffer_enqueue,
+  TRACEPOINT_PARAMS(
+    const void * buffer,
+    const uint64_t index,
+    const uint64_t size,
+    const bool overwritten),
+  TRACEPOINT_ARGS(
+    buffer,
+    index,
+    size,
+    overwritten))
+
+DEFINE_TRACEPOINT(
+  rclcpp_ring_buffer_dequeue,
+  TRACEPOINT_PARAMS(
+    const void * buffer,
+    const uint64_t index,
+    const uint64_t size),
+  TRACEPOINT_ARGS(
+    buffer,
+    index,
+    size))
+
+DEFINE_TRACEPOINT(
+  rclcpp_ring_buffer_clear,
+  TRACEPOINT_PARAMS(
+    const void * buffer),
+  TRACEPOINT_ARGS(
+    buffer))
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop

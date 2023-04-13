@@ -208,6 +208,19 @@ DECLARE_TRACEPOINT(
   const void * publisher_handle,
   const void * message)
 
+/// `rclcpp_intra_publish`
+/**
+ * Intra-process message publication.
+ * Notes the pointer to the message being published in intra process at the `rclcpp` level.
+ *
+ * \param[in] publisher_handle pointer to the publisher's `rcl_publisher_t` handle
+ * \param[in] message pointer to the message being published
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_intra_publish,
+  const void * publisher_handle,
+  const void * message)
+
 /// `rcl_publish`
 /**
  * Message publication.
@@ -520,6 +533,87 @@ DECLARE_TRACEPOINT(
 DECLARE_TRACEPOINT(
   rclcpp_executor_execute,
   const void * handle)
+
+/// `rclcpp_ipb_to_subscription`
+/**
+ * Subscription intra-process buffer initialization.
+ * Notes the `IntraProcessBuffer` and the `SubscriptionIntraProcess` that owns it.
+ *
+ * \param[in] ipb pointer to the `IntraProcessBuffer`
+ * \param[in] subscription pointer to the `SubscriptionIntraProcess`
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_ipb_to_subscription,
+  const void * ipb,
+  const void * subscription)
+
+/// `rclcpp_buffer_to_ipb`
+/**
+ * Intra-process buffer initialization.
+ * Notes the `BufferImplementationBase` and the `IntraProcessBuffer` that owns it.
+ *
+ * \param[in] buffer the pointer to the `BufferImplementationBase`
+ * \param[in] ipb to pointer to the `IntraProcessBuffer`
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_buffer_to_ipb,
+  const void * buffer,
+  const void * ipb)
+
+/// `rclcpp_construct_ring_buffer`
+/**
+ * Ring buffer construction.
+ * Notes the buffer address and its capacity.
+ *
+ * \param[in] buffer pointer to the buffer
+ * \param[in] capacity buffer size
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_construct_ring_buffer,
+  const void * buffer,
+  const uint64_t capacity)
+
+/// `rclcpp_ring_buffer_enqueue`
+/**
+ * Notes buffer address, the index to write to, and the occurrence of the lost.
+ *
+ * \param[in] buffer pointer to the buffer
+ * \param[in] index the index to write to
+ * \param[in] size the size of the buffer after this operation
+ * \param[in] overwritten occurrence of the lost
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_ring_buffer_enqueue,
+  const void * buffer,
+  const uint64_t index,
+  const uint64_t size,
+  const bool overwritten)
+
+/// `rclcpp_ring_buffer_dequeue`
+/**
+  * Ring buffer dequeue.
+  * Notes buffer address, the index to read from, and the size of the buffer after this operation.
+  *
+  * \param[in] buffer pointer to the buffer
+  * \param[in] index the index to read from
+  * \param[in] size the size of the buffer after this operation
+  */
+DECLARE_TRACEPOINT(
+  rclcpp_ring_buffer_dequeue,
+  const void * buffer,
+  const uint64_t index,
+  const uint64_t size)
+
+/// `rclcpp_ring_buffer_clear`
+/**
+ * Ring buffer clear.
+ * Notes the address of the cleared buffer.
+ *
+ * \param[in] buffer pointer to the buffer
+ */
+DECLARE_TRACEPOINT(
+  rclcpp_ring_buffer_clear,
+  const void * buffer)
 
 #ifdef __cplusplus
 }
