@@ -64,6 +64,8 @@ class TestTraceAction(unittest.TestCase):
         tmpdir,
         session_name: str = 'my-session-name',
         events_ust: List[str] = ['ros2:*', '*'],
+        subbuffer_size_ust: int = 524288,
+        subbuffer_size_kernel: int = 1048576,
     ) -> None:
         self.assertEqual(session_name, action.session_name)
         self.assertEqual(tmpdir, action.base_path)
@@ -71,6 +73,8 @@ class TestTraceAction(unittest.TestCase):
         self.assertEqual([], action.events_kernel)
         self.assertEqual(events_ust, action.events_ust)
         self.assertTrue(pathlib.Path(tmpdir).exists())
+        self.assertEqual(subbuffer_size_ust, action.subbuffer_size_ust)
+        self.assertEqual(subbuffer_size_kernel, action.subbuffer_size_kernel)
 
     def test_action(self) -> None:
         self.assertIsNone(os.environ.get('LD_PRELOAD'))
@@ -85,6 +89,8 @@ class TestTraceAction(unittest.TestCase):
                 'ros2:*',
                 '*',
             ],
+            subbuffer_size_ust=524288,
+            subbuffer_size_kernel=1048576,
         )
         self._assert_launch_no_errors([action])
         self._check_trace_action(action, tmpdir)
@@ -104,6 +110,8 @@ class TestTraceAction(unittest.TestCase):
                     base-path="{}"
                     events-kernel=""
                     events-ust="ros2:* *"
+                    subbuffer-size-ust="524288"
+                    subbuffer-size-kernel="1048576"
                 />
             </launch>
             """.format(tmpdir)
@@ -130,6 +138,8 @@ class TestTraceAction(unittest.TestCase):
                 base-path: {}
                 events-kernel: ""
                 events-ust: ros2:* *
+                subbuffer-size-ust: 524288
+                subbuffer-size-kernel: 1048576
             """.format(tmpdir)
         )
 
@@ -158,6 +168,8 @@ class TestTraceAction(unittest.TestCase):
                 'kernel': [],
                 'userspace': ['vpid', 'vtid'],
             },
+            subbuffer_size_ust=524288,
+            subbuffer_size_kernel=1048576,
         )
         self._assert_launch_no_errors([action])
         self._check_trace_action(action, tmpdir)
@@ -202,6 +214,8 @@ class TestTraceAction(unittest.TestCase):
                     TextSubstitution(text='vtid'),
                 ],
             },
+            subbuffer_size_ust=524288,
+            subbuffer_size_kernel=1048576,
         )
         self._assert_launch_no_errors([session_name_arg, action])
         self._check_trace_action(action, tmpdir)
@@ -234,6 +248,8 @@ class TestTraceAction(unittest.TestCase):
                 'lttng_ust_pthread:*',
                 'lttng_ust_dl:*',
             ],
+            subbuffer_size_ust=524288,
+            subbuffer_size_kernel=1048576,
         )
         node_ping_action = Node(
             package='test_tracetools',

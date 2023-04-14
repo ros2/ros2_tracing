@@ -73,6 +73,8 @@ def setup(
     context_fields: Union[List[str], Set[str], Dict[str, List[str]]] = DEFAULT_CONTEXT,
     channel_name_ust: str = 'ros2',
     channel_name_kernel: str = 'kchan',
+    subbuffer_size_ust: int = 8 * 4096,
+    subbuffer_size_kernel: int = 32 * 4096,
 ) -> Optional[str]:
     """
     Set up LTTng session, with events and context.
@@ -91,6 +93,10 @@ def setup(
         if it's a dictionary: { domain type string -> context fields list }
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
+    :param subbuffer_size_ust: the size of the subbuffers for userspace events (defaults to 8 times
+        the usual page size)
+    :param subbuffer_size_kernel: the size of the subbuffers for kernel events (defaults to 32
+        times the usual page size, since there can be way more kernel events than UST events)
     :return: the full path to the trace directory, or `None` if initialization failed
     """
     # Check if there is a session daemon running
@@ -142,10 +148,9 @@ def setup(
         channel_ust.name = channel_name_ust
         # Discard, do not overwrite
         channel_ust.attr.overwrite = 0
-        # 2 sub-buffers of 8 times the usual page size
         # We use 2 sub-buffers because the number of sub-buffers is pointless in discard mode,
         # and switching between sub-buffers introduces noticeable CPU overhead
-        channel_ust.attr.subbuf_size = 8 * 4096
+        channel_ust.attr.subbuf_size = subbuffer_size_ust
         channel_ust.attr.num_subbuf = 2
         # Ignore switch timer interval and use read timer instead
         channel_ust.attr.switch_timer_interval = 0
@@ -162,9 +167,7 @@ def setup(
         channel_kernel.name = channel_name_kernel
         # Discard, do not overwrite
         channel_kernel.attr.overwrite = 0
-        # 2 sub-buffers of 32 times the usual page size, since
-        # there can be way more kernel events than UST events
-        channel_kernel.attr.subbuf_size = 32 * 4096
+        channel_kernel.attr.subbuf_size = subbuffer_size_kernel
         channel_kernel.attr.num_subbuf = 2
         # Ignore switch timer interval and use read timer instead
         channel_kernel.attr.switch_timer_interval = 0
