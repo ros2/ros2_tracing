@@ -141,8 +141,10 @@ class Trace(Action):
             if it's a list or a set, the context fields are enabled for both kernel and userspace;
             if it's a dictionary: { domain type string -> context fields list }
                 with the domain type string being either 'kernel' or 'userspace'
-        :param ust_subbuffer_size: the size of the subbuffers (defaults to 8 times the usual page size)
-        :param kernel_subbuffer_size: the size of the subbuffers (defaults to 32 times the usual page size)
+        :param ust_subbuffer_size: the size of the subbuffers (defaults to 8 times the usual page
+            size)
+        :param kernel_subbuffer_size: the size of the subbuffers (defaults to 32 times the usual
+            page size)
         """
         super().__init__(**kwargs)
         self.__logger = logging.get_logger(__name__)
@@ -284,21 +286,14 @@ class Trace(Action):
         if context_fields is not None:
             kwargs['context_fields'] = cls._parse_cmdline(context_fields, parser) \
                 if context_fields else []
-
-        context_fields = entity.get_attr('', optional=True)
-        if context_fields is not None:
-            kwargs['context_fields'] = cls._parse_cmdline(context_fields, parser) \
-                if context_fields else []
-
-        ust_subbuffer_size  = entity.get_attr('ust_subbuffer_size', optional=True)
+        ust_subbuffer_size = entity.get_attr(
+            'ust-subbuffer-size', data_type=int, optional=True, can_be_str=False)
         if ust_subbuffer_size is not None:
-            kwargs['ust_subbuffer_size'] = cls._parse_cmdline(context_fields, parser) \
-                if ust_subbuffer_size else 8 * 4096
-
-        kernel_subbuffer_size  = entity.get_attr('kernel_subbuffer_size', optional=True)
+            kwargs['ust_subbuffer_size'] = ust_subbuffer_size
+        kernel_subbuffer_size = entity.get_attr(
+            'kernel-subbuffer-size', data_type=int, optional=True, can_be_str=False)
         if kernel_subbuffer_size is not None:
-            kwargs['kernel_subbuffer_size'] = cls._parse_cmdline(context_fields, parser) \
-                if kernel_subbuffer_size else 8 * 4096
+            kwargs['kernel_subbuffer_size'] = kernel_subbuffer_size
 
         return cls, kwargs
 
@@ -419,7 +414,8 @@ class Trace(Action):
         self.__logger.debug(f'Kernel events: {self.__events_kernel}')
         self.__logger.debug(f'Context fields: {self.__context_fields}')
         self.__logger.debug(f'LD_PRELOAD: {self.__ld_preload_actions}')
-        self.__logger.debug(f'Subbuffer size: {self.__ust_subbuffer_size}')
+        self.__logger.debug(f'UST subbuffer size: {self.__ust_subbuffer_size}')
+        self.__logger.debug(f'Kernel subbuffer size: {self.__kernel_subbuffer_size}')
         return True
 
     def _destroy(self, event: Event, context: LaunchContext) -> None:
@@ -435,7 +431,7 @@ class Trace(Action):
             f'events_ust={self.__events_ust}, '
             f'events_kernel={self.__events_kernel}, '
             f'context_fields={self.__context_fields}, '
-            f'ld_preload_actions={self.__ld_preload_actions},'
-            f'ust_subbuffer_size={self.__ust_subbuffer_size},'
+            f'ld_preload_actions={self.__ld_preload_actions}, '
+            f'ust_subbuffer_size={self.__ust_subbuffer_size}, '
             f'kernel_subbuffer_size={self.__kernel_subbuffer_size})'
         )

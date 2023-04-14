@@ -93,9 +93,10 @@ def setup(
         if it's a dictionary: { domain type string -> context fields list }
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
-    :param ust_subbuffer_size: the size of the subbuffers for user space events (defaults to 8 times the usual page size)
-    :param kernel_subbuffer_size: the size of the subbuffers for user space events (defaults to 32 times the usual page
-        size, since there can be way more kernel events than UST events)
+    :param ust_subbuffer_size: the size of the subbuffers for userspace events (defaults to 8 times
+        the usual page size)
+    :param kernel_subbuffer_size: the size of the subbuffers for kernel events (defaults to 32
+        times the usual page size, since there can be way more kernel events than UST events)
     :return: the full path to the trace directory, or `None` if initialization failed
     """
     # Check if there is a session daemon running
