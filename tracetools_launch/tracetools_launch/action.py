@@ -287,11 +287,11 @@ class Trace(Action):
             kwargs['context_fields'] = cls._parse_cmdline(context_fields, parser) \
                 if context_fields else []
         subbuffer_size_ust = entity.get_attr(
-            'ust-subbuffer-size', data_type=int, optional=True, can_be_str=False)
+            'subbuffer-size-ust', data_type=int, optional=True, can_be_str=False)
         if subbuffer_size_ust is not None:
             kwargs['subbuffer_size_ust'] = subbuffer_size_ust
         subbuffer_size_kernel = entity.get_attr(
-            'kernel-subbuffer-size', data_type=int, optional=True, can_be_str=False)
+            'subbuffer-size-kernel', data_type=int, optional=True, can_be_str=False)
         if subbuffer_size_kernel is not None:
             kwargs['subbuffer_size_kernel'] = subbuffer_size_kernel
 

@@ -110,8 +110,8 @@ class TestTraceAction(unittest.TestCase):
                     base-path="{}"
                     events-kernel=""
                     events-ust="ros2:* *"
-                    ust-subbuffer-size="524288"
-                    kernel-subbuffer-size="1048576"
+                    subbuffer-size-ust="524288"
+                    subbuffer-size-kernel="1048576"
                 />
             </launch>
             """.format(tmpdir)
@@ -138,8 +138,8 @@ class TestTraceAction(unittest.TestCase):
                 base-path: {}
                 events-kernel: ""
                 events-ust: ros2:* *
-                ust-subbuffer-size: 524288
-                kernel-subbuffer-size: 1048576
+                subbuffer-size-ust: 524288
+                subbuffer-size-kernel: 1048576
             """.format(tmpdir)
         )
 
