@@ -78,14 +78,16 @@ class TestLttngTracing(unittest.TestCase):
 
     def test_no_kernel_tracer(self):
         from tracetools_trace.tools.lttng_impl import setup
-        with mock.patch(
-            'tracetools_trace.tools.lttng_impl.is_kernel_tracer_available',
-            return_value=(False, 'some error message'),
+        with (
+            mock.patch(
+                'tracetools_trace.tools.lttng_impl.is_kernel_tracer_available',
+                return_value=(False, 'some error message'),
+            ),
+            mock.patch('lttng.session_daemon_alive', return_value=1),
         ):
-            with mock.patch('lttng.session_daemon_alive', return_value=1):
-                self.assertIsNone(
-                    setup(
-                        session_name='test-session',
-                        base_path='/tmp',
-                        kernel_events=['sched_switch'],
-                    ))
+            with self.assertRaises(RuntimeError):
+                setup(
+                    session_name='test-session',
+                    base_path='/tmp',
+                    kernel_events=['sched_switch'],
+                )
