@@ -1,26 +1,30 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ros2trace</name>
+  <name>test_ros2trace</name>
   <version>6.2.0</version>
-  <description>The trace command for ROS 2 command line tools.</description>
+  <description>Tests for the ros2trace package.</description>
   <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
-  <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
   <license>Apache 2.0</license>
-  <url type="website">https://index.ros.org/p/ros2trace/</url>
+  <url type="website">https://github.com/ros2/ros2_tracing</url>
   <url type="repository">https://github.com/ros2/ros2_tracing</url>
   <url type="bugtracker">https://github.com/ros2/ros2_tracing/issues</url>
-  <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
-
-  <depend>ros2cli</depend>
-  <depend>tracetools_trace</depend>
+  <author email="bedard.christophe@gmail.com">Christophe Bedard</author>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_mypy</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>ament_xmllint</test_depend>
+  <test_depend>launch</test_depend>
+  <test_depend>launch_ros</test_depend>
   <test_depend>python3-pytest</test_depend>
+  <test_depend>ros2run</test_depend>
+  <test_depend>ros2trace</test_depend>
+  <test_depend>test_tracetools</test_depend>
+  <test_depend>tracetools</test_depend>
+  <test_depend>tracetools_read</test_depend>
+  <test_depend>tracetools_trace</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

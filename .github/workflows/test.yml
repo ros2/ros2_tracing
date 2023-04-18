@@ -51,7 +51,16 @@ jobs:
         python3 -m pip install 'mypy==0.942'
     - uses: ros-tooling/action-ros-ci@master
       with:
-        package-name: ros2trace test_tracetools test_tracetools_launch tracetools tracetools_launch tracetools_read tracetools_test tracetools_trace
+        package-name: >
+          ros2trace
+          test_ros2trace
+          test_tracetools
+          test_tracetools_launch
+          tracetools
+          tracetools_launch
+          tracetools_read
+          tracetools_test
+          tracetools_trace
         target-ros2-distro: ${{ matrix.distro }}
         vcs-repo-file-url: ${{ matrix.build-type == 'source' && env.ROS2_REPOS_FILE_URL || '' }}
         extra-cmake-args: >
