@@ -2,6 +2,9 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 6.1.0 (2023-04-13)
 ------------------
 * Add intra-process tracepoints (`#30 <https://github.com/ros2/ros2_tracing/issues/30>`_)
