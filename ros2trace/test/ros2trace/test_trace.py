@@ -349,3 +349,34 @@ class TestROS2TraceCLI(unittest.TestCase):
         self.assertEqual(1, ret)
 
         shutil.rmtree(tmpdir)
+
+    def test_append_trace(self) -> None:
+        tmpdir = self.create_test_tmpdir('test_append_trace')
+
+        # Generate a normal trace
+        ret = self.run_trace_command(
+            ['--path', tmpdir, '--session-name', 'test_append_trace'],
+        )
+        self.assertEqual(0, ret)
+        trace_dir = os.path.join(tmpdir, 'test_append_trace')
+        self.assertTraceExist(trace_dir)
+
+        # Generating another trace with the same path should error out
+        ret = self.run_trace_command(
+            ['--path', tmpdir, '--session-name', 'test_append_trace'],
+        )
+        self.assertEqual(1, ret)
+        self.assertTraceExist(trace_dir)
+
+        # But it should work if we use the '--append-trace' option
+        ret = self.run_trace_command(
+            [
+                '--path', tmpdir,
+                '--session-name', 'test_append_trace',
+                '--append-trace',
+            ],
+        )
+        self.assertEqual(0, ret)
+        self.assertTraceExist(trace_dir)
+
+        shutil.rmtree(tmpdir)

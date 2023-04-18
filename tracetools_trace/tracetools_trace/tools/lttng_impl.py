@@ -68,6 +68,7 @@ def setup(
     *,
     session_name: str,
     base_path: str,
+    append_trace: bool = False,
     ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
     kernel_events: Union[List[str], Set[str]] = [],
     context_fields: Union[List[str], Set[str], Dict[str, List[str]]] = DEFAULT_CONTEXT,
@@ -89,6 +90,8 @@ def setup(
     :param session_name: the name of the session
     :param base_path: the path to the directory in which to create the tracing session directory,
         which will be created if needed
+    :param append_trace: whether to append to the trace directory if it already exists, otherwise
+        an error is reported
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
     :param context_fields: the names of context fields to enable
@@ -106,6 +109,11 @@ def setup(
     # Validate parameters
     if not session_name:
         raise RuntimeError('empty session name')
+    # Resolve full tracing directory path
+    full_path = os.path.join(base_path, session_name)
+    if os.path.isdir(full_path) and not append_trace:
+        raise RuntimeError(
+            f'trace directory already exists, use the append option to append to it: {full_path}')
 
     # Check if there is a session daemon running
     if lttng.session_daemon_alive() == 0:
@@ -179,9 +187,8 @@ def setup(
         channel_kernel.attr.output = lttng.EVENT_MMAP
         events_list_kernel = _create_events(kernel_events)
 
-    # Resolve full tracing directory path and create session
+    # Create session
     # LTTng will create the parent directories if needed
-    full_path = os.path.join(base_path, session_name)
     _create_session(session_name, full_path)
 
     # Handles, channels, events
