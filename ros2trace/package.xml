@@ -12,8 +12,8 @@
   <url type="bugtracker">https://github.com/ros2/ros2_tracing/issues</url>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
-  <depend>ros2cli</depend>
-  <depend>tracetools_trace</depend>
+  <exec_depend>ros2cli</exec_depend>
+  <exec_depend>tracetools_trace</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
