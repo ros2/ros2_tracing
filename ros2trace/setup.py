@@ -37,5 +37,14 @@ setup(
         'ros2cli.command': [
             f'trace = {package_name}.command.trace:TraceCommand',
         ],
+        'ros2cli.extension_point': [
+            f'{package_name}.verb = {package_name}.verb:VerbExtension',
+        ],
+        f'{package_name}.verb': [
+            f'pause = {package_name}.verb.pause:PauseVerb',
+            f'resume = {package_name}.verb.resume:ResumeVerb',
+            f'start = {package_name}.verb.start:StartVerb',
+            f'stop = {package_name}.verb.stop:StopVerb',
+        ],
     }
 )

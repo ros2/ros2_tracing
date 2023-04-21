@@ -84,6 +84,28 @@ def lttng_fini(**kwargs) -> None:
     _lttng.destroy(**kwargs)
 
 
+def lttng_start(**kwargs) -> None:
+    """
+    Start tracing.
+
+    Raises RuntimeError on failure.
+
+    :param session_name: the name of the session
+    """
+    _lttng.start(**kwargs)
+
+
+def lttng_stop(**kwargs) -> None:
+    """
+    Stop tracing.
+
+    Raises RuntimeError on failure.
+
+    :param session_name: the name of the session
+    """
+    _lttng.stop(**kwargs)
+
+
 def is_lttng_installed(
     *,
     minimum_version: Optional[str] = None,
