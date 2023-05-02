@@ -15,7 +15,7 @@ endif()
 
 find_package(ament_cmake_ros REQUIRED)
 
-if(WIN32 OR APPLE)
+if(WIN32 OR APPLE OR ANDROID)
   set(DISABLED_DEFAULT ON)
   set(STATUS_CHECKING_TOOL_DEFAULT OFF)
 else()
