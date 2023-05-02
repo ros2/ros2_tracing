@@ -29,17 +29,20 @@ jobs:
     - name: Install other dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y -q ros-${{ matrix.distro }}-*tracetools*
-    # TODO(christophebedard) uncomment lines when a binary ROS 2 installation includes tracepoints and LTTng
-    # - name: Make sure that tracing instrumentation is available
-    #   run: |
-    #     source /opt/ros/${{ matrix.distro }}/setup.bash
-    #     ros2 run tracetools status
-    # - name: Generate trace and make sure it is not empty
-    #   run: |
-    #     source /opt/ros/${{ matrix.distro }}/setup.bash
-    #     ros2 launch tracetools_launch example.launch.py
-    #     babeltrace ~/.ros/tracing/
+        sudo apt-get install -y -q ros-${{ matrix.distro }}-*tracetools* babeltrace
+    - name: Make sure that tracing instrumentation is available
+      run: |
+        source /opt/ros/${{ matrix.distro }}/setup.bash
+        ros2 run tracetools status
+    - name: Build test_tracetools
+      run: |
+        source /opt/ros/${{ matrix.distro }}/setup.bash
+        colcon build --packages-select test_tracetools
+    - name: Generate trace and make sure it is not empty
+      run: |
+        source install/setup.bash
+        ros2 launch tracetools_launch example.launch.py
+        babeltrace ~/.ros/tracing/
     - name: Build tracetools without tracepoints
       run: |
         cd $GITHUB_WORKSPACE/ws
