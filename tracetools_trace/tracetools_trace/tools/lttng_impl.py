@@ -17,6 +17,7 @@
 
 import os
 import re
+import shlex
 import subprocess
 from typing import Dict
 from typing import List
@@ -54,6 +55,13 @@ def get_version() -> Optional[Version]:
 
 
 def is_kernel_tracer_available() -> Tuple[bool, Optional[str]]:
+    """
+    Check if the kernel tracer is available.
+
+    Runs 'lttng list -k', which gives an error if the kernel tracer is not available.
+
+    :return: (`True` if available or `False` if not, stderr output if unavailable)
+    """
     process = subprocess.run(
         ['lttng', 'list', '-k'],
         stdout=subprocess.PIPE,
@@ -62,6 +70,71 @@ def is_kernel_tracer_available() -> Tuple[bool, Optional[str]]:
     if 0 != process.returncode:
         return False, process.stderr.decode().strip('\n')
     return True, None
+
+
+def get_lttng_home() -> Optional[str]:
+    """
+    Get the LTTng home value.
+
+    $LTTNG_HOME, or $HOME if unset: https://lttng.org/man/1/lttng/v2.13/#doc-_files
+
+    :return: the LTTng home value
+    """
+    return os.environ.get('LTTNG_HOME') or os.environ.get('HOME')
+
+
+def get_session_daemon_pid() -> Optional[int]:
+    """
+    Get the non-root session daemon PID, if there is one.
+
+    This does not apply to root session daemons.
+
+    :return: the non-root session daemon PID, or `None` if there is none
+    """
+    # When a non-root session daemon is started, its PID is written to .lttng/lttng-sessiond.pid
+    # under the LTTng home
+    lttng_home = get_lttng_home()
+    # If we can't find the home, then we can just assume that there is no session daemon
+    if not lttng_home:
+        return None
+    # If the file doesn't exist, there is no session daemon
+    lttng_sessiond_pid = os.path.join(lttng_home, '.lttng', 'lttng-sessiond.pid')
+    if not os.path.isfile(lttng_sessiond_pid):
+        return None
+    with open(lttng_sessiond_pid, 'r') as f:
+        pid = f.read().strip()
+        if not pid.isdigit():
+            return None
+        return int(pid)
+
+
+def is_session_daemon_unreachable() -> bool:
+    """
+    Check if the session daemon appears to exist while being unreachable.
+
+    This tries to detect cases of this LTTng issue: https://bugs.lttng.org/issues/1371
+    If this issue happens, LTTng will think that the session daemon exists and will happily trace,
+    but it will silently not record any trace data, since there is no actual session daemon.
+    Therefore, if this returns `True`, then tracing will silently not work.
+
+    TODO(christophebedard) remove this once Rolling uses a version of LTTng with a fix for this bug
+
+    :return: `True` if the session daemon is unreachable, `False` otherwise
+    """
+    pid = get_session_daemon_pid()
+    # If we can't find the PID, then the session daemon really doesn't exist and we can just create
+    # one, so it's fine
+    if pid is None:
+        return False
+    # Otherwise, try to look up the process with that PID; if we can't find it, or if it is not
+    # lttng-sessiond, then it means that the session daemon is unreachable
+    process = subprocess.run(
+        shlex.split(f'ps -o comm= {pid}'),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding='utf-8',
+    )
+    return 1 == process.returncode or 'lttng-sessiond' != process.stdout.strip()
 
 
 def setup(
@@ -115,14 +188,22 @@ def setup(
         raise RuntimeError(
             f'trace directory already exists, use the append option to append to it: {full_path}')
 
-    # Check if there is a session daemon running
+    # If there is no session daemon running, try to spawn one
     if lttng.session_daemon_alive() == 0:
-        # Otherwise spawn one and check if it worked
         subprocess.run(
             ['lttng-sessiond', '--daemonize'],
         )
-        if lttng.session_daemon_alive() == 0:
-            raise RuntimeError('failed to start lttng session daemon')
+    # Error out if it looks like there is a session daemon that we can't actually reach
+    if is_session_daemon_unreachable():
+        raise RuntimeError(
+            'lttng-sessiond seems to exist, but is unreachable. '
+            'If using two containers with the same HOME directory, set the LTTNG_HOME environment '
+            'variable to the path to a unique directory for each container and make sure that the '
+            'directory exists. See: https://bugs.lttng.org/issues/1371'
+        )
+    # Error out if there is still no session daemon
+    if lttng.session_daemon_alive() == 0:
+        raise RuntimeError('failed to start lttng session daemon')
 
     # Make sure the kernel tracer is available if there are kernel events
     # Do this after spawning a session daemon, otherwise we can't detect the kernel tracer
