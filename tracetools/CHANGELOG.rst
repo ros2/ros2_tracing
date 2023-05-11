@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+6.4.1 (2023-05-11)
+------------------
 * Disable tracing on Android (`#71 <https://github.com/ros2/ros2_tracing/issues/71>`_)
 * Contributors: Przemysław Dąbrowski
 
