@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Disable tracing on Android (`#72 <https://github.com/ros2/ros2_tracing/issues/72>`_)
+* Contributors: Przemysław Dąbrowski
+
 6.3.0 (2023-04-18)
 ------------------
 
@@ -98,7 +103,7 @@ Changelog for package tracetools
 
 0.2.10 (2019-11-17)
 -------------------
-* Add new rclcpp_subscription_init tracepoint to support new intra-process comms 
+* Add new rclcpp_subscription_init tracepoint to support new intra-process comms
 * Contributors: Christophe Bedard
 
 0.2.9 (2019-10-18)

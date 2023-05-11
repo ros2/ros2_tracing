@@ -2,6 +2,9 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 6.3.0 (2023-04-18)
 ------------------
 * Move ros2trace tests to new test_ros2trace package (`#63 <https://github.com/ros2/ros2_tracing/issues/63>`_)
