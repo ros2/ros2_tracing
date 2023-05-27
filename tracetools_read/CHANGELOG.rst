@@ -2,8 +2,8 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.6 (2023-05-27)
+------------------
 * Merge branch 'version-1-0-5' into 'foxy'
 * Contributors: Christophe Bedard
 

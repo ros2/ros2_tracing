@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.6 (2023-05-27)
+------------------
 * Merge branch 'foxy-backport-fix-flake8-blind-exception-error' into 'foxy'
 * Fix flake8 blind except error by using more concrete types
 * Merge branch 'version-1-0-5' into 'foxy'
