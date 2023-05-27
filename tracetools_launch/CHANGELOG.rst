@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'version-1-0-5' into 'foxy'
+* Contributors: Christophe Bedard
+
 1.0.1 (2020-05-27)
 ------------------
 * Deprecation fixes

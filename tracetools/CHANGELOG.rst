@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'version-1-0-5' into 'foxy'
+* Contributors: Christophe Bedard
+
 1.0.5 (2020-12-22)
 ------------------
 * Bring tracetools up to quality level 1

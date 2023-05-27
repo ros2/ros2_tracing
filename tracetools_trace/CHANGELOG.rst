@@ -2,6 +2,13 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'foxy-backport-fix-flake8-blind-exception-error' into 'foxy'
+* Fix flake8 blind except error by using more concrete types
+* Merge branch 'version-1-0-5' into 'foxy'
+* Contributors: Christophe Bedard, Ingo Lütkebohle
+
 1.0.1 (2020-05-27)
 ------------------
 * Fail gracefully when trying to trace if LTTng is not installed

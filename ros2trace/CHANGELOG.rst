@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'version-1-0-5' into 'foxy'
+* Contributors: Christophe Bedard
+
 0.3.0 (2020-03-04)
 ------------------
 * Expose context enabling through CLI and Trace action

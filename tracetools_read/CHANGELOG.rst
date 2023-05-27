@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'version-1-0-5' into 'foxy'
+* Contributors: Christophe Bedard
+
 0.2.11 (2019-12-09)
 -------------------
 * Register Python packages in the ament index
