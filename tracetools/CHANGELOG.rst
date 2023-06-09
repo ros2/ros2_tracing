@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add TRACETOOLS\_ prefix to tracepoint-related public macros (`#56 <https://github.com/ros2/ros2_tracing/issues/56>`_)
+* Contributors: Christophe Bedard
+
 6.4.1 (2023-05-11)
 ------------------
 * Disable tracing on Android (`#71 <https://github.com/ros2/ros2_tracing/issues/71>`_)

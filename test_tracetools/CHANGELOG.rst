@@ -2,6 +2,9 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 6.4.1 (2023-05-11)
 ------------------
 * Improve test coverage of rclcpp_callback_register in test_tracetools (`#69 <https://github.com/ros2/ros2_tracing/issues/69>`_)
