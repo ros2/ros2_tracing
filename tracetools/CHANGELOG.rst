@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+7.0.0 (2023-06-09)
+------------------
 * Add TRACETOOLS\_ prefix to tracepoint-related public macros (`#56 <https://github.com/ros2/ros2_tracing/issues/56>`_)
 * Contributors: Christophe Bedard
 
