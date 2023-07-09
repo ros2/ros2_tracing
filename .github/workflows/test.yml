@@ -46,9 +46,6 @@ jobs:
       with:
         required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
         use-ros2-testing: true
-    - name: Pin mypy==0.942
-      run: |
-        python3 -m pip install 'mypy==0.942'
     - uses: ros-tooling/action-ros-ci@master
       with:
         package-name: >
