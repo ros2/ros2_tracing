@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import subprocess
 import tempfile
 import unittest
 from unittest import mock
@@ -35,32 +34,7 @@ class TestLttngTracing(unittest.TestCase):
         with mock.patch('platform.system', return_value='Windows'):
             self.assertFalse(is_lttng_installed())
 
-        # LTTng command not found
-        class PopenFileNotFound:
-
-            def __init__(self, *args, **kwargs):
-                raise FileNotFoundError('file not found')
-
-        with mock.patch.object(subprocess, 'Popen', PopenFileNotFound):
-            self.assertFalse(is_lttng_installed())
-
-        # Other error when running LTTng command
-        class PopenReturnCodeError:
-
-            def __init__(self, *args, **kwargs):
-                pass
-
-            def communicate(self):
-                return 'stdout'.encode(), 'stderr'.encode()
-
-            @property
-            def returncode(self):
-                return 1
-
-        with mock.patch.object(subprocess, 'Popen', PopenReturnCodeError):
-            self.assertFalse(is_lttng_installed())
-
-        # lttng Python package or version not found
+        # lttng-ctl or version not found
         with mock.patch('tracetools_trace.tools.lttng.get_lttng_version', return_value=None):
             self.assertFalse(is_lttng_installed())
 
@@ -82,10 +56,17 @@ class TestLttngTracing(unittest.TestCase):
         from tracetools_trace.tools.lttng_impl import setup
         with (
             mock.patch(
-                'tracetools_trace.tools.lttng_impl.is_kernel_tracer_available',
-                return_value=(False, 'some error message'),
+                'tracetools_trace.tools.lttng_impl.is_session_daemon_not_alive',
+                return_value=False,
             ),
-            mock.patch('lttng.session_daemon_alive', return_value=1),
+            mock.patch(
+                'tracetools_trace.tools.lttng_impl.is_session_daemon_unreachable',
+                return_value=False,
+            ),
+            mock.patch(
+                'tracetools_trace.tools.lttng_impl.is_kernel_tracer_available',
+                return_value=False,
+            ),
         ):
             with self.assertRaises(RuntimeError):
                 setup(
@@ -166,9 +147,15 @@ class TestLttngTracing(unittest.TestCase):
 
     def test_unreachable_session_daemon(self):
         from tracetools_trace.tools.lttng_impl import setup
-        with mock.patch(
-            'tracetools_trace.tools.lttng_impl.is_session_daemon_unreachable',
-            return_value=True,
+        with (
+            mock.patch(
+                'tracetools_trace.tools.lttng_impl.is_session_daemon_not_alive',
+                return_value=False,
+            ),
+            mock.patch(
+                'tracetools_trace.tools.lttng_impl.is_session_daemon_unreachable',
+                return_value=True,
+            ),
         ):
             with self.assertRaises(RuntimeError):
                 setup(session_name='test-session', base_path='/tmp')

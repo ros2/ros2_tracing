@@ -15,7 +15,7 @@
 """Stub version of the interface for tracing with LTTng."""
 
 
-ERROR_MESSAGE = 'lttng module not found, but still tried to use it'
+ERROR_MESSAGE = 'LTTng Python bindings not available, but still tried to use them'
 
 
 def setup(*args, **kwargs) -> None:
