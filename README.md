@@ -218,6 +218,10 @@ The LTTng kernel tracer has a similar implementation, but is separate from the u
 
 ## Packages
 
+### lttngpy
+
+Package containing `liblttng-ctl` Python bindings.
+
 ### ros2trace
 
 Package containing a `ros2cli` extension to enable tracing.
@@ -245,6 +249,10 @@ Package containing tools for tracing-related tests.
 ### tracetools_trace
 
 Package containing tools to enable tracing.
+
+### test_ros2trace
+
+Package containing system tests for `ros2trace`.
 
 ### test_tracetools
 

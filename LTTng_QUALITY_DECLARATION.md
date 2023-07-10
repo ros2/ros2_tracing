@@ -88,16 +88,21 @@ Features are listed and well documented on the [LTTng website](https://lttng.org
 LTTng packages have embedded API documentation.
 It can be viewed on their man pages:
 
-* [`lttng-ust`](https://lttng.org/man/3/lttng-ust/v2.11/)
+* [`lttng-ust`](https://lttng.org/man/3/lttng-ust/v2.13/)
 
 ### License [3.iii]
 
 All repositories have a `LICENSE` file.
 All relevant files have a license identifier.
 
-* `lttng-tools` is licensed under LGPLv2.1 and GPLv2, see [`LICENSE` file](https://github.com/lttng/lttng-tools/blob/master/LICENSE)
 * `lttng-ust` is licensed under LGPLv2.1, the MIT license and GPLv2, see [`LICENSE` file](https://github.com/lttng/lttng-ust/blob/master/LICENSE)
+    * `liblttng-ust` (build dependency) is LGPLv2.1 and MIT
+    * The rest (runtime tools, not dependencies) is GPLv2
+* `lttng-tools` is licensed under LGPLv2.1 and GPLv2, see [`LICENSE` file](https://github.com/lttng/lttng-tools/blob/master/LICENSE)
+    * `liblttng-ctl` (build dependency) is LGPLv2.1
+    * The rest (runtime tools, not dependencies) is GPLv2
 * `lttng-modules` is licensed under LGPLv2.1, GPLv2 and the MIT license, see [`LICENSE` file](https://github.com/lttng/lttng-modules/blob/master/LICENSE)
+    * Not a dependency
 
 ### Copyright Statement [3.iv]
 
