@@ -38,17 +38,14 @@ class DefaultArgValueCompleter(ArgCompleter):
 
 
 def parse_args() -> argparse.Namespace:
-    """Parse args for tracing."""
-    parser = argparse.ArgumentParser(description='Setup and launch an LTTng tracing session.')
+    """Parse arguments for interactive tracing session configuration."""
+    parser = argparse.ArgumentParser(
+        description='Trace ROS 2 nodes to get information on their execution')
     add_arguments(parser)
     return parser.parse_args()
 
 
-def add_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument(
-        '-s', '--session-name', dest='session_name',
-        default=path.append_timestamp('session'),
-        help='the name of the tracing session (default: session-YYYYMMDDHHMMSS)')
+def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '-p', '--path', dest='path',
         help='path of the base directory for trace data (default: '
@@ -79,3 +76,27 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '-a', '--append-trace', dest='append_trace', action='store_true',
         help='append to trace if it already exists, otherwise error out (default: %(default)s)')
+
+
+def _add_arguments_default_session_name(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        '-s', '--session-name', dest='session_name',
+        default=path.append_timestamp('session'),
+        help='the name of the tracing session (default: session-YYYYMMDDHHMMSS)')
+
+
+def add_arguments(parser: argparse.ArgumentParser) -> None:
+    """Add arguments to parser for interactive tracing session configuration."""
+    _add_arguments_default_session_name(parser)
+    _add_arguments_configure(parser)
+
+
+def add_arguments_noninteractive(parser: argparse.ArgumentParser) -> None:
+    """Add arguments to parser for non-interactive tracing session configuration."""
+    add_arguments_session_name(parser)
+    _add_arguments_configure(parser)
+
+
+def add_arguments_session_name(parser: argparse.ArgumentParser) -> None:
+    """Add mandatory session name argument to parser."""
+    parser.add_argument('session_name', help='the name of the tracing session')

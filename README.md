@@ -133,6 +133,18 @@ By default, it will enable all ROS 2 tracepoints.
 The trace will be written to `~/.ros/tracing/session-YYYYMMDDHHMMSS`.
 Run the command with `-h` for more information.
 
+The `ros2 trace` command requires user interaction to start and then stop tracing.
+To trace without user interaction (e.g., in scripts), or for finer-grained tracing control, the following sub-commands can be used:
+
+```
+$ ros2 trace start session_name   # Configure tracing session and start tracing
+$ ros2 trace pause session_name   # Pause tracing after starting
+$ ros2 trace resume session_name  # Resume tracing after pausing
+$ ros2 trace stop session_name    # Stop tracing after starting or resuming
+```
+
+Run each command with `-h` for more information.
+
 You must [install the kernel tracer](#building) if you want to enable kernel events (using the `-k`/`--kernel-events` option).
 If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 

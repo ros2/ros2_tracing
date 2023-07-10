@@ -63,22 +63,30 @@ class TestROS2TraceCLI(unittest.TestCase):
         # Even if running 'ros2 trace' fails, we do not want any lingering tracing session
         self.assertNoTracingSession()
 
-    def assertNoTracingSession(self) -> None:
+    def get_tracing_sessions(self) -> Tuple[bool, str]:
         output = self.run_lttng_list()
         # If there is no session daemon, then there are no tracing sessions
         no_session_daemon_available = 'No session daemon is available' in output
         if no_session_daemon_available:
-            return
+            return False, output
         # Starting from LTTng 2.13, 'tracing session' was replaced with 'recording session'
         # (see lttng-tools e971184)
-        no_tracing_sessions = any(
+        has_tracing_sessions = not any(
             f'Currently no available {name} session' in output for name in ('tracing', 'recording')
         )
-        if not no_tracing_sessions:
+        return has_tracing_sessions, output
+
+    def assertTracingSession(self) -> None:
+        has_tracing_sessions, output = self.get_tracing_sessions()
+        self.assertTrue(has_tracing_sessions, 'no tracing sessions exist:\n' + output)
+
+    def assertNoTracingSession(self) -> None:
+        has_tracing_sessions, output = self.get_tracing_sessions()
+        if has_tracing_sessions:
             # Destroy tracing sessions if there are any, this way we can continue running tests and
             # avoid possible interference between them
             self.run_lttng_destroy_all()
-        self.assertTrue(no_tracing_sessions, 'tracing session(s) exist:\n' + output)
+        self.assertFalse(has_tracing_sessions, 'tracing session(s) exist:\n' + output)
 
     def assertTraceExist(self, trace_dir: str) -> None:
         self.assertTrue(os.path.isdir(trace_dir), f'trace directory does not exist: {trace_dir}')
@@ -90,7 +98,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         self,
         trace_dir: str,
         expected_trace_data: List[Tuple[str, str]],
-    ) -> None:
+    ) -> int:
         self.assertTraceExist(trace_dir)
         from tracetools_read.trace import get_trace_events
         events = get_trace_events(trace_dir)
@@ -99,6 +107,7 @@ class TestROS2TraceCLI(unittest.TestCase):
                 any(trace_data in event.items() for event in events),
                 f'{trace_data} not found in events: {events}',
             )
+        return len(events)
 
     def create_test_tmpdir(self, test_name: str) -> str:
         prefix = self.__class__.__name__ + '__' + test_name
@@ -126,20 +135,18 @@ class TestROS2TraceCLI(unittest.TestCase):
         output = process.stdout + process.stderr
         self.assertEqual(0, process.returncode, f"'lttng destroy' command failed: {output}")
 
-    def run_trace_command_start(
+    def run_command(
         self,
         args: List[str],
         *,
         env: Optional[Dict[str, str]] = None,
-        wait_for_start: bool = False,
     ) -> subprocess.Popen:
-        args = ['ros2', 'trace', *args]
         print('=>running:', args)
         process_env = os.environ.copy()
         process_env['PYTHONUNBUFFERED'] = '1'
         if env:
             process_env.update(env)
-        process = subprocess.Popen(
+        return subprocess.Popen(
             args,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
@@ -147,6 +154,26 @@ class TestROS2TraceCLI(unittest.TestCase):
             encoding='utf-8',
             env=process_env,
         )
+
+    def wait_and_print_command_output(
+        self,
+        process: subprocess.Popen,
+    ) -> int:
+        stdout, stderr = process.communicate()
+        stdout = stdout.strip(' \r\n\t')
+        stderr = stderr.strip(' \r\n\t')
+        print('=>stdout:\n' + stdout)
+        print('=>stderr:\n' + stderr)
+        return process.wait()
+
+    def run_trace_command_start(
+        self,
+        args: List[str],
+        *,
+        env: Optional[Dict[str, str]] = None,
+        wait_for_start: bool = False,
+    ) -> subprocess.Popen:
+        process = self.run_command(['ros2', 'trace', *args], env=env)
         # Write <enter> to stdin to start tracing
         assert process.stdin
         process.stdin.write('\n')
@@ -167,12 +194,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         assert process.stdin
         process.stdin.write('\n')
         process.stdin.flush()
-        stdout, stderr = process.communicate()
-        stdout = stdout.strip(' \r\n\t')
-        stderr = stderr.strip(' \r\n\t')
-        print('=>stdout:\n' + stdout)
-        print('=>stderr:\n' + stderr)
-        return process.wait()
+        return self.wait_and_print_command_output(process)
 
     def run_trace_command(
         self,
@@ -182,6 +204,34 @@ class TestROS2TraceCLI(unittest.TestCase):
     ) -> int:
         process = self.run_trace_command_start(args, env=env)
         return self.run_trace_command_stop(process)
+
+    def run_trace_subcommand(
+        self,
+        args: List[str],
+        *,
+        env: Optional[Dict[str, str]] = None,
+    ) -> int:
+        process = self.run_command(['ros2', 'trace', *args], env=env)
+        return self.wait_and_print_command_output(process)
+
+    def run_nodes(self) -> None:
+        nodes = [
+            Node(
+                package='test_tracetools',
+                executable='test_ping',
+                output='screen',
+            ),
+            Node(
+                package='test_tracetools',
+                executable='test_pong',
+                output='screen',
+            ),
+        ]
+        ld = LaunchDescription(nodes)
+        ls = LaunchService()
+        ls.include_launch_description(ld)
+        exit_code = ls.run()
+        self.assertEqual(0, exit_code)
 
     def test_default(self) -> None:
         tmpdir = self.create_test_tmpdir('test_default')
@@ -205,31 +255,12 @@ class TestROS2TraceCLI(unittest.TestCase):
     def test_default_tracing(self) -> None:
         tmpdir = self.create_test_tmpdir('test_default_tracing')
 
-        def run_nodes():
-            nodes = [
-                Node(
-                    package='test_tracetools',
-                    executable='test_ping',
-                    output='screen',
-                ),
-                Node(
-                    package='test_tracetools',
-                    executable='test_pong',
-                    output='screen',
-                ),
-            ]
-            ld = LaunchDescription(nodes)
-            ls = LaunchService()
-            ls.include_launch_description(ld)
-            exit_code = ls.run()
-            self.assertEqual(0, exit_code)
-
         # Test with the default session name
         process = self.run_trace_command_start(
             ['--path', tmpdir, '--ust', tracepoints.rcl_subscription_init],
             wait_for_start=True,
         )
-        run_nodes()
+        self.run_nodes()
         ret = self.run_trace_command_stop(process)
         self.assertEqual(0, ret)
         # Check that the trace directory was created
@@ -256,7 +287,7 @@ class TestROS2TraceCLI(unittest.TestCase):
             ],
             wait_for_start=True,
         )
-        run_nodes()
+        self.run_nodes()
         ret = self.run_trace_command_stop(process)
         self.assertEqual(0, ret)
         self.assertTraceContains(
@@ -378,5 +409,74 @@ class TestROS2TraceCLI(unittest.TestCase):
         )
         self.assertEqual(0, ret)
         self.assertTraceExist(trace_dir)
+
+        shutil.rmtree(tmpdir)
+
+    def test_pause_resume_stop_bad_session_name(self) -> None:
+        for subcommand in ('pause', 'resume', 'stop'):
+            # Session name doesn't exist
+            ret = self.run_trace_subcommand([subcommand, 'some_nonexistent_session_name'])
+            self.assertEqual(1, ret, f'subcommand: {subcommand}')
+            # Session name not provided
+            ret = self.run_trace_subcommand([subcommand])
+            self.assertEqual(2, ret, f'subcommand: {subcommand}')
+
+    @unittest.skipIf(not are_tracepoints_included(), 'tracepoints are required')
+    def test_start_pause_resume_stop(self) -> None:
+        tmpdir = self.create_test_tmpdir('test_start_pause_resume_stop')
+
+        # Start tracing and run nodes
+        ret = self.run_trace_subcommand(
+            ['start', 'test_start_pause_resume_stop', '--path', tmpdir],
+        )
+        self.assertEqual(0, ret)
+        trace_dir = os.path.join(tmpdir, 'test_start_pause_resume_stop')
+        self.assertTraceExist(trace_dir)
+        self.assertTracingSession()
+        self.run_nodes()
+
+        # Pause tracing and check trace
+        ret = self.run_trace_subcommand(['pause', 'test_start_pause_resume_stop'])
+        self.assertEqual(0, ret)
+        self.assertTracingSession()
+        expected_trace_data = [
+            ('topic_name', '/ping'),
+            ('topic_name', '/pong'),
+        ]
+        num_events = self.assertTraceContains(trace_dir, expected_trace_data)
+
+        # Pausing again should give an error but not affect anything
+        ret = self.run_trace_subcommand(['pause', 'test_start_pause_resume_stop'])
+        self.assertEqual(1, ret)
+        self.assertTracingSession()
+        new_num_events = self.assertTraceContains(trace_dir, expected_trace_data)
+        self.assertEqual(num_events, new_num_events, 'unexpected new events in trace')
+
+        # When not tracing, run nodes again and check that trace didn't change
+        self.run_nodes()
+        new_num_events = self.assertTraceContains(trace_dir, expected_trace_data)
+        self.assertEqual(num_events, new_num_events, 'unexpected new events in trace')
+
+        # Resume tracing and run nodes again
+        ret = self.run_trace_subcommand(['resume', 'test_start_pause_resume_stop'])
+        self.assertEqual(0, ret)
+        self.assertTracingSession()
+        self.run_nodes()
+
+        # Resuming tracing again should give an error but not affect anything
+        ret = self.run_trace_subcommand(['resume', 'test_start_pause_resume_stop'])
+        self.assertEqual(1, ret)
+        self.assertTracingSession()
+
+        # Stop tracing and check that trace changed
+        ret = self.run_trace_subcommand(['stop', 'test_start_pause_resume_stop'])
+        self.assertEqual(0, ret)
+        self.assertNoTracingSession()
+        new_num_events = self.assertTraceContains(trace_dir, expected_trace_data)
+        self.assertGreater(new_num_events, num_events, 'no new events in trace')
+
+        # Stopping tracing again should give an error but not affect anything
+        ret = self.run_trace_subcommand(['stop', 'test_start_pause_resume_stop'])
+        self.assertEqual(1, ret)
 
         shutil.rmtree(tmpdir)
