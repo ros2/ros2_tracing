@@ -2,6 +2,9 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 7.0.0 (2023-06-09)
 ------------------
 
