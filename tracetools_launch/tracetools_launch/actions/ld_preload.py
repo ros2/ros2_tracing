@@ -104,9 +104,9 @@ class LdPreload(Action):
             return None
         # Assuming that there are no spaces in paths (which should be valid for Linux libs)
         paths = output_split[1].split(' ')
-        cls.__logger.debug(f"lib paths for '{lib_name}'': {paths}")
+        cls.__logger.debug(f"lib paths for '{lib_name}': {paths}")
         # Try to find a shared library
-        # Paths could contain a shared lib (.so) or a static lib (.a) in any order
+        # Paths could contain: shared lib (.so), static lib (.a), or libtools text file (.la)
         shared_lib_paths = [path for path in paths if path.endswith('.so')]
         if not shared_lib_paths:
             return None
