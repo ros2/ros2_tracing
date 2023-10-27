@@ -171,6 +171,24 @@ class TestTraceAction(unittest.TestCase):
     def test_action_context_per_domain(self) -> None:
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_context_per_domain')
 
+        # Invalid context domain
+        action = Trace(
+            session_name='my-session-name',
+            base_path=tmpdir,
+            events_kernel=[],
+            events_ust=[
+                'ros2:*',
+                '*',
+            ],
+            context_fields={
+                'some_unknown_domain_type': [],
+                'userspace': ['vpid', 'vtid'],
+            },
+            subbuffer_size_ust=524288,
+            subbuffer_size_kernel=1048576,
+        )
+        self._assert_launch_errors([action])
+
         action = Trace(
             session_name='my-session-name',
             base_path=tmpdir,

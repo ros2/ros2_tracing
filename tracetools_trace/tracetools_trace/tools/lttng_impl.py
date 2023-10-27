@@ -131,6 +131,19 @@ def is_session_daemon_not_alive() -> bool:
     return not lttngpy.is_lttng_session_daemon_alive()
 
 
+def spawn_session_daemon() -> None:
+    """
+    Try to spawn a session daemon.
+
+    Raises RuntimeError if lttng-sessiond is not found.
+    """
+    try:
+        subprocess.run(['lttng-sessiond', '--daemonize'])
+    except FileNotFoundError:
+        raise RuntimeError(
+            'cannot find lttng-sessiond: on Ubuntu, install lttng-tools and liblttng-ust-dev')
+
+
 def setup(
     *,
     session_name: str,
@@ -165,7 +178,8 @@ def setup(
     :param context_fields: the names of context fields to enable
         if it's a list or a set, the context fields are enabled for both kernel and userspace;
         if it's a dictionary: { domain type string -> context fields list }
-            with the domain type string being either 'kernel' or 'userspace'
+            with the domain type string being either `names.DOMAIN_TYPE_KERNEL` or
+            `names.DOMAIN_TYPE_USERSPACE`
     :param channel_name_ust: the UST channel name
     :param channel_name_kernel: the kernel channel name
     :param subbuffer_size_ust: the size of the subbuffers for userspace events (defaults to 8 times
@@ -185,9 +199,7 @@ def setup(
 
     # If there is no session daemon running, try to spawn one
     if is_session_daemon_not_alive():
-        subprocess.run(
-            ['lttng-sessiond', '--daemonize'],
-        )
+        spawn_session_daemon()
     # Error out if it looks like there is a session daemon that we can't actually reach
     if is_session_daemon_unreachable():
         raise RuntimeError(
@@ -321,7 +333,8 @@ def start(
     """
     result = lttngpy.lttng_start_tracing(session_name=session_name)
     if result < 0:
-        raise RuntimeError(f'failed to start tracing: {lttngpy.lttng_strerror(result)}')
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to start tracing session '{session_name}': {error}")
 
 
 def stop(
@@ -341,7 +354,8 @@ def stop(
     """
     result = lttngpy.lttng_stop_tracing(session_name=session_name)
     if result < 0 and not ignore_error:
-        raise RuntimeError(f'failed to stop tracing: {lttngpy.lttng_strerror(result)}')
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to stop tracing session '{session_name}': {error}")
 
 
 def destroy(
@@ -361,7 +375,8 @@ def destroy(
     """
     result = lttngpy.lttng_destroy_session(session_name=session_name)
     if result < 0 and not ignore_error:
-        raise RuntimeError(f'failed to destroy tracing session: {lttngpy.lttng_strerror(result)}')
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to destroy tracing session '{session_name}': {error}")
 
 
 def _create_session(
@@ -391,7 +406,8 @@ def _create_session(
             url=full_path,
         )
     if result < 0:
-        raise RuntimeError(f'session creation failed: {lttngpy.lttng_strerror(result)}')
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to create tracing session '{session_name}': {error}")
 
 
 def _enable_channel(**kwargs) -> None:
@@ -405,7 +421,13 @@ def _enable_channel(**kwargs) -> None:
     """
     result = lttngpy.enable_channel(**kwargs)
     if result < 0:
-        raise RuntimeError(f'channel enabling failed: {lttngpy.lttng_strerror(result)}')
+        session_name = kwargs['session_name']
+        channel_name = kwargs['channel_name']
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(
+            f"failed to enable channel '{channel_name}' "
+            f"in tracing session '{session_name}': {error}"
+        )
 
 
 def _enable_events(**kwargs) -> None:
@@ -419,7 +441,13 @@ def _enable_events(**kwargs) -> None:
     """
     result = lttngpy.enable_events(**kwargs)
     if result < 0:
-        raise RuntimeError(f'event enabling failed: {lttngpy.lttng_strerror(result)}')
+        session_name = kwargs['session_name']
+        channel_name = kwargs['channel_name']
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(
+            f"failed to enable event for channel '{channel_name}' "
+            f"in tracing session '{session_name}': {error}"
+        )
 
 
 def _normalize_contexts_dict(
@@ -431,21 +459,23 @@ def _normalize_contexts_dict(
     :param context_fields: the names of context fields to enable
         if it's a set, the context fields are enabled for both kernel and userspace;
         if it's a dictionary: { domain type string -> context fields list }
-            with the domain type string being either 'kernel' or 'userspace'
-    :return: a dictionary of domain type name to list of context field name
+            with the domain type string being either `names.DOMAIN_TYPE_KERNEL` or
+            `names.DOMAIN_TYPE_USERSPACE`
+    :return: a dictionary of domain type name to list of context field names
     """
+    DOMAIN_TYPES = {DOMAIN_TYPE_USERSPACE, DOMAIN_TYPE_KERNEL}
     if isinstance(context_fields, dict):
+        unknown_domain_types = context_fields.keys() - DOMAIN_TYPES
+        if unknown_domain_types:
+            raise RuntimeError(f'unknown context domain type(s): {unknown_domain_types}')
         return {domain: set(field_names) for domain, field_names in context_fields.items()}
     assert isinstance(context_fields, set)
-    return {
-        'userspace': context_fields,
-        'kernel': context_fields,
-    }
+    return {domain_type: context_fields for domain_type in DOMAIN_TYPES}
 
 
 def _add_contexts(**kwargs) -> None:
     """
-    Add context lists to given handles, and check for errors.
+    Add context lists to given channel, and check for errors.
 
     This must not be called if `lttngpy.is_available()` is `False`.
     Raises RuntimeError on failure.
@@ -454,5 +484,11 @@ def _add_contexts(**kwargs) -> None:
     """
     result = lttngpy.add_contexts(**kwargs)
     if result < 0:
+        session_name = kwargs['session_name']
+        channel_name = kwargs['channel_name']
+        domain_type = kwargs['domain_type']
+        error = lttngpy.lttng_strerror(result)
         raise RuntimeError(
-            f'failed to add context field: {lttngpy.lttng_strerror(result)}')
+            f"failed to add context fields for channel '{channel_name}' "
+            f"and domain '{domain_type}' in tracing session '{session_name}': {error}"
+        )
