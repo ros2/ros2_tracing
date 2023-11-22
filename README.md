@@ -19,33 +19,52 @@ Consequently, it currently only supports Linux.
 
 [Read the `ros2_tracing` paper!](https://arxiv.org/abs/2201.00393)
 If you use or refer to `ros2_tracing`, please cite:
-* C. Bédard, I. Lütkebohle, and M. Dagenais, "ros2_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2," *IEEE Robotics and Automation Letters*, vol. 7, no. 3, pp. 6511–6518, 2022.
+* C. Bédard, I. Lütkebohle, and M. Dagenais, ["ros2_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2,"](https://arxiv.org/abs/2201.00393) *IEEE Robotics and Automation Letters*, vol. 7, no. 3, pp. 6511–6518, 2022.
+    <details>
+    <summary>BibTeX</summary>
 
-<details>
-<summary>BibTeX</summary>
+    ```bibtex
+    @article{bedard2022ros2tracing,
+      title={ros2\_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2},
+      author={B{\'e}dard, Christophe and L{\"u}tkebohle, Ingo and Dagenais, Michel},
+      journal={IEEE Robotics and Automation Letters},
+      year={2022},
+      volume={7},
+      number={3},
+      pages={6511--6518},
+      doi={10.1109/LRA.2022.3174346}
+    }
+    ```
+    </details>
 
-```bibtex
-@article{bedard2022ros2tracing,
-  title={ros2\_tracing: Multipurpose Low-Overhead Framework for Real-Time Tracing of ROS 2},
-  author={B{\'e}dard, Christophe and L{\"u}tkebohle, Ingo and Dagenais, Michel},
-  journal={IEEE Robotics and Automation Letters},
-  year={2022},
-  volume={7},
-  number={3},
-  pages={6511--6518},
-  doi={10.1109/LRA.2022.3174346}
-}
-```
-</details>
+This other paper leverages `ros2_tracing` to analyze and visualize the flow of messages across distributed ROS 2 systems:
+* C. Bédard, P.-Y. Lajoie, G. Beltrame, and M. Dagenais, ["Message Flow Analysis with Complex Causal Links for Distributed ROS 2 Systems,"](https://arxiv.org/abs/2204.10208) *Robotics and Autonomous Systems*, vol. 161, p. 104361, 2023.
+    <details>
+    <summary>BibTeX</summary>
 
-Also, check out the ROS World 2021 presentation titled "Tracing ROS 2 with ros2_tracing" ([video](https://vimeo.com/652633418), [slides](https://github.com/ros2/ros2_tracing/blob/rolling/doc/2021-10-20_ROS_World_2021_-_Tracing_ROS_2_with_ros2_tracing.pdf)).
-Reference:
-* C. Bédard, "Tracing ROS 2 with ros2_tracing," in *ROS World 2021*. Open Robotics, October 2021. [Online]. Available: https://vimeo.com/652633418, [(pdf)](https://github.com/ros2/ros2_tracing/blob/rolling/doc/2021-10-20_ROS_World_2021_-_Tracing_ROS_2_with_ros2_tracing.pdf)
+    ```bibtex
+    @article{bedard2023messageflow,
+      title={Message flow analysis with complex causal links for distributed {ROS} 2 systems},
+      author={B{\'e}dard, Christophe and Lajoie, Pierre-Yves and Beltrame, Giovanni and Dagenais, Michel},
+      journal={Robotics and Autonomous Systems},
+      year={2023},
+      volume={161},
+      pages={104361},
+      doi={10.1016/j.robot.2022.104361}
+    }
+    ```
+    </details>
+
+Finally, check out the following presentations:
+
+* ROSCon 2023: "Improving Your Application's Algorithms and Optimizing Performance Using Trace Data" ([video](https://vimeo.com/879001159), [slides](https://roscon.ros.org/2023/talks/Improving_Your_Applications_Algorithms_and_Optimizing_Performance_Using_Trace_Data.pdf))
+* ROS World 2021: "Tracing ROS 2 with ros2_tracing" ([video](https://vimeo.com/652633418), [slides](https://github.com/ros2/ros2_tracing/blob/rolling/doc/2021-10-20_ROS_World_2021_-_Tracing_ROS_2_with_ros2_tracing.pdf))
 
 ## Tutorials & demos
 
-* ROS 2 documentation: [Building ROS 2 with tracing](https://docs.ros.org/en/rolling/How-To-Guides/Building-ROS-2-with-Tracing.html)
-* Real-Time Working Group documentation tutorial: [How to use `ros2_tracing` to trace and analyze an application](https://ros-realtime.github.io/Guides/ros2_tracing_trace_and_analyze.html)
+* ROS 2 documentation:
+    * [Building ROS 2 with tracing](https://docs.ros.org/en/rolling/How-To-Guides/Building-ROS-2-with-Tracing.html)
+    * [How to use `ros2_tracing` to trace and analyze an application](https://docs.ros.org/en/rolling/Tutorials/Advanced/ROS2-Tracing-Trace-and-Analyze.html)
 * ROS World 2021 demo: [github.com/christophebedard/ros-world-2021-demo](https://github.com/christophebedard/ros-world-2021-demo)
 
 ## Building
