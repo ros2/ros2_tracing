@@ -15,6 +15,14 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>pkg-config</buildtool_depend>
 
+  <!-- Two of the utilities from this package (test_ping and test_pong)
+       are used in test_ros2trace.  Because of that, we need to build_export_depend
+       the dependencies that those packages use so that colcon properly sets up the
+       environment when running thes test_ros2trace tests.
+  -->
+  <build_export_depend>rclcpp</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_mypy</test_depend>
   <test_depend>ament_cmake_pytest</test_depend>
