@@ -42,64 +42,72 @@ if(BUILD_TESTING)
   add_executable(test_publisher
     src/test_publisher.cpp
   )
-  ament_target_dependencies(test_publisher
-    rclcpp
-    std_msgs
+  target_link_libraries(test_publisher PRIVATE
+    rclcpp::rclcpp
+    ${std_msgs_TARGETS}
   )
+
   add_executable(test_intra
     src/test_intra.cpp
   )
-  ament_target_dependencies(test_intra
-    rclcpp
-    std_msgs
+  target_link_libraries(test_intra PRIVATE
+    rclcpp::rclcpp
+    ${std_msgs_TARGETS}
   )
+
   add_executable(test_lifecycle_node
     src/test_lifecycle_node.cpp
   )
-  ament_target_dependencies(test_lifecycle_node
-    rclcpp
-    rclcpp_lifecycle
+  target_link_libraries(test_lifecycle_node PRIVATE
+    rclcpp::rclcpp
+    rclcpp_lifecycle::rclcpp_lifecycle
   )
+
   add_executable(test_lifecycle_client
     src/test_lifecycle_client.cpp
   )
-  ament_target_dependencies(test_lifecycle_client
-    lifecycle_msgs
-    rclcpp
+  target_link_libraries(test_lifecycle_client PRIVATE
+    ${lifecycle_msgs_TARGETS}
+    rclcpp::rclcpp
   )
+
   add_executable(test_ping
     src/test_ping.cpp
   )
-  ament_target_dependencies(test_ping
-    rclcpp
-    std_msgs
+  target_link_libraries(test_ping PRIVATE
+    rclcpp::rclcpp
+    ${std_msgs_TARGETS}
   )
+
   add_executable(test_pong
     src/test_pong.cpp
   )
-  ament_target_dependencies(test_pong
-    rclcpp
-    std_msgs
+  target_link_libraries(test_pong PRIVATE
+    rclcpp::rclcpp
+    ${std_msgs_TARGETS}
   )
+
   add_executable(test_timer
     src/test_timer.cpp
   )
-  ament_target_dependencies(test_timer
-    rclcpp
+  target_link_libraries(test_timer PRIVATE
+    rclcpp::rclcpp
   )
+
   add_executable(test_service_ping
     src/test_service_ping.cpp
   )
-  ament_target_dependencies(test_service_ping
-    rclcpp
-    std_srvs
+  target_link_libraries(test_service_ping PRIVATE
+    rclcpp::rclcpp
+    ${std_srvs_TARGETS}
   )
+
   add_executable(test_service_pong
     src/test_service_pong.cpp
   )
-  ament_target_dependencies(test_service_pong
-    rclcpp
-    std_srvs
+  target_link_libraries(test_service_pong PRIVATE
+    rclcpp::rclcpp
+    ${std_srvs_TARGETS}
   )
 
   install(TARGETS
@@ -124,8 +132,8 @@ if(BUILD_TESTING)
     find_package(ament_cmake_gtest REQUIRED)
     ament_add_gtest(test_utils test/test_utils.cpp)
     if(TARGET test_utils)
-      ament_target_dependencies(test_utils
-        tracetools
+      target_link_libraries(test_utils
+        tracetools::tracetools
       )
     endif()
   endif()
