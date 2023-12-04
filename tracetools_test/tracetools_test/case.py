@@ -62,7 +62,7 @@ class TraceTestCase(unittest.TestCase):
         nodes: List[str],
         base_path: str = '/tmp',
         events_kernel: List[str] = [],
-        additional_actions: Union[List[Action], Action] = [],
+        additional_actions: Optional[List[Action]] = None,
     ) -> None:
         """Create a TraceTestCase."""
         super().__init__(methodName=args[0])
@@ -72,7 +72,7 @@ class TraceTestCase(unittest.TestCase):
         self._events_kernel = events_kernel
         self._package = package
         self._nodes = nodes
-        self._additional_actions = additional_actions
+        self._additional_actions = additional_actions or []
 
     def setUp(self):
         # Get timestamp before trace (ns)
