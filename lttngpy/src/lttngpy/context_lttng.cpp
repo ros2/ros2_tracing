@@ -18,6 +18,7 @@
 #include <optional>
 #include <string>
 
+#include "lttngpy/config.hpp"
 #include "lttngpy/context_lttng.hpp"
 
 namespace lttngpy
@@ -74,7 +75,9 @@ std::map<std::string, enum lttng_event_context_type> context_name_to_context_typ
   {"vgid", LTTNG_EVENT_CONTEXT_VGID},
   {"vegid", LTTNG_EVENT_CONTEXT_VEGID},
   {"vsgid", LTTNG_EVENT_CONTEXT_VSGID},
-  {"time_ns", LTTNG_EVENT_CONTEXT_TIME_NS}
+#if (LTTNG_CTL_VERSION_MAJOR >= 2) && (LTTNG_CTL_VERSION_MINOR >= 13)
+  {"time_ns", LTTNG_EVENT_CONTEXT_TIME_NS},
+#endif  // (LTTNG_CTL_VERSION_MAJOR >= 2) && (LTTNG_CTL_VERSION_MINOR >= 13)
 };
 
 std::optional<enum lttng_event_context_type> get_lttng_context_type(

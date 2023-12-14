@@ -37,13 +37,24 @@ if(NOT LTTNGPY_DISABLED)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(LTTNG_CTL REQUIRED lttng-ctl)
   set(LTTNG_CTL_VERSION ${LTTNG_CTL_VERSION})
+
+  string(REGEX MATCH "([0-9]+)\.([0-9]+)\.([0-9]+)" dummy "${LTTNG_CTL_VERSION}")
+  set(LTTNG_CTL_VERSION_MAJOR "${CMAKE_MATCH_1}")
+  set(LTTNG_CTL_VERSION_MINOR "${CMAKE_MATCH_2}")
+  set(LTTNG_CTL_VERSION_PATCH "${CMAKE_MATCH_3}")
 else()
   set(LTTNG_CTL_VERSION "")
+  set(LTTNG_CTL_VERSION_MAJOR "0")
+  set(LTTNG_CTL_VERSION_MINOR "0")
+  set(LTTNG_CTL_VERSION_PATCH "0")
 endif()
 
 # Store configuration variable for buildtime use
 #   LTTNGPY_DISABLED
 #   LTTNG_CTL_VERSION
+#   LTTNG_CTL_VERSION_MAJOR
+#   LTTNG_CTL_VERSION_MINOR
+#   LTTNG_CTL_VERSION_PATCH
 configure_file(src/lttngpy/config.hpp.in src/lttngpy/config.hpp)
 
 ament_python_install_package(${PROJECT_NAME})
@@ -94,19 +105,28 @@ if(BUILD_TESTING)
     # Using source files, because I can't seem to be able to link against _lttngpy_pybind11
     ament_add_gtest(test_context_app test/test_context_app.cpp src/lttngpy/context_app.cpp)
     if(TARGET test_context_app)
-      target_include_directories(test_context_app PRIVATE src/)
+      target_include_directories(test_context_app PRIVATE
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>"
+      )
     endif()
 
     ament_add_gtest(test_context_lttng test/test_context_lttng.cpp src/lttngpy/context_lttng.cpp)
     if(TARGET test_context_lttng)
       target_link_libraries(test_context_lttng ${LTTNG_CTL_LIBRARIES})
-      target_include_directories(test_context_lttng PRIVATE src/)
+      target_include_directories(test_context_lttng PRIVATE
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>"
+      )
     endif()
 
     ament_add_gtest(test_context_perf test/test_context_perf.cpp src/lttngpy/context_perf.cpp)
     if(TARGET test_context_perf)
       target_link_libraries(test_context_perf ${LTTNG_CTL_LIBRARIES})
-      target_include_directories(test_context_perf PRIVATE src/)
+      target_include_directories(test_context_perf PRIVATE
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>"
+      )
     endif()
 
     set(_lttngpy_pytest_tests
