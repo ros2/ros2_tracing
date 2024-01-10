@@ -25,6 +25,7 @@ import unittest
 from launch import LaunchDescription
 from launch import LaunchService
 from launch_ros.actions import Node
+from lttngpy import impl as lttngpy
 from tracetools_trace.tools import tracepoints
 from tracetools_trace.tools.lttng import is_lttng_installed
 
@@ -63,30 +64,26 @@ class TestROS2TraceCLI(unittest.TestCase):
         # Even if running 'ros2 trace' fails, we do not want any lingering tracing session
         self.assertNoTracingSession()
 
-    def get_tracing_sessions(self) -> Tuple[bool, str]:
-        output = self.run_lttng_list()
-        # If there is no session daemon, then there are no tracing sessions
-        no_session_daemon_available = 'No session daemon is available' in output
-        if no_session_daemon_available:
-            return False, output
-        # Starting from LTTng 2.13, 'tracing session' was replaced with 'recording session'
-        # (see lttng-tools e971184)
-        has_tracing_sessions = not any(
-            f'Currently no available {name} session' in output for name in ('tracing', 'recording')
-        )
-        return has_tracing_sessions, output
-
     def assertTracingSession(self) -> None:
-        has_tracing_sessions, output = self.get_tracing_sessions()
-        self.assertTrue(has_tracing_sessions, 'no tracing sessions exist:\n' + output)
+        self.assertTrue(
+            lttngpy.is_lttng_session_daemon_alive(),
+            'no tracing sessions exist because there is no daemon',
+        )
+        session_names = lttngpy.get_session_names()
+        has_tracing_sessions = session_names is not None and 0 < len(session_names)
+        self.assertTrue(has_tracing_sessions, 'no tracing sessions exist')
 
     def assertNoTracingSession(self) -> None:
-        has_tracing_sessions, output = self.get_tracing_sessions()
-        if has_tracing_sessions:
+        # If there is no session daemon, then there are no tracing sessions
+        if not lttngpy.is_lttng_session_daemon_alive():
+            return
+        session_names = lttngpy.get_session_names()
+        no_tracing_sessions = 0 == len(session_names)
+        if not no_tracing_sessions:
             # Destroy tracing sessions if there are any, this way we can continue running tests and
             # avoid possible interference between them
-            self.run_lttng_destroy_all()
-        self.assertFalse(has_tracing_sessions, 'tracing session(s) exist:\n' + output)
+            self.assertEqual(0, lttngpy.destroy_all_sessions())
+        self.assertTrue(no_tracing_sessions, f'tracing session(s) exist: {session_names}')
 
     def assertTraceExist(self, trace_dir: str) -> None:
         self.assertTrue(os.path.isdir(trace_dir), f'trace directory does not exist: {trace_dir}')
@@ -115,25 +112,6 @@ class TestROS2TraceCLI(unittest.TestCase):
 
     def get_subdirectories(self, directory: str) -> List[str]:
         return [f.name for f in os.scandir(directory) if f.is_dir()]
-
-    def run_lttng_list(self) -> str:
-        process = subprocess.run(
-            ['lttng', 'list'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            encoding='utf-8',
-        )
-        return process.stdout + process.stderr
-
-    def run_lttng_destroy_all(self):
-        process = subprocess.run(
-            ['lttng', 'destroy', '--all'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            encoding='utf-8',
-        )
-        output = process.stdout + process.stderr
-        self.assertEqual(0, process.returncode, f"'lttng destroy' command failed: {output}")
 
     def run_command(
         self,
@@ -367,6 +345,17 @@ class TestROS2TraceCLI(unittest.TestCase):
         )
         self.assertEqual(0, ret)
         self.assertTraceExist(os.path.join(fake_base_path, 'test_base_path_not_exist'))
+
+        shutil.rmtree(tmpdir)
+
+    def test_no_events(self) -> None:
+        tmpdir = self.create_test_tmpdir('test_no_events')
+
+        # Enabling no events should result in an error
+        ret = self.run_trace_command(
+            ['--path', tmpdir, '--ust', '--kernel'],
+        )
+        self.assertEqual(1, ret)
 
         shutil.rmtree(tmpdir)
 

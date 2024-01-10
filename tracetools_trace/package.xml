@@ -12,8 +12,7 @@
   <url type="bugtracker">https://github.com/ros2/ros2_tracing/issues</url>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
-  <exec_depend>lttng-tools</exec_depend>
-  <exec_depend>python3-lttng</exec_depend>
+  <exec_depend>lttngpy</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

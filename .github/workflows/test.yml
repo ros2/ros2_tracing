@@ -49,6 +49,7 @@ jobs:
     - uses: ros-tooling/action-ros-ci@master
       with:
         package-name: >
+          lttngpy
           ros2trace
           test_ros2trace
           test_tracetools
