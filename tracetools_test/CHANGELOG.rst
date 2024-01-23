@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.0.0 (2024-01-23)
+------------------
 * Fix use of mutable default arg in tracetools_test (`#84 <https://github.com/ros2/ros2_tracing/issues/84>`_)
 * Contributors: Christophe Bedard
 

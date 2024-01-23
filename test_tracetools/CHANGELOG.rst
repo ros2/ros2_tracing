@@ -2,8 +2,8 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.0.0 (2024-01-23)
+------------------
 * Switch to target_link_libraries in test_tracetools. (`#83 <https://github.com/ros2/ros2_tracing/issues/83>`_)
 * Contributors: Chris Lalancette
 

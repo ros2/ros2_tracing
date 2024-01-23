@@ -2,8 +2,8 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.0.0 (2024-01-23)
+------------------
 * Remove extra single quote in LdPreload debug log (`#79 <https://github.com/ros2/ros2_tracing/issues/79>`_)
 * Contributors: Christophe Bedard
 

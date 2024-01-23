@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.0.0 (2024-01-23)
+------------------
 * Add timestamp to rmw_publish tracepoint (`#74 <https://github.com/ros2/ros2_tracing/issues/74>`_)
 * Contributors: Christopher Wecht
 
