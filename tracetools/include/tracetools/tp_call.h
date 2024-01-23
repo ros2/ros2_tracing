@@ -137,10 +137,14 @@ TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
   rmw_publish,
   TP_ARGS(
-    const void *, message_arg
+    const void *, publisher_handle_arg,
+    const void *, message_arg,
+    int64_t, timestamp_arg
   ),
   TP_FIELDS(
+    ctf_integer_hex(const void *, publisher_handle, publisher_handle_arg)
     ctf_integer_hex(const void *, message, message_arg)
+    ctf_integer(int64_t, timestamp, timestamp_arg)
   )
 )
 

@@ -156,9 +156,13 @@ DEFINE_TRACEPOINT(
 DEFINE_TRACEPOINT(
   rmw_publish,
   TRACEPOINT_PARAMS(
-    const void * message),
+    const void * publisher_handle,
+    const void * message,
+    int64_t timestamp),
   TRACEPOINT_ARGS(
-    message))
+    publisher_handle,
+    message,
+    timestamp))
 
 DEFINE_TRACEPOINT(
   rmw_subscription_init,
