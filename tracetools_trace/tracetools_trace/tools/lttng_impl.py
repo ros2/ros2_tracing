@@ -222,7 +222,7 @@ def setup(
 
     ust_enabled = ros_events is not None and len(ros_events) > 0
     kernel_enabled = kernel_events is not None and len(kernel_events) > 0
-    if not(ust_enabled or kernel_enabled):
+    if not (ust_enabled or kernel_enabled):
         raise RuntimeError('no events enabled')
 
     # Create session
