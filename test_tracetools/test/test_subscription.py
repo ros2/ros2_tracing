@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
 import unittest
 
 from tracetools_test.case import TraceTestCase
@@ -22,6 +23,7 @@ from tracetools_trace.tools.lttng import is_lttng_installed
 
 
 @unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
+@pytest.mark.tracing
 class TestSubscription(TraceTestCase):
 
     def __init__(self, *args) -> None:

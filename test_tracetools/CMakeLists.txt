@@ -218,6 +218,11 @@ if(BUILD_TESTING)
         TIMEOUT 60
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
       )
+      set_tests_properties(
+        ${_test_name}
+        PROPERTIES
+        LABELS "tracing"
+      )
     endforeach()
 
     # Tests to run with all instrumented/supported rmw implementations

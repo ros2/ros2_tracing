@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
 import unittest
 
 from tracetools_test.case import TraceTestCase
@@ -23,6 +24,7 @@ VERSION_REGEX = r'^[0-9]+\.[0-9]+\.[0-9]+$'
 
 
 @unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
+@pytest.mark.tracing
 class TestNode(TraceTestCase):
 
     def __init__(self, *args) -> None:
