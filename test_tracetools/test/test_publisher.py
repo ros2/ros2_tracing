@@ -61,7 +61,7 @@ class TestPublisher(TraceTestCase):
             # Message is a pointer (aka a handle)
             self.assertValidHandle(
                 event,
-                ['publisher_handle', 'message'],
+                ['rmw_publisher_handle', 'message'],
             )
             self.assertFieldType(event, 'timestamp', int)
         rcl_publish_events = self.get_events_with_name(tp.rcl_publish)
@@ -141,7 +141,7 @@ class TestPublisher(TraceTestCase):
         # Find pointer of published message using rmw_publisher_handle of corresponding rmw_publish
         # event, since it's the "main" publication event
         rmw_publish_topic_events = self.get_events_with_field_value(
-            'publisher_handle',
+            'rmw_publisher_handle',
             rmw_publisher_handle,
             rmw_publish_events,
         )

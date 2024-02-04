@@ -100,12 +100,12 @@ class TestPubSub(TraceTestCase):
         # Get corresponding rmw/rcl/rclcpp publish events for ping & pong
         rmw_publish_events = self.get_events_with_name(tp.rmw_publish)
         ping_rmw_pub_events = self.get_events_with_field_value(
-            'publisher_handle',
+            'rmw_publisher_handle',
             ping_rmw_pub_handle,
             rmw_publish_events,
         )
         pong_rmw_pub_events = self.get_events_with_field_value(
-            'publisher_handle',
+            'rmw_publisher_handle',
             pong_rmw_pub_handle,
             rmw_publish_events,
         )
