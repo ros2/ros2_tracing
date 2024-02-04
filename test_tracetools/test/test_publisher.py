@@ -61,8 +61,9 @@ class TestPublisher(TraceTestCase):
             # Message is a pointer (aka a handle)
             self.assertValidHandle(
                 event,
-                'message',
+                ['publisher_handle', 'message'],
             )
+            self.assertFieldType(event, 'timestamp', int)
         rcl_publish_events = self.get_events_with_name(tp.rcl_publish)
         for event in rcl_publish_events:
             # Message is a pointer (aka a handle)
@@ -137,31 +138,30 @@ class TestPublisher(TraceTestCase):
         self.assertEventOrder([rmw_pub_init_event, test_pub_init_topic_event])
 
         # Check publish events
-        # Get publisher handle from rcl_publisher_init event
-        publisher_handle = self.get_field(test_pub_init_topic_event, 'publisher_handle')
-        # And find pointer of published message using the corresponding rcl_publish event
-        rcl_publish_topic_events = self.get_events_with_field_value(
+        # Find pointer of published message using rmw_publisher_handle of corresponding rmw_publish
+        # event, since it's the "main" publication event
+        rmw_publish_topic_events = self.get_events_with_field_value(
             'publisher_handle',
-            publisher_handle,
-            rcl_publish_events,
+            rmw_publisher_handle,
+            rmw_publish_events,
         )
         self.assertNumEventsEqual(
-            rcl_publish_topic_events,
+            rmw_publish_topic_events,
             1,
-            'none or more than 1 rcl_publish event for test topic',
+            'none or more than 1 rmw_publish event for test topic',
         )
-        rcl_publish_topic_event = rcl_publish_topic_events[0]
-        pub_message = self.get_field(rcl_publish_topic_event, 'message')
-        # Find corresponding rclcpp/rmw_publish event
+        rmw_publish_topic_event = rmw_publish_topic_events[0]
+        pub_message = self.get_field(rmw_publish_topic_event, 'message')
+        # Find corresponding rclcpp/rcl_publish event
         rclcpp_publish_topic_events = self.get_events_with_field_value(
             'message',
             pub_message,
             rclcpp_publish_events,
         )
-        rmw_publish_topic_events = self.get_events_with_field_value(
+        rcl_publish_topic_events = self.get_events_with_field_value(
             'message',
             pub_message,
-            rmw_publish_events,
+            rcl_publish_events,
         )
         self.assertNumEventsEqual(
             rclcpp_publish_topic_events,
@@ -169,13 +169,16 @@ class TestPublisher(TraceTestCase):
             'none or more than 1 rclcpp_publish event for test topic',
         )
         self.assertNumEventsEqual(
-            rmw_publish_topic_events,
+            rcl_publish_topic_events,
             1,
-            'none or more than 1 rmw_publish event for test topic',
+            'none or more than 1 rcl_publish event for test topic',
         )
         rclcpp_publish_topic_event = rclcpp_publish_topic_events[0]
-        rmw_publish_topic_event = rmw_publish_topic_events[0]
-        # Check the order
+        rcl_publish_topic_event = rcl_publish_topic_events[0]
+        # Get publisher handle from rcl_publisher_init event
+        publisher_handle = self.get_field(test_pub_init_topic_event, 'publisher_handle')
+        self.assertFieldEquals(rcl_publish_topic_event, 'publisher_handle', publisher_handle)
+        # Check publication events order
         self.assertEventOrder(
             [rclcpp_publish_topic_event, rcl_publish_topic_event, rmw_publish_topic_event])
 
