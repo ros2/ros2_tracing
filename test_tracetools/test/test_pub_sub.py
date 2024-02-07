@@ -36,6 +36,7 @@ class TestPubSub(TraceTestCase):
                 tp.rcl_subscription_init,
                 tp.rclcpp_subscription_init,
                 tp.rclcpp_subscription_callback_added,
+                tp.rmw_take,
                 tp.callback_start,
                 tp.callback_end,
             ],
@@ -97,27 +98,26 @@ class TestPubSub(TraceTestCase):
         ])
 
         # Get corresponding rmw/rcl/rclcpp publish events for ping & pong
-        rcl_publish_events = self.get_events_with_name(tp.rcl_publish)
-        ping_rcl_pub_events = self.get_events_with_field_value(
-            'publisher_handle',
-            ping_pub_handle,
-            rcl_publish_events,
+        rmw_publish_events = self.get_events_with_name(tp.rmw_publish)
+        ping_rmw_pub_events = self.get_events_with_field_value(
+            'rmw_publisher_handle',
+            ping_rmw_pub_handle,
+            rmw_publish_events,
         )
-        pong_rcl_pub_events = self.get_events_with_field_value(
-            'publisher_handle',
-            pong_pub_handle,
-            rcl_publish_events,
+        pong_rmw_pub_events = self.get_events_with_field_value(
+            'rmw_publisher_handle',
+            pong_rmw_pub_handle,
+            rmw_publish_events,
         )
-        self.assertNumEventsEqual(ping_rcl_pub_events, 1)
-        self.assertNumEventsEqual(pong_rcl_pub_events, 1)
-        ping_rcl_pub_event = ping_rcl_pub_events[0]
-        pong_rcl_pub_event = pong_rcl_pub_events[0]
+        self.assertNumEventsEqual(ping_rmw_pub_events, 1)
+        self.assertNumEventsEqual(pong_rmw_pub_events, 1)
+        ping_rmw_pub_event = ping_rmw_pub_events[0]
+        pong_rmw_pub_event = pong_rmw_pub_events[0]
+        ping_pub_message = self.get_field(ping_rmw_pub_event, 'message')
+        pong_pub_message = self.get_field(pong_rmw_pub_event, 'message')
 
         rclcpp_publish_events = self.get_events_with_name(tp.rclcpp_publish)
-        rmw_publish_events = self.get_events_with_name(tp.rmw_publish)
-        ping_pub_message = self.get_field(ping_rcl_pub_event, 'message')
-        pong_pub_message = self.get_field(pong_rcl_pub_event, 'message')
-
+        rcl_publish_events = self.get_events_with_name(tp.rcl_publish)
         ping_rclcpp_pub_events = self.get_events_with_field_value(
             'message',
             ping_pub_message,
@@ -128,24 +128,26 @@ class TestPubSub(TraceTestCase):
             pong_pub_message,
             rclcpp_publish_events,
         )
-        ping_rmw_pub_events = self.get_events_with_field_value(
+        ping_rcl_pub_events = self.get_events_with_field_value(
             'message',
             ping_pub_message,
-            rmw_publish_events,
+            rcl_publish_events,
         )
-        pong_rmw_pub_events = self.get_events_with_field_value(
+        pong_rcl_pub_events = self.get_events_with_field_value(
             'message',
             pong_pub_message,
-            rmw_publish_events,
+            rcl_publish_events,
         )
         self.assertNumEventsEqual(ping_rclcpp_pub_events, 1)
         self.assertNumEventsEqual(pong_rclcpp_pub_events, 1)
-        self.assertNumEventsEqual(ping_rmw_pub_events, 1)
-        self.assertNumEventsEqual(pong_rmw_pub_events, 1)
+        self.assertNumEventsEqual(ping_rcl_pub_events, 1)
+        self.assertNumEventsEqual(pong_rcl_pub_events, 1)
         ping_rclcpp_pub_event = ping_rclcpp_pub_events[0]
         pong_rclcpp_pub_event = pong_rclcpp_pub_events[0]
-        ping_rmw_pub_event = ping_rmw_pub_events[0]
-        pong_rmw_pub_event = pong_rmw_pub_events[0]
+        ping_rcl_pub_event = ping_rcl_pub_events[0]
+        pong_rcl_pub_event = pong_rcl_pub_events[0]
+        self.assertFieldEquals(ping_rcl_pub_event, 'publisher_handle', ping_pub_handle)
+        self.assertFieldEquals(pong_rcl_pub_event, 'publisher_handle', pong_pub_handle)
 
         # Get subscription init events & subscription handles of test topics
         rcl_subscription_init_events = self.get_events_with_name(tp.rcl_subscription_init)
@@ -228,6 +230,29 @@ class TestPubSub(TraceTestCase):
         ping_callback_object = self.get_field(ping_rclcpp_subscription_callback_event, 'callback')
         pong_callback_object = self.get_field(pong_rclcpp_subscription_callback_event, 'callback')
 
+        # Get rmw_take events
+        rmw_take_events = self.get_events_with_name(tp.rmw_take)
+        pong_rmw_take_events = self.get_events_with_field_value(
+            'rmw_subscription_handle',
+            pong_rmw_sub_handle,
+            rmw_take_events,
+        )
+        ping_rmw_take_events = self.get_events_with_field_value(
+            'rmw_subscription_handle',
+            ping_rmw_sub_handle,
+            rmw_take_events,
+        )
+        self.assertNumEventsEqual(pong_rmw_take_events, 1)
+        self.assertNumEventsEqual(ping_rmw_take_events, 1)
+        pong_rmw_take_event = pong_rmw_take_events[0]
+        ping_rmw_take_event = ping_rmw_take_events[0]
+
+        # Check that pub->sub timestamps match
+        ping_timestamp = self.get_field(ping_rmw_pub_event, 'timestamp')
+        self.assertFieldEquals(ping_rmw_take_event, 'source_timestamp', ping_timestamp)
+        pong_timestamp = self.get_field(pong_rmw_pub_event, 'timestamp')
+        self.assertFieldEquals(pong_rmw_take_event, 'source_timestamp', pong_timestamp)
+
         # Check subscription init order
         self.assertEventOrder([
             ping_rmw_sub_init_event,
@@ -278,6 +303,7 @@ class TestPubSub(TraceTestCase):
         #   * /ping pub rclcpp_publish
         #   * /ping pub rcl_publish
         #   * /ping pub rmw_publish
+        #   * /ping sub rmw_take
         #   * /ping sub callback_start
         #   * /pong pub rclcpp_publish
         #   * /pong pub rcl_publish
@@ -286,12 +312,14 @@ class TestPubSub(TraceTestCase):
         #   * /ping sub callback_end
         #   ... we shouldn't necessarily expect the /pong callback to start
         #       before the /ping callback has ended
+        #   * /pong sub rmw_take
         #   * /pong sub callback_start
         #   * /pong sub callback_end
         self.assertEventOrder([
             ping_rclcpp_pub_event,
             ping_rcl_pub_event,
             ping_rmw_pub_event,
+            ping_rmw_take_event,
             ping_callback_start_event,
             pong_rclcpp_pub_event,
             pong_rcl_pub_event,
@@ -302,6 +330,7 @@ class TestPubSub(TraceTestCase):
             pong_rclcpp_pub_event,
             pong_rcl_pub_event,
             pong_rmw_pub_event,
+            pong_rmw_take_event,
             pong_callback_start_event,
             pong_callback_end_event,
         ])
