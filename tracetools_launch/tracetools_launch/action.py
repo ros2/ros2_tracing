@@ -143,7 +143,8 @@ class Trace(Action):
         :param context_fields: the names of context fields to enable
             if it's a list or a set, the context fields are enabled for both kernel and userspace;
             if it's a dictionary: { domain type string -> context fields list }
-                with the domain type string being either 'kernel' or 'userspace'
+                with the domain type string being either `names.DOMAIN_TYPE_KERNEL` or
+                `names.DOMAIN_TYPE_USERSPACE`
         :param subbuffer_size_ust: the size of the subbuffers (defaults to 8 times the usual page
             size)
         :param subbuffer_size_kernel: the size of the subbuffers (defaults to 32 times the usual
