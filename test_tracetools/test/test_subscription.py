@@ -115,12 +115,7 @@ class TestSubscription(TraceTestCase):
         test_rcl_sub_init_event = test_rcl_sub_init_events[0]
 
         # Check queue_depth value
-        self.assertFieldEquals(
-            test_rcl_sub_init_event,
-            'queue_depth',
-            10,
-            'sub_init event does not have expected queue depth value',
-        )
+        self.assertFieldEquals(test_rcl_sub_init_event, 'queue_depth', 10)
 
         # Check that the node handle matches the node_init event
         node_init_events = self.get_events_with_name(tp.rcl_node_init)
@@ -128,11 +123,7 @@ class TestSubscription(TraceTestCase):
             'test_ping',
             node_init_events,
         )
-        self.assertNumEventsEqual(
-            test_sub_node_init_events,
-            1,
-            'none or more than 1 node_init event',
-        )
+        self.assertNumEventsEqual(test_sub_node_init_events, 1)
         test_sub_node_init_event = test_sub_node_init_events[0]
         self.assertMatchingField(
             test_sub_node_init_event,
@@ -149,11 +140,7 @@ class TestSubscription(TraceTestCase):
             rclcpp_sub_init_events,
         )
         # Should only have 1 rclcpp_sub_init event, since intra-process is not enabled
-        self.assertNumEventsEqual(
-            rclcpp_sub_init_matching_events,
-            1,
-            'none or more than 1 rclcpp_sub_init event for topic',
-        )
+        self.assertNumEventsEqual(rclcpp_sub_init_matching_events, 1)
         # Check that the rmw subscription handle matches between rmw_sub_init and rcl_sub_init
         rmw_subscription_handle = self.get_field(
             test_rcl_sub_init_event, 'rmw_subscription_handle')
@@ -162,11 +149,7 @@ class TestSubscription(TraceTestCase):
             rmw_subscription_handle,
             rmw_sub_init_events,
         )
-        self.assertNumEventsEqual(
-            rmw_sub_init_events,
-            1,
-            'none or more than 1 rmw_sub_init event for test topic',
-        )
+        self.assertNumEventsEqual(rmw_sub_init_events, 1)
         rmw_sub_init_event = rmw_sub_init_events[0]
 
         # Check that subscription pointer matches between rclcpp_sub_init and sub_callback_added
@@ -177,11 +160,7 @@ class TestSubscription(TraceTestCase):
             subscription_pointer,
             callback_added_events,
         )
-        self.assertNumEventsEqual(
-            callback_added_matching_events,
-            1,
-            'none or more than 1 rclcpp_sub_callback_added event for topic',
-        )
+        self.assertNumEventsEqual(callback_added_matching_events, 1)
         callback_added_matching_event = callback_added_matching_events[0]
 
         # Check that callback pointer matches between callback_added and callback_register
@@ -195,11 +174,7 @@ class TestSubscription(TraceTestCase):
             callback_handle,
             test_sub_node_callback_register_events,
         )
-        self.assertNumEventsEqual(
-            callback_register_matching_events,
-            1,
-            'none or more than 1 matching callback_register events for the test topic',
-        )
+        self.assertNumEventsEqual(callback_register_matching_events, 1)
         callback_register_matching_event = callback_register_matching_events[0]
 
         # Check susbcription creation events order
@@ -217,22 +192,14 @@ class TestSubscription(TraceTestCase):
             subscription_handle,
             execute_events,
         )
-        self.assertNumEventsEqual(
-            test_execute_events,
-            1,
-            'none or more than 1 executor_execute event for topic sub',
-        )
+        self.assertNumEventsEqual(test_execute_events, 1)
         test_execute_event = test_execute_events[0]
         test_rmw_take_events = self.get_events_with_field_value(
             'rmw_subscription_handle',
             rmw_subscription_handle,
             rmw_take_events,
         )
-        self.assertNumEventsEqual(
-            test_execute_events,
-            1,
-            'none or more than 1 executor_execute event for topic sub',
-        )
+        self.assertNumEventsEqual(test_execute_events, 1)
         test_rmw_take_event = test_rmw_take_events[0]
         test_taken_msg = self.get_field(test_rmw_take_event, 'message')
         self.assertFieldEquals(test_rmw_take_event, 'taken', 1, 'test message not taken')
@@ -241,22 +208,14 @@ class TestSubscription(TraceTestCase):
             test_taken_msg,
             rcl_take_events,
         )
-        self.assertNumEventsEqual(
-            test_rcl_take_events,
-            1,
-            'none or more than 1 rcl_take event for topic sub',
-        )
+        self.assertNumEventsEqual(test_rcl_take_events, 1)
         test_rcl_take_event = test_rcl_take_events[0]
         test_rclcpp_take_events = self.get_events_with_field_value(
             'message',
             test_taken_msg,
             rclcpp_take_events,
         )
-        self.assertNumEventsEqual(
-            test_rcl_take_events,
-            1,
-            'none or more than 1 rclcpp_take event for topic sub',
-        )
+        self.assertNumEventsEqual(test_rcl_take_events, 1)
         test_rclcpp_take_event = test_rclcpp_take_events[0]
 
         # Check that each start:end pair has a common callback handle
@@ -288,11 +247,7 @@ class TestSubscription(TraceTestCase):
             callback_pointer,
             ping_events_start,
         )
-        self.assertNumEventsEqual(
-            callback_start_matching_events,
-            1,
-            'none or more than 1 callback_start event for topic callback',
-        )
+        self.assertNumEventsEqual(callback_start_matching_events, 1)
         callback_start_matching_event = callback_start_matching_events[0]
         ping_events_end = self.get_events_with_name(tp.callback_end, ping_events)
         callback_end_matching_events = self.get_events_with_field_value(
@@ -300,11 +255,7 @@ class TestSubscription(TraceTestCase):
             callback_pointer,
             ping_events_end,
         )
-        self.assertNumEventsEqual(
-            callback_end_matching_events,
-            1,
-            'none or more than 1 callback_end event for topic callback',
-        )
+        self.assertNumEventsEqual(callback_end_matching_events, 1)
         callback_end_matching_event = callback_end_matching_events[0]
 
         # Check execute+take+callback order

@@ -61,11 +61,7 @@ class TestBuffer(TraceTestCase):
                 target_buffer,
                 buffer_to_ipb_events)
             # Only 1 for our given buffer
-            self.assertNumEventsEqual(
-                target_buffer_to_ipb_event,
-                1,
-                'none or more than 1 buffer_to_ipb event for the buffer',
-            )
+            self.assertNumEventsEqual(target_buffer_to_ipb_event, 1)
 
             target_ipb = self.get_field(target_buffer_to_ipb_event[0], 'ipb')
             target_ipb_to_subscription_event = self.get_events_with_field_value(
@@ -74,11 +70,7 @@ class TestBuffer(TraceTestCase):
                 ipb_to_subscription_events)
 
             # Only 1 for our given ipb
-            self.assertNumEventsEqual(
-                target_ipb_to_subscription_event,
-                1,
-                'none or more than 1 ipb_to_subscription event for the ipb',
-            )
+            self.assertNumEventsEqual(target_ipb_to_subscription_event, 1)
 
             # Check subscription init order
             #   * rclcpp_construct_ring_buffer

@@ -51,11 +51,7 @@ class TestIntra(TraceTestCase):
             rcl_sub_init_events,
         )
         # Only 1 for our given topic
-        self.assertNumEventsEqual(
-            rcl_sub_init_topic_events,
-            1,
-            'none or more than 1 rcl_sub_init event for the topic',
-        )
+        self.assertNumEventsEqual(rcl_sub_init_topic_events, 1)
 
         # Get subscription handle
         rcl_sub_init_topic_event = rcl_sub_init_topic_events[0]
@@ -70,11 +66,7 @@ class TestIntra(TraceTestCase):
         )
         # Should have 2 events for the given subscription handle
         # (Subscription and SubscriptionIntraProcess)
-        self.assertNumEventsEqual(
-            rclcpp_sub_init_topic_events,
-            2,
-            'number of rclcpp_sub_init events for the topic not equal to 2',
-        )
+        self.assertNumEventsEqual(rclcpp_sub_init_topic_events, 2)
 
         # Get the 2 subscription pointers
         events = rclcpp_sub_init_topic_events
@@ -96,14 +88,8 @@ class TestIntra(TraceTestCase):
         start_events = self.get_events_with_name(tp.callback_start)
         end_events = self.get_events_with_name(tp.callback_end)
         # Should have at least one start:end pair
-        self.assertNumEventsGreaterEqual(
-            start_events,
-            1,
-            'does not have at least 1 callback start event')
-        self.assertNumEventsGreaterEqual(
-            end_events,
-            1,
-            'does not have at least 1 callback end event')
+        self.assertNumEventsGreaterEqual(start_events, 1)
+        self.assertNumEventsGreaterEqual(end_events, 1)
         start_events_topic = self.get_events_with_field_value(
             'callback',
             callback_pointers,
@@ -112,14 +98,8 @@ class TestIntra(TraceTestCase):
             'callback',
             callback_pointers,
             end_events)
-        self.assertNumEventsGreaterEqual(
-            start_events_topic,
-            1,
-            'no callback_start event found for topic')
-        self.assertNumEventsGreaterEqual(
-            end_events_topic,
-            1,
-            'no callback_end found event for topic')
+        self.assertNumEventsGreaterEqual(start_events_topic, 1)
+        self.assertNumEventsGreaterEqual(end_events_topic, 1)
 
         # Check for is_intra_process field value of 1/true
         start_events_intra = self.get_events_with_field_value(
@@ -128,11 +108,7 @@ class TestIntra(TraceTestCase):
             start_events_topic,
         )
         # Should have one event
-        self.assertNumEventsEqual(
-            start_events_intra,
-            1,
-            'none or more than 1 callback_start event for intra-process topic',
-        )
+        self.assertNumEventsEqual(start_events_intra, 1)
         # As a sanity check, make sure its callback pointer has a corresponding callback_end event
         callback_pointer_intra = self.get_field(start_events_intra[0], 'callback')
         end_events_intra = self.get_events_with_field_value(
@@ -140,11 +116,7 @@ class TestIntra(TraceTestCase):
             callback_pointer_intra,
             end_events_topic,
         )
-        self.assertNumEventsEqual(
-            end_events_intra,
-            1,
-            'none or more than 1 callback_end event for intra-process topic',
-        )
+        self.assertNumEventsEqual(end_events_intra, 1)
 
 
 if __name__ == '__main__':
