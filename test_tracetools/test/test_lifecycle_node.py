@@ -46,22 +46,14 @@ class TestLifecycleNode(TraceTestCase):
             'test_lifecycle_node',
             rcl_node_init_events,
         )
-        self.assertEqual(
-            len(lifecycle_node_matches),
-            1,
-            'no node init event for lifecycle node',
-        )
+        self.assertNumEventsEqual(lifecycle_node_matches, 1)
         lifecycle_node_handle = self.get_field(lifecycle_node_matches[0], 'node_handle')
 
         # Check the state machine init event
         rcl_lifecycle_state_machine_init_events = self.get_events_with_name(
             tp.rcl_lifecycle_state_machine_init,
         )
-        self.assertEqual(
-            len(rcl_lifecycle_state_machine_init_events),
-            1,
-            'more than one state machine init event',
-        )
+        self.assertNumEventsEqual(rcl_lifecycle_state_machine_init_events, 1)
         # Make sure the node handle matches the one from the node init event
         rcl_lifecycle_state_machine_init_event = rcl_lifecycle_state_machine_init_events[0]
         node_handle = self.get_field(rcl_lifecycle_state_machine_init_event, 'node_handle')
@@ -116,7 +108,10 @@ class TestLifecycleNode(TraceTestCase):
                 self.get_field(event, 'state_machine') == state_machine_handle
                 for event in rcl_lifecycle_transition_events
             ),
-            'state machine handle does not match',
+            (
+                f"state machine handles do not all match '{state_machine_handle}': "
+                f'{rcl_lifecycle_transition_events}'
+            ),
         )
 
 

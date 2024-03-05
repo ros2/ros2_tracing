@@ -86,20 +86,11 @@ class TestPublisher(TraceTestCase):
             '/the_topic',
             test_pub_init_events,
         )
-        self.assertNumEventsEqual(
-            test_pub_init_topic_events,
-            1,
-            'none or more than 1 rcl_pub_init even for test topic',
-        )
+        self.assertNumEventsEqual(test_pub_init_topic_events, 1)
 
         # Check queue_depth value
         test_pub_init_topic_event = test_pub_init_topic_events[0]
-        self.assertFieldEquals(
-            test_pub_init_topic_event,
-            'queue_depth',
-            10,
-            'pub_init event does not have expected queue depth value',
-        )
+        self.assertFieldEquals(test_pub_init_topic_event, 'queue_depth', 10)
 
         # Check that the node handle matches with the node_init event
         node_init_events = self.get_events_with_name(tp.rcl_node_init)
@@ -107,11 +98,7 @@ class TestPublisher(TraceTestCase):
             'test_publisher',
             node_init_events,
         )
-        self.assertNumEventsEqual(
-            test_pub_node_init_events,
-            1,
-            'none or more than 1 node_init event',
-        )
+        self.assertNumEventsEqual(test_pub_node_init_events, 1)
         test_pub_node_init_event = test_pub_node_init_events[0]
         self.assertMatchingField(
             test_pub_node_init_event,
@@ -127,11 +114,7 @@ class TestPublisher(TraceTestCase):
             rmw_publisher_handle,
             rmw_pub_init_events,
         )
-        self.assertNumEventsEqual(
-            rmw_pub_init_events,
-            1,
-            'none or more than 1 rmw_pub_init event for test topic',
-        )
+        self.assertNumEventsEqual(rmw_pub_init_events, 1)
         rmw_pub_init_event = rmw_pub_init_events[0]
 
         # Check publisher creation events order (rmw then rcl)
@@ -145,11 +128,7 @@ class TestPublisher(TraceTestCase):
             rmw_publisher_handle,
             rmw_publish_events,
         )
-        self.assertNumEventsEqual(
-            rmw_publish_topic_events,
-            1,
-            'none or more than 1 rmw_publish event for test topic',
-        )
+        self.assertNumEventsEqual(rmw_publish_topic_events, 1)
         rmw_publish_topic_event = rmw_publish_topic_events[0]
         pub_message = self.get_field(rmw_publish_topic_event, 'message')
         # Find corresponding rclcpp/rcl_publish event
@@ -163,24 +142,19 @@ class TestPublisher(TraceTestCase):
             pub_message,
             rcl_publish_events,
         )
-        self.assertNumEventsEqual(
-            rclcpp_publish_topic_events,
-            1,
-            'none or more than 1 rclcpp_publish event for test topic',
-        )
-        self.assertNumEventsEqual(
-            rcl_publish_topic_events,
-            1,
-            'none or more than 1 rcl_publish event for test topic',
-        )
+        self.assertNumEventsEqual(rclcpp_publish_topic_events, 1)
+        self.assertNumEventsEqual(rcl_publish_topic_events, 1)
         rclcpp_publish_topic_event = rclcpp_publish_topic_events[0]
         rcl_publish_topic_event = rcl_publish_topic_events[0]
         # Get publisher handle from rcl_publisher_init event
         publisher_handle = self.get_field(test_pub_init_topic_event, 'publisher_handle')
         self.assertFieldEquals(rcl_publish_topic_event, 'publisher_handle', publisher_handle)
         # Check publication events order
-        self.assertEventOrder(
-            [rclcpp_publish_topic_event, rcl_publish_topic_event, rmw_publish_topic_event])
+        self.assertEventOrder([
+            rclcpp_publish_topic_event,
+            rcl_publish_topic_event,
+            rmw_publish_topic_event,
+        ])
 
 
 if __name__ == '__main__':
