@@ -67,22 +67,22 @@ class TestIntraPubSub(TraceTestCase):
             ipb_ = self.get_events_with_field_value(
                 'buffer',
                 buffer,
-                buffer_to_ipb_events
+                buffer_to_ipb_events,
             )
             self.assertNumEventsEqual(ipb_, 1)
 
             subscription_ = self.get_events_with_field_value(
                 'ipb',
                 self.get_field(ipb_[0], 'ipb'),
-                ipb_to_subscription_events
+                ipb_to_subscription_events,
             )
             self.assertNumEventsEqual(subscription_, 1)
 
             callback_ = self.get_events_with_field_value(
                 'subscription',
                 self.get_field(subscription_[0], 'subscription'),
-                rclcpp_subscription_callback_added_events
-                )
+                rclcpp_subscription_callback_added_events,
+            )
             self.assertNumEventsEqual(callback_, 1)
             buffer_to_callback[buffer] = self.get_field(callback_[0], 'callback')
 
@@ -92,43 +92,48 @@ class TestIntraPubSub(TraceTestCase):
             enqueue_event_cand = self.get_events_with_field_value(
                 'vtid',
                 self.get_field(intra_publish_event, 'vtid'),
-                ring_buffer_enqueue_events
+                ring_buffer_enqueue_events,
             )
             target_enqueue_event = self.get_corresponding_event(
                 self.get_field(intra_publish_event, '_timestamp'),
-                enqueue_event_cand)
+                enqueue_event_cand,
+            )
 
             # Find corresponding enqueue/dequeue event
             target_index = self.get_field(target_enqueue_event, 'index')
             target_buffer = self.get_field(target_enqueue_event, 'buffer')
             filtered_dequeue_events = self.get_filtered_event(
                 {'buffer': target_buffer, 'index': target_index},
-                ring_buffer_dequeue_events)
+                ring_buffer_dequeue_events,
+            )
             target_dequeue_event = self.get_corresponding_event(
                 self.get_field(target_enqueue_event, '_timestamp'),
-                filtered_dequeue_events)
+                filtered_dequeue_events,
+            )
 
             callback_ = buffer_to_callback[target_buffer]
 
             filterd_callback_start = self.get_events_with_field_value(
                 'callback',
                 callback_,
-                callback_start_events
+                callback_start_events,
             )
 
             # Find corresponding callback_start/callback_end event
             target_callback_start = self.get_corresponding_event(
                 self.get_field(target_dequeue_event, '_timestamp'),
-                filterd_callback_start)
+                filterd_callback_start,
+            )
 
             callback_end_cand = self.get_events_with_field_value(
                 'callback',
                 callback_,
-                callback_end_events
+                callback_end_events,
             )
             target_callback_end = self.get_corresponding_event(
                 self.get_field(target_callback_start, '_timestamp'),
-                callback_end_cand)
+                callback_end_cand,
+            )
 
             event_sequence = [
                 intra_publish_event,
@@ -142,7 +147,8 @@ class TestIntraPubSub(TraceTestCase):
             for e in event_sequence:
                 self.assertTrue(
                     e is not None,
-                    'cannot find corresponding event for intra_publish')
+                    'cannot find corresponding event for intra_publish',
+                )
 
             # Check the order of events.
             self.assertEventOrder(event_sequence)

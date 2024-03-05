@@ -54,9 +54,7 @@ class TestSubscription(TraceTestCase):
         rmw_sub_init_events = self.get_events_with_name(tp.rmw_subscription_init)
         rcl_sub_init_events = self.get_events_with_name(tp.rcl_subscription_init)
         rclcpp_sub_init_events = self.get_events_with_name(tp.rclcpp_subscription_init)
-        callback_added_events = self.get_events_with_name(
-            tp.rclcpp_subscription_callback_added,
-        )
+        callback_added_events = self.get_events_with_name(tp.rclcpp_subscription_callback_added)
         callback_register_events = self.get_events_with_name(tp.rclcpp_callback_register)
         execute_events = self.get_events_with_name(tp.rclcpp_executor_execute)
         rmw_take_events = self.get_events_with_name(tp.rmw_take)
@@ -98,7 +96,7 @@ class TestSubscription(TraceTestCase):
             is_intra_process_value = self.get_field(event, 'is_intra_process')
             self.assertIsInstance(is_intra_process_value, int, 'is_intra_process not int')
             self.assertTrue(
-                is_intra_process_value in [0, 1],
+                is_intra_process_value in (0, 1),
                 f'invalid value for is_intra_process: {is_intra_process_value}',
             )
         for event in end_events:

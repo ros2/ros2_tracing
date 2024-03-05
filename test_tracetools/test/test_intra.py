@@ -93,11 +93,13 @@ class TestIntra(TraceTestCase):
         start_events_topic = self.get_events_with_field_value(
             'callback',
             callback_pointers,
-            start_events)
+            start_events,
+        )
         end_events_topic = self.get_events_with_field_value(
             'callback',
             callback_pointers,
-            end_events)
+            end_events,
+        )
         self.assertNumEventsGreaterEqual(start_events_topic, 1)
         self.assertNumEventsGreaterEqual(end_events_topic, 1)
 

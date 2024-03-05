@@ -150,8 +150,11 @@ class TestPublisher(TraceTestCase):
         publisher_handle = self.get_field(test_pub_init_topic_event, 'publisher_handle')
         self.assertFieldEquals(rcl_publish_topic_event, 'publisher_handle', publisher_handle)
         # Check publication events order
-        self.assertEventOrder(
-            [rclcpp_publish_topic_event, rcl_publish_topic_event, rmw_publish_topic_event])
+        self.assertEventOrder([
+            rclcpp_publish_topic_event,
+            rcl_publish_topic_event,
+            rmw_publish_topic_event,
+        ])
 
 
 if __name__ == '__main__':

@@ -166,11 +166,11 @@ class TestPubSub(TraceTestCase):
         ping_rcl_subscription_init_event = ping_rcl_subscription_init_events[0]
         pong_rcl_subscription_init_event = pong_rcl_subscription_init_events[0]
         ping_sub_handle = self.get_field(ping_rcl_subscription_init_event, 'subscription_handle')
-        ping_rmw_sub_handle = self.get_field(
-            ping_rcl_subscription_init_event, 'rmw_subscription_handle')
+        ping_rmw_sub_handle = \
+            self.get_field(ping_rcl_subscription_init_event, 'rmw_subscription_handle')
         pong_sub_handle = self.get_field(pong_rcl_subscription_init_event, 'subscription_handle')
-        pong_rmw_sub_handle = self.get_field(
-            pong_rcl_subscription_init_event, 'rmw_subscription_handle')
+        pong_rmw_sub_handle = \
+            self.get_field(pong_rcl_subscription_init_event, 'rmw_subscription_handle')
 
         # Find corresponding rmw_sub_init events
         ping_rmw_sub_init_events = self.get_events_with_field_value(
