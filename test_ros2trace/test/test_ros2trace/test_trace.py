@@ -26,6 +26,10 @@ from launch import LaunchDescription
 from launch import LaunchService
 from launch_ros.actions import Node
 from lttngpy import impl as lttngpy
+from tracetools_test.mark_process import get_corresponding_trace_test_events
+from tracetools_test.mark_process import get_trace_test_id
+from tracetools_test.mark_process import TRACE_TEST_ID_ENV_VAR
+from tracetools_test.mark_process import TRACE_TEST_ID_TP_NAME
 from tracetools_trace.tools import tracepoints
 from tracetools_trace.tools.lttng import is_lttng_installed
 
@@ -59,10 +63,14 @@ class TestROS2TraceCLI(unittest.TestCase):
         # Make sure there are no existing tracing sessions before running a test
         self.assertNoTracingSession()
 
+        self.trace_test_id = get_trace_test_id(self._testMethodName)
+
     def tearDown(self) -> None:
         # Make sure there are no leftover tracing sessions after running a test
         # Even if running 'ros2 trace' fails, we do not want any lingering tracing session
         self.assertNoTracingSession()
+
+        del self.trace_test_id
 
     def assertTracingSession(self) -> None:
         self.assertTrue(
@@ -98,7 +106,15 @@ class TestROS2TraceCLI(unittest.TestCase):
     ) -> int:
         self.assertTraceExist(trace_dir)
         from tracetools_read.trace import get_trace_events
-        events = get_trace_events(trace_dir)
+        events_all = get_trace_events(trace_dir)
+        self.assertGreater(len(events_all), 0, 'no events found in trace')
+        assert self.trace_test_id
+        events = get_corresponding_trace_test_events(events_all, self.trace_test_id)
+        self.assertGreater(
+            len(events),
+            0,
+            f'no matching trace test events found in trace from events: {events_all}',
+        )
         for trace_data in expected_trace_data:
             self.assertTrue(
                 any(trace_data in event.items() for event in events),
@@ -193,16 +209,22 @@ class TestROS2TraceCLI(unittest.TestCase):
         return self.wait_and_print_command_output(process)
 
     def run_nodes(self) -> None:
+        # Set trace test ID env var for spawned processes
+        env = os.environ.copy()
+        assert self.trace_test_id
+        env[TRACE_TEST_ID_ENV_VAR] = self.trace_test_id
         nodes = [
             Node(
                 package='test_tracetools',
                 executable='test_ping',
                 output='screen',
+                env=env,
             ),
             Node(
                 package='test_tracetools',
                 executable='test_pong',
                 output='screen',
+                env=env,
             ),
         ]
         ld = LaunchDescription(nodes)
@@ -235,7 +257,10 @@ class TestROS2TraceCLI(unittest.TestCase):
 
         # Test with the default session name
         process = self.run_trace_command_start(
-            ['--path', tmpdir, '--ust', tracepoints.rcl_subscription_init],
+            [
+                '--path', tmpdir,
+                '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
+            ],
             wait_for_start=True,
         )
         self.run_nodes()
@@ -260,7 +285,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         process = self.run_trace_command_start(
             [
                 '--path', tmpdir,
-                '--ust', tracepoints.rcl_subscription_init,
+                '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
                 '--session-name', 'test_default_tracing',
             ],
             wait_for_start=True,
@@ -416,7 +441,11 @@ class TestROS2TraceCLI(unittest.TestCase):
 
         # Start tracing and run nodes
         ret = self.run_trace_subcommand(
-            ['start', 'test_start_pause_resume_stop', '--path', tmpdir],
+            [
+                'start', 'test_start_pause_resume_stop',
+                '--ust', 'ros2:*', TRACE_TEST_ID_TP_NAME,
+                '--path', tmpdir,
+            ],
         )
         self.assertEqual(0, ret)
         trace_dir = os.path.join(tmpdir, 'test_start_pause_resume_stop')

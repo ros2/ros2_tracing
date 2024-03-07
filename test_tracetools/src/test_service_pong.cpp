@@ -16,6 +16,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_srvs/srv/empty.hpp"
+#include "test_tracetools/mark_process.hpp"
 
 #define NODE_NAME "test_service_pong"
 #define SERVICE_NAME "ping"
@@ -59,6 +60,8 @@ private:
 
 int main(int argc, char * argv[])
 {
+  test_tracetools::mark_trace_test_process();
+
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;

@@ -20,9 +20,11 @@
        the dependencies that those packages use so that colcon properly sets up the
        environment when running those tests.
   -->
+  <build_export_depend>liblttng-ust-dev</build_export_depend>
   <build_export_depend>lifecycle_msgs</build_export_depend>
   <build_export_depend>rclcpp</build_export_depend>
   <build_export_depend>rclcpp_lifecycle</build_export_depend>
+  <build_export_depend>rcpputils</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>std_srvs</build_export_depend>
 
@@ -31,11 +33,13 @@
   <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <test_depend>liblttng-ust-dev</test_depend>
   <test_depend>lifecycle_msgs</test_depend>
   <test_depend>python3-pytest</test_depend>
   <test_depend>python3-pytest-cov</test_depend>
   <test_depend>rclcpp</test_depend>
   <test_depend>rclcpp_lifecycle</test_depend>
+  <test_depend>rcpputils</test_depend>
   <test_depend>std_msgs</test_depend>
   <test_depend>std_srvs</test_depend>
   <test_depend>tracetools</test_depend>
