@@ -60,38 +60,29 @@ class TestROS2TraceCLI(unittest.TestCase):
         )
 
     def setUp(self) -> None:
-        # Make sure there are no existing tracing sessions before running a test
-        self.assertNoTracingSession()
-
         self.trace_test_id = get_trace_test_id(self._testMethodName)
 
     def tearDown(self) -> None:
-        # Make sure there are no leftover tracing sessions after running a test
-        # Even if running 'ros2 trace' fails, we do not want any lingering tracing session
-        self.assertNoTracingSession()
-
         del self.trace_test_id
 
-    def assertTracingSession(self) -> None:
+    def assertTracingSessionExist(self, session_name: str) -> None:
         self.assertTrue(
             lttngpy.is_lttng_session_daemon_alive(),
-            'no tracing sessions exist because there is no daemon',
+            f"tracing session '{session_name}' does not exist because there is no daemon",
         )
         session_names = lttngpy.get_session_names()
-        has_tracing_sessions = session_names is not None and 0 < len(session_names)
-        self.assertTrue(has_tracing_sessions, 'no tracing sessions exist')
+        self.assertIn(
+            session_name,
+            session_names,
+            f"tracing session '{session_name}' does not exist",
+        )
 
-    def assertNoTracingSession(self) -> None:
+    def assertTracingSessionNotExist(self, session_name: str) -> None:
         # If there is no session daemon, then there are no tracing sessions
         if not lttngpy.is_lttng_session_daemon_alive():
             return
         session_names = lttngpy.get_session_names()
-        no_tracing_sessions = 0 == len(session_names)
-        if not no_tracing_sessions:
-            # Destroy tracing sessions if there are any, this way we can continue running tests and
-            # avoid possible interference between them
-            self.assertEqual(0, lttngpy.destroy_all_sessions())
-        self.assertTrue(no_tracing_sessions, f'tracing session(s) exist: {session_names}')
+        self.assertNotIn(session_name, session_names, f"tracing session '{session_name}' exists")
 
     def assertTraceExist(self, trace_dir: str) -> None:
         self.assertTrue(os.path.isdir(trace_dir), f'trace directory does not exist: {trace_dir}')
@@ -242,12 +233,16 @@ class TestROS2TraceCLI(unittest.TestCase):
         # Check that the trace directory was created
         subdirs = self.get_subdirectories(tmpdir)
         self.assertEqual(1, len(subdirs))
-        self.assertTrue(subdirs[0].startswith('session-'))
+        trace_dir_name = subdirs[0]
+        self.assertTrue(trace_dir_name.startswith('session-'))
+        self.assertTracingSessionNotExist(trace_dir_name)
 
         # Test with a provided session name
-        ret = self.run_trace_command(['--path', tmpdir, '--session-name', 'test_default'])
+        session_name = 'test_default'
+        ret = self.run_trace_command(['--path', tmpdir, '--session-name', session_name])
         self.assertEqual(0, ret)
-        self.assertTraceExist(os.path.join(tmpdir, 'test_default'))
+        self.assertTraceExist(os.path.join(tmpdir, session_name))
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir)
 
@@ -280,157 +275,186 @@ class TestROS2TraceCLI(unittest.TestCase):
                 ('topic_name', '/pong'),
             ],
         )
+        self.assertTracingSessionNotExist(trace_dir_name)
 
         # Test with a provided session name
+        session_name = 'test_default_tracing'
         process = self.run_trace_command_start(
             [
                 '--path', tmpdir,
                 '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
-                '--session-name', 'test_default_tracing',
+                '--session-name', session_name,
             ],
             wait_for_start=True,
         )
+        self.assertTracingSessionExist(session_name)
         self.run_nodes()
         ret = self.run_trace_command_stop(process)
         self.assertEqual(0, ret)
         self.assertTraceContains(
-            os.path.join(tmpdir, 'test_default_tracing'),
+            os.path.join(tmpdir, session_name),
             [
                 ('topic_name', '/ping'),
                 ('topic_name', '/pong'),
             ],
         )
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir)
 
     def test_env_var_ros_trace_dir(self) -> None:
         tmpdir = self.create_test_tmpdir('test_env_var_ros_trace_dir')
+        session_name = 'test_env_var_ros_trace_dir'
 
         # Env var only
         ret = self.run_trace_command(
-            ['--session-name', 'test_env_var_ros_trace_dir'],
+            ['--session-name', session_name],
             env={'ROS_TRACE_DIR': tmpdir},
         )
         self.assertEqual(0, ret)
-        self.assertTraceExist(os.path.join(tmpdir, 'test_env_var_ros_trace_dir'))
+        self.assertTraceExist(os.path.join(tmpdir, session_name))
+        self.assertTracingSessionNotExist(session_name)
 
         # Env var and argument should use argument
         tmpdir_path = self.create_test_tmpdir('test_env_var_ros_trace_dir__arg')
+        session_name = 'test_env_var_ros_trace_dir2'
         ret = self.run_trace_command(
-            ['--path', tmpdir_path, '--session-name', 'test_env_var_ros_trace_dir2'],
+            ['--path', tmpdir_path, '--session-name', session_name],
             env={'ROS_TRACE_DIR': tmpdir},
         )
         self.assertEqual(0, ret)
-        self.assertTraceExist(os.path.join(tmpdir_path, 'test_env_var_ros_trace_dir2'))
-        self.assertTraceNotExist(os.path.join(tmpdir, 'test_env_var_ros_trace_dir2'))
+        self.assertTraceExist(os.path.join(tmpdir_path, session_name))
+        self.assertTraceNotExist(os.path.join(tmpdir, session_name))
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir_path)
         shutil.rmtree(tmpdir)
 
     def test_env_var_ros_home(self) -> None:
         tmpdir = self.create_test_tmpdir('test_env_var_ros_home')
+        session_name = 'test_env_var_ros_home'
 
         ret = self.run_trace_command(
-            ['--session-name', 'test_env_var_ros_home'],
+            ['--session-name', session_name],
             env={'ROS_HOME': tmpdir},
         )
         self.assertEqual(0, ret)
         # Under the 'tracing' directory
-        self.assertTraceExist(os.path.join(tmpdir, 'tracing', 'test_env_var_ros_home'))
+        self.assertTraceExist(os.path.join(tmpdir, 'tracing', session_name))
+        self.assertTracingSessionNotExist(session_name)
 
         # Env var and argument should use argument
         tmpdir_path = self.create_test_tmpdir('test_env_var_ros_home__arg')
+        session_name = 'test_env_var_ros_home2'
         ret = self.run_trace_command(
-            ['--path', tmpdir_path, '--session-name', 'test_env_var_ros_home2'],
+            ['--path', tmpdir_path, '--session-name', session_name],
             env={'ROS_HOME': tmpdir},
         )
         self.assertEqual(0, ret)
-        self.assertTraceExist(os.path.join(tmpdir_path, 'test_env_var_ros_home2'))
-        self.assertTraceNotExist(os.path.join(tmpdir, 'test_env_var_ros_home2'))
+        self.assertTraceExist(os.path.join(tmpdir_path, session_name))
+        self.assertTraceNotExist(os.path.join(tmpdir, session_name))
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir_path)
         shutil.rmtree(tmpdir)
 
     def test_empty_session_name(self) -> None:
-        tmpdir = self.create_test_tmpdir('test_env_var_ros_home')
+        tmpdir = self.create_test_tmpdir('test_empty_session_name')
 
         # Empty session name should result in an error
-        ret = self.run_trace_command(['--session-name', ''])
+        ret = self.run_trace_command(
+            ['--path', tmpdir, '--session-name', ''],
+        )
         self.assertEqual(1, ret)
+        self.assertTracingSessionNotExist('')
 
         shutil.rmtree(tmpdir)
 
     def test_base_path_not_exist(self) -> None:
         tmpdir = self.create_test_tmpdir('test_base_path_not_exist')
+        session_name = 'test_base_path_not_exist'
 
         # Base directory should be created if it does not exist
         fake_base_path = os.path.join(tmpdir, 'doesnt_exist')
         ret = self.run_trace_command(
-            ['--path', fake_base_path, '--session-name', 'test_base_path_not_exist'],
+            ['--path', fake_base_path, '--session-name', session_name],
         )
         self.assertEqual(0, ret)
-        self.assertTraceExist(os.path.join(fake_base_path, 'test_base_path_not_exist'))
+        self.assertTraceExist(os.path.join(fake_base_path, session_name))
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir)
 
     def test_no_events(self) -> None:
         tmpdir = self.create_test_tmpdir('test_no_events')
+        session_name = 'test_no_events'
 
         # Enabling no events should result in an error
         ret = self.run_trace_command(
-            ['--path', tmpdir, '--ust', '--kernel'],
+            ['--path', tmpdir, '--ust', '--kernel', '--session-name', session_name],
         )
         self.assertEqual(1, ret)
+        self.assertTraceNotExist(os.path.join(tmpdir, session_name))
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir)
 
     def test_unknown_context_field(self) -> None:
         tmpdir = self.create_test_tmpdir('test_unknown_context_field')
+        session_name = 'some_nonexistent_context_field'
 
         # Unknown context field should result in an error
         ret = self.run_trace_command(
-            ['--path', tmpdir, '--context', 'some_nonexistent_context_field'],
+            ['--path', tmpdir, '--context', session_name],
         )
         self.assertEqual(1, ret)
+        self.assertTraceNotExist(os.path.join(tmpdir, session_name))
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir)
 
     def test_append_trace(self) -> None:
         tmpdir = self.create_test_tmpdir('test_append_trace')
+        session_name = 'test_append_trace'
 
         # Generate a normal trace
         ret = self.run_trace_command(
-            ['--path', tmpdir, '--session-name', 'test_append_trace'],
+            ['--path', tmpdir, '--session-name', session_name],
         )
         self.assertEqual(0, ret)
-        trace_dir = os.path.join(tmpdir, 'test_append_trace')
+        trace_dir = os.path.join(tmpdir, session_name)
         self.assertTraceExist(trace_dir)
+        self.assertTracingSessionNotExist(session_name)
 
         # Generating another trace with the same path should error out
         ret = self.run_trace_command(
-            ['--path', tmpdir, '--session-name', 'test_append_trace'],
+            ['--path', tmpdir, '--session-name', session_name],
         )
         self.assertEqual(1, ret)
         self.assertTraceExist(trace_dir)
+        self.assertTracingSessionNotExist(session_name)
 
         # But it should work if we use the '--append-trace' option
         ret = self.run_trace_command(
             [
                 '--path', tmpdir,
-                '--session-name', 'test_append_trace',
+                '--session-name', session_name,
                 '--append-trace',
             ],
         )
         self.assertEqual(0, ret)
         self.assertTraceExist(trace_dir)
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir)
 
     def test_pause_resume_stop_bad_session_name(self) -> None:
         for subcommand in ('pause', 'resume', 'stop'):
             # Session name doesn't exist
-            ret = self.run_trace_subcommand([subcommand, 'some_nonexistent_session_name'])
+            session_name = 'some_nonexistent_session_name'
+            ret = self.run_trace_subcommand([subcommand, session_name])
             self.assertEqual(1, ret, f'subcommand: {subcommand}')
+            self.assertTracingSessionNotExist(session_name)
             # Session name not provided
             ret = self.run_trace_subcommand([subcommand])
             self.assertEqual(2, ret, f'subcommand: {subcommand}')
@@ -438,25 +462,26 @@ class TestROS2TraceCLI(unittest.TestCase):
     @unittest.skipIf(not are_tracepoints_included(), 'tracepoints are required')
     def test_start_pause_resume_stop(self) -> None:
         tmpdir = self.create_test_tmpdir('test_start_pause_resume_stop')
+        session_name = 'test_start_pause_resume_stop'
 
         # Start tracing and run nodes
         ret = self.run_trace_subcommand(
             [
-                'start', 'test_start_pause_resume_stop',
+                'start', session_name,
                 '--ust', 'ros2:*', TRACE_TEST_ID_TP_NAME,
                 '--path', tmpdir,
             ],
         )
         self.assertEqual(0, ret)
-        trace_dir = os.path.join(tmpdir, 'test_start_pause_resume_stop')
+        trace_dir = os.path.join(tmpdir, session_name)
         self.assertTraceExist(trace_dir)
-        self.assertTracingSession()
+        self.assertTracingSessionExist(session_name)
         self.run_nodes()
 
         # Pause tracing and check trace
-        ret = self.run_trace_subcommand(['pause', 'test_start_pause_resume_stop'])
+        ret = self.run_trace_subcommand(['pause', session_name])
         self.assertEqual(0, ret)
-        self.assertTracingSession()
+        self.assertTracingSessionExist(session_name)
         expected_trace_data = [
             ('topic_name', '/ping'),
             ('topic_name', '/pong'),
@@ -464,9 +489,9 @@ class TestROS2TraceCLI(unittest.TestCase):
         num_events = self.assertTraceContains(trace_dir, expected_trace_data)
 
         # Pausing again should give an error but not affect anything
-        ret = self.run_trace_subcommand(['pause', 'test_start_pause_resume_stop'])
+        ret = self.run_trace_subcommand(['pause', session_name])
         self.assertEqual(1, ret)
-        self.assertTracingSession()
+        self.assertTracingSessionExist(session_name)
         new_num_events = self.assertTraceContains(trace_dir, expected_trace_data)
         self.assertEqual(num_events, new_num_events, 'unexpected new events in trace')
 
@@ -476,25 +501,26 @@ class TestROS2TraceCLI(unittest.TestCase):
         self.assertEqual(num_events, new_num_events, 'unexpected new events in trace')
 
         # Resume tracing and run nodes again
-        ret = self.run_trace_subcommand(['resume', 'test_start_pause_resume_stop'])
+        ret = self.run_trace_subcommand(['resume', session_name])
         self.assertEqual(0, ret)
-        self.assertTracingSession()
+        self.assertTracingSessionExist(session_name)
         self.run_nodes()
 
         # Resuming tracing again should give an error but not affect anything
-        ret = self.run_trace_subcommand(['resume', 'test_start_pause_resume_stop'])
+        ret = self.run_trace_subcommand(['resume', session_name])
         self.assertEqual(1, ret)
-        self.assertTracingSession()
+        self.assertTracingSessionExist(session_name)
 
         # Stop tracing and check that trace changed
-        ret = self.run_trace_subcommand(['stop', 'test_start_pause_resume_stop'])
+        ret = self.run_trace_subcommand(['stop', session_name])
         self.assertEqual(0, ret)
-        self.assertNoTracingSession()
+        self.assertTracingSessionNotExist(session_name)
         new_num_events = self.assertTraceContains(trace_dir, expected_trace_data)
         self.assertGreater(new_num_events, num_events, 'no new events in trace')
 
         # Stopping tracing again should give an error but not affect anything
-        ret = self.run_trace_subcommand(['stop', 'test_start_pause_resume_stop'])
+        ret = self.run_trace_subcommand(['stop', session_name])
         self.assertEqual(1, ret)
+        self.assertTracingSessionNotExist(session_name)
 
         shutil.rmtree(tmpdir)
