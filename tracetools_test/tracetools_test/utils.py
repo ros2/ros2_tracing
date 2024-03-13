@@ -17,6 +17,7 @@
 import os
 import shutil
 from typing import List
+from typing import Optional
 from typing import Tuple
 
 from launch import Action
@@ -36,6 +37,7 @@ def run_and_trace(
     kernel_events: List[str],
     package_name: str,
     node_names: List[str],
+    namespace: Optional[str],
     additional_actions: List[Action],
 ) -> Tuple[int, str]:
     """
@@ -47,6 +49,7 @@ def run_and_trace(
     :param kernel_events: the list of kernel events to enable
     :param package_name: the name of the package to use
     :param node_names: the names of the nodes to execute
+    :param namespace: the ROS namespace for the node(s)
     :param additional_actions: the list of additional actions to append
     :return: exit code, full generated path
     """
@@ -69,6 +72,7 @@ def run_and_trace(
         n = Node(
             package=package_name,
             executable=node_name,
+            namespace=namespace,
             output='screen',
         )
         launch_actions.append(n)
