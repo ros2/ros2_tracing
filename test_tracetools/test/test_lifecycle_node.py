@@ -33,6 +33,7 @@ class TestLifecycleNode(TraceTestCase):
             ],
             package='test_tracetools',
             nodes=['test_lifecycle_node', 'test_lifecycle_client'],
+            namespace='/test_tracetools',
         )
 
     def test_all(self):
@@ -45,6 +46,11 @@ class TestLifecycleNode(TraceTestCase):
             'node_name',
             'test_lifecycle_node',
             rcl_node_init_events,
+        )
+        lifecycle_node_matches = self.get_events_with_field_value(
+            'namespace',
+            '/test_tracetools',
+            lifecycle_node_matches,
         )
         self.assertNumEventsEqual(lifecycle_node_matches, 1)
         lifecycle_node_handle = self.get_field(lifecycle_node_matches[0], 'node_handle')
@@ -69,7 +75,6 @@ class TestLifecycleNode(TraceTestCase):
 
         # This list of states corresponds to the states that the test_lifecycle_node goes through
         # following test_lifecycle_client's requests
-        # We do not expect any other lifecycle node
         expected_lifecycle_states = [
             'unconfigured',
             'configuring',
@@ -90,28 +95,21 @@ class TestLifecycleNode(TraceTestCase):
             (expected_lifecycle_states[i], expected_lifecycle_states[i + 1])
             for i in range(len(expected_lifecycle_states) - 1)
         ]
-        # Check transitions
-        rcl_lifecycle_transition_events = self.get_events_with_name(
-            tp.rcl_lifecycle_transition)
+        # Check transitions for our state machine
+        rcl_lifecycle_transition_events = self.get_events_with_name(tp.rcl_lifecycle_transition)
+        transition_events = self.get_events_with_field_value(
+            'state_machine',
+            state_machine_handle,
+            rcl_lifecycle_transition_events,
+        )
         lifecycle_state_transitions = [
             (self.get_field(event, 'start_label'), self.get_field(event, 'goal_label'))
-            for event in rcl_lifecycle_transition_events
+            for event in transition_events
         ]
         self.assertListEqual(
             expected_lifecycle_state_transitions,
             lifecycle_state_transitions,
             'transitions not valid',
-        )
-        # Make sure all state machine handle values match the one from the init event
-        self.assertTrue(
-            all(
-                self.get_field(event, 'state_machine') == state_machine_handle
-                for event in rcl_lifecycle_transition_events
-            ),
-            (
-                f"state machine handles do not all match '{state_machine_handle}': "
-                f'{rcl_lifecycle_transition_events}'
-            ),
         )
 
 
