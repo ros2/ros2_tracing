@@ -1,6 +1,4 @@
-# Copyright 2019 Robert Bosch GmbH
-# Copyright 2019 Apex.AI, Inc.
-# Copyright 2021 Christophe Bedard
+# Copyright 2024 Research Institute of Systems Planning, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
