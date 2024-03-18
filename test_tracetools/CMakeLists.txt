@@ -198,9 +198,11 @@ if(BUILD_TESTING)
       test/test_lifecycle_node.py
       test/test_node.py
       test/test_pub_sub.py
+      test/test_generic_pub_sub.py
       test/test_publisher.py
       test/test_service.py
       test/test_subscription.py
+      test/test_generic_subscription.py
       test/test_timer.py
     )
     foreach(_test_path ${_test_tracetools_pytest_tests})
