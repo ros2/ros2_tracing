@@ -27,6 +27,12 @@
   <test_depend>tracetools_read</test_depend>
   <test_depend>tracetools_trace</test_depend>
 
+  <!-- TODO(clalancette): This is actually a false dependency,
+	  but we add it here to ensure that we don't run multiple
+	  tracing tests in parallel, which often ends up crashing.
+  -->
+  <test_depend>test_tracetools_launch</test_depend>
+
   <export>
     <build_type>ament_python</build_type>
   </export>
