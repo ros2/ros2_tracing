@@ -36,13 +36,36 @@ if(BUILD_TESTING)
   find_package(lifecycle_msgs REQUIRED)
   find_package(rclcpp REQUIRED)
   find_package(rclcpp_lifecycle REQUIRED)
+  find_package(rcpputils REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(std_srvs REQUIRED)
+
+  # The utility lib is needed even if TRACETOOLS_DISABLED; it's just empty
+  add_library(${PROJECT_NAME}_mark_process src/mark_process.cpp)
+  if(NOT TRACETOOLS_DISABLED)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(LTTNG REQUIRED lttng-ust)
+    target_link_libraries(${PROJECT_NAME}_mark_process PRIVATE
+      ${LTTNG_LIBRARIES}
+      rcpputils::rcpputils
+    )
+  endif()
+  target_include_directories(${PROJECT_NAME}_mark_process PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  )
+  if(TRACETOOLS_DISABLED)
+    target_compile_definitions(${PROJECT_NAME}_mark_process PRIVATE TRACETOOLS_DISABLED)
+  endif()
+  install(
+    DIRECTORY include/
+    DESTINATION include/${PROJECT_NAME}
+  )
 
   add_executable(test_publisher
     src/test_publisher.cpp
   )
   target_link_libraries(test_publisher PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     ${std_msgs_TARGETS}
   )
@@ -51,6 +74,7 @@ if(BUILD_TESTING)
     src/test_intra.cpp
   )
   target_link_libraries(test_intra PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     ${std_msgs_TARGETS}
   )
@@ -59,6 +83,7 @@ if(BUILD_TESTING)
     src/test_lifecycle_node.cpp
   )
   target_link_libraries(test_lifecycle_node PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     rclcpp_lifecycle::rclcpp_lifecycle
   )
@@ -67,6 +92,7 @@ if(BUILD_TESTING)
     src/test_lifecycle_client.cpp
   )
   target_link_libraries(test_lifecycle_client PRIVATE
+    ${PROJECT_NAME}_mark_process
     ${lifecycle_msgs_TARGETS}
     rclcpp::rclcpp
   )
@@ -75,6 +101,7 @@ if(BUILD_TESTING)
     src/test_ping.cpp
   )
   target_link_libraries(test_ping PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     ${std_msgs_TARGETS}
   )
@@ -83,6 +110,7 @@ if(BUILD_TESTING)
     src/test_pong.cpp
   )
   target_link_libraries(test_pong PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     ${std_msgs_TARGETS}
   )
@@ -91,6 +119,7 @@ if(BUILD_TESTING)
     src/test_timer.cpp
   )
   target_link_libraries(test_timer PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
   )
 
@@ -98,6 +127,7 @@ if(BUILD_TESTING)
     src/test_service_ping.cpp
   )
   target_link_libraries(test_service_ping PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     ${std_srvs_TARGETS}
   )
@@ -106,6 +136,7 @@ if(BUILD_TESTING)
     src/test_service_pong.cpp
   )
   target_link_libraries(test_service_pong PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     ${std_srvs_TARGETS}
   )

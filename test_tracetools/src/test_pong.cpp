@@ -16,6 +16,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "test_tracetools/mark_process.hpp"
 
 #define NODE_NAME "test_pong"
 #define SUB_TOPIC_NAME "ping"
@@ -58,6 +59,8 @@ private:
 
 int main(int argc, char * argv[])
 {
+  test_tracetools::mark_trace_test_process();
+
   bool do_only_one = true;
   for (int i = 0; i < argc; ++i) {
     if (strncmp(argv[i], "do_more", 7) == 0) {

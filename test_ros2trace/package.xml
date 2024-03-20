@@ -25,6 +25,7 @@
   <test_depend>test_tracetools</test_depend>
   <test_depend>tracetools</test_depend>
   <test_depend>tracetools_read</test_depend>
+  <test_depend>tracetools_test</test_depend>
   <test_depend>tracetools_trace</test_depend>
 
   <!-- TODO(clalancette): This is actually a false dependency,

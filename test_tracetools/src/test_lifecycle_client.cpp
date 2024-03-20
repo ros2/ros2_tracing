@@ -25,6 +25,7 @@
 #include "lifecycle_msgs/srv/get_state.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rcutils/logging_macros.h"
+#include "test_tracetools/mark_process.hpp"
 
 using namespace std::chrono_literals;
 
@@ -256,6 +257,8 @@ void cycle_through_states(std::shared_ptr<LifecycleNodeClient> client_node)
 
 int main(int argc, char ** argv)
 {
+  test_tracetools::mark_trace_test_process();
+
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;

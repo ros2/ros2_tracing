@@ -74,6 +74,8 @@ def run_and_trace(
             executable=node_name,
             namespace=namespace,
             output='screen',
+            # Explicitly request to use the current environment
+            env=None,
         )
         launch_actions.append(n)
     launch_actions.extend(additional_actions)

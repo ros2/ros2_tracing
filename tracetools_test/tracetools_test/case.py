@@ -26,12 +26,17 @@ import unittest
 
 from launch import Action
 from tracetools_read import DictEvent
-from tracetools_read import get_event_name
 from tracetools_read import get_event_timestamp
+from tracetools_read import get_events_with_field_value
+from tracetools_read import get_events_with_name
 from tracetools_read import get_field
 from tracetools_read import get_procname
 from tracetools_read.trace import get_trace_events
 
+from .mark_process import get_corresponding_trace_test_events
+from .mark_process import get_trace_test_id
+from .mark_process import TRACE_TEST_ID_ENV_VAR
+from .mark_process import TRACE_TEST_ID_TP_NAME
 from .utils import cleanup_trace
 from .utils import get_event_names
 from .utils import run_and_trace
@@ -69,7 +74,7 @@ class TraceTestCase(unittest.TestCase):
         super().__init__(methodName=args[0])
         self._base_path = base_path
         self._session_name_prefix = session_name_prefix
-        self._events_ros = events_ros
+        self._events_ros = events_ros + [TRACE_TEST_ID_TP_NAME]
         self._events_kernel = events_kernel
         self._package = package
         self._nodes = nodes
@@ -80,7 +85,10 @@ class TraceTestCase(unittest.TestCase):
         # Get timestamp before trace (ns)
         timestamp_before = int(time.time() * 1000000000.0)
 
-        exit_code, full_path = run_and_trace(
+        # Set trace test ID env var for spawned processes
+        trace_test_id = get_trace_test_id(self._session_name_prefix)
+        os.environ[TRACE_TEST_ID_ENV_VAR] = trace_test_id
+        exit_code, self._full_path = run_and_trace(
             self._base_path,
             self._session_name_prefix,
             self._events_ros,
@@ -91,17 +99,22 @@ class TraceTestCase(unittest.TestCase):
             self._additional_actions,
         )
 
-        print(f'TRACE DIRECTORY: {full_path}')
-        self._exit_code = exit_code
-        self._full_path = full_path
+        print(f'TRACE DIRECTORY: {self._full_path}')
 
         # Check that setUp() ran fine
-        self.assertEqual(self._exit_code, 0)
+        self.assertEqual(exit_code, 0)
 
         # Read events once
-        self._events = get_trace_events(self._full_path)
+        events_all = get_trace_events(self._full_path)
+        self.assertGreater(len(events_all), 0, 'no events found in trace')
+        # Only keep events from processes that have the same marker ID
+        self._events = get_corresponding_trace_test_events(events_all, trace_test_id)
+        self.assertGreater(
+            len(self._events),
+            0,
+            f'no matching trace test events found in trace amongst events: {events_all}',
+        )
         self._event_names = get_event_names(self._events)
-        self.assertGreater(len(self._events), 0, 'no events found in trace')
 
         # Check the timestamp of the first event
         self.assertEventAfterTimestamp(self._events[0], timestamp_before)
@@ -458,7 +471,7 @@ class TraceTestCase(unittest.TestCase):
         """
         if events is None:
             events = self._events
-        return [e for e in events if get_event_name(e) == event_name]
+        return get_events_with_name(event_name, events)
 
     def get_events_with_procname(
         self,
@@ -493,11 +506,9 @@ class TraceTestCase(unittest.TestCase):
         :param events: the events to check (or `None` to check all events)
         :return: the events with the given field:value pair
         """
-        if not isinstance(field_values, list):
-            field_values = [field_values]
         if events is None:
             events = self._events
-        return [e for e in events if get_field(e, field_name, None) in field_values]
+        return get_events_with_field_value(field_name, field_values, events)
 
     def get_events_with_field_not_value(
         self,
@@ -513,7 +524,7 @@ class TraceTestCase(unittest.TestCase):
         :param events: the events to check (or `None` to check all events)
         :return: the events with the given field:value pair
         """
-        if not isinstance(field_values, list):
+        if not isinstance(field_values, (list, set)):
             field_values = [field_values]
         if events is None:
             events = self._events
