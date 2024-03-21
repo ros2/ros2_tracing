@@ -119,6 +119,7 @@ if(BUILD_TESTING)
     src/test_generic_ping.cpp
   )
   target_link_libraries(test_generic_ping PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     ${std_msgs_TARGETS}
   )
@@ -127,6 +128,7 @@ if(BUILD_TESTING)
     src/test_generic_pong.cpp
   )
   target_link_libraries(test_generic_pong PRIVATE
+    ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     ${std_msgs_TARGETS}
   )
