@@ -1,4 +1,5 @@
-// Copyright 2024 Research Institute of Systems Planning, Inc.
+// Copyright 2019 Robert Bosch GmbH
+// Copyright 2024 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
