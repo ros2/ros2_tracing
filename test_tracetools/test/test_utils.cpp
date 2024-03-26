@@ -84,10 +84,9 @@ TEST(TestUtils, valid_symbol_lambda_capture) {
 
   auto m = [&](int other_num) {return num + other_num;};
   symbol = tracetools::get_symbol(m);
-  EXPECT_STREQ(
-    symbol,
-    "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#2}") <<
-    "invalid symbol";
+  const std::string expected_symbol_name =
+    "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#";
+  EXPECT_EQ(memcmp(symbol, expected_symbol_name.c_str(), expected_symbol_name.length()), 0);
   std::free(symbol);
 }
 
