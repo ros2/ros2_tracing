@@ -84,10 +84,15 @@ TEST(TestUtils, valid_symbol_lambda_capture) {
 
   auto m = [&](int other_num) {return num + other_num;};
   symbol = tracetools::get_symbol(m);
-  EXPECT_STREQ(
-    symbol,
-    "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#2}") <<
-    "invalid symbol";
+
+  // g++ does not guarantee symbol names.  Thus in g++ 11.4.0, the symbol for the
+  // lambda above is "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#2}"
+  // while in g++ 13.2.0 the symbol for the lambda is
+  // "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#1}"
+  // We only check the first part of the string so we can handle either.
+  const std::string expected_symbol_name =
+    "TestUtils_valid_symbol_lambda_capture_Test::TestBody()::{lambda(int)#";
+  EXPECT_EQ(memcmp(symbol, expected_symbol_name.c_str(), expected_symbol_name.length()), 0);
   std::free(symbol);
 }
 
