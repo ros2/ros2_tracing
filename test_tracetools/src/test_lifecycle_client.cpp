@@ -268,7 +268,7 @@ int main(int argc, char ** argv)
 
   std::shared_future<void> script = std::async(
     std::launch::async, std::bind(cycle_through_states, client_node));
-  exec.spin_until_future_complete(script);
+  exec.spin_until_complete(script);
 
   rclcpp::shutdown();
 
