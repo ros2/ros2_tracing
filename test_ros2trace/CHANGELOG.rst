@@ -2,8 +2,8 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.1.0 (2024-03-27)
+------------------
 * Allow tracing tests to be run in parallel with other tests (`#95 <https://github.com/ros2/ros2_tracing/issues/95>`_)
 * Make test_ros2trace depend on test_tracetools_launch.
 * Contributors: Chris Lalancette, Christophe Bedard

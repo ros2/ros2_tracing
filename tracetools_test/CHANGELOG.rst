@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.1.0 (2024-03-27)
+------------------
 * Allow tracing tests to be run in parallel with other tests (`#95 <https://github.com/ros2/ros2_tracing/issues/95>`_)
 * Fix interference between test_tracetools and ros2lifecycle tests (`#96 <https://github.com/ros2/ros2_tracing/issues/96>`_)
 * Make tracing test assert messages more descriptive (`#93 <https://github.com/ros2/ros2_tracing/issues/93>`_)
