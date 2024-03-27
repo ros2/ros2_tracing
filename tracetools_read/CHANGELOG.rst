@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Allow tracing tests to be run in parallel with other tests (`#95 <https://github.com/ros2/ros2_tracing/issues/95>`_)
+* Contributors: Christophe Bedard
+
 8.0.0 (2024-01-23)
 ------------------
 

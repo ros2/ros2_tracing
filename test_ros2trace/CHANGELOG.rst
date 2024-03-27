@@ -2,6 +2,12 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Allow tracing tests to be run in parallel with other tests (`#95 <https://github.com/ros2/ros2_tracing/issues/95>`_)
+* Make test_ros2trace depend on test_tracetools_launch.
+* Contributors: Chris Lalancette, Christophe Bedard
+
 8.0.0 (2024-01-23)
 ------------------
 * Switch to custom lttng-ctl Python bindings (`#81 <https://github.com/ros2/ros2_tracing/issues/81>`_)

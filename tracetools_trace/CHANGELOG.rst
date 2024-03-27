@@ -2,6 +2,12 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Improve tracing configuration error reporting (`#85 <https://github.com/ros2/ros2_tracing/issues/85>`_)
+* Add a space in between not and parentheses. (`#88 <https://github.com/ros2/ros2_tracing/issues/88>`_)
+* Contributors: Chris Lalancette, Christophe Bedard
+
 8.0.0 (2024-01-23)
 ------------------
 * Switch to custom lttng-ctl Python bindings (`#81 <https://github.com/ros2/ros2_tracing/issues/81>`_)
