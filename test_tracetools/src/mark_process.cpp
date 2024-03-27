@@ -42,9 +42,9 @@ void mark_trace_test_process()
   const auto test_id = rcpputils::get_env_var(env_var.c_str());
   if (!test_id.empty()) {
 #if LTTNG_UST_MINOR_VERSION <= 12
-    _lttng_ust_tracef("%s=%s", env_var.c_str(), test_id.c_str());
+    tracef("%s=%s", env_var.c_str(), test_id.c_str());
 #else
-    lttng_ust__tracef("%s=%s", env_var.c_str(), test_id.c_str());
+    lttng_ust_tracef("%s=%s", env_var.c_str(), test_id.c_str());
 #endif
   }
 #endif  // TRACETOOLS_DISABLED
