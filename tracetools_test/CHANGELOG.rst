@@ -2,6 +2,13 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Allow tracing tests to be run in parallel with other tests (`#95 <https://github.com/ros2/ros2_tracing/issues/95>`_)
+* Fix interference between test_tracetools and ros2lifecycle tests (`#96 <https://github.com/ros2/ros2_tracing/issues/96>`_)
+* Make tracing test assert messages more descriptive (`#93 <https://github.com/ros2/ros2_tracing/issues/93>`_)
+* Contributors: Christophe Bedard
+
 8.0.0 (2024-01-23)
 ------------------
 * Fix use of mutable default arg in tracetools_test (`#84 <https://github.com/ros2/ros2_tracing/issues/84>`_)
