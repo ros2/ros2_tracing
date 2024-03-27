@@ -2,8 +2,8 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.1.0 (2024-03-27)
+------------------
 * Use a memcmp for the expected symbol name. (`#100 <https://github.com/ros2/ros2_tracing/issues/100>`_)
 * Fix the build on RHEL-9. (`#98 <https://github.com/ros2/ros2_tracing/issues/98>`_)
 * Allow tracing tests to be run in parallel with other tests (`#95 <https://github.com/ros2/ros2_tracing/issues/95>`_)

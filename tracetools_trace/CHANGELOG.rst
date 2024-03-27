@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.1.0 (2024-03-27)
+------------------
 * Improve tracing configuration error reporting (`#85 <https://github.com/ros2/ros2_tracing/issues/85>`_)
 * Add a space in between not and parentheses. (`#88 <https://github.com/ros2/ros2_tracing/issues/88>`_)
 * Contributors: Chris Lalancette, Christophe Bedard

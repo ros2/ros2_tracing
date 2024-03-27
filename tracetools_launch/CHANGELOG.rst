@@ -2,8 +2,8 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.1.0 (2024-03-27)
+------------------
 * Use single underscore for private vars in Python (`#92 <https://github.com/ros2/ros2_tracing/issues/92>`_)
 * Improve tracing configuration error reporting (`#85 <https://github.com/ros2/ros2_tracing/issues/85>`_)
 * Fix warnings when using mypy 1.8.0. (`#89 <https://github.com/ros2/ros2_tracing/issues/89>`_)
