@@ -8,7 +8,9 @@ on:
     - cron: "0 5 * * *"
 jobs:
   binary:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -51,7 +53,9 @@ jobs:
         source install/setup.bash
         (! ros2 run tracetools status)
   source:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
     continue-on-error: true
     strategy:
       fail-fast: false
