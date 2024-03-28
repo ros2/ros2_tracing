@@ -28,7 +28,7 @@ class TestSubscription(TraceTestCase):
     def __init__(self, *args) -> None:
         super().__init__(
             *args,
-            session_name_prefix='session-test-subscription',
+            session_name_prefix='session-test-generic-subscription',
             events_ros=[
                 tp.rcl_node_init,
                 tp.rmw_subscription_init,
