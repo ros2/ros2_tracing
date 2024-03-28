@@ -24,6 +24,7 @@
  */
 #ifndef TRACETOOLS_TRACEPOINTS_EXCLUDED
 # include "tracetools/tp_call.h"
+// *INDENT-OFF*
 # define _CONDITIONAL_TP(...) \
   tracepoint(TRACEPOINT_PROVIDER, __VA_ARGS__)
 # define _CONDITIONAL_TP_ENABLED(event_name) \
@@ -65,6 +66,7 @@
   { \
     _CONDITIONAL_DO_TP(event_name); \
   }
+// *INDENT-ON*
 
 bool ros_trace_compile_status()
 {

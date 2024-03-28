@@ -38,6 +38,7 @@ namespace lttngpy
 #define CTX_HW(name, counter_id) {name, _CTX_HW(counter_id)}
 #define CTX_SW(name, counter_id) {name, _CTX_SW(counter_id)}
 
+// *INDENT-OFF*
 /**
  * Get 'config' value for a cache/op/result combination.
  *
@@ -70,6 +71,7 @@ namespace lttngpy
   CTX_HW_CACHE_OP_RESULT( \
     name "-prefetch-misses", cache_id, \
     PERF_COUNT_HW_CACHE_OP_PREFETCH, PERF_COUNT_HW_CACHE_RESULT_MISS)
+// *INDENT-ON*
 
 /**
  * LTTng perf counter name to perf counter context struct.
