@@ -23,7 +23,7 @@ from tracetools_trace.tools.lttng import is_lttng_installed
 
 
 @unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
-class TestSubscription(TraceTestCase):
+class TestGenericSubscription(TraceTestCase):
 
     def __init__(self, *args) -> None:
         super().__init__(
