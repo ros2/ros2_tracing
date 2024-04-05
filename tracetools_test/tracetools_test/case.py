@@ -319,11 +319,16 @@ class TraceTestCase(unittest.TestCase):
         events: List[DictEvent],
     ) -> None:
         """
-        Check that the first event was generated before the second event.
+        Check that the events are ordered (from their timestamps).
 
         :param events: the events in the expected order
         """
-        self.assertTrue(self.are_events_ordered(events), f'unexpected events order: {events}')
+        events_ordered = sorted(events, key=lambda event: get_event_timestamp(event))
+        self.assertListEqual(
+            events,
+            events_ordered,
+            f'unexpected events order: {events}',
+        )
 
     def assertNumEventsEqual(  # noqa: N802
         self,
@@ -539,8 +544,7 @@ class TraceTestCase(unittest.TestCase):
 
         :param events: the events in the expected order
         """
-        orders = [
+        return all(
             get_event_timestamp(events[i]) < get_event_timestamp(events[i + 1])
             for i in range(len(events) - 1)
-        ]
-        return all(orders)
+        )
