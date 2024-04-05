@@ -65,7 +65,7 @@ class TestSubscription(TraceTestCase):
 
         for event in rmw_sub_init_events:
             self.assertValidHandle(event, ['rmw_subscription_handle'])
-            self.assertValidArray(event, 'gid', int)
+            self.assertValidStaticArray(event, 'gid', int, 24)
         for event in rcl_sub_init_events:
             self.assertValidHandle(
                 event,
@@ -104,13 +104,12 @@ class TestSubscription(TraceTestCase):
 
         # Check that the pong test topic name exists
         # Note: using the ping node
-        test_rcl_sub_init_events = self.get_events_with_field_value(
+        test_rcl_sub_init_event = self.get_event_with_field_value_and_assert(
             'topic_name',
             '/pong',
             rcl_sub_init_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_rcl_sub_init_events, 1, 'cannot find test topic name')
-        test_rcl_sub_init_event = test_rcl_sub_init_events[0]
 
         # Check queue_depth value
         self.assertFieldEquals(test_rcl_sub_init_event, 'queue_depth', 10)
@@ -132,34 +131,32 @@ class TestSubscription(TraceTestCase):
 
         # Check that subscription handle matches between rcl_sub_init and rclcpp_sub_init
         subscription_handle = self.get_field(test_rcl_sub_init_event, 'subscription_handle')
-        rclcpp_sub_init_matching_events = self.get_events_with_field_value(
+        # Should only have 1 rclcpp_sub_init event, since intra-process is not enabled
+        rclcpp_sub_init_matching_event = self.get_event_with_field_value_and_assert(
             'subscription_handle',
             subscription_handle,
             rclcpp_sub_init_events,
+            allow_multiple=False,
         )
-        # Should only have 1 rclcpp_sub_init event, since intra-process is not enabled
-        self.assertNumEventsEqual(rclcpp_sub_init_matching_events, 1)
         # Check that the rmw subscription handle matches between rmw_sub_init and rcl_sub_init
         rmw_subscription_handle = self.get_field(
             test_rcl_sub_init_event, 'rmw_subscription_handle')
-        rmw_sub_init_events = self.get_events_with_field_value(
+        rmw_sub_init_event = self.get_event_with_field_value_and_assert(
             'rmw_subscription_handle',
             rmw_subscription_handle,
             rmw_sub_init_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(rmw_sub_init_events, 1)
-        rmw_sub_init_event = rmw_sub_init_events[0]
 
         # Check that subscription pointer matches between rclcpp_sub_init and sub_callback_added
-        rclcpp_sub_init_matching_event = rclcpp_sub_init_matching_events[0]
         subscription_pointer = self.get_field(rclcpp_sub_init_matching_event, 'subscription')
-        callback_added_matching_events = self.get_events_with_field_value(
+        # There is only one callback for /pong topic in ping node
+        callback_added_matching_event = self.get_event_with_field_value_and_assert(
             'subscription',
             subscription_pointer,
             callback_added_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(callback_added_matching_events, 1)
-        callback_added_matching_event = callback_added_matching_events[0]
 
         # Check that callback pointer matches between callback_added and callback_register
         callback_handle = self.get_field(callback_added_matching_event, 'callback')
@@ -167,13 +164,12 @@ class TestSubscription(TraceTestCase):
             'test_ping',
             callback_register_events,
         )
-        callback_register_matching_events = self.get_events_with_field_value(
+        callback_register_matching_event = self.get_event_with_field_value_and_assert(
             'callback',
             callback_handle,
             test_sub_node_callback_register_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(callback_register_matching_events, 1)
-        callback_register_matching_event = callback_register_matching_events[0]
 
         # Check susbcription creation events order
         self.assertEventOrder([
@@ -185,36 +181,32 @@ class TestSubscription(TraceTestCase):
         ])
 
         # Get executor_execute and *_take events, there should only be one message received
-        test_execute_events = self.get_events_with_field_value(
+        test_execute_event = self.get_event_with_field_value_and_assert(
             'handle',
             subscription_handle,
             execute_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_execute_events, 1)
-        test_execute_event = test_execute_events[0]
-        test_rmw_take_events = self.get_events_with_field_value(
+        test_rmw_take_event = self.get_event_with_field_value_and_assert(
             'rmw_subscription_handle',
             rmw_subscription_handle,
             rmw_take_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_execute_events, 1)
-        test_rmw_take_event = test_rmw_take_events[0]
         test_taken_msg = self.get_field(test_rmw_take_event, 'message')
         self.assertFieldEquals(test_rmw_take_event, 'taken', 1, 'test message not taken')
-        test_rcl_take_events = self.get_events_with_field_value(
+        test_rcl_take_event = self.get_event_with_field_value_and_assert(
             'message',
             test_taken_msg,
             rcl_take_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_rcl_take_events, 1)
-        test_rcl_take_event = test_rcl_take_events[0]
-        test_rclcpp_take_events = self.get_events_with_field_value(
+        test_rclcpp_take_event = self.get_event_with_field_value_and_assert(
             'message',
             test_taken_msg,
             rclcpp_take_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_rcl_take_events, 1)
-        test_rclcpp_take_event = test_rclcpp_take_events[0]
 
         # Check that each start:end pair has a common callback handle
         ping_events = self.get_events_with_procname('test_ping')
@@ -237,24 +229,19 @@ class TestSubscription(TraceTestCase):
             )
 
         # Check that callback pointer matches between sub_callback_added and callback_start/end
-        # There is only one callback for /pong topic in ping node
-        callback_added_matching_event = callback_added_matching_events[0]
-        callback_pointer = self.get_field(callback_added_matching_event, 'callback')
-        callback_start_matching_events = self.get_events_with_field_value(
+        callback_start_matching_event = self.get_event_with_field_value_and_assert(
             'callback',
-            callback_pointer,
+            callback_handle,
             ping_events_start,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(callback_start_matching_events, 1)
-        callback_start_matching_event = callback_start_matching_events[0]
         ping_events_end = self.get_events_with_name(tp.callback_end, ping_events)
-        callback_end_matching_events = self.get_events_with_field_value(
+        callback_end_matching_event = self.get_event_with_field_value_and_assert(
             'callback',
-            callback_pointer,
+            callback_handle,
             ping_events_end,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(callback_end_matching_events, 1)
-        callback_end_matching_event = callback_end_matching_events[0]
 
         # Check execute+take+callback order
         self.assertEventOrder([

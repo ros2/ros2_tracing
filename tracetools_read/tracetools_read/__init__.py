@@ -63,6 +63,10 @@ def get_procname(event: DictEvent) -> str:
     return event['procname']
 
 
+def get_tid(event: DictEvent) -> str:
+    return event['vtid']
+
+
 def get_events_with_name(
     event_name: str,
     events: List[DictEvent],

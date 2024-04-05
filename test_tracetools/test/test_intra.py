@@ -43,16 +43,15 @@ class TestIntra(TraceTestCase):
 
         # Check rcl_subscription_init events
         rcl_sub_init_events = self.get_events_with_name(tp.rcl_subscription_init)
-        rcl_sub_init_topic_events = self.get_events_with_field_value(
+        # Only 1 for our given topic
+        rcl_sub_init_topic_event = self.get_event_with_field_value_and_assert(
             'topic_name',
             '/the_topic',
             rcl_sub_init_events,
+            allow_multiple=False,
         )
-        # Only 1 for our given topic
-        self.assertNumEventsEqual(rcl_sub_init_topic_events, 1)
 
         # Get subscription handle
-        rcl_sub_init_topic_event = rcl_sub_init_topic_events[0]
         sub_handle_intra = self.get_field(rcl_sub_init_topic_event, 'subscription_handle')
 
         # Check rclcpp_subscription_init events

@@ -56,23 +56,22 @@ class TestBuffer(TraceTestCase):
         # Check corresponding events for construct_buffer_event
         for construct_event in construct_buffer_events:
             target_buffer = self.get_field(construct_event, 'buffer')
-            target_buffer_to_ipb_event = self.get_events_with_field_value(
+            # Only 1 for our given buffer
+            target_buffer_to_ipb_event = self.get_event_with_field_value_and_assert(
                 'buffer',
                 target_buffer,
                 buffer_to_ipb_events,
+                allow_multiple=False,
             )
-            # Only 1 for our given buffer
-            self.assertNumEventsEqual(target_buffer_to_ipb_event, 1)
 
-            target_ipb = self.get_field(target_buffer_to_ipb_event[0], 'ipb')
-            target_ipb_to_subscription_event = self.get_events_with_field_value(
+            target_ipb = self.get_field(target_buffer_to_ipb_event, 'ipb')
+            # Only 1 for our given ipb
+            target_ipb_to_subscription_event = self.get_event_with_field_value_and_assert(
                 'ipb',
                 target_ipb,
                 ipb_to_subscription_events,
+                allow_multiple=False,
             )
-
-            # Only 1 for our given ipb
-            self.assertNumEventsEqual(target_ipb_to_subscription_event, 1)
 
             # Check subscription init order
             #   * rclcpp_construct_ring_buffer
@@ -80,8 +79,8 @@ class TestBuffer(TraceTestCase):
             #   * rclcpp_ipb_to_subscription
             self.assertEventOrder([
                 construct_event,
-                target_buffer_to_ipb_event[0],
-                target_ipb_to_subscription_event[0],
+                target_buffer_to_ipb_event,
+                target_ipb_to_subscription_event,
             ])
 
 

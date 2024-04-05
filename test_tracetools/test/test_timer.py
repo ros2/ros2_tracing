@@ -87,43 +87,39 @@ class TestTimer(TraceTestCase):
         timer_handle = self.get_field(test_timer_init_event, 'timer_handle')
 
         # Check that the timer_init:callback_added pair exists and has a common timer handle
-        test_callback_added_events = self.get_events_with_field_value(
+        test_callback_added_event = self.get_event_with_field_value_and_assert(
             'timer_handle',
             timer_handle,
             callback_added_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_callback_added_events, 1)
-        test_callback_added_event = test_callback_added_events[0]
 
         # Check that callback pointer matches between callback_added and callback_register
         callback_handle = self.get_field(test_callback_added_event, 'callback')
-        test_callback_register_events = self.get_events_with_field_value(
+        test_callback_register_event = self.get_event_with_field_value_and_assert(
             'callback',
             callback_handle,
             callback_register_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_callback_register_events, 1)
-        test_callback_register_event = test_callback_register_events[0]
 
         # Check that there is a link_node event for the timer
-        test_link_node_events = self.get_events_with_field_value(
+        test_link_node_event = self.get_event_with_field_value_and_assert(
             'timer_handle',
             timer_handle,
             link_node_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_link_node_events, 1)
-        test_link_node_event = test_link_node_events[0]
 
         # And that the node from that node handle exists
         node_handle = self.get_field(test_link_node_event, 'node_handle')
         node_init_events = self.get_events_with_name(tp.rcl_node_init)
-        test_node_inits_events = self.get_events_with_field_value(
+        test_node_inits_event = self.get_event_with_field_value_and_assert(
             'node_handle',
             node_handle,
             node_init_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(test_node_inits_events, 1)
-        test_node_inits_event = test_node_inits_events[0]
 
         # Check timer creation events order
         self.assertEventOrder([
