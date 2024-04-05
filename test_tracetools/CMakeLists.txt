@@ -115,6 +115,24 @@ if(BUILD_TESTING)
     ${std_msgs_TARGETS}
   )
 
+  add_executable(test_generic_ping
+    src/test_generic_ping.cpp
+  )
+  target_link_libraries(test_generic_ping PRIVATE
+    ${PROJECT_NAME}_mark_process
+    rclcpp::rclcpp
+    ${std_msgs_TARGETS}
+  )
+
+  add_executable(test_generic_pong
+    src/test_generic_pong.cpp
+  )
+  target_link_libraries(test_generic_pong PRIVATE
+    ${PROJECT_NAME}_mark_process
+    rclcpp::rclcpp
+    ${std_msgs_TARGETS}
+  )
+
   add_executable(test_timer
     src/test_timer.cpp
   )
@@ -147,6 +165,8 @@ if(BUILD_TESTING)
     test_lifecycle_client
     test_ping
     test_pong
+    test_generic_ping
+    test_generic_pong
     test_publisher
     test_service_ping
     test_service_pong
@@ -180,9 +200,11 @@ if(BUILD_TESTING)
       test/test_lifecycle_node.py
       test/test_node.py
       test/test_pub_sub.py
+      test/test_generic_pub_sub.py
       test/test_publisher.py
       test/test_service.py
       test/test_subscription.py
+      test/test_generic_subscription.py
       test/test_timer.py
     )
     foreach(_test_path ${_test_tracetools_pytest_tests})
