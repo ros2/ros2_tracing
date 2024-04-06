@@ -93,7 +93,9 @@ class TestROS2TraceCLI(unittest.TestCase):
     def assertTraceContains(
         self,
         trace_dir: str,
-        expected_trace_data: List[Tuple[str, str]],
+        *,
+        expected_field_value: List[Tuple[str, str]] = [],
+        expected_field: List[str] = [],
     ) -> int:
         self.assertTraceExist(trace_dir)
         from tracetools_read.trace import get_trace_events
@@ -106,10 +108,15 @@ class TestROS2TraceCLI(unittest.TestCase):
             0,
             f'no matching trace test events found in trace from events: {events_all}',
         )
-        for trace_data in expected_trace_data:
+        for field_value in expected_field_value:
             self.assertTrue(
-                any(trace_data in event.items() for event in events),
-                f'{trace_data} not found in events: {events}',
+                any(field_value in event.items() for event in events),
+                f'{field_value} not found in events: {events}',
+            )
+        for field in expected_field:
+            self.assertTrue(
+                any(field in event.keys() for event in events),
+                f'{field} not found in events: {events}',
             )
         return len(events)
 
@@ -270,7 +277,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         # Check that the trace contains at least the publishers/subscriptions we expect
         self.assertTraceContains(
             trace_dir,
-            [
+            expected_field_value=[
                 ('topic_name', '/ping'),
                 ('topic_name', '/pong'),
             ],
@@ -293,7 +300,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         self.assertEqual(0, ret)
         self.assertTraceContains(
             os.path.join(tmpdir, session_name),
-            [
+            expected_field_value=[
                 ('topic_name', '/ping'),
                 ('topic_name', '/pong'),
             ],
@@ -413,6 +420,32 @@ class TestROS2TraceCLI(unittest.TestCase):
 
         shutil.rmtree(tmpdir)
 
+    @unittest.skipIf(not are_tracepoints_included(), 'tracepoints are required')
+    def test_explicit_context_fields(self) -> None:
+        tmpdir = self.create_test_tmpdir('test_explicit_context_fields')
+        session_name = 'test_explicit_context_fields'
+
+        ret = self.run_trace_subcommand(
+            [
+                'start',
+                session_name,
+                '--path', tmpdir,
+                '--ust', 'ros2:*', TRACE_TEST_ID_TP_NAME,
+                '--context', 'vpid', 'vuid',
+                '--list',
+            ],
+        )
+        self.assertEqual(0, ret)
+        self.run_nodes()
+        ret = self.run_trace_subcommand(['stop', session_name])
+        self.assertEqual(0, ret)
+        self.assertTraceContains(
+            os.path.join(tmpdir, session_name),
+            expected_field=['vpid', 'vuid'],
+        )
+
+        shutil.rmtree(tmpdir)
+
     def test_append_trace(self) -> None:
         tmpdir = self.create_test_tmpdir('test_append_trace')
         session_name = 'test_append_trace'
@@ -486,18 +519,24 @@ class TestROS2TraceCLI(unittest.TestCase):
             ('topic_name', '/ping'),
             ('topic_name', '/pong'),
         ]
-        num_events = self.assertTraceContains(trace_dir, expected_trace_data)
+        num_events = self.assertTraceContains(trace_dir, expected_field_value=expected_trace_data)
 
         # Pausing again should give an error but not affect anything
         ret = self.run_trace_subcommand(['pause', session_name])
         self.assertEqual(1, ret)
         self.assertTracingSessionExist(session_name)
-        new_num_events = self.assertTraceContains(trace_dir, expected_trace_data)
+        new_num_events = self.assertTraceContains(
+            trace_dir,
+            expected_field_value=expected_trace_data,
+        )
         self.assertEqual(num_events, new_num_events, 'unexpected new events in trace')
 
         # When not tracing, run nodes again and check that trace didn't change
         self.run_nodes()
-        new_num_events = self.assertTraceContains(trace_dir, expected_trace_data)
+        new_num_events = self.assertTraceContains(
+            trace_dir,
+            expected_field_value=expected_trace_data,
+        )
         self.assertEqual(num_events, new_num_events, 'unexpected new events in trace')
 
         # Resume tracing and run nodes again
@@ -515,7 +554,10 @@ class TestROS2TraceCLI(unittest.TestCase):
         ret = self.run_trace_subcommand(['stop', session_name])
         self.assertEqual(0, ret)
         self.assertTracingSessionNotExist(session_name)
-        new_num_events = self.assertTraceContains(trace_dir, expected_trace_data)
+        new_num_events = self.assertTraceContains(
+            trace_dir,
+            expected_field_value=expected_trace_data,
+        )
         self.assertGreater(new_num_events, num_events, 'no new events in trace')
 
         # Stopping tracing again should give an error but not affect anything
