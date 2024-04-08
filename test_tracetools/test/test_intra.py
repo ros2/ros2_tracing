@@ -41,8 +41,6 @@ class TestIntra(TraceTestCase):
         # Check events as set
         self.assertEventsSet(self._events_ros)
 
-        print('EVENTS: ', self._events)
-
         # Check rcl_subscription_init events
         rcl_sub_init_events = self.get_events_with_name(tp.rcl_subscription_init)
         rcl_sub_init_topic_events = self.get_events_with_field_value(
