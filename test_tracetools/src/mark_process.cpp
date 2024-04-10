@@ -16,8 +16,12 @@
 #include <lttng/tracef.h>
 #include <lttng/ust-version.h>
 
+#include <string>
+
 #include "rcpputils/env.hpp"
 #endif  // TRACETOOLS_DISABLED
+
+#include <string_view>
 
 #include "test_tracetools/mark_process.hpp"
 
