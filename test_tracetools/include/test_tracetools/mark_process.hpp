@@ -15,8 +15,6 @@
 #ifndef TEST_TRACETOOLS__MARK_PROCESS_HPP_
 #define TEST_TRACETOOLS__MARK_PROCESS_HPP_
 
-#include <string>
-
 namespace test_tracetools
 {
 
