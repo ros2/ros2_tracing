@@ -60,6 +60,12 @@ if(BUILD_TESTING)
     DIRECTORY include/
     DESTINATION include/${PROJECT_NAME}
   )
+  install(
+    TARGETS ${PROJECT_NAME}_mark_process
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+  )
 
   add_executable(test_publisher
     src/test_publisher.cpp
