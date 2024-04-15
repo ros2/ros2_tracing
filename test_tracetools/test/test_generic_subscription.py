@@ -151,7 +151,6 @@ class TestGenericSubscription(TraceTestCase):
 
         # Check that subscription pointer matches between rclcpp_sub_init and sub_callback_added
         subscription_pointer = self.get_field(rclcpp_sub_init_matching_event, 'subscription')
-        # There is only one callback for /pong topic in ping node
         callback_added_matching_event = self.get_event_with_field_value_and_assert(
             'subscription',
             subscription_pointer,

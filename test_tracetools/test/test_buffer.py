@@ -56,7 +56,6 @@ class TestBuffer(TraceTestCase):
         # Check corresponding events for construct_buffer_event
         for construct_event in construct_buffer_events:
             target_buffer = self.get_field(construct_event, 'buffer')
-            # Only 1 for our given buffer
             target_buffer_to_ipb_event = self.get_event_with_field_value_and_assert(
                 'buffer',
                 target_buffer,
@@ -65,7 +64,6 @@ class TestBuffer(TraceTestCase):
             )
 
             target_ipb = self.get_field(target_buffer_to_ipb_event, 'ipb')
-            # Only 1 for our given ipb
             target_ipb_to_subscription_event = self.get_event_with_field_value_and_assert(
                 'ipb',
                 target_ipb,
