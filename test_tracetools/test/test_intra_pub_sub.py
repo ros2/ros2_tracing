@@ -64,34 +64,35 @@ class TestIntraPubSub(TraceTestCase):
         buffers = [self.get_field(e, 'buffer') for e in construct_ring_buffer_events]
         buffer_to_callback = {}
         for buffer in buffers:
-            ipb_ = self.get_events_with_field_value(
+            ipb_event = self.get_event_with_field_value_and_assert(
                 'buffer',
                 buffer,
                 buffer_to_ipb_events,
+                allow_multiple=False,
             )
-            self.assertNumEventsEqual(ipb_, 1)
 
-            subscription_ = self.get_events_with_field_value(
+            subscription_event = self.get_event_with_field_value_and_assert(
                 'ipb',
-                self.get_field(ipb_[0], 'ipb'),
+                self.get_field(ipb_event, 'ipb'),
                 ipb_to_subscription_events,
+                allow_multiple=False,
             )
-            self.assertNumEventsEqual(subscription_, 1)
 
-            callback_ = self.get_events_with_field_value(
+            subscription_callback_added_event = self.get_event_with_field_value_and_assert(
                 'subscription',
-                self.get_field(subscription_[0], 'subscription'),
+                self.get_field(subscription_event, 'subscription'),
                 rclcpp_subscription_callback_added_events,
+                allow_multiple=False,
             )
-            self.assertNumEventsEqual(callback_, 1)
-            buffer_to_callback[buffer] = self.get_field(callback_[0], 'callback')
+            buffer_to_callback[buffer] = \
+                self.get_field(subscription_callback_added_event, 'callback')
 
         # Check that intra-publish events can be linked.
         for i, intra_publish_event in enumerate(rclcpp_intra_publish_events):
             # Find corresponding intra-publish/enqueue event.
             enqueue_event_cand = self.get_events_with_field_value(
                 'vtid',
-                self.get_field(intra_publish_event, 'vtid'),
+                self.get_tid(intra_publish_event),
                 ring_buffer_enqueue_events,
             )
             target_enqueue_event = self.get_corresponding_event(

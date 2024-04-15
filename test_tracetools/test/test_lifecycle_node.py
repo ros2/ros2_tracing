@@ -47,13 +47,13 @@ class TestLifecycleNode(TraceTestCase):
             'test_lifecycle_node',
             rcl_node_init_events,
         )
-        lifecycle_node_matches = self.get_events_with_field_value(
+        lifecycle_node_match = self.get_event_with_field_value_and_assert(
             'namespace',
             '/test_tracetools',
             lifecycle_node_matches,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(lifecycle_node_matches, 1)
-        lifecycle_node_handle = self.get_field(lifecycle_node_matches[0], 'node_handle')
+        lifecycle_node_handle = self.get_field(lifecycle_node_match, 'node_handle')
 
         # Check the state machine init event
         rcl_lifecycle_state_machine_init_events = self.get_events_with_name(

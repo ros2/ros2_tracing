@@ -69,28 +69,27 @@ class TestService(TraceTestCase):
             'test_service_ping',
             srv_init_events,
         )
-        ping_node_test_srv_init_events = self.get_events_with_field_value(
+        ping_node_test_srv_init_event = self.get_event_with_field_value_and_assert(
             'service_name',
             '/pong',
             ping_node_srv_init_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(ping_node_test_srv_init_events, 1)
 
         pong_node_srv_init_events = self.get_events_with_procname(
             'test_service_pong',
             srv_init_events,
         )
-        pong_node_test_srv_init_events = self.get_events_with_field_value(
+        pong_node_test_srv_init_event = self.get_event_with_field_value_and_assert(
             'service_name',
             '/ping',
             pong_node_srv_init_events,
+            allow_multiple=True,
         )
-        self.assertNumEventsGreaterEqual(pong_node_test_srv_init_events, 1)
 
         # Check that the service init events have a matching node handle (with node_init events)
         node_init_events = self.get_events_with_name(tp.rcl_node_init)
 
-        ping_node_test_srv_init_event = ping_node_test_srv_init_events[0]
         self.assertMatchingField(
             ping_node_test_srv_init_event,
             'node_handle',
@@ -99,7 +98,6 @@ class TestService(TraceTestCase):
             False,
         )
 
-        pong_node_test_srv_init_event = pong_node_test_srv_init_events[0]
         self.assertMatchingField(
             pong_node_test_srv_init_event,
             'node_handle',
@@ -122,31 +120,31 @@ class TestService(TraceTestCase):
             'test_service_ping',
             callback_added_events,
         )
-        ping_node_test_srv_callback_added_events = self.get_events_with_field_value(
+        ping_node_test_srv_callback_added_event = self.get_event_with_field_value_and_assert(
             'service_handle',
             ping_node_test_service_handle,
             ping_node_srv_callback_added_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(ping_node_test_srv_callback_added_events, 1)
 
         pong_node_srv_callback_added_events = self.get_events_with_procname(
             'test_service_pong',
             callback_added_events,
         )
-        pong_node_test_srv_callback_added_events = self.get_events_with_field_value(
+        pong_node_test_srv_callback_added_event = self.get_event_with_field_value_and_assert(
             'service_handle',
             pong_node_test_service_handle,
             pong_node_srv_callback_added_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(pong_node_test_srv_callback_added_events, 1)
 
         # Check that there are matching rclcpp_callback_register events
         ping_node_test_callback_ref = self.get_field(
-            ping_node_test_srv_callback_added_events[0],
+            ping_node_test_srv_callback_added_event,
             'callback',
         )
         pong_node_test_callback_ref = self.get_field(
-            pong_node_test_srv_callback_added_events[0],
+            pong_node_test_srv_callback_added_event,
             'callback',
         )
 

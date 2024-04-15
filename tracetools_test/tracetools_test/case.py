@@ -16,6 +16,7 @@
 """Module for a tracing-specific unittest.TestCase extension."""
 
 import os
+import tempfile
 import time
 from typing import Any
 from typing import List
@@ -31,6 +32,7 @@ from tracetools_read import get_events_with_field_value
 from tracetools_read import get_events_with_name
 from tracetools_read import get_field
 from tracetools_read import get_procname
+from tracetools_read import get_tid
 from tracetools_read.trace import get_trace_events
 
 from .mark_process import get_corresponding_trace_test_events
@@ -65,14 +67,14 @@ class TraceTestCase(unittest.TestCase):
         events_ros: List[str],
         package: str,
         nodes: List[str],
-        base_path: str = '/tmp',
+        base_path: Optional[str] = None,
         events_kernel: List[str] = [],
         additional_actions: Optional[List[Action]] = None,
         namespace: Optional[str] = None,
     ) -> None:
         """Create a TraceTestCase."""
         super().__init__(methodName=args[0])
-        self._base_path = base_path
+        self._base_path = base_path or tempfile.gettempdir()
         self._session_name_prefix = session_name_prefix
         self._events_ros = events_ros + [TRACE_TEST_ID_TP_NAME]
         self._events_kernel = events_kernel
@@ -191,54 +193,70 @@ class TraceTestCase(unittest.TestCase):
         self,
         event: DictEvent,
         handle_field_names: Union[str, List[str]],
+        *,
+        can_be_null: bool = False,
     ) -> None:
         """
         Check that the handle associated to a field name is valid.
 
         :param event: the event which has a handle field
         :param handle_field_names: the handle field name(s) to check
+        :param can_be_null: whether the handle can be null
         """
         self.assertValidPointer(
             event,
             handle_field_names,
+            can_be_null=can_be_null,
         )
 
     def assertValidPointer(  # noqa: N802
         self,
         event: DictEvent,
         pointer_field_names: Union[str, List[str]],
+        *,
+        can_be_null: bool = False,
     ) -> None:
         """
         Check that the pointer associated to a field name is valid.
 
         :param event: the event which has a pointer field
         :param pointer_field_names: the pointer field name(s) to check
+        :param can_be_null: whether the pointer can be null
         """
         if not isinstance(pointer_field_names, list):
             pointer_field_names = [pointer_field_names]
         for field_name in pointer_field_names:
-            self.assertFieldType(event, pointer_field_names, int)
+            self.assertFieldType(event, field_name, int)
             pointer_value = self.get_field(event, field_name)
-            self.assertGreater(
-                pointer_value,
-                0,
-                f"invalid '{field_name}' pointer value '{field_name}' for event: {event}",
-            )
+            if can_be_null:
+                self.assertGreaterEqual(
+                    pointer_value,
+                    0,
+                    f"invalid '{field_name}' pointer value '{field_name}' for event: {event}",
+                )
+            else:
+                self.assertGreater(
+                    pointer_value,
+                    0,
+                    f"invalid '{field_name}' pointer value '{field_name}' for event: {event}",
+                )
 
-    def assertValidArray(  # noqa: N802
+    def assertValidStaticArray(  # noqa: N802
         self,
         event: DictEvent,
         array_field_names: Union[str, List[str]],
         array_type: Optional[Type] = None,
+        array_length: Optional[int] = None,
     ) -> None:
         """
-        Check that the array associated to a field name is valid.
+        Check that the static array associated to a field name is valid.
 
-        Optionally check the type of its elements.
+        Optionally check its length and the type of its elements.
 
-        :param event: the event which has has an array field
-        :param array_field_names: the aray field name(s) to check
+        :param event: the event which has a static array field
+        :param array_field_names: the static array field name(s) to check
         :param array_type: the expected type of elements in the array, or `None`
+        :param array_length: the expected length of the array, or `None`
         """
         if not isinstance(array_field_names, list):
             array_field_names = [array_field_names]
@@ -249,13 +267,20 @@ class TraceTestCase(unittest.TestCase):
                 list,
                 f"'{field_name}' value '{array_value}' not array for event: {event}",
             )
+            if array_length:
+                self.assertEqual(
+                    array_length,
+                    len(array_value),
+                    f"'{field_name}' array '{array_value}' length invalid for event: {event}",
+                )
             if array_type and len(array_value) > 0:
+                array_element = array_value[0]
                 self.assertIsInstance(
-                    array_value[0],
+                    array_element,
                     array_type,
                     (
-                        f"'{field_name}' array element '{array_type.__name__}' "
-                        f"not '{array_value}' for event: {event}"
+                        f"'{field_name}' array element '{array_element}' "
+                        f"not '{array_type.__name__}' for event: {event}"
                     ),
                 )
 
@@ -462,6 +487,18 @@ class TraceTestCase(unittest.TestCase):
         """
         return get_procname(event)
 
+    def get_tid(
+        self,
+        event: DictEvent,
+    ) -> str:
+        """
+        Get TID.
+
+        :param event: the event
+        :return: the TID of the event
+        """
+        return get_tid(event)
+
     def get_events_with_name(
         self,
         event_name: str,
@@ -514,6 +551,40 @@ class TraceTestCase(unittest.TestCase):
         if events is None:
             events = self._events
         return get_events_with_field_value(field_name, field_values, events)
+
+    def get_event_with_field_value_and_assert(
+        self,
+        field_name: str,
+        field_values: Any,
+        events: Optional[List[DictEvent]] = None,
+        *,
+        allow_multiple: bool = False,
+    ) -> DictEvent:
+        """
+        Assert that an event with the given field:value exists and return it.
+
+        Can expect to get >=1 matching event, but always returns the first matching one.
+
+        :param field_name: the name of the field to check
+        :param field_values: the value(s) of the field to check
+        :param events: the events to check (or `None` to check all events)
+        :param allow_multiple: whether to allow multiple event matches
+        :return: the (first) event with the given field:value pair
+        """
+        matching_events = self.get_events_with_field_value(field_name, field_values, events)
+        if allow_multiple:
+            self.assertNumEventsGreaterEqual(
+                matching_events,
+                1,
+                f'expected >=1 events matching {field_name}={field_values} in events: {events}',
+            )
+        else:
+            self.assertNumEventsEqual(
+                matching_events,
+                1,
+                f'expected 1 event matching {field_name}={field_values} in events: {events}',
+            )
+        return matching_events[0]
 
     def get_events_with_field_not_value(
         self,
