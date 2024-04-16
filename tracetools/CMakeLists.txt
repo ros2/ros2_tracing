@@ -103,7 +103,9 @@ if(NOT TRACETOOLS_DISABLED)
   set(export_target_options "HAS_LIBRARY_TARGET")
 endif()
 ament_export_targets(${PROJECT_NAME}_export ${export_target_options})
-ament_generate_version_header(${PROJECT_NAME})
+if(NOT TRACETOOLS_DISABLED)
+  ament_generate_version_header(${PROJECT_NAME})
+endif()
 
 if(TRACETOOLS_STATUS_CHECKING_TOOL)
   # Lib for status checking
