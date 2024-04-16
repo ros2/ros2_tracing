@@ -7,7 +7,7 @@
   <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
   <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Luetkebohle</maintainer>
   <license>Apache 2.0</license>
-  <url type="website">https://index.ros.org/p/tracetools_read/</url>
+  <url type="website">https://docs.ros.org/en/rolling/p/tracetools_read/</url>
   <url type="repository">https://github.com/ros2/ros2_tracing</url>
   <url type="bugtracker">https://github.com/ros2/ros2_tracing/issues</url>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>

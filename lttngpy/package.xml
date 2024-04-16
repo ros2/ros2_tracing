@@ -6,7 +6,7 @@
   <description>liblttng-ctl Python bindings</description>
   <maintainer email="christophe.bedard@apex.ai">Christophe Bedard</maintainer>
   <license>Apache License 2.0</license>
-  <url type="website">https://index.ros.org/p/lttngpy/</url>
+  <url type="website">https://docs.ros.org/en/rolling/p/lttngpy/</url>
   <url type="repository">https://github.com/ros2/ros2_tracing</url>
   <url type="bugtracker">https://github.com/ros2/ros2_tracing/issues</url>
   <author email="christophe.bedard@apex.ai">Christophe Bedard</author>
