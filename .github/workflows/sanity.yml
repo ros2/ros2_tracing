@@ -6,6 +6,9 @@ on:
       - rolling
   schedule:
     - cron: "0 5 * * *"
+defaults:
+  run:
+    shell: bash
 jobs:
   binary:
     runs-on: ubuntu-latest
