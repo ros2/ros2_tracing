@@ -2,6 +2,11 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.0 (2024-04-16)
+------------------
+* Add explicit context fields test to test_ros2trace (`#107 <https://github.com/ros2/ros2_tracing/issues/107>`_)
+* Contributors: Christophe Bedard
+
 8.1.0 (2024-03-27)
 ------------------
 * Allow tracing tests to be run in parallel with other tests (`#95 <https://github.com/ros2/ros2_tracing/issues/95>`_)

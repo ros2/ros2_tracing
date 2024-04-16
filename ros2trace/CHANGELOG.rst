@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.0 (2024-04-16)
+------------------
+* Replace all occurences of index.ros.org (`#114 <https://github.com/ros2/ros2_tracing/issues/114>`_)
+* Contributors: Chris Lalancette
+
 8.1.0 (2024-03-27)
 ------------------
 

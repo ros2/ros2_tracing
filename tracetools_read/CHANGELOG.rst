@@ -2,6 +2,12 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.0 (2024-04-16)
+------------------
+* Replace all occurences of index.ros.org (`#114 <https://github.com/ros2/ros2_tracing/issues/114>`_)
+* Improve tracetools_test and simplify test_tracetools code (`#109 <https://github.com/ros2/ros2_tracing/issues/109>`_)
+* Contributors: Chris Lalancette, Christophe Bedard
+
 8.1.0 (2024-03-27)
 ------------------
 * Allow tracing tests to be run in parallel with other tests (`#95 <https://github.com/ros2/ros2_tracing/issues/95>`_)

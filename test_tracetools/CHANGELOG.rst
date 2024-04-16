@@ -2,6 +2,17 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.0 (2024-04-16)
+------------------
+* Improve tracetools_test and simplify test_tracetools code (`#109 <https://github.com/ros2/ros2_tracing/issues/109>`_)
+* Install test_tracetools_mark_process (`#113 <https://github.com/ros2/ros2_tracing/issues/113>`_)
+* Remove unnecessary <string> include (`#111 <https://github.com/ros2/ros2_tracing/issues/111>`_)
+* Include <string> in mark_process.cpp (`#110 <https://github.com/ros2/ros2_tracing/issues/110>`_)
+* Remove unnecessary print in test (`#108 <https://github.com/ros2/ros2_tracing/issues/108>`_)
+* Add test for GenericPublisher/Subscriber (`#97 <https://github.com/ros2/ros2_tracing/issues/97>`_)
+* Use lttng_ust_tracef instead of lttng_ust__tracef (`#103 <https://github.com/ros2/ros2_tracing/issues/103>`_)
+* Contributors: Christophe Bedard, h-suzuki-isp
+
 8.1.0 (2024-03-27)
 ------------------
 * Use a memcmp for the expected symbol name. (`#100 <https://github.com/ros2/ros2_tracing/issues/100>`_)

@@ -2,6 +2,13 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.2.0 (2024-04-16)
+------------------
+* Replace all occurences of index.ros.org (`#114 <https://github.com/ros2/ros2_tracing/issues/114>`_)
+* Switch to ament_generate_version_header for tracetools (`#112 <https://github.com/ros2/ros2_tracing/issues/112>`_)
+* Fixes for newer uncrustify (`#101 <https://github.com/ros2/ros2_tracing/issues/101>`_)
+* Contributors: Chris Lalancette, Christophe Bedard
+
 8.1.0 (2024-03-27)
 ------------------
 * Update tests and docs after new rmw_publish timestamp field (`#90 <https://github.com/ros2/ros2_tracing/issues/90>`_)
@@ -124,7 +131,7 @@ Changelog for package tracetools
 
 0.2.10 (2019-11-17)
 -------------------
-* Add new rclcpp_subscription_init tracepoint to support new intra-process comms 
+* Add new rclcpp_subscription_init tracepoint to support new intra-process comms
 * Contributors: Christophe Bedard
 
 0.2.9 (2019-10-18)
