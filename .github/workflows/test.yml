@@ -6,34 +6,39 @@ on:
       - rolling
   schedule:
     - cron: "0 5 * * *"
+defaults:
+  run:
+    shell: bash
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.os }}
     continue-on-error: ${{ matrix.build-type == 'binary' }}
     strategy:
       fail-fast: false
       matrix:
         include:
           # Normal build (binary)
-          - os: ubuntu-22.04
+          - os: ubuntu:24.04
             distro: rolling
             build-type: binary
             instrumentation: instr-enabled
             tracepoints: tp-included
           # Normal build (source)
-          - os: ubuntu-22.04
+          - os: ubuntu:24.04
             distro: rolling
             build-type: source
             instrumentation: instr-enabled
             tracepoints: tp-included
           # Build with instrumentation disabled
-          - os: ubuntu-22.04
+          - os: ubuntu:24.04
             distro: rolling
             build-type: source
             instrumentation: instr-disabled
             tracepoints: tp-included
           # Normal build with tracepoints excluded
-          - os: ubuntu-22.04
+          - os: ubuntu:24.04
             distro: rolling
             build-type: source
             instrumentation: instr-enabled
