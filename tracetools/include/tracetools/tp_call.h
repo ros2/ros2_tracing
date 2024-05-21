@@ -477,7 +477,7 @@ TRACEPOINT_EVENT(
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, buffer, buffer_arg)
-    ctf_integer(const uint64_t *, index, index_arg)
+    ctf_integer(const uint64_t, index, index_arg)
     ctf_integer(const uint64_t, size, size_arg)
     ctf_integer(const int, overwritten, (overwritten_arg ? 1 : 0))
   )
