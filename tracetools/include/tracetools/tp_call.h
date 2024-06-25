@@ -37,6 +37,11 @@
 /// See RMW_GID_STORAGE_SIZE in rmw.
 #define TRACETOOLS_GID_STORAGE_SIZE 24u
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+#endif
+
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
   rcl_init,
@@ -508,6 +513,10 @@ TRACEPOINT_EVENT(
     ctf_integer_hex(const void *, buffer, buffer_arg)
   )
 )
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #endif  // _TRACETOOLS__TP_CALL_H_
 
