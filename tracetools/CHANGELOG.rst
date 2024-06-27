@@ -2,6 +2,13 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix type for buffer index argument in tracepoint event declaration. (`#117 <https://github.com/ros2/ros2_tracing/issues/117>`_) (`#119 <https://github.com/ros2/ros2_tracing/issues/119>`_)
+  (cherry picked from commit 7e8d42e3816dc9f7dc268109a2bb9cc66cc4d4ee)
+  Co-authored-by: Mattis Kieffer <62772198+mat-kie@users.noreply.github.com>
+* Contributors: mergify[bot]
+
 8.2.0 (2024-04-16)
 ------------------
 * Replace all occurences of index.ros.org (`#114 <https://github.com/ros2/ros2_tracing/issues/114>`_)
