@@ -46,20 +46,20 @@
 
 // *INDENT-OFF*
 #  define _TRACEPOINT_NOARGS(event_name) \
-  (ros_trace_ ## event_name)()
+  (ros_trace_ ## event_name)(void)
 #  define _TRACEPOINT_ARGS(event_name, ...) \
   (ros_trace_ ## event_name)(__VA_ARGS__)
 #  define _DO_TRACEPOINT_NOARGS(event_name) \
-  (ros_trace_do_ ## event_name)()
+  (ros_trace_do_ ## event_name)(void)
 #  define _DO_TRACEPOINT_ARGS(event_name, ...) \
   (ros_trace_do_ ## event_name)(__VA_ARGS__)
 #  define _DECLARE_TRACEPOINT_NOARGS(event_name) \
-  TRACETOOLS_PUBLIC void ros_trace_ ## event_name(); \
-  TRACETOOLS_PUBLIC bool ros_trace_enabled_ ## event_name(); \
-  TRACETOOLS_PUBLIC void ros_trace_do_ ## event_name();
+  TRACETOOLS_PUBLIC void ros_trace_ ## event_name(void); \
+  TRACETOOLS_PUBLIC bool ros_trace_enabled_ ## event_name(void); \
+  TRACETOOLS_PUBLIC void ros_trace_do_ ## event_name(void);
 #  define _DECLARE_TRACEPOINT_ARGS(event_name, ...) \
   TRACETOOLS_PUBLIC void ros_trace_ ## event_name(__VA_ARGS__); \
-  TRACETOOLS_PUBLIC bool ros_trace_enabled_ ## event_name(); \
+  TRACETOOLS_PUBLIC bool ros_trace_enabled_ ## event_name(void); \
   TRACETOOLS_PUBLIC void ros_trace_do_ ## event_name(__VA_ARGS__);
 
 #  define _GET_MACRO_TRACEPOINT(...) \
@@ -103,7 +103,7 @@
  * This is the preferred method over calling the underlying function directly.
  */
 #  define TRACETOOLS_TRACEPOINT_ENABLED(event_name) \
-  ros_trace_enabled_ ## event_name()
+  ros_trace_enabled_ ## event_name(void)
 /// Call a tracepoint, without checking if it is enabled.
 /**
  * Combine this with `TRACEPOINT_ENABLED()` to check if a tracepoint is enabled before triggering
@@ -164,7 +164,7 @@ extern "C"
 /**
  * \return `true` if tracing is enabled, `false` otherwise
  */
-TRACETOOLS_PUBLIC bool ros_trace_compile_status();
+TRACETOOLS_PUBLIC bool ros_trace_compile_status(void);
 
 /// `rcl_init`
 /**
