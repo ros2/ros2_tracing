@@ -30,7 +30,7 @@ public:
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
       SUB_TOPIC_NAME,
-      rclcpp::QoS(10),
+      rclcpp::QoS(10).transient_local(),
       std::bind(&PongNode::callback, this, std::placeholders::_1));
     pub_ = this->create_publisher<std_msgs::msg::String>(
       PUB_TOPIC_NAME,

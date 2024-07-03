@@ -41,7 +41,7 @@ public:
     pub_ = this->create_generic_publisher(
       PUB_TOPIC_NAME,
       "std_msgs/msg/String",
-      rclcpp::QoS(QUEUE_DEPTH));
+      rclcpp::QoS(QUEUE_DEPTH).transient_local());
     timer_ = this->create_wall_timer(
       500ms,
       std::bind(&PingNode::timer_callback, this));
@@ -70,6 +70,9 @@ private:
     serialized_msg.reserve(1024);
     serializer_->serialize_message(&msg, &serialized_msg);
     pub_->publish(serialized_msg);
+    if (do_only_one_) {
+      timer_->cancel();
+    }
   }
 
   rclcpp::GenericSubscription::SharedPtr sub_;

@@ -32,7 +32,7 @@ public:
     sub_ = this->create_generic_subscription(
       SUB_TOPIC_NAME,
       "std_msgs/msg/String",
-      rclcpp::QoS(10),
+      rclcpp::QoS(10).transient_local(),
       std::bind(&PongNode::callback, this, std::placeholders::_1));
     pub_ = this->create_generic_publisher(
       PUB_TOPIC_NAME,
