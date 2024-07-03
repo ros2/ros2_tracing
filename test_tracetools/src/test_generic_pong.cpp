@@ -55,6 +55,7 @@ private:
     rclcpp::SerializedMessage serialized_msg;
     serialized_msg.reserve(1024);
     serializer_->serialize_message(&next_msg, &serialized_msg);
+    RCLCPP_INFO(this->get_logger(), "pong");
     pub_->publish(serialized_msg);
     if (do_only_one_) {
       rclcpp::shutdown();

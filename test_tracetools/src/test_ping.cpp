@@ -60,6 +60,7 @@ private:
   {
     auto msg = std::make_shared<std_msgs::msg::String>();
     msg->data = "some random ping string";
+    RCLCPP_INFO(this->get_logger(), "ping");
     pub_->publish(*msg);
     if (do_only_one_) {
       timer_->cancel();

@@ -46,6 +46,7 @@ private:
     RCLCPP_INFO(this->get_logger(), "[output] %s", msg->data.c_str());
     auto next_msg = std::make_shared<std_msgs::msg::String>();
     next_msg->data = "some random pong string";
+    RCLCPP_INFO(this->get_logger(), "pong");
     pub_->publish(*next_msg);
     if (do_only_one_) {
       rclcpp::shutdown();
