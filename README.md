@@ -69,8 +69,14 @@ Finally, check out the following presentations:
 
 ## Building
 
-As of Iron, the LTTng tracer is a ROS 2 dependency.
+Starting from ROS 2 Iron Irwini, the LTTng tracer is a ROS 2 dependency.
 Therefore, ROS 2 can be traced out-of-the-box on Linux; this package does not need to be re-built.
+The following `rmw` implementations are supported:
+
+* `rmw_connextdds`
+* `rmw_cyclonedds_cpp`
+* `rmw_fastrtps_cpp`
+* `rmw_fastrtps_dynamic_cpp`
 
 To make sure that the instrumentation and tracepoints are available:
 
