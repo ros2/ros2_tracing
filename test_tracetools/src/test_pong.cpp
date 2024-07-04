@@ -30,7 +30,7 @@ public:
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
       SUB_TOPIC_NAME,
-      rclcpp::QoS(10),
+      rclcpp::QoS(10).transient_local(),
       std::bind(&PongNode::callback, this, std::placeholders::_1));
     pub_ = this->create_publisher<std_msgs::msg::String>(
       PUB_TOPIC_NAME,
@@ -46,6 +46,7 @@ private:
     RCLCPP_INFO(this->get_logger(), "[output] %s", msg->data.c_str());
     auto next_msg = std::make_shared<std_msgs::msg::String>();
     next_msg->data = "some random pong string";
+    RCLCPP_INFO(this->get_logger(), "pong");
     pub_->publish(*next_msg);
     if (do_only_one_) {
       rclcpp::shutdown();

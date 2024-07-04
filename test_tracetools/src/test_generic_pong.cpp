@@ -32,7 +32,7 @@ public:
     sub_ = this->create_generic_subscription(
       SUB_TOPIC_NAME,
       "std_msgs/msg/String",
-      rclcpp::QoS(10),
+      rclcpp::QoS(10).transient_local(),
       std::bind(&PongNode::callback, this, std::placeholders::_1));
     pub_ = this->create_generic_publisher(
       PUB_TOPIC_NAME,
@@ -55,6 +55,7 @@ private:
     rclcpp::SerializedMessage serialized_msg;
     serialized_msg.reserve(1024);
     serializer_->serialize_message(&next_msg, &serialized_msg);
+    RCLCPP_INFO(this->get_logger(), "pong");
     pub_->publish(serialized_msg);
     if (do_only_one_) {
       rclcpp::shutdown();

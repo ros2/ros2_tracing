@@ -38,7 +38,7 @@ public:
       std::bind(&PingNode::callback, this, std::placeholders::_1));
     pub_ = this->create_publisher<std_msgs::msg::String>(
       PUB_TOPIC_NAME,
-      rclcpp::QoS(QUEUE_DEPTH));
+      rclcpp::QoS(QUEUE_DEPTH).transient_local());
     timer_ = this->create_wall_timer(
       500ms,
       std::bind(&PingNode::timer_callback, this));
@@ -60,7 +60,11 @@ private:
   {
     auto msg = std::make_shared<std_msgs::msg::String>();
     msg->data = "some random ping string";
+    RCLCPP_INFO(this->get_logger(), "ping");
     pub_->publish(*msg);
+    if (do_only_one_) {
+      timer_->cancel();
+    }
   }
 
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
