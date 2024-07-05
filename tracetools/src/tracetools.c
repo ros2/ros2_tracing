@@ -35,7 +35,7 @@
 # define _CONDITIONAL_TP(...) ((void) (0))
 # define _CONDITIONAL_TP_ENABLED(...) false
 # define _CONDITIONAL_DO_TP(...) ((void) (0))
-#endif
+#endif  // TRACETOOLS_TRACEPOINTS_EXCLUDED
 
 #define TRACEPOINT_ARGS(...) __VA_ARGS__
 #define TRACEPOINT_PARAMS(...) __VA_ARGS__
@@ -77,12 +77,19 @@ bool ros_trace_compile_status()
 #endif
 }
 
+// Ignore unused-parameters warning when tracepoints are excluded
 #ifndef _WIN32
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wunused-parameter"
 #else
 # pragma warning(push)
 # pragma warning(disable: 4100)
+#endif
+
+// Ignore zero-variadic-macro-arguments clang warnings caused by lttng-ust macros
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 #endif
 
 DEFINE_TRACEPOINT(
@@ -416,6 +423,10 @@ DEFINE_TRACEPOINT(
     const void * buffer),
   TRACEPOINT_ARGS(
     buffer))
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #ifndef _WIN32
 # pragma GCC diagnostic pop
