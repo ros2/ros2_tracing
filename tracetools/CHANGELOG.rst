@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix type for buffer index argument in tracepoint event declaration. (`#121 <https://github.com/ros2/ros2_tracing/issues/121>`_)
+* Contributors: Mattis Kieffer
+
 6.3.1 (2023-05-11)
 ------------------
 * Disable tracing on Android (`#72 <https://github.com/ros2/ros2_tracing/issues/72>`_)
