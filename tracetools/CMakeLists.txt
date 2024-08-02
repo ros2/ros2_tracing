@@ -50,7 +50,7 @@ set(SOURCES
 set(HEADERS
   include/${PROJECT_NAME}/tracetools.h
   include/${PROJECT_NAME}/utils.hpp
-  include/${PROJECT_NAME}/visibility_control.hpp
+  include/${PROJECT_NAME}/visibility_control.h
 )
 if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
   # We only need these if we're using LTTng

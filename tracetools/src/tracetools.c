@@ -68,7 +68,7 @@
   }
 // *INDENT-ON*
 
-bool ros_trace_compile_status()
+bool ros_trace_compile_status(void)
 {
 #ifndef TRACETOOLS_TRACEPOINTS_EXCLUDED
   return true;
