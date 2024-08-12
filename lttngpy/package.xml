@@ -12,6 +12,7 @@
   <author email="christophe.bedard@apex.ai">Christophe Bedard</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>pkg-config</buildtool_depend>
   <buildtool_depend>python_cmake_module</buildtool_depend>
 
   <depend>liblttng-ctl-dev</depend>
