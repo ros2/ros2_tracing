@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
     branches:
-      - rolling
+      - iron
   schedule:
     - cron: "0 5 * * *"
 jobs:
@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         distro:
-          - rolling
+          - iron
     steps:
     - uses: actions/checkout@v3
       with:
@@ -57,7 +57,7 @@ jobs:
       fail-fast: false
       matrix:
         distro:
-          - rolling
+          - iron
     steps:
     - uses: actions/checkout@v3
       with:
