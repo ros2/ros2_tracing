@@ -75,7 +75,10 @@ class TraceTestCase(unittest.TestCase):
         """Create a TraceTestCase."""
         super().__init__(methodName=args[0])
         self._base_path = base_path or tempfile.gettempdir()
-        self._session_name_prefix = session_name_prefix
+        # Append rmw implementation name to session name if one is explicitly set
+        rmw_implementation = os.environ.get('RMW_IMPLEMENTATION', None)
+        self._session_name_prefix = \
+            session_name_prefix + ('__' + rmw_implementation if rmw_implementation else '')
         self._events_ros = events_ros + [TRACE_TEST_ID_TP_NAME]
         self._events_kernel = events_kernel
         self._package = package
