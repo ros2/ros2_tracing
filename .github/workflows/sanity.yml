@@ -3,18 +3,23 @@ on:
   pull_request:
   push:
     branches:
-      - rolling
+      - jazzy
   schedule:
     - cron: "0 5 * * *"
+defaults:
+  run:
+    shell: bash
 jobs:
   binary:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
     continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
         distro:
-          - rolling
+          - jazzy
     steps:
     - uses: actions/checkout@v3
       with:
@@ -51,13 +56,15 @@ jobs:
         source install/setup.bash
         (! ros2 run tracetools status)
   source:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
     continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
         distro:
-          - rolling
+          - jazzy
     steps:
     - uses: actions/checkout@v3
       with:
