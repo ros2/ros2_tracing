@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
     branches:
-      - rolling
+      - iron
   schedule:
     - cron: "0 5 * * *"
 jobs:
@@ -16,25 +16,25 @@ jobs:
         include:
           # Normal build (binary)
           - os: ubuntu-22.04
-            distro: rolling
+            distro: iron
             build-type: binary
             instrumentation: instr-enabled
             tracepoints: tp-included
           # Normal build (source)
           - os: ubuntu-22.04
-            distro: rolling
+            distro: iron
             build-type: source
             instrumentation: instr-enabled
             tracepoints: tp-included
           # Build with instrumentation disabled
           - os: ubuntu-22.04
-            distro: rolling
+            distro: iron
             build-type: source
             instrumentation: instr-disabled
             tracepoints: tp-included
           # Normal build with tracepoints excluded
           - os: ubuntu-22.04
-            distro: rolling
+            distro: iron
             build-type: source
             instrumentation: instr-enabled
             tracepoints: tp-excluded
