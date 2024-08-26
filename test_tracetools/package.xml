@@ -40,6 +40,7 @@
   <test_depend>rclcpp</test_depend>
   <test_depend>rclcpp_lifecycle</test_depend>
   <test_depend>rcpputils</test_depend>
+  <test_depend>rmw_implementation_cmake</test_depend>
   <test_depend>std_msgs</test_depend>
   <test_depend>std_srvs</test_depend>
   <test_depend>tracetools</test_depend>
