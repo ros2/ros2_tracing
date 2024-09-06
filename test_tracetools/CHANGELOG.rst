@@ -2,6 +2,19 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Run relevant test_tracetools tests with all instrumented rmw impls (`#134 <https://github.com/ros2/ros2_tracing/issues/134>`_)
+* Make test_tracetools ping pubs/subs transient_local (`#125 <https://github.com/ros2/ros2_tracing/issues/125>`_) (`#135 <https://github.com/ros2/ros2_tracing/issues/135>`_)
+  This will make sure that the initial `/ping` message is received no
+  matter the launch order of the `*ping` and `*pong` executables.
+  Also, given this guarantee, cancel the timer after the initial `/ping`
+  message.
+  Finally, add some helpful debug logs.
+  (cherry picked from commit 00a4e99c461e005d093689e1bdbb6b6caa3f5960)
+  Co-authored-by: Christophe Bedard <christophe.bedard@apex.ai>
+* Contributors: Christophe Bedard, mergify[bot]
+
 8.2.1 (2024-06-27)
 ------------------
 
