@@ -63,6 +63,10 @@ def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
         default=[],
         help='the kernel events to enable (default: no kernel events)')
     events_kernel_arg.completer = ArgCompleter(names.EVENTS_KERNEL)  # type: ignore
+    parser.add_argument(
+        '--syscall', nargs='*', dest='syscalls', metavar='SYSCALL',
+        default=[],
+        help='the syscalls to enable (default: no syscalls)')
     context_arg = parser.add_argument(  # type: ignore
         '-c', '--context', nargs='*', dest='context_fields', metavar='CONTEXT',
         default=names.DEFAULT_CONTEXT,

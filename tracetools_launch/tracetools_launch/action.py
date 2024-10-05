@@ -112,6 +112,7 @@ class Trace(Action):
         append_trace: bool = False,
         events_ust: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_ROS,
         events_kernel: Iterable[SomeSubstitutionsType] = [],
+        syscalls: Iterable[SomeSubstitutionsType] = [],
         context_fields:
             Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
             = names.DEFAULT_CONTEXT,
@@ -140,6 +141,7 @@ class Trace(Action):
             otherwise an error is reported
         :param events_ust: the list of ROS UST events to enable
         :param events_kernel: the list of kernel events to enable
+        :param syscalls: the list of syscalls to enable
         :param context_fields: the names of context fields to enable
             if it's a list or a set, the context fields are enabled for both kernel and userspace;
             if it's a dictionary: { domain type string -> context fields list }
@@ -160,6 +162,7 @@ class Trace(Action):
         self._trace_directory = None
         self._events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self._events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
+        self._syscalls = [normalize_to_list_of_substitutions(x) for x in syscalls]
         self._context_fields = \
             {
                 domain: [normalize_to_list_of_substitutions(field) for field in fields]
@@ -194,6 +197,10 @@ class Trace(Action):
     @property
     def events_kernel(self):
         return self._events_kernel
+
+    @property
+    def syscalls(self):
+        return self._syscalls
 
     @property
     def context_fields(self):
@@ -295,6 +302,10 @@ class Trace(Action):
         if events_kernel is not None:
             kwargs['events_kernel'] = cls._parse_cmdline(events_kernel, parser) \
                 if events_kernel else []
+        syscalls = entity.get_attr('syscalls', optional=True)
+        if syscalls is not None:
+            kwargs['syscalls'] = cls._parse_cmdline(syscalls, parser) \
+                if syscalls else []
         context_fields = entity.get_attr('context-fields', optional=True)
         if context_fields is not None:
             kwargs['context_fields'] = cls._parse_cmdline(context_fields, parser) \
@@ -374,6 +385,7 @@ class Trace(Action):
             if self._base_path else path.get_tracing_directory()
         self._events_ust = [perform_substitutions(context, x) for x in self._events_ust]
         self._events_kernel = [perform_substitutions(context, x) for x in self._events_kernel]
+        self._syscalls = [perform_substitutions(context, x) for x in self._syscalls]
         self._context_fields = \
             {
                 domain: [perform_substitutions(context, field) for field in fields]
@@ -418,6 +430,7 @@ class Trace(Action):
                 append_trace=self._append_trace,
                 ros_events=self._events_ust,
                 kernel_events=self._events_kernel,
+                syscalls=self._syscalls,
                 context_fields=self._context_fields,
                 subbuffer_size_ust=self._subbuffer_size_ust,
                 subbuffer_size_kernel=self._subbuffer_size_kernel,
@@ -427,6 +440,7 @@ class Trace(Action):
             self._logger.info(f'Writing tracing session to: {self._trace_directory}')
             self._logger.debug(f'UST events: {self._events_ust}')
             self._logger.debug(f'Kernel events: {self._events_kernel}')
+            self._logger.debug(f'Syscalls: {self._syscalls}')
             self._logger.debug(f'Context fields: {self._context_fields}')
             self._logger.debug(f'LD_PRELOAD: {self._ld_preload_actions}')
             self._logger.debug(f'UST subbuffer size: {self._subbuffer_size_ust}')
@@ -454,6 +468,7 @@ class Trace(Action):
             f'trace_directory={self._trace_directory}, '
             f'events_ust={self._events_ust}, '
             f'events_kernel={self._events_kernel}, '
+            f'syscalls={self._syscalls}, '
             f'context_fields={self._context_fields}, '
             f'ld_preload_actions={self._ld_preload_actions}, '
             f'subbuffer_size_ust={self._subbuffer_size_ust}, '

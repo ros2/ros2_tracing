@@ -170,7 +170,7 @@ $ ros2 trace stop session_name    # Stop tracing after starting or resuming
 
 Run each command with `-h` for more information.
 
-You must [install the kernel tracer](#building) if you want to enable kernel events (using the `-k`/`--kernel-events` option).
+You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) events (using the `-k`/`--kernel-events` option) or syscalls (using the `--syscalls` option).
 If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ### Launch file trace action
@@ -185,7 +185,7 @@ $ ros2 launch tracetools_launch example.launch.py
 The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/v2.13/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
 For more information, see [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py).
 
-You must [install the kernel tracer](#building) if you want to enable kernel events (`events_kernel` in Python, `events-kernel` in XML or YAML).
+You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) events (`events_kernel` in Python, `events-kernel` in XML or YAML) or syscalls (`syscalls` in Python, XML, or YAML).
 If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ## Design

@@ -30,6 +30,7 @@ namespace lttngpy
  *
  * \param session_name the session name
  * \param domain_type the domain type
+ * \param event_type the event type
  * \param channel_name the channel name
  * \param events the set of event names
  * \return 0 on success, else a negative LTTng error code
@@ -37,6 +38,7 @@ namespace lttngpy
 int enable_events(
   const std::string & session_name,
   const enum lttng_domain_type domain_type,
+  const enum lttng_event_type event_type,
   const std::string & channel_name,
   const std::set<std::string> & events);
 
@@ -48,6 +50,14 @@ int enable_events(
  *   available when providing the kernel domain)
  */
 std::variant<int, std::set<std::string>> get_tracepoints(const enum lttng_domain_type domain_type);
+
+/**
+ * Get syscalls.
+ *
+ * \return the set of syscalls, else a negative LTTng error code (e.g., if kernel tracer is not
+ *   available)
+ */
+std::variant<int, std::set<std::string>> get_syscalls();
 
 /**
  * Add contexts.

@@ -35,6 +35,7 @@ namespace lttngpy
 int enable_events(
   const std::string & session_name,
   const enum lttng_domain_type domain_type,
+  const enum lttng_event_type event_type,
   const std::string & channel_name,
   const std::set<std::string> & events)
 {
@@ -59,7 +60,7 @@ int enable_events(
       break;
     }
     event_name.copy(event->name, LTTNG_SYMBOL_NAME_LEN);
-    event->type = LTTNG_EVENT_TRACEPOINT;
+    event->type = event_type;
 
     ret = lttng_enable_event(handle, event, channel_name.c_str());
     lttng_event_destroy(event);
@@ -99,6 +100,24 @@ std::variant<int, std::set<std::string>> get_tracepoints(const enum lttng_domain
   std::free(events);
   lttng_destroy_handle(handle);
   return tracepoints_var;
+}
+
+std::variant<int, std::set<std::string>> get_syscalls()
+{
+  struct lttng_event * events = nullptr;
+  int ret = lttng_list_syscalls(&events);
+  std::variant<int, std::set<std::string>> syscalls_var = ret;
+  if (0 <= ret) {
+    std::set<std::string> syscalls = {};
+    const int num_events = ret;
+    for (int i = 0; i < num_events; i++) {
+      syscalls.insert(events[i].name);
+    }
+    syscalls_var = syscalls;
+  }
+
+  std::free(events);
+  return syscalls_var;
 }
 
 int _fill_in_event_context(

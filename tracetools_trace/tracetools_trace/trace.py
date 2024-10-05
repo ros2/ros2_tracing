@@ -40,23 +40,28 @@ def _display_info(
     *,
     ros_events: List[str],
     kernel_events: List[str],
+    syscalls: List[str],
     context_fields: List[str],
     display_list: bool,
 ) -> None:
-    ust_enabled = len(ros_events) > 0
-    kernel_enabled = len(kernel_events) > 0
-    if ust_enabled:
-        print(f'UST tracing enabled ({len(ros_events)} events)')
+    if ros_events:
+        print(f'userspace tracing enabled ({len(ros_events)} events)')
         if display_list:
             print_names_list(ros_events)
     else:
-        print('UST tracing disabled')
-    if kernel_enabled:
+        print('userspace tracing disabled')
+    if kernel_events:
         print(f'kernel tracing enabled ({len(kernel_events)} events)')
         if display_list:
             print_names_list(kernel_events)
     else:
         print('kernel tracing disabled')
+    if syscalls:
+        print(f'syscall tracing enabled ({len(syscalls)} syscalls)')
+        if display_list:
+            print_names_list(syscalls)
+    else:
+        print('syscalls tracing disabled')
     if len(context_fields) > 0:
         print(f'context ({len(context_fields)} fields)')
         if display_list:
@@ -82,6 +87,7 @@ def init(
     append_trace: bool,
     ros_events: List[str],
     kernel_events: List[str],
+    syscalls: List[str],
     context_fields: List[str],
     display_list: bool,
     interactive: bool,
@@ -101,6 +107,7 @@ def init(
         an error is reported
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
+    :param syscalls: list of syscalls to enable
     :param context_fields: list of context fields to enable
     :param display_list: whether to display list(s) of enabled events and context names
     :param interactive: whether to require user interaction to start tracing
@@ -109,6 +116,7 @@ def init(
     _display_info(
         ros_events=ros_events,
         kernel_events=kernel_events,
+        syscalls=syscalls,
         context_fields=context_fields,
         display_list=display_list,
     )
@@ -126,6 +134,7 @@ def init(
         append_trace=append_trace,
         ros_events=ros_events,
         kernel_events=kernel_events,
+        syscalls=syscalls,
         context_fields=context_fields,
     )
     if trace_directory is None:
@@ -213,6 +222,7 @@ def trace(args: argparse.Namespace) -> int:
             append_trace=args.append_trace,
             ros_events=args.events_ust,
             kernel_events=args.events_kernel,
+            syscalls=args.syscalls,
             context_fields=args.context_fields,
             display_list=args.list,
             interactive=True,
@@ -241,6 +251,7 @@ def start(args: argparse.Namespace) -> int:
                 append_trace=args.append_trace,
                 ros_events=args.events_ust,
                 kernel_events=args.events_kernel,
+                syscalls=args.syscalls,
                 context_fields=args.context_fields,
                 display_list=args.list,
                 interactive=False,
