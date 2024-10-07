@@ -52,6 +52,24 @@ def are_tracepoints_included() -> bool:
     return 0 == process.returncode
 
 
+def skip_if_no_kernel_tracing(func):
+    """Skip test if kernel tracing for kernel tracepoints or syscalls is not available."""
+    def wrapper(*args, **kwargs):
+        kernel_tracepoints = lttngpy.get_tracepoints(domain_type=lttngpy.LTTNG_DOMAIN_KERNEL)
+        syscalls = lttngpy.get_syscalls()
+        error = ', '.join(
+            f'{name}: {lttngpy.lttng_strerror(error_code)}' for name, error_code in (
+                ('kernel tracepoints', kernel_tracepoints),
+                ('syscalls', syscalls),
+            )
+            if isinstance(error_code, int)
+        )
+        if error:
+            raise unittest.SkipTest(f'kernel tracer is required: {error}')
+        return func(*args, **kwargs)
+    return wrapper
+
+
 @unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
 class TestROS2TraceCLI(unittest.TestCase):
 
@@ -316,13 +334,7 @@ class TestROS2TraceCLI(unittest.TestCase):
 
         shutil.rmtree(tmpdir)
 
-    @unittest.skipIf(
-        (
-            isinstance(lttngpy.get_tracepoints(domain_type=lttngpy.LTTNG_DOMAIN_KERNEL), int) or
-            isinstance(lttngpy.get_syscalls(), int)
-        ),
-        'kernel tracer is required',
-    )
+    @skip_if_no_kernel_tracing
     def test_kernel_tracing(self) -> None:
         tmpdir = self.create_test_tmpdir('test_kernel_tracing')
         session_name = 'test_kernel_tracing'
