@@ -35,7 +35,7 @@
 #include "tracetools/version.h"
 
 /// See RMW_GID_STORAGE_SIZE in rmw.
-#define TRACETOOLS_GID_STORAGE_SIZE 24u
+#define TRACETOOLS_GID_STORAGE_SIZE 16u
 
 #ifdef __clang__
 # pragma clang diagnostic push
