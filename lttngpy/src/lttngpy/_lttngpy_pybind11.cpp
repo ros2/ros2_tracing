@@ -130,6 +130,16 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     py::arg("output"));
 
   // Event
+  py::enum_<lttng_event_type>(m, "lttng_event_type")
+  .value("LTTNG_EVENT_ALL", LTTNG_EVENT_ALL)
+  .value("LTTNG_EVENT_TRACEPOINT", LTTNG_EVENT_TRACEPOINT)
+  .value("LTTNG_EVENT_PROBE", LTTNG_EVENT_PROBE)
+  .value("LTTNG_EVENT_FUNCTION", LTTNG_EVENT_FUNCTION)
+  .value("LTTNG_EVENT_FUNCTION_ENTRY", LTTNG_EVENT_FUNCTION_ENTRY)
+  .value("LTTNG_EVENT_NOOP", LTTNG_EVENT_NOOP)
+  .value("LTTNG_EVENT_SYSCALL", LTTNG_EVENT_SYSCALL)
+  .value("LTTNG_EVENT_USERSPACE_PROBE", LTTNG_EVENT_USERSPACE_PROBE)
+  .export_values();
   py::enum_<lttng_event_output>(m, "lttng_event_output")
   .value("LTTNG_EVENT_SPLICE", LTTNG_EVENT_SPLICE)
   .value("LTTNG_EVENT_MMAP", LTTNG_EVENT_MMAP)
@@ -141,6 +151,7 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     py::kw_only(),
     py::arg("session_name"),
     py::arg("domain_type"),
+    py::arg("event_type"),
     py::arg("channel_name"),
     py::arg("events"));
   m.def(
@@ -149,6 +160,10 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     "Get tracepoints.",
     py::kw_only(),
     py::arg("domain_type"));
+  m.def(
+    "get_syscalls",
+    &lttngpy::get_syscalls,
+    "Get syscalls.");
   m.def(
     "add_contexts",
     &lttngpy::add_contexts,

@@ -26,6 +26,7 @@ from launch import LaunchDescription
 from launch import LaunchService
 from launch_ros.actions import Node
 from lttngpy import impl as lttngpy
+from tracetools_read import get_event_name
 from tracetools_test.mark_process import get_corresponding_trace_test_events
 from tracetools_test.mark_process import get_trace_test_id
 from tracetools_test.mark_process import TRACE_TEST_ID_ENV_VAR
@@ -49,6 +50,24 @@ def are_tracepoints_included() -> bool:
         encoding='utf-8',
     )
     return 0 == process.returncode
+
+
+def skip_if_no_kernel_tracing(func):
+    """Skip test if kernel tracing for kernel tracepoints or syscalls is not available."""
+    def wrapper(*args, **kwargs):
+        kernel_tracepoints = lttngpy.get_tracepoints(domain_type=lttngpy.LTTNG_DOMAIN_KERNEL)
+        syscalls = lttngpy.get_syscalls()
+        error = ', '.join(
+            f'{name}: {lttngpy.lttng_strerror(error_code)}' for name, error_code in (
+                ('kernel tracepoints', kernel_tracepoints),
+                ('syscalls', syscalls),
+            )
+            if isinstance(error_code, int)
+        )
+        if error:
+            raise unittest.SkipTest(f'kernel tracer is required: {error}')
+        return func(*args, **kwargs)
+    return wrapper
 
 
 @unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
@@ -94,6 +113,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         self,
         trace_dir: str,
         *,
+        expected_event_name: List[str] = [],
         expected_field_value: List[Tuple[str, str]] = [],
         expected_field: List[str] = [],
     ) -> int:
@@ -108,6 +128,11 @@ class TestROS2TraceCLI(unittest.TestCase):
             0,
             f'no matching trace test events found in trace from events: {events_all}',
         )
+        for event_name in expected_event_name:
+            self.assertTrue(
+                any(event_name == get_event_name(event) for event in events),
+                f'{event_name} not found in events: {events}',
+            )
         for field_value in expected_field_value:
             self.assertTrue(
                 any(field_value in event.items() for event in events),
@@ -309,6 +334,37 @@ class TestROS2TraceCLI(unittest.TestCase):
 
         shutil.rmtree(tmpdir)
 
+    @skip_if_no_kernel_tracing
+    def test_kernel_tracing(self) -> None:
+        tmpdir = self.create_test_tmpdir('test_kernel_tracing')
+        session_name = 'test_kernel_tracing'
+
+        process = self.run_trace_command_start(
+            [
+                '--path', tmpdir,
+                '--ust', TRACE_TEST_ID_TP_NAME,
+                '--kernel', 'sched_switch',
+                '--syscall', 'openat',
+                '--session-name', session_name,
+            ],
+            wait_for_start=True,
+        )
+        self.run_nodes()
+        ret = self.run_trace_command_stop(process)
+        self.assertEqual(0, ret)
+        trace_dir = os.path.join(tmpdir, session_name)
+        self.assertTraceContains(
+            trace_dir,
+            expected_event_name=[
+                'sched_switch',
+                'syscall_entry_openat',
+                'syscall_exit_openat',
+            ],
+        )
+        self.assertTracingSessionNotExist(session_name)
+
+        shutil.rmtree(tmpdir)
+
     def test_env_var_ros_trace_dir(self) -> None:
         tmpdir = self.create_test_tmpdir('test_env_var_ros_trace_dir')
         session_name = 'test_env_var_ros_trace_dir'
@@ -398,7 +454,7 @@ class TestROS2TraceCLI(unittest.TestCase):
 
         # Enabling no events should result in an error
         ret = self.run_trace_command(
-            ['--path', tmpdir, '--ust', '--kernel', '--session-name', session_name],
+            ['--path', tmpdir, '--ust', '--kernel', '--syscall', '--session-name', session_name],
         )
         self.assertEqual(1, ret)
         self.assertTraceNotExist(os.path.join(tmpdir, session_name))

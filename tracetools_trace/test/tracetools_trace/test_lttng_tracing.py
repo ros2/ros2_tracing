@@ -74,6 +74,12 @@ class TestLttngTracing(unittest.TestCase):
                     base_path='/tmp',
                     kernel_events=['sched_switch'],
                 )
+            with self.assertRaises(RuntimeError):
+                setup(
+                    session_name='test-session',
+                    base_path='/tmp',
+                    syscalls=['open'],
+                )
 
     def test_get_lttng_home(self):
         from tracetools_trace.tools.lttng_impl import get_lttng_home
