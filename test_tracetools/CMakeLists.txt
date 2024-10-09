@@ -233,6 +233,7 @@ if(BUILD_TESTING)
       rmw_cyclonedds_cpp
       rmw_fastrtps_cpp
       rmw_fastrtps_dynamic_cpp
+      rmw_zenoh_cpp
     )
     get_available_rmw_implementations(rmw_implementations)
     foreach(_test_path ${_test_tracetools_pytest_tests_multi_rmw})

@@ -77,6 +77,7 @@ The following `rmw` implementations are supported:
 * `rmw_cyclonedds_cpp`
 * `rmw_fastrtps_cpp`
 * `rmw_fastrtps_dynamic_cpp`
+* `rmw_zenoh_cpp`
 
 To make sure that the instrumentation and tracepoints are available:
 
