@@ -2,6 +2,13 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Allow enabling syscalls through ``ros2 trace`` or the Trace action (`#137 <https://github.com/ros2/ros2_tracing/issues/137>`_)
+* Remove python_cmake_module use. (`#91 <https://github.com/ros2/ros2_tracing/issues/91>`_)
+* Add missing dependency on pkg-config to lttngpy (`#130 <https://github.com/ros2/ros2_tracing/issues/130>`_)
+* Contributors: Chris Lalancette, Christophe Bedard, Nathan Wiebe Neufeldt
+
 8.3.0 (2024-04-26)
 ------------------
 

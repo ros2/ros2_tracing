@@ -2,6 +2,15 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Change expected rmw GID array size to 16 bytes (`#138 <https://github.com/ros2/ros2_tracing/issues/138>`_)
+* Fix up two different C problems. (`#129 <https://github.com/ros2/ros2_tracing/issues/129>`_)
+* Ignore zero-variadic-macro-arguments warnings from lttng-ust macros (`#126 <https://github.com/ros2/ros2_tracing/issues/126>`_)
+* Remove deprecated TRACEPOINT macros (`#123 <https://github.com/ros2/ros2_tracing/issues/123>`_)
+* Fix type for buffer index argument in tracepoint event declaration. (`#117 <https://github.com/ros2/ros2_tracing/issues/117>`_)
+* Contributors: Chris Lalancette, Christophe Bedard, Mattis Kieffer
+
 8.3.0 (2024-04-26)
 ------------------
 
