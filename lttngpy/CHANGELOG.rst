@@ -2,8 +2,8 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.0 (2024-10-15)
+------------------
 * Allow enabling syscalls through ``ros2 trace`` or the Trace action (`#137 <https://github.com/ros2/ros2_tracing/issues/137>`_)
 * Remove python_cmake_module use. (`#91 <https://github.com/ros2/ros2_tracing/issues/91>`_)
 * Add missing dependency on pkg-config to lttngpy (`#130 <https://github.com/ros2/ros2_tracing/issues/130>`_)
