@@ -2,6 +2,9 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 6.3.2 (2024-07-11)
 ------------------
 

@@ -2,6 +2,9 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 6.3.2 (2024-07-11)
 ------------------
 * Fix type for buffer index argument in tracepoint event declaration. (`#121 <https://github.com/ros2/ros2_tracing/issues/121>`_)
