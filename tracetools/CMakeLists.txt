@@ -16,7 +16,7 @@ endif()
 find_package(ament_cmake_gen_version_h REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 
-if(WIN32 OR APPLE OR ANDROID)
+if(WIN32 OR APPLE OR ANDROID OR BSD)
   set(DISABLED_DEFAULT ON)
   set(STATUS_CHECKING_TOOL_DEFAULT OFF)
 else()

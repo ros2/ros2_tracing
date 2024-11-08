@@ -17,7 +17,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-if(WIN32 OR APPLE OR ANDROID)
+if(WIN32 OR APPLE OR ANDROID OR BSD)
   set(DISABLED_DEFAULT ON)
 else()
   set(DISABLED_DEFAULT OFF)
@@ -92,7 +92,7 @@ endif()
 
 pybind11_add_module(_lttngpy_pybind11 SHARED ${SOURCES})
 
-if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE)
+if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE AND NOT BSD)
   target_link_libraries(_lttngpy_pybind11 PRIVATE atomic)
 endif()
 
