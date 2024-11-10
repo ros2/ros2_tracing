@@ -46,8 +46,8 @@ class TestService(TraceTestCase):
         srv_init_events = self.get_events_with_name(tp.rcl_service_init)
         callback_added_events = self.get_events_with_name(tp.rclcpp_service_callback_added)
         callback_register_events = self.get_events_with_name(tp.rclcpp_callback_register)
-        start_events = self.get_events_with_name(tp.callback_start)
-        end_events = self.get_events_with_name(tp.callback_end)
+        callback_start_events = self.get_events_with_name(tp.callback_start)
+        callback_end_events = self.get_events_with_name(tp.callback_end)
 
         for event in srv_init_events:
             self.assertValidHandle(event, ['service_handle', 'node_handle', 'rmw_service_handle'])
@@ -57,147 +57,74 @@ class TestService(TraceTestCase):
         for event in callback_register_events:
             self.assertValidPointer(event, 'callback')
             self.assertStringFieldNotEmpty(event, 'symbol')
-        for event in start_events:
+        for event in callback_start_events:
             self.assertValidHandle(event, 'callback')
             # Should not be 1 for services (yet)
             self.assertFieldEquals(event, 'is_intra_process', 0)
-        for event in end_events:
+        for event in callback_end_events:
             self.assertValidHandle(event, 'callback')
 
-        # Check that the test services names exists
-        ping_node_srv_init_events = self.get_events_with_procname(
-            'test_service_ping',
-            srv_init_events,
-        )
-        ping_node_test_srv_init_event = self.get_event_with_field_value_and_assert(
-            'service_name',
-            '/pong',
-            ping_node_srv_init_events,
+        # Find node event
+        node_init_events = self.get_events_with_name(tp.rcl_node_init)
+        # The test_service_pong node is the one that has the service (server)
+        test_node_init_event = self.get_event_with_field_value_and_assert(
+            'node_name',
+            'test_service_pong',
+            node_init_events,
             allow_multiple=False,
         )
+        node_handle = self.get_field(test_node_init_event, 'node_handle')
 
-        pong_node_srv_init_events = self.get_events_with_procname(
-            'test_service_pong',
-            srv_init_events,
-        )
-        pong_node_test_srv_init_event = self.get_event_with_field_value_and_assert(
+        # Find service init event and check that the node handle matches
+        test_srv_init_event = self.get_event_with_field_value_and_assert(
             'service_name',
             '/ping',
-            pong_node_srv_init_events,
-            allow_multiple=True,
-        )
-
-        # Check that the service init events have a matching node handle (with node_init events)
-        node_init_events = self.get_events_with_name(tp.rcl_node_init)
-
-        self.assertMatchingField(
-            ping_node_test_srv_init_event,
-            'node_handle',
-            None,
-            node_init_events,
-            False,
-        )
-
-        self.assertMatchingField(
-            pong_node_test_srv_init_event,
-            'node_handle',
-            None,
-            node_init_events,
-            False,
-        )
-
-        # Check that there are matching rclcpp_service_callback_added events
-        ping_node_test_service_handle = self.get_field(
-            ping_node_test_srv_init_event,
-            'service_handle',
-        )
-        pong_node_test_service_handle = self.get_field(
-            pong_node_test_srv_init_event,
-            'service_handle',
-        )
-
-        ping_node_srv_callback_added_events = self.get_events_with_procname(
-            'test_service_ping',
-            callback_added_events,
-        )
-        ping_node_test_srv_callback_added_event = self.get_event_with_field_value_and_assert(
-            'service_handle',
-            ping_node_test_service_handle,
-            ping_node_srv_callback_added_events,
+            srv_init_events,
             allow_multiple=False,
         )
+        self.assertFieldEquals(test_srv_init_event, 'node_handle', node_handle)
 
-        pong_node_srv_callback_added_events = self.get_events_with_procname(
-            'test_service_pong',
-            callback_added_events,
-        )
-        pong_node_test_srv_callback_added_event = self.get_event_with_field_value_and_assert(
+        # Check that there is a matching rclcpp_service_callback_added event
+        service_handle = self.get_field(test_srv_init_event, 'service_handle')
+        test_srv_callback_added_event = self.get_event_with_field_value_and_assert(
             'service_handle',
-            pong_node_test_service_handle,
-            pong_node_srv_callback_added_events,
+            service_handle,
+            callback_added_events,
             allow_multiple=False,
         )
 
         # Check that there are matching rclcpp_callback_register events
-        ping_node_test_callback_ref = self.get_field(
-            ping_node_test_srv_callback_added_event,
+        callback_ref = self.get_field(test_srv_callback_added_event, 'callback')
+        test_callback_register_event = self.get_event_with_field_value_and_assert(
             'callback',
-        )
-        pong_node_test_callback_ref = self.get_field(
-            pong_node_test_srv_callback_added_event,
-            'callback',
-        )
-
-        ping_node_callback_register_events = self.get_events_with_procname(
-            'test_service_ping',
+            callback_ref,
             callback_register_events,
+            allow_multiple=False,
         )
-        ping_node_test_callback_register_events = self.get_events_with_field_value(
-            'callback',
-            ping_node_test_callback_ref,
-            ping_node_callback_register_events,
-        )
-        self.assertNumEventsEqual(ping_node_test_callback_register_events, 1)
-
-        pong_node_callback_register_events = self.get_events_with_procname(
-            'test_service_pong',
-            callback_register_events,
-        )
-        pong_node_test_callback_register_events = self.get_events_with_field_value(
-            'callback',
-            pong_node_test_callback_ref,
-            pong_node_callback_register_events,
-        )
-        self.assertNumEventsEqual(pong_node_test_callback_register_events, 1)
 
         # Check that there are corresponding callback_start/stop pairs
-        ping_node_test_callback_start_events = self.get_events_with_field_value(
+        test_callback_start_event = self.get_event_with_field_value_and_assert(
             'callback',
-            ping_node_test_callback_ref,
-            start_events,
+            callback_ref,
+            callback_start_events,
+            allow_multiple=False,
         )
-        self.assertNumEventsEqual(ping_node_test_callback_start_events, 1)
+        test_callback_end_event = self.get_event_with_field_value_and_assert(
+            'callback',
+            callback_ref,
+            callback_end_events,
+            allow_multiple=False,
+        )
 
-        pong_node_test_callback_start_events = self.get_events_with_field_value(
-            'callback',
-            pong_node_test_callback_ref,
-            start_events,
-        )
-        self.assertNumEventsEqual(pong_node_test_callback_start_events, 1)
-
-        ping_node_test_callback_end_events = self.get_events_with_field_value(
-            'callback',
-            ping_node_test_callback_ref,
-            end_events,
-        )
-        self.assertNumEventsEqual(ping_node_test_callback_end_events, 1)
-
-        pong_node_test_callback_end_events = self.get_events_with_field_value(
-            'callback',
-            pong_node_test_callback_ref,
-            end_events,
-        )
-        self.assertNumEventsEqual(pong_node_test_callback_end_events, 1)
+        # Check events order
+        self.assertEventOrder([
+            test_node_init_event,
+            test_srv_init_event,
+            test_srv_callback_added_event,
+            test_callback_register_event,
+            test_callback_start_event,
+            test_callback_end_event,
+        ])
 
 
 if __name__ == '__main__':
