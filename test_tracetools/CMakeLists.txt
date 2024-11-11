@@ -203,6 +203,7 @@ if(BUILD_TESTING)
     # Tests to run with the default rmw implementation, which should not matter
     set(_test_tracetools_pytest_tests
       test/test_buffer.py
+      test/test_client.py
       test/test_executor.py
       test/test_intra.py
       test/test_intra_pub_sub.py
