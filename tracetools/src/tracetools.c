@@ -265,6 +265,45 @@ DEFINE_TRACEPOINT(
     callback))
 
 DEFINE_TRACEPOINT(
+  rmw_take_request,
+  TRACEPOINT_PARAMS(
+    const void * rmw_service_handle,
+    const void * request,
+    const uint8_t * client_gid,
+    int64_t sequence_number,
+    const bool taken),
+  TRACEPOINT_ARGS(
+    rmw_service_handle,
+    request,
+    client_gid,
+    sequence_number,
+    taken))
+
+DEFINE_TRACEPOINT(
+  rmw_send_response,
+  TRACEPOINT_PARAMS(
+    const void * rmw_service_handle,
+    const void * response,
+    const uint8_t * client_gid,
+    int64_t sequence_number,
+    int64_t timestamp),
+  TRACEPOINT_ARGS(
+    rmw_service_handle,
+    response,
+    client_gid,
+    sequence_number,
+    timestamp))
+
+DEFINE_TRACEPOINT(
+  rmw_client_init,
+  TRACEPOINT_PARAMS(
+    const void * rmw_client_handle,
+    const uint8_t * gid),
+  TRACEPOINT_ARGS(
+    rmw_client_handle,
+    gid))
+
+DEFINE_TRACEPOINT(
   rcl_client_init,
   TRACEPOINT_PARAMS(
     const void * client_handle,
@@ -276,6 +315,32 @@ DEFINE_TRACEPOINT(
     node_handle,
     rmw_client_handle,
     service_name))
+
+DEFINE_TRACEPOINT(
+  rmw_send_request,
+  TRACEPOINT_PARAMS(
+    const void * rmw_client_handle,
+    const void * request,
+    int64_t sequence_numer),
+  TRACEPOINT_ARGS(
+    rmw_client_handle,
+    request,
+    sequence_numer))
+
+DEFINE_TRACEPOINT(
+  rmw_take_response,
+  TRACEPOINT_PARAMS(
+    const void * rmw_client_handle,
+    const void * response,
+    int64_t sequence_number,
+    int64_t source_timestamp,
+    const bool taken),
+  TRACEPOINT_ARGS(
+    rmw_client_handle,
+    response,
+    sequence_number,
+    source_timestamp,
+    taken))
 
 DEFINE_TRACEPOINT(
   rcl_timer_init,
