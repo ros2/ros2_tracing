@@ -17,6 +17,7 @@
   <depend>liblttng-ctl-dev</depend>
 
   <build_depend>pybind11_vendor</build_depend>
+  <build_depend>python3-dev</build_depend>
 
   <exec_depend>rpyutils</exec_depend>
 
