@@ -2,8 +2,8 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.1 (2024-11-25)
+------------------
 * Add python3-dev build_depend to lttngpy. (`#146 <https://github.com/ros2/ros2_tracing/issues/146>`_)
 * Don't try to build on BSD (`#142 <https://github.com/ros2/ros2_tracing/issues/142>`_)
 * Contributors: Chris Lalancette, Scott K Logan

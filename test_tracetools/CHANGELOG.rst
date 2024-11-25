@@ -2,8 +2,8 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.1 (2024-11-25)
+------------------
 * Don't try to build on BSD (`#142 <https://github.com/ros2/ros2_tracing/issues/142>`_)
   The 'BSD' variable was added in CMake 3.25. Note that variables which
   are not defined will evaluate to 'False', so this shouldn't regress

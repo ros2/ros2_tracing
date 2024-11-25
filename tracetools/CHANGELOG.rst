@@ -2,8 +2,8 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.4.1 (2024-11-25)
+------------------
 * Don't try to build on BSD (`#142 <https://github.com/ros2/ros2_tracing/issues/142>`_)
 * Contributors: Scott K Logan
 
