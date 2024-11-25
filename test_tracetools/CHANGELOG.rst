@@ -2,6 +2,15 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Don't try to build on BSD (`#142 <https://github.com/ros2/ros2_tracing/issues/142>`_)
+  The 'BSD' variable was added in CMake 3.25. Note that variables which
+  are not defined will evaluate to 'False', so this shouldn't regress
+  platforms using CMake versions older than 3.25.
+* Refactor and split test_service into test\_{service,client} (`#144 <https://github.com/ros2/ros2_tracing/issues/144>`_)
+* Contributors: Christophe Bedard, Scott K Logan
+
 8.4.0 (2024-10-15)
 ------------------
 * Change expected rmw GID array size to 16 bytes (`#138 <https://github.com/ros2/ros2_tracing/issues/138>`_)

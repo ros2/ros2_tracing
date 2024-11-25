@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Don't try to build on BSD (`#142 <https://github.com/ros2/ros2_tracing/issues/142>`_)
+* Contributors: Scott K Logan
+
 8.4.0 (2024-10-15)
 ------------------
 * Change expected rmw GID array size to 16 bytes (`#138 <https://github.com/ros2/ros2_tracing/issues/138>`_)
