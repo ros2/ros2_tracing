@@ -28,7 +28,10 @@ class TestClient(TraceTestCase):
             session_name_prefix='session-test-client',
             events_ros=[
                 tp.rcl_node_init,
+                tp.rmw_client_init,
                 tp.rcl_client_init,
+                tp.rmw_send_request,
+                tp.rmw_take_response,
             ],
             package='test_tracetools',
             nodes=['test_service_ping', 'test_service_pong'],
@@ -39,11 +42,25 @@ class TestClient(TraceTestCase):
         self.assertEventsSet(self._events_ros)
 
         # Check fields
-        client_init_events = self.get_events_with_name(tp.rcl_client_init)
+        rmw_client_init_events = self.get_events_with_name(tp.rmw_client_init)
+        rcl_client_init_events = self.get_events_with_name(tp.rcl_client_init)
+        rmw_send_request_events = self.get_events_with_name(tp.rmw_send_request)
+        rmw_take_response_events = self.get_events_with_name(tp.rmw_take_response)
 
-        for event in client_init_events:
+        for event in rmw_client_init_events:
+            self.assertValidHandle(event, 'rmw_client_handle')
+            self.assertValidStaticArray(event, 'gid', int, 16)
+        for event in rcl_client_init_events:
             self.assertValidHandle(event, ['client_handle', 'node_handle', 'rmw_client_handle'])
             self.assertStringFieldNotEmpty(event, 'service_name')
+        for event in rmw_send_request_events:
+            self.assertValidHandle(event, 'rmw_client_handle')
+            self.assertValidPointer(event, 'request')
+            self.assertFieldType(event, 'sequence_number', int)
+        for event in rmw_take_response_events:
+            self.assertValidHandle(event, 'rmw_client_handle')
+            self.assertValidPointer(event, 'response')
+            self.assertFieldType(event, ['sequence_number', 'source_timestamp', 'taken'], int)
 
         # Find node event
         node_init_events = self.get_events_with_name(tp.rcl_node_init)
@@ -56,19 +73,43 @@ class TestClient(TraceTestCase):
         )
         node_handle = self.get_field(test_node_init_event, 'node_handle')
 
-        # Find client init event and check that the node handle matches
-        test_client_init_event = self.get_event_with_field_value_and_assert(
+        # Find client init events and check that the handles match
+        test_rcl_client_init_event = self.get_event_with_field_value_and_assert(
             'service_name',
             '/ping',
-            client_init_events,
+            rcl_client_init_events,
             allow_multiple=False,
         )
-        self.assertFieldEquals(test_client_init_event, 'node_handle', node_handle)
+        self.assertFieldEquals(test_rcl_client_init_event, 'node_handle', node_handle)
+        rmw_client_handle = self.get_field(test_rcl_client_init_event, 'rmw_client_handle')
+        test_rmw_client_init_event = self.get_event_with_field_value_and_assert(
+            'rmw_client_handle',
+            rmw_client_handle,
+            rmw_client_init_events,
+            allow_multiple=False,
+        )
+
+        # Find rmw_send_request and rmw_take_response events
+        test_rmw_send_request_event = self.get_event_with_field_value_and_assert(
+            'rmw_client_handle',
+            rmw_client_handle,
+            rmw_send_request_events,
+            allow_multiple=False,
+        )
+        test_rmw_take_response_event = self.get_event_with_field_value_and_assert(
+            'rmw_client_handle',
+            rmw_client_handle,
+            rmw_take_response_events,
+            allow_multiple=False,
+        )
 
         # Check events order
         self.assertEventOrder([
             test_node_init_event,
-            test_client_init_event,
+            test_rmw_client_init_event,
+            test_rcl_client_init_event,
+            test_rmw_send_request_event,
+            test_rmw_take_response_event,
         ])
 
 

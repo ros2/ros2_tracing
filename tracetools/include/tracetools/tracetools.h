@@ -226,8 +226,7 @@ _DECLARE_TRACEPOINT(
 /// `rcl_publish`
 /**
  * Message publication.
- * Links a `rcl_publisher_t` handle to a pointer to
- * a message being published at the `rcl` level.
+ * Links a `rcl_publisher_t` handle to a pointer to a message being published at the `rcl` level.
  *
  * \param[in] publisher_handle pointer to the publisher's `rcl_publisher_t` handle
  * \param[in] message pointer to the message being published
@@ -241,6 +240,7 @@ _DECLARE_TRACEPOINT(
 /**
  * Message publication.
  * Notes the pointer to the message being published at the `rmw` level.
+ * Also notes the source timestamp of the message.
  *
  * \param[in] rmw_publisher_handle pointer to the publisher's `rmw_publisher_t` handle
  * \param[in] message pointer to the message being published
@@ -317,12 +317,12 @@ _DECLARE_TRACEPOINT(
 /// `rmw_take`
 /**
  * Message taking.
- * Links a `rmw_subscription_t` handle to a pointer
- * to a message being taken at the `rmw` level.
+ * Links a `rmw_subscription_t` handle to a pointer to a message being taken at the `rmw` level.
+ * Notes the source timestamp of the message.
  *
  * \param[in] rmw_subscription_handle pointer to the subscription's `rmw_subscription_t` handle
  * \param[in] message pointer to the message being taken
- * \param[in] source_timestamp the source timestamp of the received message,
+ * \param[in] source_timestamp the source timestamp of the message,
  *  or 0 (if no message or no info)
  * \param[in] taken whether a message was taken
  */
@@ -386,6 +386,64 @@ _DECLARE_TRACEPOINT(
   const void * service_handle,
   const void * callback)
 
+/// `rmw_take_request`
+/**
+ * Request taking.
+ * Links a `rmw_service_t` handle to a pointer to a request being taken at the `rmw` level.
+ * Also notes the sequence number of the request and the GID of the requesting client.
+ *
+ * \param[in] rmw_service_handle pointer to the service's `rmw_service_t` handle
+ * \param[in] request pointer to the request being taken
+ * \param[in] client_gid the GID of the requesting client
+ * \param[in] sequence_number the sequence number of the received request,
+ *  or 0 (if no request or no info)
+ * \param[in] taken whether a request was taken
+ */
+_DECLARE_TRACEPOINT(
+  rmw_take_request,
+  const void * rmw_service_handle,
+  const void * request,
+  const uint8_t * client_gid,
+  int64_t sequence_number,
+  const bool taken)
+
+/// `rmw_send_response`
+/**
+ * Response publication.
+ * Notes the pointer to the response being sent at the `rmw` level.
+ * Also notes the sequence number of the request that this response is for and the GID of the
+ * requesting client, and notes the source timestamp of the response.
+ *
+ * \param[in] rmw_service_handle pointer to the service's `rmw_service_t` handle
+ * \param[in] response pointer to the request being sent
+ * \param[in] client_gid the GID of the requesting client
+ * \param[in] sequence_number the sequence number of the request this response is for
+ * \param[in] timestamp the source timestamp of the response
+ */
+_DECLARE_TRACEPOINT(
+  rmw_send_response,
+  const void * rmw_service_handle,
+  const void * response,
+  const uint8_t * client_gid,
+  int64_t sequence_number,
+  int64_t timestamp)
+
+/// `rmw_client_init`
+/**
+ * RMW client initialisation.
+ * Links a `rmw_client_t` handle to its DDS/rmw GID.
+ * This GID should be the same client GID that is collected by the `rmw_take_request` and
+ * `rmw_send_response` tracepoints for requests made by this client and responses to requests made
+ * by this client.
+ *
+ * \param[in] rmw_client_handle pointer to the client's `rmw_client_t` handle
+ * \param[in] gid pointer to the client's DDS/rmw GID
+ */
+_DECLARE_TRACEPOINT(
+  rmw_client_init,
+  const void * rmw_client_handle,
+  const uint8_t * gid)
+
 /// `rcl_client_init`
 /**
  * Client initialisation.
@@ -403,6 +461,46 @@ _DECLARE_TRACEPOINT(
   const void * node_handle,
   const void * rmw_client_handle,
   const char * service_name)
+
+/// `rmw_send_request`
+/**
+ * Request publication.
+ * Notes the pointer to the request being sent at the `rmw` level.
+ * Also notes the sequence number of the request.
+ *
+ * \param[in] rmw_client_handle pointer to the client's `rmw_client_t` handle
+ * \param[in] request pointer to the request being sent
+ * \param[in] sequence_number the sequence number of the request
+ */
+_DECLARE_TRACEPOINT(
+  rmw_send_request,
+  const void * rmw_client_handle,
+  const void * request,
+  int64_t sequence_number)
+
+/// `rmw_take_response`
+/**
+ * Response taking.
+ * Links a `rmw_client_t` handle to a pointer to a response being taken at the `rmw` level.
+ * Notes the source timestamp of the response. Also notes the sequence number of the request this
+ * response is for. It does not note the request's client GID, since it is assumed that the matching
+ * of the response to the original client is performed before this tracepoint.
+ *
+ * \param[in] rmw_client_handle pointer to the client's `rmw_client_t` handle
+ * \param[in] response pointer to the response being taken
+ * \param[in] sequence_number the sequence number of the request this response is for,
+ *  or 0 (if no response or no info)
+ * \param[in] source_timestamp the source timestamp of the response,
+ *  or 0 (if no response or no info)
+ * \param[in] taken whether a response was taken
+ */
+_DECLARE_TRACEPOINT(
+  rmw_take_response,
+  const void * rmw_client_handle,
+  const void * response,
+  int64_t sequence_number,
+  int64_t source_timestamp,
+  const bool taken)
 
 /// `rcl_timer_init`
 /**
