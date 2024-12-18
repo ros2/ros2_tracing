@@ -2,6 +2,9 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.2.2 (2024-09-06)
 ------------------
 * Run relevant test_tracetools tests with all instrumented rmw impls (`#134 <https://github.com/ros2/ros2_tracing/issues/134>`_)
