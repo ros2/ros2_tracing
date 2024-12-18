@@ -2,8 +2,8 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.3 (2024-12-18)
+------------------
 * Add missing dependency on pkg-config to lttngpy (`#130 <https://github.com/ros2/ros2_tracing/issues/130>`_) (`#136 <https://github.com/ros2/ros2_tracing/issues/136>`_)
   (cherry picked from commit a866b9c701311bc8200a00c949b4a0fff9803777)
   Co-authored-by: Nathan Wiebe Neufeldt <wn.nathan@gmail.com>
