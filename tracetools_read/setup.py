@@ -5,7 +5,7 @@ package_name = 'tracetools_read'
 
 setup(
     name=package_name,
-    version='8.4.1',
+    version='8.5.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/' + package_name, ['package.xml']),

@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.5.0 (2024-12-20)
+------------------
 * Instrument client/service for end-to-end request/response tracking (`#145 <https://github.com/ros2/ros2_tracing/issues/145>`_)
 * Contributors: Christophe Bedard
 
