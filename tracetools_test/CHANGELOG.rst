@@ -2,6 +2,9 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.4.1 (2024-11-25)
 ------------------
 
