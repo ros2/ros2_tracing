@@ -89,6 +89,7 @@ def init(
     kernel_events: List[str],
     syscalls: List[str],
     context_fields: List[str],
+    live_timer_interval: Optional[int],
     display_list: bool,
     interactive: bool,
 ) -> bool:
@@ -136,6 +137,7 @@ def init(
         kernel_events=kernel_events,
         syscalls=syscalls,
         context_fields=context_fields,
+        live_timer_interval=live_timer_interval,
     )
     if trace_directory is None:
         return False
@@ -224,6 +226,7 @@ def trace(args: argparse.Namespace) -> int:
             kernel_events=args.events_kernel,
             syscalls=args.syscalls,
             context_fields=args.context_fields,
+            live_timer_interval=args.live_timer_interval,
             display_list=args.list,
             interactive=True,
         ):

@@ -80,6 +80,12 @@ def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '-a', '--append-trace', dest='append_trace', action='store_true',
         help='append to trace if it already exists, otherwise error out (default: %(default)s)')
+    parser.add_argument(
+        '--live', dest='live_timer_interval', type=int, nargs='?',
+        # Default value for 'lttng create-session --live':
+        # https://lttng.org/man/1/lttng-create/v2.13/#doc-opt--live
+        default=1000000,
+        help='TODO (default: %(default)s)')
 
 
 def _add_arguments_default_session_name(parser: argparse.ArgumentParser) -> None:

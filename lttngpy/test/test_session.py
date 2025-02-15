@@ -59,6 +59,10 @@ class TestSession(unittest.TestCase):
 
         shutil.rmtree(tmpdir)
 
+    def test_session_live_list_create_start_stop_destroy(self):
+        # TODO(christophebedard): add test for lttngpy.lttng_create_session_live()
+        pass
+
     def test_error(self):
         session_name = 'test_error'
         self.assertSetEqual(set(), lttngpy.get_session_names())

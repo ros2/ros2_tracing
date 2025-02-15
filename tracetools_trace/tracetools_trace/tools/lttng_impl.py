@@ -157,6 +157,7 @@ def setup(
     channel_name_kernel: str = 'kchan',
     subbuffer_size_ust: int = 8 * 4096,
     subbuffer_size_kernel: int = 32 * 4096,
+    live_timer_interval: Optional[int] = None,
 ) -> Optional[str]:
     """
     Set up LTTng session, with events and context.
@@ -195,6 +196,9 @@ def setup(
     if not session_name:
         raise RuntimeError('empty session name')
     # Resolve full tracing directory path
+    # TODO(christophebedard): do we need to join the base_path with session_name for a live session?
+    #   We need to return a path, so maybe format it like:
+    #   "net://localhost/host/$hostname/$session_name"
     full_path = os.path.join(base_path, session_name)
     if os.path.isdir(full_path) and not append_trace:
         raise RuntimeError(
@@ -243,11 +247,18 @@ def setup(
         raise RuntimeError('no events enabled')
 
     # Create session
-    # LTTng will create the parent directories if needed
-    _create_session(
-        session_name=session_name,
-        full_path=full_path,
-    )
+    if live_timer_interval is None:
+        # LTTng will create the parent directories if needed
+        _create_session(
+            session_name=session_name,
+            full_path=full_path,
+        )
+    else:
+        _create_session_live(
+            session_name=session_name,
+            full_path=full_path,
+            timer_interval=live_timer_interval,
+        )
 
     # Enable channel, events, and contexts for each domain
     contexts_dict = _normalize_contexts_dict(context_fields)
@@ -424,6 +435,28 @@ def _create_session(
     if result < 0:
         error = lttngpy.lttng_strerror(result)
         raise RuntimeError(f"failed to create tracing session '{session_name}': {error}")
+
+
+def _create_session_live(
+    *,
+    session_name: str,
+    full_path: str,
+    timer_interval: int,
+) -> None:
+    """
+    TODO
+    """
+    result = lttngpy.lttng_create_session_live(
+        session_name=session_name,
+        # TODO(christophebedard): figure out what to provide here as the URL
+        #   This depends on how we expect users to use live tracing
+        #   See the documentation for the url param of lttng_create_session_live()
+        url=None,
+        timer_interval=timer_interval,
+    )
+    if result < 0:
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to create live tracing session '{session_name}': {error}")
 
 
 def _enable_channel(**kwargs) -> None:
