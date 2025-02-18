@@ -51,14 +51,14 @@ def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
         help='path of the base directory for trace data (default: '
              '$ROS_TRACE_DIR if ROS_TRACE_DIR is set and not empty, or '
              '$ROS_HOME/tracing, using ~/.ros for ROS_HOME if not set or if empty)')
-    events_ust_arg = parser.add_argument(  # type: ignore
+    events_ust_arg = parser.add_argument(
         '-u', '--ust', nargs='*', dest='events_ust', metavar='EVENT',
         default=names.DEFAULT_EVENTS_UST,
         help='the userspace events to enable (default: see tracetools_trace.tools.names) '
              '[to disable all UST events, '
              'provide this flag without any event name]')
     events_ust_arg.completer = DefaultArgValueCompleter(events_ust_arg)  # type: ignore
-    events_kernel_arg = parser.add_argument(  # type: ignore
+    events_kernel_arg = parser.add_argument(
         '-k', '--kernel', nargs='*', dest='events_kernel', metavar='EVENT',
         default=[],
         help='the kernel events to enable (default: no kernel events)')
@@ -67,7 +67,7 @@ def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
         '--syscall', nargs='*', dest='syscalls', metavar='SYSCALL',
         default=[],
         help='the syscalls to enable (default: no syscalls)')
-    context_arg = parser.add_argument(  # type: ignore
+    context_arg = parser.add_argument(
         '-c', '--context', nargs='*', dest='context_fields', metavar='CONTEXT',
         default=names.DEFAULT_CONTEXT,
         help='the context fields to enable (default: see tracetools_trace.tools.names) '
