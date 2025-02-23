@@ -86,7 +86,7 @@ class TraceTestCase(unittest.TestCase):
         self._additional_actions = additional_actions or []
         self._namespace = namespace
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Get timestamp before trace (ns)
         timestamp_before = int(time.time() * 1000000000.0)
 
@@ -133,7 +133,7 @@ class TraceTestCase(unittest.TestCase):
         # Check that the launched nodes are present as processes
         self.assertProcessNamesExist(self._nodes)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         if not os.environ.get(self.ENV_VAR_DEBUG, None):
             cleanup_trace(self._full_path)
 

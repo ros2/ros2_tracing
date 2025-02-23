@@ -21,6 +21,7 @@ import shlex
 from typing import Dict
 from typing import Iterable
 from typing import List
+from typing import Mapping
 from typing import Optional
 from typing import Text
 from typing import Union
@@ -34,6 +35,7 @@ from launch.frontend import expose_action
 from launch.frontend import Parser
 from launch.launch_context import LaunchContext
 from launch.some_substitutions_type import SomeSubstitutionsType
+from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
 from launch.utilities import normalize_to_list_of_substitutions
 from launch.utilities import perform_substitutions
@@ -159,59 +161,62 @@ class Trace(Action):
         self._base_path = base_path \
             if base_path is None else normalize_to_list_of_substitutions(base_path)
         self._append_trace = append_trace
-        self._trace_directory = None
+        self._trace_directory: Optional[str] = None
         self._events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self._events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
         self._syscalls = [normalize_to_list_of_substitutions(x) for x in syscalls]
-        self._context_fields = \
+        self._context_fields = (
             {
                 domain: [normalize_to_list_of_substitutions(field) for field in fields]
                 for domain, fields in context_fields.items()
-            } \
-            if isinstance(context_fields, dict) \
+            }
+            if isinstance(context_fields, dict)
             else [normalize_to_list_of_substitutions(field) for field in context_fields]
-        self._ld_preload_actions: List[LdPreload] = []
+        )
+        self._ld_preload_actions: List[Action] = []
         self._subbuffer_size_ust = subbuffer_size_ust
         self._subbuffer_size_kernel = subbuffer_size_kernel
 
     @property
-    def session_name(self):
+    def session_name(self) -> List[Substitution]:
         return self._session_name
 
     @property
-    def base_path(self):
+    def base_path(self) -> Optional[List[Substitution]]:
         return self._base_path
 
     @property
-    def append_trace(self):
+    def append_trace(self) -> bool:
         return self._append_trace
 
     @property
-    def trace_directory(self):
+    def trace_directory(self) -> Optional[str]:
         return self._trace_directory
 
     @property
-    def events_ust(self):
+    def events_ust(self) -> Iterable[List[Substitution]]:
         return self._events_ust
 
     @property
-    def events_kernel(self):
+    def events_kernel(self) -> Iterable[List[Substitution]]:
         return self._events_kernel
 
     @property
-    def syscalls(self):
+    def syscalls(self) -> Iterable[List[Substitution]]:
         return self._syscalls
 
     @property
-    def context_fields(self):
+    def context_fields(
+        self,
+    ) -> Union[Mapping[str, Iterable[List[Substitution]]], Iterable[List[Substitution]]]:
         return self._context_fields
 
     @property
-    def subbuffer_size_ust(self):
+    def subbuffer_size_ust(self) -> int:
         return self._subbuffer_size_ust
 
     @property
-    def subbuffer_size_kernel(self):
+    def subbuffer_size_kernel(self) -> int:
         return self._subbuffer_size_kernel
 
     @classmethod
@@ -459,7 +464,7 @@ class Trace(Action):
         self._logger.debug(f'Finalizing tracing session: {self._session_name}')
         lttng.lttng_fini(session_name=self._session_name)
 
-    def __repr__(self):
+    def __repr__(self) -> Text:
         return (
             'Trace('
             f'session_name={self._session_name}, '
