@@ -90,7 +90,7 @@ if(NOT LTTNGPY_DISABLED)
   )
 endif()
 
-pybind11_add_module(_lttngpy_pybind11 SHARED ${SOURCES})
+pybind11_add_module(_lttngpy_pybind11 ${SOURCES})
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE AND NOT BSD)
   target_link_libraries(_lttngpy_pybind11 PRIVATE atomic)
