@@ -13,7 +13,8 @@ It also provides [tools to configure tracing](#tracing) through [a launch action
 `ros2_tracing` currently only supports the [LTTng](https://lttng.org/) tracer.
 Consequently, it currently only supports Linux.
 
-**Note**: make sure to use the right branch, depending on the ROS 2 distro: [use `rolling` for Rolling, `galactic` for Galactic, etc.](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Developer-Guide.html#branches)
+> [!NOTE]
+> Make sure to use the right branch, depending on the ROS 2 distro: [use `rolling` for Rolling, `galactic` for Galactic, etc.](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Developer-Guide.html#branches)
 
 ## Publications & presentations
 
@@ -126,11 +127,12 @@ By default, trace data will not be generated, and thus these packages will have 
 LTTng has to be configured for tracing.
 The packages in this repo provide two options: a [command](#trace-command) and a [launch file action](#launch-file-trace-action).
 
-**Note**: tracing must be started before the application is launched.
-Metadata is recorded during the initialization phase of the application.
-This metadata is needed to understand the rest of the trace data, so if tracing is started after the application started executing, then the trace data might be unusable.
-For more information, refer to the [design document](./doc/design_ros_2.md#general-guidelines).
-The [launch file action](#launch-file-trace-action) is designed to automatically start tracing before the application launches.
+> [!NOTE]
+> Tracing must be started before the application is launched.
+> Metadata is recorded during the initialization phase of the application.
+> This metadata is needed to understand the rest of the trace data, so if tracing is started after the application started executing, then the trace data might be unusable.
+> For more information, refer to the [design document](./doc/design_ros_2.md#general-guidelines).
+> The [launch file action](#launch-file-trace-action) is designed to automatically start tracing before the application launches.
 
 The tracing directory can be configured using command/launch action parameters, or through environment variables with the following logic:
 
