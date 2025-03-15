@@ -9,6 +9,7 @@ Tracing tools for ROS 2.
 
 `ros2_tracing` provides [tracing instrumentation](#tracetools) for the core ROS 2 packages.
 It also provides [tools to configure tracing](#tracing) through [a launch action](#launch-file-trace-action) and a [`ros2` CLI command](#trace-command).
+For more information about tracing, see the [*What is tracing?*](#what-is-tracing) section.
 
 `ros2_tracing` currently only supports the [LTTng](https://lttng.org/) tracer.
 Consequently, it currently only supports Linux.
@@ -120,6 +121,21 @@ $ colcon build --packages-select tracetools --cmake-clean-cache --cmake-args -DT
 This will keep the instrumentation but remove all tracepoints.
 This also means that LTTng is not required at build-time or at runtime.
 This option can be useful, since tracepoints can be added back in or removed by simply replacing/re-building the shared library provided by the [`tracetools` package](#tracetools).
+
+## What is tracing?
+
+Software *tracing* is a method of collecting low-level runtime data to understand a system's execution.
+This is achieved by *instrumenting* the code using *tracepoints*, for example in ROS 2, the Linux kernel, or any other application.
+When a tracepoint is executed, it generates information that is collected by a *tracer* into a *trace*.
+Tracers are usually low-overhead to avoid affecting the execution.
+Traces can then be analyzed to help understand the execution, fix bugs, improve performance, etc.
+While *logs* are typically high-level enough for a user to read and understand, trace data is low-level & high-rate and therefore usually needs to be processed to be useful.
+
+For more information, see the following introductions on tracing:
+
+* [LTTng tracer documentation](https://lttng.org/docs/v2.13/#doc-what-is-tracing)
+* [Tracing tutorial](https://github.com/tuxology/tracevizlab/tree/master/labs/001-what-is-tracing#what-is-tracing)
+* [Eclipse Trace Compass (trace analysis tool) documentation](https://archive.eclipse.org/tracecompass/doc/stable/org.eclipse.tracecompass.doc.user/Overview.html#About_Tracing)
 
 ## Tracing
 
