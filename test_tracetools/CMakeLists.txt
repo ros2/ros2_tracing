@@ -197,7 +197,7 @@ if(BUILD_TESTING)
 
   # Only run tracing tests if instrumentation and tracepoints are included
   if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
-    find_package(ament_cmake_pytest REQUIRED)
+    find_package(ament_cmake_ros REQUIRED)
     find_package(rmw_implementation_cmake REQUIRED)
 
     # Tests to run with the default rmw implementation, which should not matter
@@ -212,7 +212,7 @@ if(BUILD_TESTING)
     )
     foreach(_test_path ${_test_tracetools_pytest_tests})
       get_filename_component(_test_name ${_test_path} NAME_WE)
-      ament_add_pytest_test(${_test_name} ${_test_path}
+      ament_add_ros_isolated_pytest_test(${_test_name} ${_test_path}
         APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
         TIMEOUT 60
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -241,7 +241,7 @@ if(BUILD_TESTING)
       get_filename_component(_test_name ${_test_path} NAME_WE)
       foreach(rmw_implementation ${_test_tracetools_rmw_implementations})
         if(rmw_implementation IN_LIST rmw_implementations)
-          ament_add_pytest_test(${_test_name}__${rmw_implementation} ${_test_path}
+          ament_add_ros_isolated_pytest_test(${_test_name}__${rmw_implementation} ${_test_path}
             ENV RMW_IMPLEMENTATION=${rmw_implementation}
             APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
             TIMEOUT 60
