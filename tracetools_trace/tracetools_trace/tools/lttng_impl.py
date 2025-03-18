@@ -15,13 +15,16 @@
 
 """Implementation of the interface for tracing with LTTng."""
 
+import itertools
 import os
+from pathlib import Path
 import shlex
 import subprocess
 from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Set
+from typing import Tuple
 from typing import Union
 
 from lttngpy import impl as lttngpy
@@ -53,6 +56,50 @@ def is_kernel_tracer_available() -> bool:
     :return: `True` if available or `False` if not
     """
     return not isinstance(lttngpy.get_tracepoints(domain_type=lttngpy.LTTNG_DOMAIN_KERNEL), int)
+
+
+def is_kernel_paranoid_perf_event(context_fields: Set[str]) -> Tuple[bool, Optional[str]]:
+    """
+    Check if the kernel is paranoid about perf events, if any.
+
+    The current kernel may not allow perf events (exposed by LTTng as context fields) to be used
+    depending on the perf_event_paranoid value (/proc/sys/kernel/perf_event_paranoid), see:
+    https://www.kernel.org/doc/Documentation/sysctl/kernel.txt. In that case, the resulting trace
+    will be unexpectedly empty.
+
+    Note: the CAP_SYS_ADMIN capability may still allow perf events to be used even if the kernel is
+    paranoid. However, we are not checking for that here.
+
+    :param: context_fields: the names of requested context fields
+    :return: a (is_paranoid, message) tuple, where:
+        is_paranoid: `True` if kernel is paranoid about given context fields, otherwise `False`
+        message: a message explaining the paranoia (only applicable if `is_paranoid` is `True`)
+    """
+    # For now, just check for 'perf:thread:*' perf events
+    has_perf_thread_context_fields = any(
+        # Wildcards (*) are not supported for context fields
+        context_field.startswith('perf:thread:')
+        for context_field in context_fields
+    )
+    if not has_perf_thread_context_fields:
+        return False, None
+    path_perf_event_paranoid = Path('/proc/sys/kernel/perf_event_paranoid')
+    # If it's not a file or if the file doesn't exist, assume it's OK
+    if not path_perf_event_paranoid.is_file():
+        return False, None
+    paranoid_value_str = path_perf_event_paranoid.read_text().strip()
+    if not paranoid_value_str.isdigit():
+        return False, None
+    paranoid_value = int(paranoid_value_str)
+    # Events such as 'perf:thread:task-clock' are part of "kernel profiling," see:
+    # https://man7.org/linux/man-pages/man2/perf_event_open.2.html
+    # That corresponds to a paranoid value of >=2
+    return (
+        paranoid_value >= 2,
+        'kernel likely too paranoid for desired context fields: resulting trace may be '
+        f'unexpectedly empty\ncheck value in {path_perf_event_paranoid} and refer to: '
+        'https://www.kernel.org/doc/Documentation/sysctl/kernel.txt'
+    )
 
 
 def get_lttng_home() -> Optional[str]:
@@ -242,6 +289,13 @@ def setup(
     if not (ust_enabled or kernel_enabled):
         raise RuntimeError('no events enabled')
 
+    # Warn if the kernel is paranoid about perf events enabled through context fields
+    contexts_dict = _normalize_contexts_dict(context_fields)
+    context_fields_values = set(itertools.chain.from_iterable(contexts_dict.values()))
+    is_kernel_paranoid, paranoid_message = is_kernel_paranoid_perf_event(context_fields_values)
+    if is_kernel_paranoid:
+        print(f'warning: {paranoid_message}')
+
     # Create session
     # LTTng will create the parent directories if needed
     _create_session(
@@ -250,7 +304,6 @@ def setup(
     )
 
     # Enable channel, events, and contexts for each domain
-    contexts_dict = _normalize_contexts_dict(context_fields)
     if ust_enabled:
         domain = DOMAIN_TYPE_USERSPACE
         domain_type = lttngpy.LTTNG_DOMAIN_UST
