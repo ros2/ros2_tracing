@@ -70,6 +70,7 @@ class TestTraceAction(unittest.TestCase):
         ls.include_launch_description(ld)
         self.assertEqual(0, ls.run(), 'expected no errors')
         trace_action = ld.describe_sub_entities()[0]
+        assert isinstance(trace_action, Trace), f'expected Trace action, got: {trace_action}'
         return trace_action
 
     def _check_trace_action(
@@ -213,7 +214,7 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(action, tmpdir)
 
         self.assertDictEqual(
-            action.context_fields,
+            action.context_fields,  # type: ignore[arg-type]
             {
                 'kernel': [],
                 'userspace': ['vpid', 'vtid'],
@@ -258,7 +259,7 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(action, tmpdir)
 
         self.assertDictEqual(
-            action.context_fields,
+            action.context_fields,  # type: ignore[arg-type]
             {
                 'kernel': [],
                 'userspace': ['vpid', 'vtid'],
@@ -342,7 +343,8 @@ class TestTraceAction(unittest.TestCase):
         self._check_trace_action(action, tmpdir, session_name=None)
         # Session name should start with the given prefix and end with the timestamp, but don't
         # bother validating the timestamp here
-        self.assertTrue(action.session_name.startswith('my-session-name-'))
+        self.assertTrue(
+            action.session_name.startswith('my-session-name-'))  # type: ignore[attr-defined]
         self.assertNotEqual('my-session-name-', action.session_name)
 
         shutil.rmtree(tmpdir)

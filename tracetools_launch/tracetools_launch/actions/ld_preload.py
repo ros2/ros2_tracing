@@ -83,7 +83,7 @@ class LdPreload(Action):
 
     def execute(self, context: LaunchContext) -> Optional[List[Action]]:
         if self.lib_found():
-            return [self._env_action]
+            return [self._env_action]  # type: ignore[list-item]
         return None
 
     @classmethod
