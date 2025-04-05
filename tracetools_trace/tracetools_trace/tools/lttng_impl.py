@@ -18,6 +18,7 @@
 import os
 import shlex
 import subprocess
+import socket
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -157,7 +158,9 @@ def setup(
     channel_name_kernel: str = 'kchan',
     subbuffer_size_ust: int = 8 * 4096,
     subbuffer_size_kernel: int = 32 * 4096,
+    live_mode: Optional[bool] = False,
     live_timer_interval: Optional[int] = None,
+    live_tracing_url_origin: Optional[str] = None,
 ) -> Optional[str]:
     """
     Set up LTTng session, with events and context.
@@ -190,6 +193,10 @@ def setup(
         the usual page size)
     :param subbuffer_size_kernel: the size of the subbuffers for kernel events (defaults to 32
         times the usual page size, since there can be way more kernel events than UST events)
+    :param live_mode: whether to create a live session
+    :param live_timer_interval: the time interval at which the data should be flushed from the
+        buffer and sent to the LTTng relay. This is in microseconds. Used only if live_mode is `True`.
+    :param live_tracing_url_origin: the URL to which the tracing output will be sent. Used only if live_mode is `True`.
     :return: the full path to the trace directory, or `None` if initialization failed
     """
     # Validate parameters
@@ -199,6 +206,7 @@ def setup(
     # TODO(christophebedard): do we need to join the base_path with session_name for a live session?
     #   We need to return a path, so maybe format it like:
     #   "net://localhost/host/$hostname/$session_name"
+    live_tracing_url = live_tracing_url_origin + '/' + 'host/' + socket.gethostname() + '/' + session_name
     full_path = os.path.join(base_path, session_name)
     if os.path.isdir(full_path) and not append_trace:
         raise RuntimeError(
@@ -247,7 +255,7 @@ def setup(
         raise RuntimeError('no events enabled')
 
     # Create session
-    if live_timer_interval is None:
+    if not live_mode:
         # LTTng will create the parent directories if needed
         _create_session(
             session_name=session_name,
@@ -256,7 +264,7 @@ def setup(
     else:
         _create_session_live(
             session_name=session_name,
-            full_path=full_path,
+            live_tracing_url_origin=live_tracing_url_origin,
             timer_interval=live_timer_interval,
         )
 
@@ -342,6 +350,9 @@ def setup(
             context_fields=contexts_dict.get(domain),
         )
 
+    if live_mode:
+        # TODO(suchetanrs) is there a better way to do this?
+        full_path = live_tracing_url
     return full_path
 
 
@@ -440,7 +451,7 @@ def _create_session(
 def _create_session_live(
     *,
     session_name: str,
-    full_path: str,
+    live_tracing_url_origin: str,
     timer_interval: int,
 ) -> None:
     """
@@ -451,7 +462,7 @@ def _create_session_live(
         # TODO(christophebedard): figure out what to provide here as the URL
         #   This depends on how we expect users to use live tracing
         #   See the documentation for the url param of lttng_create_session_live()
-        url=None,
+        url=live_tracing_url_origin,
         timer_interval=timer_interval,
     )
     if result < 0:

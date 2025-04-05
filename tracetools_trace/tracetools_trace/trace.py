@@ -89,7 +89,9 @@ def init(
     kernel_events: List[str],
     syscalls: List[str],
     context_fields: List[str],
+    live_mode: Optional[bool],
     live_timer_interval: Optional[int],
+    live_tracing_url_origin: Optional[str],
     display_list: bool,
     interactive: bool,
 ) -> bool:
@@ -137,12 +139,19 @@ def init(
         kernel_events=kernel_events,
         syscalls=syscalls,
         context_fields=context_fields,
+        live_mode=live_mode,
         live_timer_interval=live_timer_interval,
+        live_tracing_url_origin=live_tracing_url_origin,
     )
     if trace_directory is None:
         return False
     # Simple sanity check
-    assert trace_directory == full_session_path
+    print(f"Trace directory: {trace_directory}")
+    print(f"Full session path: {full_session_path}")
+    # TODO(suchetanrs): There should be a sanity check for live_mode as well. 
+    # Should there be a _resolve_url_live just like  _resolve_session_path
+    if not live_mode:
+        assert trace_directory == full_session_path
     return True
 
 
@@ -226,7 +235,9 @@ def trace(args: argparse.Namespace) -> int:
             kernel_events=args.events_kernel,
             syscalls=args.syscalls,
             context_fields=args.context_fields,
+            live_mode=args.live_mode,
             live_timer_interval=args.live_timer_interval,
+            live_tracing_url_origin=args.live_tracing_url_origin,
             display_list=args.list,
             interactive=True,
         ):
@@ -256,6 +267,9 @@ def start(args: argparse.Namespace) -> int:
                 kernel_events=args.events_kernel,
                 syscalls=args.syscalls,
                 context_fields=args.context_fields,
+                live_mode=args.live_mode,
+                live_timer_interval=args.live_timer_interval,
+                live_tracing_url_origin=args.live_tracing_url_origin,
                 display_list=args.list,
                 interactive=False,
             )
