@@ -95,8 +95,9 @@ def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
         help='Set the live timer interval (default: %(default)s)')
     parser.add_argument(
         '--live-tracing-url-origin', dest='live_tracing_url_origin', type=str,
-        default="net://localhost",
+        default='net://localhost',
         help='Set the live tracing URL origin (default: %(default)s)')
+
 
 def _add_arguments_default_session_name(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(

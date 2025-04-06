@@ -146,10 +146,10 @@ def init(
     if trace_directory is None:
         return False
     # Simple sanity check
-    print(f"Trace directory: {trace_directory}")
-    print(f"Full session path: {full_session_path}")
-    # TODO(suchetanrs): There should be a sanity check for live_mode as well. 
-    # Should there be a _resolve_url_live just like  _resolve_session_path
+    print(f'Trace directory: {trace_directory}')
+    print(f'Full session path: {full_session_path}')
+    # TODO(suchetanrs): There should be a sanity check for live_mode as well.
+    # Should there be a _resolve_url_live just like  _resolve_session_path?
     if not live_mode:
         assert trace_directory == full_session_path
     return True

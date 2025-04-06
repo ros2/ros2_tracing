@@ -17,8 +17,8 @@
 
 import os
 import shlex
-import subprocess
 import socket
+import subprocess
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -195,18 +195,25 @@ def setup(
         times the usual page size, since there can be way more kernel events than UST events)
     :param live_mode: whether to create a live session
     :param live_timer_interval: the time interval at which the data should be flushed from the
-        buffer and sent to the LTTng relay. This is in microseconds. Used only if live_mode is `True`.
-    :param live_tracing_url_origin: the URL to which the tracing output will be sent. Used only if live_mode is `True`.
+        buffer and sent to the LTTng relay. This is in microseconds.
+        Used only if live_mode is `True`.
+    :param live_tracing_url_origin: the URL to which the tracing output will be sent.
+        Used only if live_mode is `True`.
     :return: the full path to the trace directory, or `None` if initialization failed
     """
     # Validate parameters
     if not session_name:
         raise RuntimeError('empty session name')
     # Resolve full tracing directory path
-    # TODO(christophebedard): do we need to join the base_path with session_name for a live session?
+    # TODO(christophebedard): do we need to join the
+    #   base_path with session_name for a live session?
     #   We need to return a path, so maybe format it like:
     #   "net://localhost/host/$hostname/$session_name"
-    live_tracing_url = live_tracing_url_origin + '/' + 'host/' + socket.gethostname() + '/' + session_name
+    live_tracing_url = (
+        live_tracing_url_origin + '/' +
+        'host/' + socket.gethostname() + '/' +
+        session_name
+    )
     full_path = os.path.join(base_path, session_name)
     if os.path.isdir(full_path) and not append_trace:
         raise RuntimeError(

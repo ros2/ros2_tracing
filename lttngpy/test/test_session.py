@@ -64,7 +64,12 @@ class TestSession(unittest.TestCase):
         tmpdir = self.create_test_tmpdir(session_name)
 
         self.assertSetEqual(set(), lttngpy.get_session_names())
-        self.assertEqual(0, lttngpy.lttng_create_session_live(session_name=session_name, url=None, timer_interval=1000000))
+        result = lttngpy.lttng_create_session_live(
+            session_name=session_name,
+            url=None,
+            timer_interval=1000000
+        )
+        self.assertEqual(0, result)
         self.assertSetEqual({session_name}, lttngpy.get_session_names())
         self.assertEqual(
             0,
@@ -86,7 +91,12 @@ class TestSession(unittest.TestCase):
         self.assertEqual(0, lttngpy.lttng_destroy_session(session_name=session_name))
         self.assertSetEqual(set(), lttngpy.get_session_names())
 
-        self.assertEqual(0, lttngpy.lttng_create_session_live(session_name=session_name, url=None, timer_interval=1000000))
+        result = lttngpy.lttng_create_session_live(
+            session_name=session_name,
+            url=None,
+            timer_interval=1000000
+        )
+        self.assertEqual(0, result)
         self.assertEqual(0, lttngpy.destroy_all_sessions())
         self.assertSetEqual(set(), lttngpy.get_session_names())
 
