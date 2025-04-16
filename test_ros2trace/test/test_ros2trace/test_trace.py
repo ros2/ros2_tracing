@@ -16,6 +16,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import time
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -175,13 +176,15 @@ class TestROS2TraceCLI(unittest.TestCase):
     def wait_and_print_command_output(
         self,
         process: subprocess.Popen,
+        *,
+        timeout: Optional[float] = None,
     ) -> int:
         stdout, stderr = process.communicate()
         stdout = stdout.strip(' \r\n\t')
         stderr = stderr.strip(' \r\n\t')
         print('=>stdout:\n' + stdout)
         print('=>stderr:\n' + stderr)
-        return process.wait()
+        return process.wait(timeout)
 
     def run_trace_command_start(
         self,
@@ -189,6 +192,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         *,
         env: Optional[Dict[str, str]] = None,
         wait_for_start: bool = False,
+        timeout: Optional[float] = None,
     ) -> subprocess.Popen:
         process = self.run_command(['ros2', 'trace', *args], env=env)
         # Write <enter> to stdin to start tracing
@@ -199,37 +203,52 @@ class TestROS2TraceCLI(unittest.TestCase):
         if wait_for_start:
             assert process.stdout
             stdout = ''
-            while 'press enter to stop...' not in stdout:
+            time_start = time.time()
+            time_now = time_start
+
+            def timedout(now: float) -> bool:
+                return timeout is not None and now - time_start > timeout
+
+            while 'press enter to stop...' not in stdout and not timedout(time_now):
                 stdout += process.stdout.read(1)
+                time_now = time.time()
+            self.assertFalse(
+                timedout(time_now),
+                f"timed out waiting for 'ros2 trace' to start tracing: {stdout}",
+            )
         return process
 
     def run_trace_command_stop(
         self,
         process: subprocess.Popen,
+        *,
+        timeout: Optional[float] = None,
     ) -> int:
         # Write <enter> to stdin to stop tracing
         assert process.stdin
         process.stdin.write('\n')
         process.stdin.flush()
-        return self.wait_and_print_command_output(process)
+        return self.wait_and_print_command_output(process, timeout=timeout)
 
     def run_trace_command(
         self,
         args: List[str],
         *,
         env: Optional[Dict[str, str]] = None,
+        timeout: Optional[float] = None,
     ) -> int:
-        process = self.run_trace_command_start(args, env=env)
-        return self.run_trace_command_stop(process)
+        process = self.run_trace_command_start(args, env=env, timeout=timeout)
+        return self.run_trace_command_stop(process, timeout=timeout)
 
     def run_trace_subcommand(
         self,
         args: List[str],
         *,
         env: Optional[Dict[str, str]] = None,
+        timeout: Optional[float] = None,
     ) -> int:
         process = self.run_command(['ros2', 'trace', *args], env=env)
-        return self.wait_and_print_command_output(process)
+        return self.wait_and_print_command_output(process, timeout=timeout)
 
     def run_nodes(self) -> None:
         # Set trace test ID env var for spawned processes
@@ -289,6 +308,7 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
             ],
             wait_for_start=True,
+            timeout=10.0,
         )
         self.run_nodes()
         ret = self.run_trace_command_stop(process)
@@ -318,6 +338,7 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--session-name', session_name,
             ],
             wait_for_start=True,
+            timeout=10.0,
         )
         self.assertTracingSessionExist(session_name)
         self.run_nodes()
@@ -348,6 +369,7 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--session-name', session_name,
             ],
             wait_for_start=True,
+            timeout=10.0,
         )
         self.run_nodes()
         ret = self.run_trace_command_stop(process)
