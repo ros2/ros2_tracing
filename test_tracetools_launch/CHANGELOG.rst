@@ -2,6 +2,11 @@
 Changelog for package test_tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix or ignore new mypy issues (`#161 <https://github.com/ros2/ros2_tracing/issues/161>`_)
+* Contributors: Christophe Bedard
+
 8.5.0 (2024-12-20)
 ------------------
 

@@ -2,6 +2,11 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Switch to ament_cmake_ros_core package (`#162 <https://github.com/ros2/ros2_tracing/issues/162>`_)
+* Contributors: Michael Carroll
+
 8.5.0 (2024-12-20)
 ------------------
 * Instrument client/service for end-to-end request/response tracking (`#145 <https://github.com/ros2/ros2_tracing/issues/145>`_)

@@ -2,6 +2,11 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove SHARED from pybind11_add_module (`#154 <https://github.com/ros2/ros2_tracing/issues/154>`_)
+* Contributors: Silvio Traversaro
+
 8.5.0 (2024-12-20)
 ------------------
 

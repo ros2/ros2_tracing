@@ -2,6 +2,13 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Improve Python typing annotations (`#152 <https://github.com/ros2/ros2_tracing/issues/152>`_)
+* Expose types for tracing tools (`#153 <https://github.com/ros2/ros2_tracing/issues/153>`_)
+* Remove unnecessary 'type: ignore' comments in tracetools_trace (`#151 <https://github.com/ros2/ros2_tracing/issues/151>`_)
+* Contributors: Christophe Bedard, Michael Carlstrom
+
 8.5.0 (2024-12-20)
 ------------------
 * Instrument client/service for end-to-end request/response tracking (`#145 <https://github.com/ros2/ros2_tracing/issues/145>`_)
