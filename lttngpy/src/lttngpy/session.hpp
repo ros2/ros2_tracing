@@ -30,6 +30,22 @@ namespace lttngpy
 std::variant<int, std::set<std::string>> get_session_names();
 
 /**
+ * Get the path of a given session, i.e., the trace path.
+ *
+ * \param session_name the session name
+ * \return the session path, else a negative LTTng error code
+ */
+std::variant<int, std::string> get_session_path(const std::string & session_name);
+
+/**
+ * Check if a session is enabled, i.e., currently recording.
+ *
+ * \param session_name the session name
+ * \return `true` if enabled or `false` otherwise, else a negative LTTng error code
+ */
+std::variant<int, bool> is_session_enabled(const std::string & session_name);
+
+/**
  * Destroy all sessions.
  *
  * Tries to destroy all sessions, and reports an error if any session destruction was unsuccessful.

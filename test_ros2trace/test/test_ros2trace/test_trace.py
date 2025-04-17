@@ -186,12 +186,72 @@ class TestROS2TraceCLI(unittest.TestCase):
         print('=>stderr:\n' + stderr)
         return process.wait(timeout)
 
+    def wait_for_tracing_start(
+        self,
+        *,
+        base_directory: str,
+        timeout: float,
+        session_name: Optional[str] = None,
+    ) -> None:
+        def get_matching_session_name() -> Optional[str]:
+            if session_name:
+                return session_name
+            # Find session name based on base directory
+            session_names = lttngpy.get_session_names()
+            self.assertIsInstance(session_names, set, 'failed to get session names')
+            session_paths = {
+                lttngpy.get_session_path(session_name=session_name): session_name
+                for session_name in session_names
+            }
+            matching_session_paths = {
+                session_path: session_name
+                for session_path, session_name in session_paths.items()
+                if isinstance(session_path, str) and session_path.startswith(base_directory)
+            }
+            self.assertLessEqual(
+                len(matching_session_paths),
+                1,
+                f'more than 1 matching session: {matching_session_paths}, {session_paths}',
+            )
+            if not matching_session_paths:
+                return None
+            return list(matching_session_paths.values())[0]
+
+        time_start = time.time()
+        time_now = time_start
+
+        def timedout(now: float) -> bool:
+            return timeout is not None and now - time_start > timeout
+
+        session_name = get_matching_session_name()
+        while not session_name and not timedout(time_now):
+            session_name = get_matching_session_name()
+            time_now = time.time()
+        self.assertFalse(
+            timedout(time_now),
+            f'timed out waiting for matching tracing session to appear: {base_directory}',
+        )
+        # self.assertIsInstance(session_name, str, f'failed to get session name: {base_directory}')
+
+        def tracing_session_enabled() -> bool:
+            enabled = lttngpy.is_session_enabled(session_name=session_name)
+            return isinstance(enabled, bool) and enabled
+
+        time_now = time.time()
+        while not tracing_session_enabled() and not timedout(time_now):
+            time_now = time.time()
+        self.assertFalse(
+            timedout(time_now),
+            f"timed out waiting for 'ros2 trace' to start tracing for session: {session_name}",
+        )
+
     def run_trace_command_start(
         self,
         args: List[str],
         *,
         env: Optional[Dict[str, str]] = None,
         wait_for_start: bool = False,
+        session_name: Optional[str] = None,
         timeout: Optional[float] = None,
     ) -> subprocess.Popen:
         process = self.run_command(['ros2', 'trace', *args], env=env)
@@ -199,23 +259,6 @@ class TestROS2TraceCLI(unittest.TestCase):
         assert process.stdin
         process.stdin.write('\n')
         process.stdin.flush()
-        # If needed, wait until tracing has started by waiting until 'ros2 trace' is ready to stop
-        if wait_for_start:
-            assert process.stdout
-            stdout = ''
-            time_start = time.time()
-            time_now = time_start
-
-            def timedout(now: float) -> bool:
-                return timeout is not None and now - time_start > timeout
-
-            while 'press enter to stop...' not in stdout and not timedout(time_now):
-                stdout += process.stdout.read(1)
-                time_now = time.time()
-            self.assertFalse(
-                timedout(time_now),
-                f"timed out waiting for 'ros2 trace' to start tracing: {stdout}",
-            )
         return process
 
     def run_trace_command_stop(
@@ -307,7 +350,12 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--path', tmpdir,
                 '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
             ],
-            wait_for_start=True,
+            # wait_for_start=True,
+            # timeout=10.0,
+        )
+        self.wait_for_tracing_start(
+            base_directory=tmpdir,
+            session_name=None,
             timeout=10.0,
         )
         self.run_nodes()
@@ -337,10 +385,16 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
                 '--session-name', session_name,
             ],
-            wait_for_start=True,
+            # wait_for_start=True,
+            # session_name=session_name,
+            # timeout=10.0,
+        )
+        self.wait_for_tracing_start(
+            base_directory=tmpdir,
+            session_name=session_name,
             timeout=10.0,
         )
-        self.assertTracingSessionExist(session_name)
+        # self.assertTracingSessionExist(session_name)
         self.run_nodes()
         ret = self.run_trace_command_stop(process)
         self.assertEqual(0, ret)
@@ -368,7 +422,13 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--syscall', 'openat',
                 '--session-name', session_name,
             ],
-            wait_for_start=True,
+            # wait_for_start=True,
+            # session_name=session_name,
+            # timeout=10.0,
+        )
+        self.wait_for_tracing_start(
+            base_directory=tmpdir,
+            session_name=session_name,
             timeout=10.0,
         )
         self.run_nodes()

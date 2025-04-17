@@ -42,6 +42,46 @@ std::variant<int, std::set<std::string>> get_session_names()
   return session_names;
 }
 
+std::variant<int, std::string> get_session_path(const std::string & session_name)
+{
+  struct lttng_session * sessions = nullptr;
+  int ret = lttng_list_sessions(&sessions);
+  if (0 > ret) {
+    std::free(sessions);
+    return ret;
+  }
+
+  const int num_sessions = ret;
+  std::variant<int, std::string> session_path{-LTTNG_ERR_SESS_NOT_FOUND};
+  for (int i = 0; i < num_sessions; i++) {
+    if (session_name == sessions[i].name) {
+      session_path = sessions[i].path;
+    }
+  }
+  std::free(sessions);
+  return session_path;
+}
+
+std::variant<int, bool> is_session_enabled(const std::string & session_name)
+{
+  struct lttng_session * sessions = nullptr;
+  int ret = lttng_list_sessions(&sessions);
+  if (0 > ret) {
+    std::free(sessions);
+    return ret;
+  }
+
+  const int num_sessions = ret;
+  std::variant<int, bool> session_enabled{-LTTNG_ERR_SESS_NOT_FOUND};
+  for (int i = 0; i < num_sessions; i++) {
+    if (session_name == sessions[i].name) {
+      session_enabled = sessions[i].enabled == 1;
+    }
+  }
+  std::free(sessions);
+  return session_enabled;
+}
+
 int destroy_all_sessions()
 {
   const auto & session_names_opt = lttngpy::get_session_names();

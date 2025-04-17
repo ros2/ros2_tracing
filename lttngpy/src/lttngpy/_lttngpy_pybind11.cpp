@@ -96,6 +96,18 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     "get_session_names",
     &lttngpy::get_session_names,
     "Get the currently-existing session names.");
+  m.def(
+    "get_session_path",
+    &lttngpy::get_session_path,
+    "Get the path of a given session.",
+    py::kw_only(),
+    py::arg("session_name"));
+  m.def(
+    "is_session_enabled",
+    &lttngpy::is_session_enabled,
+    "Check if a session is enabled.",
+    py::kw_only(),
+    py::arg("session_name"));
 
   // Domain
   py::enum_<lttng_domain_type>(m, "lttng_domain_type")
