@@ -2,8 +2,8 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.6.0 (2025-04-17)
+------------------
 * Run test_tracetools tests against rmw_zenoh_cpp (`#140 <https://github.com/ros2/ros2_tracing/issues/140>`_)
 * Use ament_add_ros_isolated\_* in test_tracetools (`#159 <https://github.com/ros2/ros2_tracing/issues/159>`_)
 * Contributors: Christophe Bedard

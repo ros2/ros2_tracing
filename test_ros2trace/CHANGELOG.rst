@@ -2,8 +2,8 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.6.0 (2025-04-17)
+------------------
 * Add timeout to test_ros2trace tests that wait on stdout (`#167 <https://github.com/ros2/ros2_tracing/issues/167>`_)
 * Contributors: Christophe Bedard
 

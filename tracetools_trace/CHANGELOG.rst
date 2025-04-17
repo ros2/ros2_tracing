@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.6.0 (2025-04-17)
+------------------
 * Improve Python typing annotations (`#152 <https://github.com/ros2/ros2_tracing/issues/152>`_)
 * Expose types for tracing tools (`#153 <https://github.com/ros2/ros2_tracing/issues/153>`_)
 * Remove unnecessary 'type: ignore' comments in tracetools_trace (`#151 <https://github.com/ros2/ros2_tracing/issues/151>`_)

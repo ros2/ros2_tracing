@@ -2,8 +2,8 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.6.0 (2025-04-17)
+------------------
 * Expose types for tracing tools (`#153 <https://github.com/ros2/ros2_tracing/issues/153>`_)
 * Contributors: Michael Carlstrom
 
