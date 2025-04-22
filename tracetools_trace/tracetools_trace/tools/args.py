@@ -80,21 +80,14 @@ def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '-a', '--append-trace', dest='append_trace', action='store_true',
         help='append to trace if it already exists, otherwise error out (default: %(default)s)')
-    # parser.add_argument(
-    #     '--live', dest='live_timer_interval', type=int, nargs='?',
-    #     # Default value for 'lttng create-session --live':
-    #     # https://lttng.org/man/1/lttng-create/v2.13/#doc-opt--live
-    #     default=1000000,
-    #     help='TODO (default: %(default)s)')
     parser.add_argument(
-        '--live', dest='live_mode', action='store_true',
-        help='Enable live mode (default: %(default)s)')
-    parser.add_argument(
-        '--live-timer-interval', dest='live_timer_interval', type=int,
-        default=100000,
+        '--live', dest='live_timer_interval', type=int, nargs='?',
+        # Default value for 'lttng create-session --live':
+        # https://lttng.org/man/1/lttng-create/v2.13/#doc-opt--live
+        const=100000,
         help='Set the live timer interval (default: %(default)s)')
     parser.add_argument(
-        '--live-tracing-url-origin', dest='live_tracing_url_origin', type=str,
+        '--live-url', dest='live_url', type=str,
         default='net://localhost',
         help='Set the live tracing URL origin (default: %(default)s)')
 
