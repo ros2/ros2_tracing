@@ -246,7 +246,7 @@ def setup(
         raise RuntimeError('no events enabled')
 
     # Create session
-    if not live_timer_interval:
+    if live_timer_interval is None:
         # Resolve full tracing directory path
         full_path = os.path.join(base_path, session_name)
         if os.path.isdir(full_path) and not append_trace:

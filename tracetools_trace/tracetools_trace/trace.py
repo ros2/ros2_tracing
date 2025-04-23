@@ -137,7 +137,7 @@ def init(
         live_timer_interval=live_timer_interval,
     )
 
-    if not live_timer_interval:
+    if live_timer_interval is None:
         base_path, full_session_path = _resolve_session_path(
             session_name=session_name,
             base_path=base_path,
@@ -163,7 +163,7 @@ def init(
     if trace_directory is None:
         return False
     # Simple sanity check
-    if not live_timer_interval:
+    if live_timer_interval is None:
         assert trace_directory == full_session_path
     return True
 
