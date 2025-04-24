@@ -2,6 +2,9 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.7.0 (2025-04-24)
+------------------
+
 8.6.0 (2025-04-17)
 ------------------
 * Fix or ignore new mypy issues (`#161 <https://github.com/ros2/ros2_tracing/issues/161>`_)

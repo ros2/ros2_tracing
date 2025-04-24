@@ -2,6 +2,9 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.7.0 (2025-04-24)
+------------------
+
 8.6.0 (2025-04-17)
 ------------------
 * Run test_tracetools tests against rmw_zenoh_cpp (`#140 <https://github.com/ros2/ros2_tracing/issues/140>`_)

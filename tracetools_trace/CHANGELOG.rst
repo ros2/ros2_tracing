@@ -2,6 +2,9 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.7.0 (2025-04-24)
+------------------
+
 8.6.0 (2025-04-17)
 ------------------
 * Improve Python typing annotations (`#152 <https://github.com/ros2/ros2_tracing/issues/152>`_)
