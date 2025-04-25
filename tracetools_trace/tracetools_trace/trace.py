@@ -67,7 +67,7 @@ def _display_info(
         print('syscalls tracing disabled')
     if len(context_fields) > 0:
         field_str = 'fields' if len(context_fields) > 1 else 'field'
-        print(f'context tracing enabled ({len(context_fields)} {field_str})')
+        print(f'context ({len(context_fields)} {field_str})')
         if display_list:
             print_names_list(context_fields)
 
