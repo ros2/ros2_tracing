@@ -45,25 +45,29 @@ def _display_info(
     display_list: bool,
 ) -> None:
     if ros_events:
-        print(f'userspace tracing enabled ({len(ros_events)} events)')
+        event_str = 'events' if len(ros_events) > 1 else 'event'
+        print(f'userspace tracing enabled ({len(ros_events)} {event_str})')
         if display_list:
             print_names_list(ros_events)
     else:
         print('userspace tracing disabled')
     if kernel_events:
-        print(f'kernel tracing enabled ({len(kernel_events)} events)')
+        event_str = 'events' if len(kernel_events) > 1 else 'event'
+        print(f'kernel tracing enabled ({len(kernel_events)} {event_str})')
         if display_list:
             print_names_list(kernel_events)
     else:
         print('kernel tracing disabled')
     if syscalls:
-        print(f'syscall tracing enabled ({len(syscalls)} syscalls)')
+        syscall_str = 'syscalls' if len(syscalls) > 1 else 'syscall'
+        print(f'syscall tracing enabled ({len(syscalls)} {syscall_str})')
         if display_list:
             print_names_list(syscalls)
     else:
         print('syscalls tracing disabled')
     if len(context_fields) > 0:
-        print(f'context ({len(context_fields)} fields)')
+        field_str = 'fields' if len(context_fields) > 1 else 'field'
+        print(f'context ({len(context_fields)} {field_str})')
         if display_list:
             print_names_list(context_fields)
 
