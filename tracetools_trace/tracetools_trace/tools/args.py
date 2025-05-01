@@ -85,7 +85,8 @@ def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
         # Default value for 'lttng create-session --live':
         # https://lttng.org/man/1/lttng-create/v2.13/#doc-opt--live
         const=100000,
-        help='Set the live timer interval (default: %(default)s)')
+        help='Create a live tracing session. Optionally set the live timer interval '
+             '(default: %(default)s)')
     parser.add_argument(
         '--live-url', dest='live_url', type=str,
         default='net://localhost',
