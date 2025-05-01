@@ -85,13 +85,12 @@ def _resolve_session_path(
 
 def _resolve_session_live_url(
     *,
+    live_url: Optional[str],
     session_name: str,
 ) -> str:
-    live_tracing_url = (
-        'net://localhost/host/' + socket.gethostname() + '/' +
-        session_name
-    )
-    print(f'live trace data will be sent to: {live_tracing_url} on the system running lttng-relayd')
+    full_live_url = f'{live_url}/host/{socket.gethostname()}/{session_name}'
+    print(f'live trace data will be sent to the relay daemon at {full_live_url}')
+    return full_live_url
 
 def init(
     *,
@@ -144,6 +143,7 @@ def init(
         )
     else:
         full_live_url = _resolve_session_live_url(
+            live_url=live_url,
             session_name=session_name,
         )
 
@@ -165,6 +165,8 @@ def init(
     # Simple sanity check
     if live_timer_interval is None:
         assert trace_directory == full_session_path
+    else:
+        assert trace_directory == full_live_url
     return True
 
 
