@@ -193,10 +193,10 @@ def setup(
     :param subbuffer_size_kernel: the size of the subbuffers for kernel events (defaults to 32
         times the usual page size, since there can be way more kernel events than UST events)
     :param live_timer_interval: the time interval at which the data should be flushed from the
-        buffer and sent to the LTTng relay. This is in microseconds.
-        Used only if live_timer_interval is `True`.
-    :param live_url: the URL to which the tracing output will be sent.
-        Used only if live_timer_interval is `True`.
+        buffer and sent to the LTTng relay daemon. This is in microseconds.
+        The created tracing session will be in live mode if this value is not `None`.
+    :param live_url: the URL of the relay daemon to which the tracing output will be sent.
+        Used only if live_timer_interval is not `None`.
     :return: the full path to the trace directory, or `None` if initialization failed
     """
     # Validate parameters
@@ -258,11 +258,7 @@ def setup(
             full_path=full_path,
         )
     else:
-        # TODO(christophebedard): do we need to join the
-        #   base_path with session_name for a live session?
-        #   We need to return a path, so maybe format it like:
-        #   "net://localhost/host/$hostname/$session_name"
-        live_tracing_url =  'net://localhost/host/' + socket.gethostname() + '/' + session_name
+        live_tracing_url = f'{live_url}/host/{socket.gethostname()}/{session_name}'
         full_path = live_tracing_url
         _create_session_live(
             session_name=session_name,
@@ -458,9 +454,6 @@ def _create_session_live(
     """
     result = lttngpy.lttng_create_session_live(
         session_name=session_name,
-        # TODO(christophebedard): figure out what to provide here as the URL
-        #   This depends on how we expect users to use live tracing
-        #   See the documentation for the url param of lttng_create_session_live()
         url=url,
         timer_interval=timer_interval,
     )
