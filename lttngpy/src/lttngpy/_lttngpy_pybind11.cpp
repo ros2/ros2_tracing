@@ -69,7 +69,7 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
   m.def(
     "lttng_create_session_live",
     &lttng_create_session_live,
-    "Create session.",
+    "Create live session.",
     py::kw_only(),
     py::arg("session_name"),
     py::arg("url"),

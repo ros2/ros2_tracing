@@ -18,6 +18,7 @@
 
 import argparse
 import os
+import socket
 import sys
 from typing import Callable
 from typing import List
@@ -43,6 +44,7 @@ def _display_info(
     syscalls: List[str],
     context_fields: List[str],
     display_list: bool,
+    live_timer_interval: int = None,
 ) -> None:
     if ros_events:
         print(f'userspace tracing enabled ({len(ros_events)} events)')
@@ -66,6 +68,8 @@ def _display_info(
         print(f'context ({len(context_fields)} fields)')
         if display_list:
             print_names_list(context_fields)
+    if live_timer_interval:
+        print(f'live timer interval set to: {live_timer_interval}')
 
 
 def _resolve_session_path(
@@ -79,6 +83,14 @@ def _resolve_session_path(
     print(f'writing tracing session to: {full_session_path}')
     return base_path, full_session_path
 
+def _resolve_session_live_url(
+    *,
+    live_url: Optional[str],
+    session_name: str,
+) -> str:
+    full_live_url = f'{live_url}/host/{socket.gethostname()}/{session_name}'
+    print(f'live trace data will be sent to the relay daemon at {full_live_url}')
+    return full_live_url
 
 def init(
     *,
@@ -90,6 +102,7 @@ def init(
     syscalls: List[str],
     context_fields: List[str],
     live_timer_interval: Optional[int],
+    live_url: Optional[str],
     display_list: bool,
     interactive: bool,
 ) -> bool:
@@ -120,12 +133,19 @@ def init(
         syscalls=syscalls,
         context_fields=context_fields,
         display_list=display_list,
+        live_timer_interval=live_timer_interval,
     )
 
-    base_path, full_session_path = _resolve_session_path(
-        session_name=session_name,
-        base_path=base_path,
-    )
+    if live_timer_interval is None:
+        base_path, full_session_path = _resolve_session_path(
+            session_name=session_name,
+            base_path=base_path,
+        )
+    else:
+        full_live_url = _resolve_session_live_url(
+            live_url=live_url,
+            session_name=session_name,
+        )
 
     if interactive:
         input('press enter to start...')
@@ -138,11 +158,15 @@ def init(
         syscalls=syscalls,
         context_fields=context_fields,
         live_timer_interval=live_timer_interval,
+        live_url=live_url,
     )
     if trace_directory is None:
         return False
     # Simple sanity check
-    assert trace_directory == full_session_path
+    if live_timer_interval is None:
+        assert trace_directory == full_session_path
+    else:
+        assert trace_directory == full_live_url
     return True
 
 
@@ -227,6 +251,7 @@ def trace(args: argparse.Namespace) -> int:
             syscalls=args.syscalls,
             context_fields=args.context_fields,
             live_timer_interval=args.live_timer_interval,
+            live_url=args.live_url,
             display_list=args.list,
             interactive=True,
         ):
@@ -256,6 +281,8 @@ def start(args: argparse.Namespace) -> int:
                 kernel_events=args.events_kernel,
                 syscalls=args.syscalls,
                 context_fields=args.context_fields,
+                live_timer_interval=args.live_timer_interval,
+                live_url=args.live_url,
                 display_list=args.list,
                 interactive=False,
             )

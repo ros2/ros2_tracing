@@ -17,6 +17,7 @@
 
 import os
 import shlex
+import socket
 import subprocess
 from typing import Dict
 from typing import List
@@ -158,6 +159,7 @@ def setup(
     subbuffer_size_ust: int = 8 * 4096,
     subbuffer_size_kernel: int = 32 * 4096,
     live_timer_interval: Optional[int] = None,
+    live_url: Optional[str] = None,
 ) -> Optional[str]:
     """
     Set up LTTng session, with events and context.
@@ -190,19 +192,16 @@ def setup(
         the usual page size)
     :param subbuffer_size_kernel: the size of the subbuffers for kernel events (defaults to 32
         times the usual page size, since there can be way more kernel events than UST events)
+    :param live_timer_interval: the time interval at which the data should be flushed from the
+        buffer and sent to the LTTng relay daemon. This is in microseconds.
+        The created tracing session will be in live mode if this value is not `None`.
+    :param live_url: the URL of the relay daemon to which the tracing output will be sent.
+        Used only if live_timer_interval is not `None`.
     :return: the full path to the trace directory, or `None` if initialization failed
     """
     # Validate parameters
     if not session_name:
         raise RuntimeError('empty session name')
-    # Resolve full tracing directory path
-    # TODO(christophebedard): do we need to join the base_path with session_name for a live session?
-    #   We need to return a path, so maybe format it like:
-    #   "net://localhost/host/$hostname/$session_name"
-    full_path = os.path.join(base_path, session_name)
-    if os.path.isdir(full_path) and not append_trace:
-        raise RuntimeError(
-            f'trace directory already exists, use the append option to append to it: {full_path}')
 
     # If there is no session daemon running, try to spawn one
     if is_session_daemon_not_alive():
@@ -248,15 +247,22 @@ def setup(
 
     # Create session
     if live_timer_interval is None:
+        # Resolve full tracing directory path
+        full_path = os.path.join(base_path, session_name)
+        if os.path.isdir(full_path) and not append_trace:
+            raise RuntimeError(
+                f'trace directory already exists, use the append option to append to it: {full_path}')
         # LTTng will create the parent directories if needed
         _create_session(
             session_name=session_name,
             full_path=full_path,
         )
     else:
+        live_tracing_url = f'{live_url}/host/{socket.gethostname()}/{session_name}'
+        full_path = live_tracing_url
         _create_session_live(
             session_name=session_name,
-            full_path=full_path,
+            url=live_url,
             timer_interval=live_timer_interval,
         )
 
@@ -440,7 +446,7 @@ def _create_session(
 def _create_session_live(
     *,
     session_name: str,
-    full_path: str,
+    url: str,
     timer_interval: int,
 ) -> None:
     """
@@ -448,10 +454,7 @@ def _create_session_live(
     """
     result = lttngpy.lttng_create_session_live(
         session_name=session_name,
-        # TODO(christophebedard): figure out what to provide here as the URL
-        #   This depends on how we expect users to use live tracing
-        #   See the documentation for the url param of lttng_create_session_live()
-        url=None,
+        url=url,
         timer_interval=timer_interval,
     )
     if result < 0:
