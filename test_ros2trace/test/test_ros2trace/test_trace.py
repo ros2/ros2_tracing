@@ -177,9 +177,9 @@ class TestROS2TraceCLI(unittest.TestCase):
         self,
         process: subprocess.Popen,
         *,
-        timeout: Optional[float] = None,
+        timeout: Optional[float] = 10.0,
     ) -> int:
-        stdout, stderr = process.communicate()
+        stdout, stderr = process.communicate(timeout=timeout)
         stdout = stdout.strip(' \r\n\t')
         stderr = stderr.strip(' \r\n\t')
         print('=>stdout:\n' + stdout)
@@ -192,7 +192,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         *,
         env: Optional[Dict[str, str]] = None,
         wait_for_start: bool = False,
-        timeout: Optional[float] = None,
+        timeout: Optional[float] = 10.0,
     ) -> subprocess.Popen:
         process = self.run_command(['ros2', 'trace', *args], env=env)
         # Write <enter> to stdin to start tracing
@@ -221,34 +221,30 @@ class TestROS2TraceCLI(unittest.TestCase):
     def run_trace_command_stop(
         self,
         process: subprocess.Popen,
-        *,
-        timeout: Optional[float] = None,
     ) -> int:
         # Write <enter> to stdin to stop tracing
         assert process.stdin
         process.stdin.write('\n')
         process.stdin.flush()
-        return self.wait_and_print_command_output(process, timeout=timeout)
+        return self.wait_and_print_command_output(process)
 
     def run_trace_command(
         self,
         args: List[str],
         *,
         env: Optional[Dict[str, str]] = None,
-        timeout: Optional[float] = None,
     ) -> int:
-        process = self.run_trace_command_start(args, env=env, timeout=timeout)
-        return self.run_trace_command_stop(process, timeout=timeout)
+        process = self.run_trace_command_start(args, env=env)
+        return self.run_trace_command_stop(process)
 
     def run_trace_subcommand(
         self,
         args: List[str],
         *,
         env: Optional[Dict[str, str]] = None,
-        timeout: Optional[float] = None,
     ) -> int:
         process = self.run_command(['ros2', 'trace', *args], env=env)
-        return self.wait_and_print_command_output(process, timeout=timeout)
+        return self.wait_and_print_command_output(process)
 
     def run_nodes(self) -> None:
         # Set trace test ID env var for spawned processes
@@ -308,7 +304,6 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
             ],
             wait_for_start=True,
-            timeout=10.0,
         )
         self.run_nodes()
         ret = self.run_trace_command_stop(process)
@@ -338,7 +333,6 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--session-name', session_name,
             ],
             wait_for_start=True,
-            timeout=10.0,
         )
         self.assertTracingSessionExist(session_name)
         self.run_nodes()
@@ -369,7 +363,6 @@ class TestROS2TraceCLI(unittest.TestCase):
                 '--session-name', session_name,
             ],
             wait_for_start=True,
-            timeout=10.0,
         )
         self.run_nodes()
         ret = self.run_trace_command_stop(process)
