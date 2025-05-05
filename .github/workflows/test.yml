@@ -47,11 +47,11 @@ jobs:
       ROS2_REPOS_FILE_URL: 'https://raw.githubusercontent.com/ros2/ros2/${{ matrix.distro }}/ros2.repos'
     steps:
     - uses: actions/checkout@v4
-    - uses: ros-tooling/setup-ros@master
+    - uses: ros-tooling/setup-ros@main
       with:
         required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
         use-ros2-testing: true
-    - uses: ros-tooling/action-ros-ci@master
+    - uses: ros-tooling/action-ros-ci@main
       with:
         package-name: >
           lttngpy
