@@ -46,11 +46,11 @@
 
 // *INDENT-OFF*
 #  define _TRACEPOINT_NOARGS(event_name) \
-  (ros_trace_ ## event_name)(void)
+  (ros_trace_ ## event_name)()
 #  define _TRACEPOINT_ARGS(event_name, ...) \
   (ros_trace_ ## event_name)(__VA_ARGS__)
 #  define _DO_TRACEPOINT_NOARGS(event_name) \
-  (ros_trace_do_ ## event_name)(void)
+  (ros_trace_do_ ## event_name)()
 #  define _DO_TRACEPOINT_ARGS(event_name, ...) \
   (ros_trace_do_ ## event_name)(__VA_ARGS__)
 #  define _DECLARE_TRACEPOINT_NOARGS(event_name) \
