@@ -109,7 +109,7 @@
  * This is the preferred method over calling the underlying function directly.
  */
 #  define TRACETOOLS_TRACEPOINT_ENABLED(event_name) \
-  ros_trace_enabled_ ## event_name()
+  _FUNC_TRACEPOINT_ENABLED(event_name)()
 /// Call a tracepoint, without checking if it is enabled.
 /**
  * Combine this with `TRACEPOINT_ENABLED()` to check if a tracepoint is enabled before triggering
