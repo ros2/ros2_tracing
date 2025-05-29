@@ -49,7 +49,7 @@
   (ros_trace_ ## event_name)
 #  define _FUNC_TRACEPOINT_ENABLED(event_name) \
   (ros_trace_enabled_ ## event_name)
-#  define _FUNC_DO_TRACEPOINT(event_name)\
+#  define _FUNC_DO_TRACEPOINT(event_name) \
   (ros_trace_do_ ## event_name)
 #  define _TRACEPOINT_NOARGS(event_name) \
   _FUNC_TRACEPOINT(event_name)()
