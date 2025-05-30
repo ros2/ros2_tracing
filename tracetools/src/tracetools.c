@@ -41,28 +41,28 @@
 #define TRACEPOINT_PARAMS(...) __VA_ARGS__
 
 #define DEFINE_TRACEPOINT(event_name, _TP_PARAMS, _TP_ARGS) \
-  void TRACETOOLS_TRACEPOINT(event_name, _TP_PARAMS) \
+  void _FUNC_TRACEPOINT(event_name)(_TP_PARAMS) \
   { \
     _CONDITIONAL_TP(event_name, _TP_ARGS); \
   } \
-  bool TRACETOOLS_TRACEPOINT_ENABLED(event_name) \
+  bool _FUNC_TRACEPOINT_ENABLED(event_name)(void) \
   { \
     return _CONDITIONAL_TP_ENABLED(event_name); \
   } \
-  void TRACETOOLS_DO_TRACEPOINT(event_name, _TP_PARAMS) \
+  void _FUNC_DO_TRACEPOINT(event_name)(_TP_PARAMS) \
   { \
     _CONDITIONAL_DO_TP(event_name, _TP_ARGS); \
   }
 #define DEFINE_TRACEPOINT_NO_ARGS(event_name) \
-  void TRACETOOLS_TRACEPOINT(event_name) \
+  void _FUNC_TRACEPOINT(event_name)(void) \
   { \
     _CONDITIONAL_TP(event_name); \
   } \
-  bool TRACETOOLS_TRACEPOINT_ENABLED(event_name) \
+  bool _FUNC_TRACEPOINT_ENABLED(event_name)(void) \
   { \
     return _CONDITIONAL_TP_ENABLED(event_name); \
   } \
-  void TRACETOOLS_DO_TRACEPOINT(event_name) \
+  void _FUNC_DO_TRACEPOINT(event_name)(void) \
   { \
     _CONDITIONAL_DO_TP(event_name); \
   }
