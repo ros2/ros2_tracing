@@ -18,7 +18,6 @@
 import fnmatch
 import re
 import shlex
-from typing import Dict
 from typing import Iterable
 from typing import List
 from typing import Mapping
@@ -36,6 +35,7 @@ from launch.frontend import Parser
 from launch.launch_context import LaunchContext
 from launch.some_substitutions_type import SomeSubstitutionsType
 from launch.substitution import Substitution
+from launch.substitutions import IfElseSubstitution
 from launch.substitutions import TextSubstitution
 from launch.utilities import normalize_to_list_of_substitutions
 from launch.utilities import perform_substitutions
@@ -116,7 +116,7 @@ class Trace(Action):
         events_kernel: Iterable[SomeSubstitutionsType] = [],
         syscalls: Iterable[SomeSubstitutionsType] = [],
         context_fields:
-            Union[Iterable[SomeSubstitutionsType], Dict[str, Iterable[SomeSubstitutionsType]]]
+            Union[Iterable[SomeSubstitutionsType], Mapping[str, Iterable[SomeSubstitutionsType]]]
             = names.DEFAULT_CONTEXT,
         subbuffer_size_ust: int = 8 * 4096,
         subbuffer_size_kernel: int = 32 * 4096,
@@ -156,16 +156,25 @@ class Trace(Action):
         """
         super().__init__(**kwargs)
         self._logger = logging.get_logger(__name__)
-        self._append_timestamp = append_timestamp
-        self._session_name = normalize_to_list_of_substitutions(session_name)
-        self._base_path = base_path \
-            if base_path is None else normalize_to_list_of_substitutions(base_path)
+        self._session_name: List[Substitution] = [
+            IfElseSubstitution(
+                str(append_timestamp), Trace.AppendTimestamp(session_name), session_name)
+        ]
+        self._base_path: List[Substitution] = [
+            IfElseSubstitution(
+                str(base_path is not None),
+                normalize_to_list_of_substitutions(base_path or []),
+                Trace.TraceDirectory(),
+            )
+        ]
         self._append_trace = append_trace
         self._trace_directory: Optional[str] = None
         self._events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self._events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
         self._syscalls = [normalize_to_list_of_substitutions(x) for x in syscalls]
-        self._context_fields = (
+        self._context_fields: Union[
+            Mapping[str, List[List[Substitution]]], List[List[Substitution]]
+        ] = (
             {
                 domain: [normalize_to_list_of_substitutions(field) for field in fields]
                 for domain, fields in context_fields.items()
@@ -182,7 +191,7 @@ class Trace(Action):
         return self._session_name
 
     @property
-    def base_path(self) -> Optional[List[Substitution]]:
+    def base_path(self) -> List[Substitution]:
         return self._base_path
 
     @property
@@ -194,21 +203,21 @@ class Trace(Action):
         return self._trace_directory
 
     @property
-    def events_ust(self) -> Iterable[List[Substitution]]:
+    def events_ust(self) -> List[List[Substitution]]:
         return self._events_ust
 
     @property
-    def events_kernel(self) -> Iterable[List[Substitution]]:
+    def events_kernel(self) -> List[List[Substitution]]:
         return self._events_kernel
 
     @property
-    def syscalls(self) -> Iterable[List[Substitution]]:
+    def syscalls(self) -> List[List[Substitution]]:
         return self._syscalls
 
     @property
     def context_fields(
         self,
-    ) -> Union[Mapping[str, Iterable[List[Substitution]]], Iterable[List[Substitution]]]:
+    ) -> Union[Mapping[str, List[List[Substitution]]], List[List[Substitution]]]:
         return self._context_fields
 
     @property
@@ -382,87 +391,87 @@ class Trace(Action):
         """Check if the events list contains at least one dl event."""
         return cls.any_events_match(events, cls.EVENTS_DL)
 
-    def _perform_substitutions(self, context: LaunchContext) -> None:
-        self._session_name = perform_substitutions(context, self._session_name)
-        if self._append_timestamp:
-            self._session_name = path.append_timestamp(self._session_name)
-        self._base_path = perform_substitutions(context, self._base_path) \
-            if self._base_path else path.get_tracing_directory()
-        self._events_ust = [perform_substitutions(context, x) for x in self._events_ust]
-        self._events_kernel = [perform_substitutions(context, x) for x in self._events_kernel]
-        self._syscalls = [perform_substitutions(context, x) for x in self._syscalls]
-        self._context_fields = \
+    def execute(self, context: LaunchContext) -> List[Action]:
+        session_name = perform_substitutions(context, self._session_name)
+        base_path = perform_substitutions(context, self._base_path)
+        events_ust = [perform_substitutions(context, x) for x in self._events_ust]
+        events_kernel = [perform_substitutions(context, x) for x in self._events_kernel]
+        syscalls = [perform_substitutions(context, x) for x in self._syscalls]
+        context_fields = (
             {
                 domain: [perform_substitutions(context, field) for field in fields]
                 for domain, fields in self._context_fields.items()
-            } \
-            if isinstance(self._context_fields, dict) \
+            }
+            if isinstance(self._context_fields, Mapping)
             else [perform_substitutions(context, field) for field in self._context_fields]
+        )
+        self._ld_preload_actions = self._get_ld_preload_actions(events_ust)
 
-        # Add LD_PRELOAD actions if corresponding events are enabled
-        if self.has_libc_wrapper_events(self._events_ust):
-            self._ld_preload_actions.append(LdPreload(self.LIB_LIBC_WRAPPER))
-        if self.has_pthread_wrapper_events(self._events_ust):
-            self._ld_preload_actions.append(LdPreload(self.LIB_PTHREAD_WRAPPER))
-        if self.has_dl_events(self._events_ust):
-            self._ld_preload_actions.append(LdPreload(self.LIB_DL))
-        # Warn if events match both normal AND fast profiling libs
-        has_fast_profiling_events = self.has_profiling_events(self._events_ust, True)
-        has_normal_profiling_events = self.has_profiling_events(self._events_ust, False)
-        # In practice, the first lib in the LD_PRELOAD list will be used, so the fast one here
-        if has_fast_profiling_events:
-            self._ld_preload_actions.append(LdPreload(self.LIB_PROFILE_FAST))
-        if has_normal_profiling_events:
-            self._ld_preload_actions.append(LdPreload(self.LIB_PROFILE_NORMAL))
-        if has_normal_profiling_events and has_fast_profiling_events:
-            self._logger.warning('events match both normal and fast profiling shared libraries')
+        def setup() -> bool:
+            try:
+                self._trace_directory = lttng.lttng_init(
+                    session_name=session_name,
+                    base_path=base_path,
+                    append_trace=self._append_trace,
+                    ros_events=events_ust,
+                    kernel_events=events_kernel,
+                    syscalls=syscalls,
+                    context_fields=context_fields,
+                    subbuffer_size_ust=self._subbuffer_size_ust,
+                    subbuffer_size_kernel=self._subbuffer_size_kernel,
+                )
+                if self._trace_directory is None:
+                    return False
+                self._logger.info(f'Writing tracing session to: {self._trace_directory}')
+                self._logger.debug(f'UST events: {events_ust}')
+                self._logger.debug(f'Kernel events: {events_kernel}')
+                self._logger.debug(f'Syscalls: {syscalls}')
+                self._logger.debug(f'Context fields: {context_fields}')
+                self._logger.debug(f'LD_PRELOAD: {self._ld_preload_actions}')
+                self._logger.debug(f'UST subbuffer size: {self._subbuffer_size_ust}')
+                self._logger.debug(f'Kernel subbuffer size: {self._subbuffer_size_kernel}')
+                return True
+            except RuntimeError as e:
+                self._logger.error(str(e))
+                # Make sure to clean up tracing session
+                lttng.lttng_fini(
+                    session_name=session_name,
+                    ignore_error=True,
+                )
+                return False
 
-    def execute(self, context: LaunchContext) -> Optional[List[Action]]:
-        self._perform_substitutions(context)
+        def destroy(event: Event, context: LaunchContext) -> None:
+            self._logger.debug(f'Finalizing tracing session: {session_name}')
+            lttng.lttng_fini(session_name=session_name)
+
         # TODO make sure this is done as early as possible
-        if not self._setup():
+        if not setup():
             # Fail right away if tracing setup fails
             raise RuntimeError('tracing setup failed, see errors above')
         # TODO make sure this is done as late as possible
-        context.register_event_handler(OnShutdown(on_shutdown=self._destroy))
+        context.register_event_handler(OnShutdown(on_shutdown=destroy))
         return self._ld_preload_actions
 
-    def _setup(self) -> bool:
-        try:
-            self._trace_directory = lttng.lttng_init(
-                session_name=self._session_name,
-                base_path=self._base_path,
-                append_trace=self._append_trace,
-                ros_events=self._events_ust,
-                kernel_events=self._events_kernel,
-                syscalls=self._syscalls,
-                context_fields=self._context_fields,
-                subbuffer_size_ust=self._subbuffer_size_ust,
-                subbuffer_size_kernel=self._subbuffer_size_kernel,
-            )
-            if self._trace_directory is None:
-                return False
-            self._logger.info(f'Writing tracing session to: {self._trace_directory}')
-            self._logger.debug(f'UST events: {self._events_ust}')
-            self._logger.debug(f'Kernel events: {self._events_kernel}')
-            self._logger.debug(f'Syscalls: {self._syscalls}')
-            self._logger.debug(f'Context fields: {self._context_fields}')
-            self._logger.debug(f'LD_PRELOAD: {self._ld_preload_actions}')
-            self._logger.debug(f'UST subbuffer size: {self._subbuffer_size_ust}')
-            self._logger.debug(f'Kernel subbuffer size: {self._subbuffer_size_kernel}')
-            return True
-        except RuntimeError as e:
-            self._logger.error(str(e))
-            # Make sure to clean up tracing session
-            lttng.lttng_fini(
-                session_name=self._session_name,
-                ignore_error=True,
-            )
-            return False
-
-    def _destroy(self, event: Event, context: LaunchContext) -> None:
-        self._logger.debug(f'Finalizing tracing session: {self._session_name}')
-        lttng.lttng_fini(session_name=self._session_name)
+    def _get_ld_preload_actions(self, events_ust: List[str]) -> List[Action]:
+        ld_preload_actions: List[Action] = []
+        # Add LD_PRELOAD actions if corresponding events are enabled
+        if self.has_libc_wrapper_events(events_ust):
+            ld_preload_actions.append(LdPreload(self.LIB_LIBC_WRAPPER))
+        if self.has_pthread_wrapper_events(events_ust):
+            ld_preload_actions.append(LdPreload(self.LIB_PTHREAD_WRAPPER))
+        if self.has_dl_events(events_ust):
+            ld_preload_actions.append(LdPreload(self.LIB_DL))
+        # Warn if events match both normal AND fast profiling libs
+        has_fast_profiling_events = self.has_profiling_events(events_ust, True)
+        has_normal_profiling_events = self.has_profiling_events(events_ust, False)
+        # In practice, the first lib in the LD_PRELOAD list will be used, so the fast one here
+        if has_fast_profiling_events:
+            ld_preload_actions.append(LdPreload(self.LIB_PROFILE_FAST))
+        if has_normal_profiling_events:
+            ld_preload_actions.append(LdPreload(self.LIB_PROFILE_NORMAL))
+        if has_normal_profiling_events and has_fast_profiling_events:
+            self._logger.warning('events match both normal and fast profiling shared libraries')
+        return ld_preload_actions
 
     def __repr__(self) -> Text:
         return (
@@ -479,3 +488,27 @@ class Trace(Action):
             f'subbuffer_size_ust={self._subbuffer_size_ust}, '
             f'subbuffer_size_kernel={self._subbuffer_size_kernel})'
         )
+
+    class AppendTimestamp(Substitution):
+        """Substitution which appends a timestamp."""
+
+        def __init__(self, prefix: SomeSubstitutionsType) -> None:
+            super().__init__()
+            self._prefix = normalize_to_list_of_substitutions(prefix)
+
+        def perform(self, context: LaunchContext) -> Text:
+            return path.append_timestamp(perform_substitutions(context, self._prefix))
+
+        def describe(self) -> Text:
+            return f'AppendTimestamp({self._prefix})'
+
+    class TraceDirectory(Substitution):
+        """Substitution for the trace directory."""
+
+        def perform(self, context: LaunchContext) -> Text:
+            # This depends on the context.environment being os.environ, because
+            # get_tracing_directory() directly uses os.environ
+            return path.get_tracing_directory()
+
+        def describe(self) -> Text:
+            return 'TraceDirectory()'

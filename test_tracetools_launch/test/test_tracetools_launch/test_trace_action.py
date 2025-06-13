@@ -21,15 +21,21 @@ import tempfile
 import textwrap
 from typing import List
 from typing import Optional
+from typing import TextIO
+from typing import Tuple
 import unittest
 
+from launch import Action
+from launch import LaunchContext
 from launch import LaunchDescription
 from launch import LaunchService
 from launch.actions import DeclareLaunchArgument
+from launch.actions import SetEnvironmentVariable
 from launch.frontend import Parser
 from launch.substitutions import EnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import TextSubstitution
+from launch.utilities import perform_substitutions
 from launch_ros.actions import Node
 
 from tracetools_launch.action import Trace
@@ -51,19 +57,23 @@ class TestTraceAction(unittest.TestCase):
         if 'LD_PRELOAD' in os.environ:
             del os.environ['LD_PRELOAD']
 
-    def _assert_launch(self, actions) -> int:
+    def _assert_launch(self, actions: List[Action]) -> Tuple[int, LaunchContext]:
         ld = LaunchDescription(actions)
         ls = LaunchService(debug=True)
         ls.include_launch_description(ld)
-        return ls.run()
+        return ls.run(), ls.context
 
-    def _assert_launch_no_errors(self, actions) -> None:
-        self.assertEqual(0, self._assert_launch(actions), 'expected no errors')
+    def _assert_launch_no_errors(self, actions: List[Action]) -> LaunchContext:
+        ret, context = self._assert_launch(actions)
+        self.assertEqual(0, ret, 'expected no errors')
+        return context
 
-    def _assert_launch_errors(self, actions) -> None:
-        self.assertEqual(1, self._assert_launch(actions), 'expected errors')
+    def _assert_launch_errors(self, actions: List[Action]) -> LaunchContext:
+        ret, context = self._assert_launch(actions)
+        self.assertEqual(1, ret, 'expected errors')
+        return context
 
-    def _assert_launch_frontend_no_errors(self, file) -> Trace:
+    def _assert_launch_frontend_no_errors(self, file: TextIO) -> Tuple[Trace, LaunchContext]:
         root_entity, parser = Parser.load(file)
         ld = parser.parse_description(root_entity)
         ls = LaunchService()
@@ -71,12 +81,13 @@ class TestTraceAction(unittest.TestCase):
         self.assertEqual(0, ls.run(), 'expected no errors')
         trace_action = ld.describe_sub_entities()[0]
         assert isinstance(trace_action, Trace), f'expected Trace action, got: {trace_action}'
-        return trace_action
+        return trace_action, ls.context
 
     def _check_trace_action(
         self,
-        action,
-        tmpdir,
+        action: Trace,
+        context: LaunchContext,
+        tmpdir: Optional[str] = None,
         *,
         session_name: Optional[str] = 'my-session-name',
         append_trace: bool = False,
@@ -85,13 +96,16 @@ class TestTraceAction(unittest.TestCase):
         subbuffer_size_kernel: int = 1048576,
     ) -> None:
         if session_name is not None:
-            self.assertEqual(session_name, action.session_name)
-        self.assertEqual(tmpdir, action.base_path)
-        self.assertTrue(action.trace_directory.startswith(tmpdir))
+            self.assertEqual(session_name, perform_substitutions(context, action.session_name))
+        if tmpdir is not None:
+            self.assertEqual(tmpdir, perform_substitutions(context, action.base_path))
+            assert action.trace_directory
+            self.assertTrue(action.trace_directory.startswith(tmpdir))
+            self.assertTrue(pathlib.Path(tmpdir).exists())
         self.assertEqual(append_trace, action.append_trace)
-        self.assertEqual([], action.events_kernel)
-        self.assertEqual(events_ust, action.events_ust)
-        self.assertTrue(pathlib.Path(tmpdir).exists())
+        self.assertEqual(0, len(action.events_kernel))
+        self.assertEqual(
+            events_ust, [perform_substitutions(context, x) for x in action.events_ust])
         self.assertEqual(subbuffer_size_ust, action.subbuffer_size_ust)
         self.assertEqual(subbuffer_size_kernel, action.subbuffer_size_kernel)
 
@@ -111,8 +125,8 @@ class TestTraceAction(unittest.TestCase):
             subbuffer_size_ust=524288,
             subbuffer_size_kernel=1048576,
         )
-        self._assert_launch_no_errors([action])
-        self._check_trace_action(action, tmpdir)
+        context = self._assert_launch_no_errors([action])
+        self._check_trace_action(action, context, tmpdir)
 
         shutil.rmtree(tmpdir)
 
@@ -139,9 +153,9 @@ class TestTraceAction(unittest.TestCase):
 
         trace_action = None
         with io.StringIO(xml_file) as f:
-            trace_action = self._assert_launch_frontend_no_errors(f)
+            trace_action, context = self._assert_launch_frontend_no_errors(f)
 
-        self._check_trace_action(trace_action, tmpdir, append_trace=True)
+        self._check_trace_action(trace_action, context, tmpdir, append_trace=True)
 
         shutil.rmtree(tmpdir)
 
@@ -166,9 +180,9 @@ class TestTraceAction(unittest.TestCase):
 
         trace_action = None
         with io.StringIO(yaml_file) as f:
-            trace_action = self._assert_launch_frontend_no_errors(f)
+            trace_action, context = self._assert_launch_frontend_no_errors(f)
 
-        self._check_trace_action(trace_action, tmpdir, append_trace=True)
+        self._check_trace_action(trace_action, context, tmpdir, append_trace=True)
 
         shutil.rmtree(tmpdir)
 
@@ -210,11 +224,15 @@ class TestTraceAction(unittest.TestCase):
             subbuffer_size_ust=524288,
             subbuffer_size_kernel=1048576,
         )
-        self._assert_launch_no_errors([action])
-        self._check_trace_action(action, tmpdir)
+        context = self._assert_launch_no_errors([action])
+        self._check_trace_action(action, context, tmpdir)
 
+        assert isinstance(action.context_fields, dict)
         self.assertDictEqual(
-            action.context_fields,  # type: ignore[arg-type]
+            {
+                domain: [perform_substitutions(context, field) for field in fields]
+                for domain, fields in action.context_fields.items()
+            },
             {
                 'kernel': [],
                 'userspace': ['vpid', 'vtid'],
@@ -255,11 +273,15 @@ class TestTraceAction(unittest.TestCase):
             subbuffer_size_ust=524288,
             subbuffer_size_kernel=1048576,
         )
-        self._assert_launch_no_errors([session_name_arg, action])
-        self._check_trace_action(action, tmpdir)
+        context = self._assert_launch_no_errors([session_name_arg, action])
+        self._check_trace_action(action, context, tmpdir)
 
+        assert isinstance(action.context_fields, dict)
         self.assertDictEqual(
-            action.context_fields,  # type: ignore[arg-type]
+            {
+                domain: [perform_substitutions(context, field) for field in fields]
+                for domain, fields in action.context_fields.items()
+            },
             {
                 'kernel': [],
                 'userspace': ['vpid', 'vtid'],
@@ -298,9 +320,10 @@ class TestTraceAction(unittest.TestCase):
             executable='test_pong',
             output='screen',
         )
-        self._assert_launch_no_errors([action, node_ping_action, node_pong_action])
+        context = self._assert_launch_no_errors([action, node_ping_action, node_pong_action])
         self._check_trace_action(
             action,
+            context,
             tmpdir,
             events_ust=[
                 'lttng_ust_cyg_profile_fast:*',
@@ -339,13 +362,45 @@ class TestTraceAction(unittest.TestCase):
             subbuffer_size_ust=524288,
             subbuffer_size_kernel=1048576,
         )
-        self._assert_launch_no_errors([action])
-        self._check_trace_action(action, tmpdir, session_name=None)
-        # Session name should start with the given prefix and end with the timestamp, but don't
-        # bother validating the timestamp here
-        self.assertTrue(
-            action.session_name.startswith('my-session-name-'))  # type: ignore[attr-defined]
-        self.assertNotEqual('my-session-name-', action.session_name)
+        context = self._assert_launch_no_errors([action])
+        self._check_trace_action(action, context, tmpdir, session_name=None)
+        # Session name should start with the given prefix and end with the timestamp
+        session_name = perform_substitutions(context, action.session_name)
+        self.assertTrue(session_name.startswith('my-session-name-'))
+        session_name_timestamp = session_name[len('my-session-name-'):]
+        self.assertNotEqual(0, len(session_name_timestamp))
+        self.assertTrue(all(c.isdigit() for c in session_name_timestamp))
+
+        shutil.rmtree(tmpdir)
+
+    def test_base_path_trace_directory(self) -> None:
+        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_base_path_trace_directory')
+
+        # Let it rely on the ROS_HOME env var for the base path
+        os.environ.pop('ROS_HOME', None)
+        tmpdir_home = os.path.join(tmpdir, 'home')
+        set_ros_home = SetEnvironmentVariable('ROS_HOME', tmpdir_home)
+        action = Trace(
+            session_name='my-session-name',
+            base_path=None,
+            events_kernel=[],
+            syscalls=[],
+            events_ust=[
+                'ros2:*',
+                '*',
+            ],
+            subbuffer_size_ust=524288,
+            subbuffer_size_kernel=1048576,
+        )
+        self.assertIsNone(action.trace_directory)
+        context = self._assert_launch_no_errors([set_ros_home, action])
+        self._check_trace_action(action, context, tmpdir=None, session_name=None)
+        base_path = os.path.join(tmpdir_home, 'tracing')
+        self.assertEqual(base_path, perform_substitutions(context, action.base_path))
+        assert action.trace_directory
+        self.assertTrue(action.trace_directory.startswith(base_path + os.path.sep))
+        self.assertTrue(pathlib.Path(base_path).exists())
+        os.environ.pop('ROS_HOME', None)
 
         shutil.rmtree(tmpdir)
 
@@ -366,8 +421,8 @@ class TestTraceAction(unittest.TestCase):
             subbuffer_size_ust=524288,
             subbuffer_size_kernel=1048576,
         )
-        self._assert_launch_no_errors([action])
-        self._check_trace_action(action, tmpdir, append_trace=False)
+        context = self._assert_launch_no_errors([action])
+        self._check_trace_action(action, context, tmpdir, append_trace=False)
 
         # Generating another trace with the same path should error out
         self._assert_launch_errors([action])
@@ -386,8 +441,8 @@ class TestTraceAction(unittest.TestCase):
             subbuffer_size_ust=524288,
             subbuffer_size_kernel=1048576,
         )
-        self._assert_launch_no_errors([action])
-        self._check_trace_action(action, tmpdir, append_trace=True)
+        context = self._assert_launch_no_errors([action])
+        self._check_trace_action(action, context, tmpdir, append_trace=True)
 
         shutil.rmtree(tmpdir)
 
