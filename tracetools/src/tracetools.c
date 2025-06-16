@@ -14,6 +14,7 @@
 // limitations under the License.
 
 #include "tracetools/tracetools.h"
+#include "stdio.h"
 
 #ifndef TRACETOOLS_DISABLED
 
@@ -488,6 +489,16 @@ DEFINE_TRACEPOINT(
     const void * buffer),
   TRACEPOINT_ARGS(
     buffer))
+
+void __attribute__((constructor)) tracetools_init() {
+  if(getenv("TRACETOOLS_DISABLE")) {
+    fprintf(stderr, "ROS 2 tracing disabled\n");
+    return;
+  }
+  if(!dlopen("libtracetools_provider.so", RTLD_NOW | RTLD_GLOBAL)) {
+    fprintf(stderr, "Failed to load tracepoint provider for ROS 2 tracing, disabling\n");
+  }
+}
 
 #ifdef __clang__
 # pragma clang diagnostic pop
