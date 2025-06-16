@@ -14,6 +14,7 @@
 // limitations under the License.
 
 #include "tracetools/tracetools.h"
+#include "dlfcn.h"
 #include "stdio.h"
 
 #ifndef TRACETOOLS_DISABLED
