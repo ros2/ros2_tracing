@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import pathlib
 from typing import List
 import unittest
 
+from launch.launch_context import LaunchContext
 from tracetools_launch.action import Trace
+from tracetools_trace.tools.path import get_tracing_directory
 
 
 class TestTraceAction(unittest.TestCase):
@@ -175,6 +179,16 @@ class TestTraceAction(unittest.TestCase):
             self.assertTrue(Trace.has_dl_events(events), events)
         for events in events_lists_no_match:
             self.assertFalse(Trace.has_dl_events(events), events)
+
+    def test_trace_directory_substitution(self) -> None:
+        os.environ.pop('ROS_TRACE_DIR', None)
+        os.environ.pop('ROS_HOME', None)
+        home = pathlib.Path.home()
+        self.assertTrue(str(home))
+        # Just test the default case here
+        trace_dir = get_tracing_directory()
+        self.assertNotEqual(0, len(trace_dir))
+        self.assertEqual(trace_dir, Trace.TraceDirectory().perform(LaunchContext()))
 
 
 if __name__ == '__main__':
