@@ -14,8 +14,8 @@
 // limitations under the License.
 
 #include "tracetools/tracetools.h"
-#include "dlfcn.h"
-#include "stdio.h"
+#include <dlfcn.h>
+#include <stdio.h>
 
 #ifndef TRACETOOLS_DISABLED
 
@@ -491,7 +491,8 @@ DEFINE_TRACEPOINT(
   TRACEPOINT_ARGS(
     buffer))
 
-void __attribute__((constructor)) tracetools_init() {
+void __attribute__((constructor)) tracetools_init()
+{
   if(getenv("TRACETOOLS_DISABLE")) {
     fprintf(stderr, "ROS 2 tracing disabled\n");
     return;

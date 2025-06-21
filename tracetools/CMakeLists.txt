@@ -95,7 +95,7 @@ if(NOT TRACETOOLS_DISABLED)
     "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
   )
   target_include_directories(${PROJECT_NAME} PRIVATE
-     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   ) # to find tp_call.h
 else()
   target_include_directories(${PROJECT_NAME} INTERFACE
