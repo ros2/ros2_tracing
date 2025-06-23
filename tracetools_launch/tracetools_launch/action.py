@@ -39,6 +39,8 @@ from launch.substitutions import IfElseSubstitution
 from launch.substitutions import TextSubstitution
 from launch.utilities import normalize_to_list_of_substitutions
 from launch.utilities import perform_substitutions
+from launch.utilities.type_utils import normalize_typed_substitution
+from launch.utilities.type_utils import perform_typed_substitution
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import names
 from tracetools_trace.tools import path
@@ -111,15 +113,15 @@ class Trace(Action):
         session_name: SomeSubstitutionsType,
         append_timestamp: bool = False,
         base_path: Optional[SomeSubstitutionsType] = None,
-        append_trace: bool = False,
+        append_trace: Union[bool, SomeSubstitutionsType] = False,
         events_ust: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_ROS,
         events_kernel: Iterable[SomeSubstitutionsType] = [],
         syscalls: Iterable[SomeSubstitutionsType] = [],
         context_fields:
             Union[Iterable[SomeSubstitutionsType], Mapping[str, Iterable[SomeSubstitutionsType]]]
             = names.DEFAULT_CONTEXT,
-        subbuffer_size_ust: int = 8 * 4096,
-        subbuffer_size_kernel: int = 32 * 4096,
+        subbuffer_size_ust: Union[int, SomeSubstitutionsType] = 8 * 4096,
+        subbuffer_size_kernel: Union[int, SomeSubstitutionsType] = 32 * 4096,
         **kwargs,
     ) -> None:
         """
@@ -167,7 +169,7 @@ class Trace(Action):
                 Trace.TraceDirectory(),
             )
         ]
-        self._append_trace = append_trace
+        self._append_trace = normalize_typed_substitution(append_trace, bool)
         self._trace_directory: Optional[str] = None
         self._events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self._events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
@@ -183,8 +185,8 @@ class Trace(Action):
             else [normalize_to_list_of_substitutions(field) for field in context_fields]
         )
         self._ld_preload_actions: List[Action] = []
-        self._subbuffer_size_ust = subbuffer_size_ust
-        self._subbuffer_size_kernel = subbuffer_size_kernel
+        self._subbuffer_size_ust = normalize_typed_substitution(subbuffer_size_ust, int)
+        self._subbuffer_size_kernel = normalize_typed_substitution(subbuffer_size_kernel, int)
 
     @property
     def session_name(self) -> List[Substitution]:
@@ -195,7 +197,7 @@ class Trace(Action):
         return self._base_path
 
     @property
-    def append_trace(self) -> bool:
+    def append_trace(self) -> Union[bool, List[Substitution]]:  
         return self._append_trace
 
     @property
@@ -221,11 +223,11 @@ class Trace(Action):
         return self._context_fields
 
     @property
-    def subbuffer_size_ust(self) -> int:
+    def subbuffer_size_ust(self) -> Union[int, List[SomeSubstitutionsType]]:
         return self._subbuffer_size_ust
 
     @property
-    def subbuffer_size_kernel(self) -> int:
+    def subbuffer_size_kernel(self) -> Union[int, List[SomeSubstitutionsType]]:
         return self._subbuffer_size_kernel
 
     @classmethod
@@ -394,6 +396,7 @@ class Trace(Action):
     def execute(self, context: LaunchContext) -> List[Action]:
         session_name = perform_substitutions(context, self._session_name)
         base_path = perform_substitutions(context, self._base_path)
+        append_trace = perform_typed_substitution(context, self._append_trace, bool)
         events_ust = [perform_substitutions(context, x) for x in self._events_ust]
         events_kernel = [perform_substitutions(context, x) for x in self._events_kernel]
         syscalls = [perform_substitutions(context, x) for x in self._syscalls]
@@ -405,6 +408,8 @@ class Trace(Action):
             if isinstance(self._context_fields, Mapping)
             else [perform_substitutions(context, field) for field in self._context_fields]
         )
+        subbuffersize_ust = perform_typed_substitution(context, self._subbuffer_size_ust, int)
+        subbuffersize_kernel = perform_typed_substitution(context, self._subbuffer_size_kernel, int)
         self._ld_preload_actions = self._get_ld_preload_actions(events_ust)
 
         def setup() -> bool:
@@ -412,13 +417,13 @@ class Trace(Action):
                 self._trace_directory = lttng.lttng_init(
                     session_name=session_name,
                     base_path=base_path,
-                    append_trace=self._append_trace,
+                    append_trace=append_trace,
                     ros_events=events_ust,
                     kernel_events=events_kernel,
                     syscalls=syscalls,
                     context_fields=context_fields,
-                    subbuffer_size_ust=self._subbuffer_size_ust,
-                    subbuffer_size_kernel=self._subbuffer_size_kernel,
+                    subbuffer_size_ust=subbuffersize_ust,
+                    subbuffer_size_kernel=subbuffersize_kernel,
                 )
                 if self._trace_directory is None:
                     return False
