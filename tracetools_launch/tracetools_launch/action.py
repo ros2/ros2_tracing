@@ -111,7 +111,7 @@ class Trace(Action):
         self,
         *,
         session_name: SomeSubstitutionsType,
-        append_timestamp: bool = False,
+        append_timestamp: Union[bool, SomeSubstitutionsType] = False,
         base_path: Optional[SomeSubstitutionsType] = None,
         append_trace: Union[bool, SomeSubstitutionsType] = False,
         events_ust: Iterable[SomeSubstitutionsType] = names.DEFAULT_EVENTS_ROS,
@@ -160,7 +160,11 @@ class Trace(Action):
         self._logger = logging.get_logger(__name__)
         self._session_name: List[Substitution] = [
             IfElseSubstitution(
-                str(append_timestamp), Trace.AppendTimestamp(session_name), session_name)
+                str(append_timestamp) if isinstance(append_timestamp, bool) 
+                                      else normalize_typed_substitution(append_timestamp, bool),
+                Trace.AppendTimestamp(session_name),
+                session_name
+            )
         ]
         self._base_path: List[Substitution] = [
             IfElseSubstitution(

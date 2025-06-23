@@ -255,6 +255,11 @@ class TestTraceAction(unittest.TestCase):
             default_value='my-session-name',
             description='the session name',
         )
+        append_timestamp_arg = DeclareLaunchArgument(
+            'append-timestamp',
+            default_value='False',
+            description='whether to append a timestamp to the session name',
+        )
         append_trace_arg = DeclareLaunchArgument(
             'append-trace',
             default_value='False',
@@ -272,6 +277,7 @@ class TestTraceAction(unittest.TestCase):
         )
         action = Trace(
             session_name=LaunchConfiguration(session_name_arg.name),
+            append_timestamp=LaunchConfiguration(append_timestamp_arg.name),
             base_path=TextSubstitution(text=tmpdir),
             append_trace=LaunchConfiguration(append_trace_arg.name),
             events_kernel=[],
@@ -292,6 +298,7 @@ class TestTraceAction(unittest.TestCase):
         )
         context = self._assert_launch_no_errors([
             session_name_arg, 
+            append_timestamp_arg,
             append_trace_arg,
             subbuffer_size_ust_arg,
             subbuffer_size_kernel_arg,
