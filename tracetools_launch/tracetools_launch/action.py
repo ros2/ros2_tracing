@@ -127,8 +127,7 @@ class Trace(Action):
         """
         Create a Trace.
 
-        Substitutions are supported for the session name,
-        base path, and the lists of events and context fields.
+        Substitutions are supported for all parameters.
 
         For the lists of events, wildcards can be used, e.g., 'ros2:*' for
         all events from the 'ros2' tracepoint provider or '*' for all events.
