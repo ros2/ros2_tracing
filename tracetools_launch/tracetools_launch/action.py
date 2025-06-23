@@ -159,8 +159,8 @@ class Trace(Action):
         self._logger = logging.get_logger(__name__)
         self._session_name: List[Substitution] = [
             IfElseSubstitution(
-                str(append_timestamp) if isinstance(append_timestamp, bool) 
-                                      else normalize_typed_substitution(append_timestamp, bool),
+                str(append_timestamp) if isinstance(append_timestamp, bool)
+                else normalize_typed_substitution(append_timestamp, bool),
                 Trace.AppendTimestamp(session_name),
                 session_name
             )
@@ -200,7 +200,7 @@ class Trace(Action):
         return self._base_path
 
     @property
-    def append_trace(self) -> Union[bool, List[Substitution]]:  
+    def append_trace(self) -> Union[bool, List[Substitution]]:
         return self._append_trace
 
     @property
@@ -412,7 +412,11 @@ class Trace(Action):
             else [perform_substitutions(context, field) for field in self._context_fields]
         )
         subbuffersize_ust = perform_typed_substitution(context, self._subbuffer_size_ust, int)
-        subbuffersize_kernel = perform_typed_substitution(context, self._subbuffer_size_kernel, int)
+        subbuffersize_kernel = perform_typed_substitution(
+            context,
+            self._subbuffer_size_kernel,
+            int
+        )
         self._ld_preload_actions = self._get_ld_preload_actions(events_ust)
 
         def setup() -> bool:

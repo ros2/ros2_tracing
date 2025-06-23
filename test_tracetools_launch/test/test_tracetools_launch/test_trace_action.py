@@ -103,12 +103,21 @@ class TestTraceAction(unittest.TestCase):
             assert action.trace_directory
             self.assertTrue(action.trace_directory.startswith(tmpdir))
             self.assertTrue(pathlib.Path(tmpdir).exists())
-        self.assertEqual(append_trace, perform_typed_substitution(context, action.append_trace, bool))
+        self.assertEqual(
+            append_trace,
+            perform_typed_substitution(context, action.append_trace, bool)
+        )
         self.assertEqual(0, len(action.events_kernel))
         self.assertEqual(
             events_ust, [perform_substitutions(context, x) for x in action.events_ust])
-        self.assertEqual(subbuffer_size_ust, perform_typed_substitution(context, action.subbuffer_size_ust, int))
-        self.assertEqual(subbuffer_size_kernel, perform_typed_substitution(context, action.subbuffer_size_kernel, int))
+        self.assertEqual(
+            subbuffer_size_ust,
+            perform_typed_substitution(context, action.subbuffer_size_ust, int)
+        )
+        self.assertEqual(
+            subbuffer_size_kernel,
+            perform_typed_substitution(context, action.subbuffer_size_kernel, int)
+        )
 
     def test_action(self) -> None:
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action')
@@ -297,14 +306,14 @@ class TestTraceAction(unittest.TestCase):
             subbuffer_size_kernel=LaunchConfiguration(subbuffer_size_kernel_arg.name)
         )
         context = self._assert_launch_no_errors([
-            session_name_arg, 
+            session_name_arg,
             append_timestamp_arg,
             append_trace_arg,
             subbuffer_size_ust_arg,
             subbuffer_size_kernel_arg,
             action
         ])
-        
+
         self._check_trace_action(action, context, tmpdir)
 
         assert isinstance(action.context_fields, dict)
