@@ -40,8 +40,8 @@ from launch.substitutions import TextSubstitution
 from launch.utilities import normalize_to_list_of_substitutions
 from launch.utilities import perform_substitutions
 from launch.utilities.type_utils import normalize_typed_substitution
-from launch.utilities.type_utils import perform_typed_substitution
 from launch.utilities.type_utils import NormalizedValueType
+from launch.utilities.type_utils import perform_typed_substitution
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import names
 from tracetools_trace.tools import path
