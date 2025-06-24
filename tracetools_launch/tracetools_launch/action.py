@@ -18,6 +18,7 @@
 import fnmatch
 import re
 import shlex
+from typing import cast
 from typing import Iterable
 from typing import List
 from typing import Mapping
@@ -161,7 +162,10 @@ class Trace(Action):
         self._session_name: List[Substitution] = [
             IfElseSubstitution(
                 str(append_timestamp) if isinstance(append_timestamp, bool)
-                else normalize_typed_substitution(append_timestamp, bool),
+                else cast(
+                    List[Substitution],
+                    normalize_typed_substitution(append_timestamp, bool)
+                ),
                 Trace.AppendTimestamp(session_name),
                 session_name
             )
