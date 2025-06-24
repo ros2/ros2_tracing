@@ -41,6 +41,7 @@ from launch.utilities import normalize_to_list_of_substitutions
 from launch.utilities import perform_substitutions
 from launch.utilities.type_utils import normalize_typed_substitution
 from launch.utilities.type_utils import perform_typed_substitution
+from launch.utilities.type_utils import NormalizedValueType
 from tracetools_trace.tools import lttng
 from tracetools_trace.tools import names
 from tracetools_trace.tools import path
@@ -200,7 +201,7 @@ class Trace(Action):
         return self._base_path
 
     @property
-    def append_trace(self) -> Union[bool, List[Substitution]]:
+    def append_trace(self) -> NormalizedValueType:
         return self._append_trace
 
     @property
@@ -226,11 +227,11 @@ class Trace(Action):
         return self._context_fields
 
     @property
-    def subbuffer_size_ust(self) -> Union[int, List[SomeSubstitutionsType]]:
+    def subbuffer_size_ust(self) -> NormalizedValueType:
         return self._subbuffer_size_ust
 
     @property
-    def subbuffer_size_kernel(self) -> Union[int, List[SomeSubstitutionsType]]:
+    def subbuffer_size_kernel(self) -> NormalizedValueType:
         return self._subbuffer_size_kernel
 
     @classmethod
