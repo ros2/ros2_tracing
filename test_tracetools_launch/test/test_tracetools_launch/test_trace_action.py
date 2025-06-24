@@ -36,6 +36,7 @@ from launch.substitutions import EnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import TextSubstitution
 from launch.utilities import perform_substitutions
+from launch.utilities.type_utils import perform_typed_substitution
 from launch_ros.actions import Node
 
 from tracetools_launch.action import Trace
@@ -102,12 +103,21 @@ class TestTraceAction(unittest.TestCase):
             assert action.trace_directory
             self.assertTrue(action.trace_directory.startswith(tmpdir))
             self.assertTrue(pathlib.Path(tmpdir).exists())
-        self.assertEqual(append_trace, action.append_trace)
+        self.assertEqual(
+            append_trace,
+            perform_typed_substitution(context, action.append_trace, bool)
+        )
         self.assertEqual(0, len(action.events_kernel))
         self.assertEqual(
             events_ust, [perform_substitutions(context, x) for x in action.events_ust])
-        self.assertEqual(subbuffer_size_ust, action.subbuffer_size_ust)
-        self.assertEqual(subbuffer_size_kernel, action.subbuffer_size_kernel)
+        self.assertEqual(
+            subbuffer_size_ust,
+            perform_typed_substitution(context, action.subbuffer_size_ust, int)
+        )
+        self.assertEqual(
+            subbuffer_size_kernel,
+            perform_typed_substitution(context, action.subbuffer_size_kernel, int)
+        )
 
     def test_action(self) -> None:
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action')
@@ -254,9 +264,31 @@ class TestTraceAction(unittest.TestCase):
             default_value='my-session-name',
             description='the session name',
         )
+        append_timestamp_arg = DeclareLaunchArgument(
+            'append-timestamp',
+            default_value='False',
+            description='whether to append a timestamp to the session name',
+        )
+        append_trace_arg = DeclareLaunchArgument(
+            'append-trace',
+            default_value='False',
+            description='whether to append to an existing trace',
+        )
+        subbuffer_size_ust_arg = DeclareLaunchArgument(
+            'subbuffer-size-ust',
+            default_value='524288',
+            description='the subbuffer size for userspace traces',
+        )
+        subbuffer_size_kernel_arg = DeclareLaunchArgument(
+            'subbuffer-size-kernel',
+            default_value='1048576',
+            description='the subbuffer size for kernel traces',
+        )
         action = Trace(
             session_name=LaunchConfiguration(session_name_arg.name),
+            append_timestamp=LaunchConfiguration(append_timestamp_arg.name),
             base_path=TextSubstitution(text=tmpdir),
+            append_trace=LaunchConfiguration(append_trace_arg.name),
             events_kernel=[],
             syscalls=[],
             events_ust=[
@@ -270,10 +302,18 @@ class TestTraceAction(unittest.TestCase):
                     TextSubstitution(text='vtid'),
                 ],
             },
-            subbuffer_size_ust=524288,
-            subbuffer_size_kernel=1048576,
+            subbuffer_size_ust=LaunchConfiguration(subbuffer_size_ust_arg.name),
+            subbuffer_size_kernel=LaunchConfiguration(subbuffer_size_kernel_arg.name)
         )
-        context = self._assert_launch_no_errors([session_name_arg, action])
+        context = self._assert_launch_no_errors([
+            session_name_arg,
+            append_timestamp_arg,
+            append_trace_arg,
+            subbuffer_size_ust_arg,
+            subbuffer_size_kernel_arg,
+            action
+        ])
+
         self._check_trace_action(action, context, tmpdir)
 
         assert isinstance(action.context_fields, dict)
