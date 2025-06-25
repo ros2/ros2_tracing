@@ -311,7 +311,7 @@ class Trace(Action):
         if append_timestamp is not None:
             kwargs['append_timestamp'] = append_timestamp \
                 if isinstance(append_timestamp, bool) \
-                else parser.parse_substitution(append_timestamp)
+                else parser.parse_substitution(cast(str, append_timestamp))
         base_path = entity.get_attr('base-path', optional=True)
         if base_path:
             kwargs['base_path'] = parser.parse_substitution(base_path)
@@ -319,7 +319,7 @@ class Trace(Action):
         if append_trace is not None:
             kwargs['append_trace'] = append_trace \
                 if isinstance(append_trace, bool) \
-                else parser.parse_substitution(append_trace)
+                else parser.parse_substitution(cast(str, append_trace))
         # Make sure to handle empty strings and replace with empty lists,
         # otherwise an empty string enables all events
         events_ust = entity.get_attr('events-ust', optional=True)
@@ -342,12 +342,12 @@ class Trace(Action):
         if subbuffer_size_ust is not None:
             kwargs['subbuffer_size_ust'] = subbuffer_size_ust \
                 if isinstance(subbuffer_size_ust, int) \
-                else parser.parse_substitution(subbuffer_size_ust)
+                else parser.parse_substitution(cast(str, subbuffer_size_ust))
         subbuffer_size_kernel = entity.get_attr('subbuffer-size-kernel', data_type=int, optional=True)
         if subbuffer_size_kernel is not None:
             kwargs['subbuffer_size_kernel'] = subbuffer_size_kernel \
                 if isinstance(subbuffer_size_kernel, int) \
-                else parser.parse_substitution(subbuffer_size_kernel)
+                else parser.parse_substitution(cast(str, subbuffer_size_kernel))
         return cls, kwargs
 
     @staticmethod
