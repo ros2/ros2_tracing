@@ -304,18 +304,26 @@ class Trace(Action):
         """Parse."""
         _, kwargs = super().parse(entity, parser)
 
-        kwargs['session_name'] = entity.get_attr('session-name')
+        session_name = entity.get_attr('session-name')
+        if session_name is not None:
+            kwargs['session_name'] = parser.parse_substitution(session_name)
         append_timestamp = entity.get_attr(
-            'append-timestamp', data_type=bool, optional=True, can_be_str=False)
+            'append-timestamp', data_type=bool, optional=True, can_be_str=True)
         if append_timestamp is not None:
-            kwargs['append_timestamp'] = append_timestamp
+            kwargs['append_timestamp'] = (
+                append_timestamp if isinstance(append_timestamp, bool)
+                else parser.parse_substitution(append_timestamp)
+            )
         base_path = entity.get_attr('base-path', optional=True)
         if base_path:
             kwargs['base_path'] = parser.parse_substitution(base_path)
         append_trace = entity.get_attr(
-            'append-trace', data_type=bool, optional=True, can_be_str=False)
+            'append-trace', data_type=bool, optional=True, can_be_str=True)
         if append_trace is not None:
-            kwargs['append_trace'] = append_trace
+            kwargs['append_trace'] = (
+                append_trace if isinstance(append_trace, bool)
+                else parser.parse_substitution(append_trace)
+            )
         # Make sure to handle empty strings and replace with empty lists,
         # otherwise an empty string enables all events
         events_ust = entity.get_attr('events-ust', optional=True)
@@ -335,13 +343,19 @@ class Trace(Action):
             kwargs['context_fields'] = cls._parse_cmdline(context_fields, parser) \
                 if context_fields else []
         subbuffer_size_ust = entity.get_attr(
-            'subbuffer-size-ust', data_type=int, optional=True, can_be_str=False)
+            'subbuffer-size-ust', data_type=int, optional=True, can_be_str=True)
         if subbuffer_size_ust is not None:
-            kwargs['subbuffer_size_ust'] = subbuffer_size_ust
+            kwargs['subbuffer_size_ust'] = (
+                subbuffer_size_ust if isinstance(subbuffer_size_ust, int)
+                else parser.parse_substitution(subbuffer_size_ust)
+            )
         subbuffer_size_kernel = entity.get_attr(
-            'subbuffer-size-kernel', data_type=int, optional=True, can_be_str=False)
+            'subbuffer-size-kernel', data_type=int, optional=True, can_be_str=True)
         if subbuffer_size_kernel is not None:
-            kwargs['subbuffer_size_kernel'] = subbuffer_size_kernel
+            kwargs['subbuffer_size_kernel'] = (
+                subbuffer_size_kernel if isinstance(subbuffer_size_kernel, int)
+                else parser.parse_substitution(subbuffer_size_kernel)
+            )
 
         return cls, kwargs
 
