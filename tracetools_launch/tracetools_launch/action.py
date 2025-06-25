@@ -343,7 +343,8 @@ class Trace(Action):
             kwargs['subbuffer_size_ust'] = subbuffer_size_ust \
                 if isinstance(subbuffer_size_ust, int) \
                 else parser.parse_substitution(cast(str, subbuffer_size_ust))
-        subbuffer_size_kernel = entity.get_attr('subbuffer-size-kernel', data_type=int, optional=True)
+        subbuffer_size_kernel = entity.get_attr(
+            'subbuffer-size-kernel', data_type=int, optional=True)
         if subbuffer_size_kernel is not None:
             kwargs['subbuffer_size_kernel'] = subbuffer_size_kernel \
                 if isinstance(subbuffer_size_kernel, int) \
