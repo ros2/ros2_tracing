@@ -345,6 +345,8 @@ class TestTraceAction(unittest.TestCase):
                 <arg name="append-timestamp" default="false" />
                 <arg name="base-path" default="{}" />
                 <arg name="append-trace" default="true" />
+                <arg name="events-ust-1" default="ros2:*" />
+                <arg name="events-ust-2" default="*" />
                 <arg name="subbuffer-size-ust" default="524288" />
                 <arg name="subbuffer-size-kernel" default="1048576" />
                 <trace
@@ -354,7 +356,7 @@ class TestTraceAction(unittest.TestCase):
                     append-trace="$(var append-trace)"
                     events-kernel=""
                     syscalls=""
-                    events-ust="ros2:* *"
+                    events-ust="$(var events-ust-1) $(var events-ust-2)"
                     subbuffer-size-ust="$(var subbuffer-size-ust)"
                     subbuffer-size-kernel="$(var subbuffer-size-kernel)"
                 />
@@ -390,6 +392,12 @@ class TestTraceAction(unittest.TestCase):
                 name: append-trace
                 default: "true"
             - arg:
+                name: events-ust-1
+                default: "ros2:*"
+            - arg:
+                name: events-ust-2
+                default: "*"
+            - arg:
                 name: subbuffer-size-ust
                 default: "524288"
             - arg:
@@ -402,7 +410,7 @@ class TestTraceAction(unittest.TestCase):
                 append-trace: "$(var append-trace)"
                 events-kernel: ""
                 syscalls: ""
-                events-ust: ros2:* *
+                events-ust: "$(var events-ust-1) $(var events-ust-2)"
                 subbuffer-size-ust: "$(var subbuffer-size-ust)"
                 subbuffer-size-kernel: "$(var subbuffer-size-kernel)"
             """.format(tmpdir)
