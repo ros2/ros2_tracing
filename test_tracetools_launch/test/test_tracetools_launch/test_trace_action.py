@@ -84,7 +84,7 @@ class TestTraceAction(unittest.TestCase):
             (action for action in ld.entities if isinstance(action, Trace)),
             None
         )
-        assert trace_action is not None, f'expected Trace action, got: {trace_action}'
+        assert trace_action is not None, 'did not find Trace action'
         return trace_action, ls.context
 
     def _check_trace_action(
@@ -336,7 +336,7 @@ class TestTraceAction(unittest.TestCase):
         del os.environ['TestTraceAction__context_field']
 
     def test_action_substitutions_frontend_xml(self) -> None:
-        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_frontend_xml')
+        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_substitutions_frontend_xml')
 
         xml_file = textwrap.dedent(
             r"""
@@ -371,7 +371,8 @@ class TestTraceAction(unittest.TestCase):
         shutil.rmtree(tmpdir)
 
     def test_action_substitutions_frontend_yaml(self) -> None:
-        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_frontend_yaml')
+        tmpdir = tempfile.mkdtemp(
+            prefix='TestTraceAction__test_action_substitutions_frontend_yaml')
 
         yaml_file = textwrap.dedent(
             r"""
