@@ -80,8 +80,11 @@ class TestTraceAction(unittest.TestCase):
         ls = LaunchService()
         ls.include_launch_description(ld)
         self.assertEqual(0, ls.run(), 'expected no errors')
-        trace_action = ld.describe_sub_entities()[0]
-        assert isinstance(trace_action, Trace), f'expected Trace action, got: {trace_action}'
+        trace_action = next(
+            (action for action in ld.entities if isinstance(action, Trace)),
+            None
+        )
+        assert trace_action is not None, 'did not find Trace action'
         return trace_action, ls.context
 
     def _check_trace_action(
@@ -331,6 +334,95 @@ class TestTraceAction(unittest.TestCase):
         shutil.rmtree(tmpdir)
         del os.environ['TestTraceAction__event_ust']
         del os.environ['TestTraceAction__context_field']
+
+    def test_action_substitutions_frontend_xml(self) -> None:
+        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_substitutions_frontend_xml')
+
+        xml_file = textwrap.dedent(
+            r"""
+            <launch>
+                <arg name="session-name" default="my-session-name" />
+                <arg name="append-timestamp" default="false" />
+                <arg name="base-path" default="{}" />
+                <arg name="append-trace" default="true" />
+                <arg name="events-ust-1" default="ros2:*" />
+                <arg name="events-ust-2" default="*" />
+                <arg name="subbuffer-size-ust" default="524288" />
+                <arg name="subbuffer-size-kernel" default="1048576" />
+                <trace
+                    session-name="$(var session-name)"
+                    append-timestamp="$(var append-timestamp)"
+                    base-path="$(var base-path)"
+                    append-trace="$(var append-trace)"
+                    events-kernel=""
+                    syscalls=""
+                    events-ust="$(var events-ust-1) $(var events-ust-2)"
+                    subbuffer-size-ust="$(var subbuffer-size-ust)"
+                    subbuffer-size-kernel="$(var subbuffer-size-kernel)"
+                />
+            </launch>
+            """.format(tmpdir)
+        )
+
+        trace_action = None
+        with io.StringIO(xml_file) as f:
+            trace_action, context = self._assert_launch_frontend_no_errors(f)
+
+        self._check_trace_action(trace_action, context, tmpdir, append_trace=True)
+
+        shutil.rmtree(tmpdir)
+
+    def test_action_substitutions_frontend_yaml(self) -> None:
+        tmpdir = tempfile.mkdtemp(
+            prefix='TestTraceAction__test_action_substitutions_frontend_yaml')
+
+        yaml_file = textwrap.dedent(
+            r"""
+            launch:
+            - arg:
+                name: session-name
+                default: my-session-name
+            - arg:
+                name: append-timestamp
+                default: "false"
+            - arg:
+                name: base-path
+                default: "{}"
+            - arg:
+                name: append-trace
+                default: "true"
+            - arg:
+                name: events-ust-1
+                default: "ros2:*"
+            - arg:
+                name: events-ust-2
+                default: "*"
+            - arg:
+                name: subbuffer-size-ust
+                default: "524288"
+            - arg:
+                name: subbuffer-size-kernel
+                default: "1048576"
+            - trace:
+                session-name: "$(var session-name)"
+                append-timestamp: "$(var append-timestamp)"
+                base-path: "$(var base-path)"
+                append-trace: "$(var append-trace)"
+                events-kernel: ""
+                syscalls: ""
+                events-ust: "$(var events-ust-1) $(var events-ust-2)"
+                subbuffer-size-ust: "$(var subbuffer-size-ust)"
+                subbuffer-size-kernel: "$(var subbuffer-size-kernel)"
+            """.format(tmpdir)
+        )
+
+        trace_action = None
+        with io.StringIO(yaml_file) as f:
+            trace_action, context = self._assert_launch_frontend_no_errors(f)
+
+        self._check_trace_action(trace_action, context, tmpdir, append_trace=True)
+
+        shutil.rmtree(tmpdir)
 
     def test_action_ld_preload(self) -> None:
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_ld_preload')
