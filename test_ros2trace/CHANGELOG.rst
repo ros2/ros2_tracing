@@ -2,6 +2,11 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use timeout for everything in test_ros2trace tests (`#174 <https://github.com/ros2/ros2_tracing/issues/174>`_)
+* Contributors: Christophe Bedard
+
 8.7.0 (2025-04-24)
 ------------------
 

@@ -2,6 +2,13 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix Clang warnings by using proper function prototypes in macros (`#179 <https://github.com/ros2/ros2_tracing/issues/179>`_)
+* Update CMakeLists.txt (`#176 <https://github.com/ros2/ros2_tracing/issues/176>`_)
+* Removed clang warning (`#168 <https://github.com/ros2/ros2_tracing/issues/168>`_)
+* Contributors: Alejandro Hernández Cordero, Shravan Deva, mosfet80
+
 8.7.0 (2025-04-24)
 ------------------
 
