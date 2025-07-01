@@ -2,8 +2,8 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.8.0 (2025-07-01)
+------------------
 * Address typing issues reported by mypy in tracetools_launch (`#184 <https://github.com/ros2/ros2_tracing/issues/184>`_)
 * Warn if kernel might be paranoid about 'perf:thread:' context fields (`#173 <https://github.com/ros2/ros2_tracing/issues/173>`_)
 * Fix pluralization in ros2 trace output (`#169 <https://github.com/ros2/ros2_tracing/issues/169>`_)

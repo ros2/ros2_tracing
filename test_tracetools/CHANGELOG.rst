@@ -2,8 +2,8 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.8.0 (2025-07-01)
+------------------
 * Update CMakeLists.txt (`#176 <https://github.com/ros2/ros2_tracing/issues/176>`_)
 * Contributors: mosfet80
 

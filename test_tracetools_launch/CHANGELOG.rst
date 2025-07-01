@@ -2,8 +2,8 @@
 Changelog for package test_tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.8.0 (2025-07-01)
+------------------
 * Make trace action parameters substitutable for xml and yaml launch files (`#188 <https://github.com/ros2/ros2_tracing/issues/188>`_)
 * Make trace action parameters substitutable (`#187 <https://github.com/ros2/ros2_tracing/issues/187>`_)
 * Address typing issues reported by mypy in tracetools_launch (`#184 <https://github.com/ros2/ros2_tracing/issues/184>`_)
