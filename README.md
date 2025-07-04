@@ -100,6 +100,16 @@ $ sudo apt-get install lttng-modules-dkms
 
 For more information about LTTng, [refer to its documentation](https://lttng.org/docs/v2.13/).
 
+### Disabling the instrumentation
+
+To disable all instrumentation in runtime, set the `TRACETOOLS_RUNTIME_DISABLE` envvar:
+
+```
+$ export TRACETOOLS_RUNTIME_DISABLE=1
+$ ros2 run tracetools status
+Tracing disabled
+```
+
 ### Removing the instrumentation
 
 To build and remove all instrumentation, use `TRACETOOLS_DISABLED`:

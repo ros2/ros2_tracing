@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections.abc import Mapping
+
 import os
 import shutil
 import subprocess
@@ -109,6 +111,13 @@ class TestROS2TraceCLI(unittest.TestCase):
 
     def assertTraceNotExist(self, trace_dir: str) -> None:
         self.assertFalse(os.path.isdir(trace_dir), f'trace directory exists: {trace_dir}')
+
+    def assertTraceIsEmpty(self, trace_dir: str) -> None:
+        self.assertTraceExist(trace_dir)
+        from tracetools_read.trace import get_trace_events
+        events_all = get_trace_events(trace_dir)
+        events = get_corresponding_trace_test_events(events_all, self.trace_test_id)
+        self.assertEqual(len(events), 0, f'events found: {events_all}')
 
     def assertTraceContains(
         self,
@@ -246,23 +255,25 @@ class TestROS2TraceCLI(unittest.TestCase):
         process = self.run_command(['ros2', 'trace', *args], env=env)
         return self.wait_and_print_command_output(process)
 
-    def run_nodes(self) -> None:
+    def run_nodes(self, env: Optional[Mapping[str, str]] = None) -> None:
         # Set trace test ID env var for spawned processes
-        env = os.environ.copy()
+        if env is None:
+            env = os.environ
+        mutable_env = dict(env)
         assert self.trace_test_id
-        env[TRACE_TEST_ID_ENV_VAR] = self.trace_test_id
+        mutable_env[TRACE_TEST_ID_ENV_VAR] = self.trace_test_id
         nodes = [
             Node(
                 package='test_tracetools',
                 executable='test_ping',
                 output='screen',
-                env=env,
+                env=mutable_env,
             ),
             Node(
                 package='test_tracetools',
                 executable='test_pong',
                 output='screen',
-                env=env,
+                env=mutable_env,
             ),
         ]
         ld = LaunchDescription(nodes)
@@ -635,5 +646,30 @@ class TestROS2TraceCLI(unittest.TestCase):
         ret = self.run_trace_subcommand(['stop', session_name])
         self.assertEqual(1, ret)
         self.assertTracingSessionNotExist(session_name)
+
+        shutil.rmtree(tmpdir)
+
+    @unittest.skipIf(not are_tracepoints_included(), 'tracepoints are required')
+    def test_runtime_disable(self) -> None:
+        tmpdir = self.create_test_tmpdir('test_runtime_disable')
+        session_name = 'test_runtime_disable'
+
+        env = os.environ.copy()
+        env['TRACETOOLS_RUNTIME_DISABLE'] = '1'
+
+        process = self.run_trace_command_start(
+            [
+                '--path', tmpdir, '--session-name', session_name,
+                '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
+            ],
+            wait_for_start=True,
+            env=env,
+        )
+        self.run_nodes(env)
+
+        ret = self.run_trace_command_stop(process)
+        self.assertEqual(0, ret)
+
+        self.assertTraceIsEmpty(os.path.join(tmpdir, session_name))
 
         shutil.rmtree(tmpdir)

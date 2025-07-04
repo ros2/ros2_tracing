@@ -34,6 +34,11 @@ namespace
 /**
  * \see tracetools_test
  */
+constexpr std::string_view tracetools_runtime_disable_env_var = "TRACETOOLS_RUNTIME_DISABLE";
+
+/**
+ * \see tracetools_test
+ */
 constexpr std::string_view trace_test_id_env_var = "TRACETOOLS_TEST_TRACE_TEST_ID";
 
 }  // namespace
@@ -42,13 +47,19 @@ void mark_trace_test_process()
 {
 #ifndef TRACETOOLS_DISABLED
   // See tracetools_test.mark_process for more details
-  const std::string env_var{trace_test_id_env_var};
-  const auto test_id = rcpputils::get_env_var(env_var.c_str());
+  const std::string runtime_disable_env_var{tracetools_runtime_disable_env_var};
+  const auto runtime_disable = rcpputils::get_env_var(runtime_disable_env_var.c_str());
+  if (!runtime_disable.empty() && runtime_disable == "1") {
+    return;
+  }
+
+  const std::string test_id_env_var{trace_test_id_env_var};
+  const auto test_id = rcpputils::get_env_var(test_id_env_var.c_str());
   if (!test_id.empty()) {
 #if LTTNG_UST_MINOR_VERSION <= 12
-    tracef("%s=%s", env_var.c_str(), test_id.c_str());
+    tracef("%s=%s", test_id_env_var.c_str(), test_id.c_str());
 #else
-    lttng_ust_tracef("%s=%s", env_var.c_str(), test_id.c_str());
+    lttng_ust_tracef("%s=%s", test_id_env_var.c_str(), test_id.c_str());
 #endif
   }
 #endif  // TRACETOOLS_DISABLED

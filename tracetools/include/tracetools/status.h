@@ -22,7 +22,7 @@ extern "C"
 {
 #endif
 
-int tracetools_status(bool trace_compile_status_enabled);
+int tracetools_status(bool trace_status_enabled);
 
 #ifdef __cplusplus
 }
