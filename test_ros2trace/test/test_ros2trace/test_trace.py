@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from collections.abc import Mapping
-
 import os
 import shutil
 import subprocess
@@ -36,6 +35,7 @@ from tracetools_test.mark_process import TRACE_TEST_ID_ENV_VAR
 from tracetools_test.mark_process import TRACE_TEST_ID_TP_NAME
 from tracetools_trace.tools import tracepoints
 from tracetools_trace.tools.lttng import is_lttng_installed
+from tracetools_trace.tools.names import DEFAULT_EVENTS_ROS
 
 
 def are_tracepoints_included() -> bool:
@@ -112,12 +112,21 @@ class TestROS2TraceCLI(unittest.TestCase):
     def assertTraceNotExist(self, trace_dir: str) -> None:
         self.assertFalse(os.path.isdir(trace_dir), f'trace directory exists: {trace_dir}')
 
-    def assertTraceIsEmpty(self, trace_dir: str) -> None:
+    def assertTraceNotContains(self, trace_dir: str, unexpected_event_names: List[str]) -> None:
         self.assertTraceExist(trace_dir)
         from tracetools_read.trace import get_trace_events
-        events_all = get_trace_events(trace_dir)
-        events = get_corresponding_trace_test_events(events_all, self.trace_test_id)
-        self.assertEqual(len(events), 0, f'events found: {events_all}')
+        events = get_trace_events(trace_dir)
+        trace_test_events = get_corresponding_trace_test_events(events, self.trace_test_id)
+        self.assertGreater(
+            len(trace_test_events),
+            0,
+            f'no matching trace test events found: {events}')
+        for event in events:
+            event_name = get_event_name(event)
+            self.assertNotIn(
+                event_name, unexpected_event_names,
+                f'{event_name} found in events: {events}'
+            )
 
     def assertTraceContains(
         self,
@@ -257,23 +266,23 @@ class TestROS2TraceCLI(unittest.TestCase):
 
     def run_nodes(self, env: Optional[Mapping[str, str]] = None) -> None:
         # Set trace test ID env var for spawned processes
-        if env is None:
-            env = os.environ
-        mutable_env = dict(env)
+        additional_env: Dict[str, str] = {}
+        if env is not None:
+            additional_env.update(env)
         assert self.trace_test_id
-        mutable_env[TRACE_TEST_ID_ENV_VAR] = self.trace_test_id
+        additional_env[TRACE_TEST_ID_ENV_VAR] = self.trace_test_id
         nodes = [
             Node(
                 package='test_tracetools',
                 executable='test_ping',
                 output='screen',
-                env=mutable_env,
+                additional_env=additional_env,
             ),
             Node(
                 package='test_tracetools',
                 executable='test_pong',
                 output='screen',
-                env=mutable_env,
+                additional_env=additional_env,
             ),
         ]
         ld = LaunchDescription(nodes)
@@ -654,8 +663,7 @@ class TestROS2TraceCLI(unittest.TestCase):
         tmpdir = self.create_test_tmpdir('test_runtime_disable')
         session_name = 'test_runtime_disable'
 
-        env = os.environ.copy()
-        env['TRACETOOLS_RUNTIME_DISABLE'] = '1'
+        env = {'TRACETOOLS_RUNTIME_DISABLE': '1'}
 
         process = self.run_trace_command_start(
             [
@@ -670,6 +678,6 @@ class TestROS2TraceCLI(unittest.TestCase):
         ret = self.run_trace_command_stop(process)
         self.assertEqual(0, ret)
 
-        self.assertTraceIsEmpty(os.path.join(tmpdir, session_name))
+        self.assertTraceNotContains(os.path.join(tmpdir, session_name), DEFAULT_EVENTS_ROS)
 
         shutil.rmtree(tmpdir)

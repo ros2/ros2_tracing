@@ -100,9 +100,9 @@ $ sudo apt-get install lttng-modules-dkms
 
 For more information about LTTng, [refer to its documentation](https://lttng.org/docs/v2.13/).
 
-### Disabling the instrumentation
+### Disabling the tracer at runtime
 
-To disable all instrumentation in runtime, set the `TRACETOOLS_RUNTIME_DISABLE` envvar:
+To avoid loading the tracer at runtime (and therefore disable all instrumentation), set the `TRACETOOLS_RUNTIME_DISABLE` environment variable:
 
 ```
 $ export TRACETOOLS_RUNTIME_DISABLE=1

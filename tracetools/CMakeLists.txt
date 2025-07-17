@@ -67,12 +67,12 @@ endif()
 
 if(NOT TRACETOOLS_DISABLED)
   add_library(${PROJECT_NAME} ${SOURCES})
-  target_compile_definitions(${PROJECT_NAME} PRIVATE TRACETOOLS_PROVIDER_SONAME="$<TARGET_FILE_NAME:${PROJECT_NAME}_provider>")
 else()
   # only export a target with headers when disabled
   add_library(${PROJECT_NAME} INTERFACE)
 endif()
 if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE TRACETOOLS_PROVIDER_SONAME="$<TARGET_FILE_NAME:${PROJECT_NAME}_provider>")
   target_link_libraries(${PROJECT_NAME}_provider ${PROJECT_NAME} ${LTTNG_LIBRARIES})
 endif()
 if(NOT TRACETOOLS_DISABLED)
