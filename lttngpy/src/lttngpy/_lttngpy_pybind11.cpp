@@ -67,6 +67,13 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     py::arg("session_name"),
     py::arg("url"));
   m.def(
+    "lttng_create_session_snapshot",
+    &lttng_create_session_snapshot,
+    "Create snapshot session.",
+    py::kw_only(),
+    py::arg("session_name"),
+    py::arg("url"));
+  m.def(
     "lttng_destroy_session",
     &lttng_destroy_session,
     "Destroy session.",
