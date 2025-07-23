@@ -117,7 +117,7 @@ class Trace(Action):
         append_timestamp: Union[bool, SomeSubstitutionsType] = False,
         base_path: Optional[SomeSubstitutionsType] = None,
         append_trace: Union[bool, SomeSubstitutionsType] = False,
-        events_ust: Iterable[SomeSubstitutionsType] = None,
+        events_ust: Optional[Iterable[SomeSubstitutionsType]] = None,
         events_kernel: Iterable[SomeSubstitutionsType] = [],
         syscalls: Iterable[SomeSubstitutionsType] = [],
         context_fields:
