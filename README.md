@@ -102,7 +102,7 @@ For more information about LTTng, [refer to its documentation](https://lttng.org
 
 ### Disabling the tracer at runtime
 
-To avoid loading the tracer at runtime (and therefore disable all instrumentation), set the `TRACETOOLS_RUNTIME_DISABLE` environment variable:
+To avoid loading the tracer at runtime (and therefore disable all instrumentation), set the `TRACETOOLS_RUNTIME_DISABLE` environment variable to `1`:
 
 ```
 $ export TRACETOOLS_RUNTIME_DISABLE=1
