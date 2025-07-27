@@ -498,7 +498,9 @@ def _create_session_snapshot(
     Raises RuntimeError on failure.
 
     :param session_name: the name of the session
-    :param full_path: the full path to the main directory to write trace data to
+    :param full_path: the full path to the main directory to write trace data to;
+        if `None`, the snapshot output object will not be created 
+        (output object must be created before taking snapshots)
     """
     result = lttngpy.lttng_create_session_snapshot(
         session_name=session_name,
