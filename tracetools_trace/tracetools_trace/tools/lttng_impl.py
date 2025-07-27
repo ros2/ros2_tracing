@@ -244,11 +244,7 @@ def setup(
     if not session_name:
         raise RuntimeError('empty session name')
     # Resolve full tracing directory path
-    # For snapshot sessions, remove the suffixes in the full path
-    if is_snapshot_session:
-        full_path = os.path.join(base_path, session_name.removesuffix('-snapshot'), 'snapshot')
-    else:
-        full_path = os.path.join(base_path, session_name)
+    full_path = os.path.join(base_path, session_name)
     if os.path.isdir(full_path) and not append_trace:
         raise RuntimeError(
             f'trace directory already exists, use the append option to append to it: {full_path}')
@@ -312,7 +308,6 @@ def setup(
     else:
         _create_session_snapshot(
             session_name=session_name,
-            full_path=full_path,
         )
 
     # Enable channel, events, and contexts for each domain
@@ -494,7 +489,7 @@ def _create_session(
 def _create_session_snapshot(
         *,
         session_name: str,
-        full_path: str,
+        full_path: Optional[str] = None,
 ) -> None:
     """
     Create snapshot session from name and full directory path, and check for errors.
