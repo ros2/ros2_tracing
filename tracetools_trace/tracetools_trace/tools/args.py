@@ -80,6 +80,9 @@ def _add_arguments_configure(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '-a', '--append-trace', dest='append_trace', action='store_true',
         help='append to trace if it already exists, otherwise error out (default: %(default)s)')
+    parser.add_argument(
+        '-r', '--runtime', dest='is_runtime_session', action='store_true',
+        help='enable runtime tracing (default: %(default)s)')
 
 
 def _add_arguments_default_session_name(parser: argparse.ArgumentParser) -> None:
