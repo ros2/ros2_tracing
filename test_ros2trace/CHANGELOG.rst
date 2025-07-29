@@ -2,6 +2,11 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_)
+* Contributors: mosfet80
+
 8.8.0 (2025-07-01)
 ------------------
 * Use timeout for everything in test_ros2trace tests (`#174 <https://github.com/ros2/ros2_tracing/issues/174>`_)

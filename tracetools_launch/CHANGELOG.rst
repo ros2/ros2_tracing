@@ -2,6 +2,11 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_)
+* Contributors: mosfet80
+
 8.8.0 (2025-07-01)
 ------------------
 * Make trace action parameters substitutable for xml and yaml launch files (`#188 <https://github.com/ros2/ros2_tracing/issues/188>`_)

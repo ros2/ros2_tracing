@@ -2,6 +2,9 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.8.0 (2025-07-01)
 ------------------
 * Fix Clang warnings by using proper function prototypes in macros (`#179 <https://github.com/ros2/ros2_tracing/issues/179>`_)
