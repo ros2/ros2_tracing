@@ -76,17 +76,25 @@ def _resolve_session_path(
     *,
     session_name: str,
     base_path: Optional[str],
+    is_runtime_session: bool,
 ) -> Tuple[str, str]:
     if not base_path:
         base_path = path.get_tracing_directory()
-    full_session_path = os.path.join(base_path, session_name)
-    print(f'writing tracing session to: {full_session_path}')
+    if is_runtime_session:
+        full_session_path = os.path.join(base_path, session_name.removesuffix('-runtime'), 'runtime')
+    else:
+        full_session_path = os.path.join(base_path, session_name)
+
+    session_path = full_session_path if not is_runtime_session else full_session_path.removesuffix("/runtime")
+    print(f'writing tracing session to: {session_path}')
+
     return base_path, full_session_path
 
 
 def init(
     *,
     session_name: str,
+    is_runtime_session: bool,
     base_path: Optional[str],
     append_trace: bool,
     ros_events: List[str],
@@ -105,6 +113,7 @@ def init(
     Raises RuntimeError on failure, in which case the tracing session might still exist.
 
     :param session_name: the name of the session
+    :param is_runtime_session: whether this is a runtime session
     :param base_path: the path to the directory in which to create the tracing session directory,
         or `None` for default
     :param append_trace: whether to append to the trace directory if it already exists, otherwise
@@ -125,15 +134,20 @@ def init(
         display_list=display_list,
     )
 
+    if is_runtime_session:
+        session_name = session_name + '-runtime'
+
     base_path, full_session_path = _resolve_session_path(
         session_name=session_name,
         base_path=base_path,
+        is_runtime_session=is_runtime_session,
     )
 
     if interactive:
         input('press enter to start...')
     trace_directory = lttng.lttng_init(
         session_name=session_name,
+        is_runtime_session=is_runtime_session,
         base_path=base_path,
         append_trace=append_trace,
         ros_events=ros_events,
@@ -230,11 +244,17 @@ def trace(args: argparse.Namespace) -> int:
             context_fields=args.context_fields,
             display_list=args.list,
             interactive=True,
+            is_runtime_session=args.is_runtime_session,
         ):
             return 1
-        fini(session_name=args.session_name)
+        fini(session_name=args.session_name if not args.is_runtime_session
+                   else args.session_name + '-runtime')
         return 0
-    return _do_work_and_report_error(work, args.session_name, do_cleanup=True)
+    return _do_work_and_report_error(
+        work,
+        args.session_name if not args.is_runtime_session else args.session_name + '-runtime',
+        do_cleanup=True
+    )
 
 
 def start(args: argparse.Namespace) -> int:
