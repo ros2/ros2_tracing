@@ -34,16 +34,27 @@ int lttng_record_snapshot(
     return -LTTNG_ERR_UNK;
   }
 
+  int ret = 0;
+  auto try_or_cleanup = [&](int function_call) -> bool {
+    ret = function_call;
+    if (0 != ret) {
+      lttng_snapshot_output_destroy(output);
+      return false;
+    }
+    return true;
+  };
+
   // Set snapshot output attributes.
-  lttng_snapshot_output_set_id(id, output);
-  lttng_snapshot_output_set_size(max_size, output);
-  lttng_snapshot_output_set_name(name.c_str(), output);
-  lttng_snapshot_output_set_local_path(url.c_str(), output);
+  if (!try_or_cleanup(lttng_snapshot_output_set_id(id, output))) return ret;
+  if (!try_or_cleanup(lttng_snapshot_output_set_size(max_size, output))) return ret;
+  if (!try_or_cleanup(lttng_snapshot_output_set_name(name.c_str(), output))) return ret;
+  if (!try_or_cleanup(lttng_snapshot_output_set_local_path(url.c_str(), output))) return ret;
 
   // Add snapshot output to the session.
-  lttng_snapshot_add_output(session_name.c_str(), output);
+  if (!try_or_cleanup(lttng_snapshot_add_output(session_name.c_str(), output))) return ret;
 
-  int ret = lttng_snapshot_record(session_name.c_str(), output, 1);
+  // Record the snapshot.
+  ret = lttng_snapshot_record(session_name.c_str(), output, 1);
   return ret;
 }
 
