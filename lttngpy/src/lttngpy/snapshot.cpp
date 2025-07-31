@@ -24,7 +24,7 @@ int lttng_record_snapshot(
   // Set snapshot output attributes.
   lttng_snapshot_output_set_id(id, output);
   lttng_snapshot_output_set_size(max_size, output);
-  lttng_snapshot_output_set_name(name.c_str(), output);  
+  lttng_snapshot_output_set_name(name.c_str(), output);
   lttng_snapshot_output_set_local_path(url.c_str(), output);
 
   // Add snapshot output to the session.

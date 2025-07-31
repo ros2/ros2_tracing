@@ -23,6 +23,6 @@ int lttng_record_snapshot(
   const std::string & url,
   const int wait);
 
-} // namespace lttngpy
+}  // namespace lttngpy
 
 #endif  // LTTNGPY__SNAPSHOT_HPP_

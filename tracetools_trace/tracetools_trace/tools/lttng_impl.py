@@ -510,9 +510,9 @@ def _create_session(
 
 
 def _create_session_snapshot(
-        *,
-        session_name: str,
-        full_path: Optional[str] = None,
+    *,
+    session_name: str,
+    full_path: Optional[str] = None,
 ) -> None:
     """
     Create snapshot session from name and full directory path, and check for errors.
