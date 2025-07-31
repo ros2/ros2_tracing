@@ -34,8 +34,7 @@ int lttng_record_snapshot(
   const uint32_t id,
   const uint64_t max_size,
   const std::string & name,
-  const std::string & url,
-  const int wait);
+  const std::string & url);
 
 }  // namespace lttngpy
 

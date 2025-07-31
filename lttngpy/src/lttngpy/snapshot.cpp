@@ -27,8 +27,7 @@ int lttng_record_snapshot(
   const uint32_t id,
   const uint64_t max_size,
   const std::string & name,
-  const std::string & url,
-  const int wait)
+  const std::string & url)
 {
   struct lttng_snapshot_output * output = lttng_snapshot_output_create();
   if (nullptr == output) {
@@ -44,7 +43,7 @@ int lttng_record_snapshot(
   // Add snapshot output to the session.
   lttng_snapshot_add_output(session_name.c_str(), output);
 
-  int ret = lttng_snapshot_record(session_name.c_str(), output, wait);
+  int ret = lttng_snapshot_record(session_name.c_str(), output, 1);
   return ret;
 }
 

@@ -107,8 +107,7 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     py::arg("id"),
     py::arg("max_size"),
     py::arg("name"),
-    py::arg("url"),
-    py::arg("wait"));
+    py::arg("url"));
 
   // Session info
   m.def(
