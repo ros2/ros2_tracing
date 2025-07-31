@@ -19,11 +19,11 @@
 #include "tracetools/config.h"
 #include "tracetools/status.h"
 
-int tracetools_status(bool trace_compile_status_enabled)
+int tracetools_status(bool trace_status_enabled)
 {
 #ifndef TRACETOOLS_DISABLED
   printf("Tracing ");
-  if (trace_compile_status_enabled) {
+  if (trace_status_enabled) {
     printf("enabled\n");
     return 0;
   } else {
@@ -31,7 +31,7 @@ int tracetools_status(bool trace_compile_status_enabled)
     return 1;
   }
 #else
-  (void)trace_compile_status_enabled;
+  (void)trace_status_enabled;
   printf("Tracing disabled through configuration\n");
   return 1;
 #endif

@@ -19,7 +19,7 @@
 int main(void)
 {
 #ifndef TRACETOOLS_DISABLED
-  return tracetools_status(ros_trace_compile_status());
+  return tracetools_status(ros_trace_runtime_status());
 #else
   return tracetools_status(false);
 #endif

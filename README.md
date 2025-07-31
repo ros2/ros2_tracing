@@ -100,6 +100,16 @@ $ sudo apt-get install lttng-modules-dkms
 
 For more information about LTTng, [refer to its documentation](https://lttng.org/docs/v2.13/).
 
+### Disabling the tracer at runtime
+
+To avoid loading the tracer at runtime (and therefore disable all instrumentation), set the `TRACETOOLS_RUNTIME_DISABLE` environment variable to `1`:
+
+```
+$ export TRACETOOLS_RUNTIME_DISABLE=1
+$ ros2 run tracetools status
+Tracing disabled
+```
+
 ### Removing the instrumentation
 
 To build and remove all instrumentation, use `TRACETOOLS_DISABLED`:

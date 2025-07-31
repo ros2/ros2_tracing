@@ -1,4 +1,4 @@
-// Copyright 2020 Christophe Bedard
+// Copyright 2019 Robert Bosch GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TRACETOOLS__STATUS_H_
-#define TRACETOOLS__STATUS_H_
-
-#include <stdbool.h>
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-int tracetools_status(bool trace_status_enabled);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif  // TRACETOOLS__STATUS_H_
+#define TRACEPOINT_DEFINE
+#define TRACEPOINT_PROBE_DYNAMIC_LINKAGE
+#include "tracetools/tp_call.h"
