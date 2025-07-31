@@ -146,7 +146,9 @@ class Trace(Action):
             or `None` for default
         :param append_trace: whether to append to the trace directory if it already exists,
             otherwise an error is reported
-        :param events_ust: the list of ROS UST events to enable
+        :param events_ust: the list of ROS UST events to enable; if it's `None`, the default ROS
+            events are used for a normal session, and the default ROS initialization events are
+            used for a snapshot session; if it's an empty list, no UST events are enabled
         :param events_kernel: the list of kernel events to enable
         :param syscalls: the list of syscalls to enable
         :param context_fields: the names of context fields to enable
