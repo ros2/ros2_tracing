@@ -81,11 +81,16 @@ def _resolve_session_path(
     if not base_path:
         base_path = path.get_tracing_directory()
     if is_runtime_session:
-        full_session_path = os.path.join(base_path, session_name.removesuffix('-runtime'), 'runtime')
+        full_session_path = os.path.join(
+            base_path,
+            session_name.removesuffix('-runtime'),
+            'runtime',
+        )
     else:
         full_session_path = os.path.join(base_path, session_name)
 
-    session_path = full_session_path if not is_runtime_session else full_session_path.removesuffix("/runtime")
+    session_path = full_session_path if not is_runtime_session \
+        else full_session_path.removesuffix('/runtime')
     print(f'writing tracing session to: {session_path}')
 
     return base_path, full_session_path
@@ -248,7 +253,7 @@ def trace(args: argparse.Namespace) -> int:
         ):
             return 1
         fini(session_name=args.session_name if not args.is_runtime_session
-                   else args.session_name + '-runtime')
+             else args.session_name + '-runtime')
         return 0
     return _do_work_and_report_error(
         work,

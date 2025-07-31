@@ -22,7 +22,7 @@ namespace lttngpy
 
 /**
  * Record a snapshot session.
- * 
+ *
  * \param session_name the session name
  * \param id the snapshot output ID
  * \param max_size the maximum size of the snapshot output in bytes
