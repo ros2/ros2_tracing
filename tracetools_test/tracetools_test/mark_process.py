@@ -65,7 +65,7 @@ def get_corresponding_trace_test_events(
 
     :param events: all of the trace events
     :param trace_test_id: the trace test ID
-    :return: the relevant trace events corresponding to the given test
+    :return: the relevant trace events corresponding to the given test, including the marker event
     """
     expected_event_msg = _get_trace_test_id_event_value(trace_test_id)
     events_id = get_events_with_name(TRACE_TEST_ID_TP_NAME, events)
