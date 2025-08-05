@@ -113,19 +113,23 @@ class TestROS2TraceCLI(unittest.TestCase):
         self.assertFalse(os.path.isdir(trace_dir), f'trace directory exists: {trace_dir}')
 
     def assertTraceNotContains(self, trace_dir: str, unexpected_event_names: List[str]) -> None:
+        self.assertNotIn(
+            TRACE_TEST_ID_TP_NAME, unexpected_event_names, 'process marker event is required')
         self.assertTraceExist(trace_dir)
         from tracetools_read.trace import get_trace_events
         events = get_trace_events(trace_dir)
         trace_test_events = get_corresponding_trace_test_events(events, self.trace_test_id)
+        # The events from the marked processes should contain process marker event(s)
         self.assertGreater(
             len(trace_test_events),
             0,
             f'no matching trace test events found: {events}')
-        for event in events:
+        # but not the unexpected events
+        for event in trace_test_events:
             event_name = get_event_name(event)
             self.assertNotIn(
                 event_name, unexpected_event_names,
-                f'{event_name} found in events: {events}'
+                f'{event_name} found in events: {trace_test_events}'
             )
 
     def assertTraceContains(
