@@ -248,6 +248,8 @@ def setup(
     # Resolve full tracing directory path
     if is_runtime_session:
         full_path = os.path.join(base_path, session_name.removesuffix('-runtime'), 'runtime')
+    if is_snapshot_session:
+        full_path = os.path.join(base_path, session_name.removesuffix('-snapshot'), 'snapshot')
     else:
         full_path = os.path.join(base_path, session_name)
     if os.path.isdir(full_path) and not append_trace:
@@ -313,6 +315,9 @@ def setup(
     else:
         _create_session_snapshot(
             session_name=session_name,
+            max_size=10 * subbuffer_size_ust,
+            name='snapshot',
+            full_path=full_path,
         )
 
     # Enable channel, events, and contexts for each domain
@@ -512,7 +517,9 @@ def _create_session(
 def _create_session_snapshot(
     *,
     session_name: str,
-    full_path: Optional[str] = None,
+    max_size: int,
+    name: str,
+    full_path: str,
 ) -> None:
     """
     Create snapshot session from name and full directory path, and check for errors.
@@ -521,13 +528,13 @@ def _create_session_snapshot(
     Raises RuntimeError on failure.
 
     :param session_name: the name of the session
-    :param full_path: the full path to the main directory to write trace data to;
-        if `None`, the snapshot output object will not be created
-        (output object must be created before taking snapshots)
+    :param max_size: the maximum size of the snapshot output in bytes
+    :param name: the name of the snapshot output
+    :param full_path: the full path to the main directory to write trace data to
     """
     result = lttngpy.lttng_create_session_snapshot(
         session_name=session_name,
-        url=full_path,
+        url=None,
     )
     if -lttngpy.LTTNG_ERR_EXIST_SESS.value == result:
         # Sessions may persist if there was an error previously, so if it already exists, just
@@ -535,11 +542,20 @@ def _create_session_snapshot(
         destroy(session_name=session_name)
         result = lttngpy.lttng_create_session_snapshot(
             session_name=session_name,
-            url=full_path,
+            url=None,
         )
     if result < 0:
         error = lttngpy.lttng_strerror(result)
         raise RuntimeError(f"failed to create tracing session '{session_name}': {error}")
+    result = lttngpy.lttng_add_snapshot_output(
+        session_name=session_name,
+        max_size=max_size,
+        name=name,
+        url=full_path,
+    )
+    if result < 0:
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to setup the tracing session '{session_name}': {error}")
 
 
 def _enable_channel(**kwargs) -> None:
