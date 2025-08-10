@@ -22,9 +22,8 @@
 namespace lttngpy
 {
 
-int lttng_record_snapshot(
+int lttng_add_snapshot_output(
   const std::string & session_name,
-  const uint32_t id,
   const uint64_t max_size,
   const std::string & name,
   const std::string & url)
@@ -45,16 +44,18 @@ int lttng_record_snapshot(
     };
 
   // Set snapshot output attributes.
-  if (!try_or_cleanup(lttng_snapshot_output_set_id(id, output))) {return ret;}
   if (!try_or_cleanup(lttng_snapshot_output_set_size(max_size, output))) {return ret;}
   if (!try_or_cleanup(lttng_snapshot_output_set_name(name.c_str(), output))) {return ret;}
   if (!try_or_cleanup(lttng_snapshot_output_set_local_path(url.c_str(), output))) {return ret;}
 
-  // Add snapshot output to the session.
-  if (!try_or_cleanup(lttng_snapshot_add_output(session_name.c_str(), output))) {return ret;}
+  // Add output object to the session.
+  ret = lttng_snapshot_add_output(session_name.c_str(), output);
+  return ret;
+}
 
-  // Record the snapshot.
-  ret = lttng_snapshot_record(session_name.c_str(), output, 1);
+int lttng_record_snapshot(const std::string & session_name)
+{
+  int ret = lttng_snapshot_record(session_name.c_str(), NULL, 1);
   return ret;
 }
 
