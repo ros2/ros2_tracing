@@ -248,11 +248,11 @@ def setup(
     # Resolve full tracing directory path
     if is_runtime_session:
         full_path = os.path.join(base_path, session_name.removesuffix('-runtime'), 'runtime')
-    if is_snapshot_session:
+    elif is_snapshot_session:
         full_path = os.path.join(base_path, session_name.removesuffix('-snapshot'), 'snapshot')
     else:
         full_path = os.path.join(base_path, session_name)
-    if os.path.isdir(full_path) and not append_trace:
+    if os.path.isdir(full_path) and not append_trace and not is_snapshot_session:
         raise RuntimeError(
             f'trace directory already exists, use the append option to append to it: {full_path}')
 
@@ -444,18 +444,21 @@ def stop(
         raise RuntimeError(f"failed to stop tracing session '{session_name}': {error}")
 
 
-def record_snapshot(**kwargs) -> None:
+def record_snapshot(
+    *,
+    session_name: str,
+    **kwargs
+) -> None:
     """
     Record a snapshot, and check for errors.
 
     This must not be called if `lttngpy.is_available()` is `False`.
     Raises RuntimeError on failure.
 
-    See `lttngpy.lttng_record_snapshot` for kwargs.
+    :param session_name: the name of the session
     """
-    result = lttngpy.lttng_record_snapshot(**kwargs)
+    result = lttngpy.lttng_record_snapshot(session_name=session_name)
     if result < 0:
-        session_name = kwargs['session_name']
         error = lttngpy.lttng_strerror(result)
         raise RuntimeError(
             f"failed to record snapshot of the tracing session '{session_name}': {error}"
