@@ -21,7 +21,7 @@ class StartVerb(VerbExtension):
     """Configure tracing session and start tracing."""
 
     def add_arguments(self, parser, cli_name) -> None:
-        args.add_arguments_noninteractive(parser)
+        args.add_arguments_noninteractive_configure(parser)
 
     def main(self, *, args) -> int:
         return start(args)
