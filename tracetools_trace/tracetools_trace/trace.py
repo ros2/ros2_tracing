@@ -164,7 +164,7 @@ def init(
             input('press enter to start tracing...')
         lttng.lttng_record_snapshot(session_name=snapshot_session_name)
 
-        # For runtime sessions, use the runtime session name 
+        # For runtime sessions, use the runtime session name
         # and path so lttng_init() can be called uniformly
         full_session_path = full_runtime_session_path
         session_name = runtime_session_name
@@ -175,7 +175,7 @@ def init(
         )
         if interactive:
             input('press enter to start...')
-    
+
     trace_directory = lttng.lttng_init(
         session_name=session_name,
         is_runtime_session=is_runtime_session,
@@ -210,9 +210,9 @@ def fini(
 
     def _fini() -> None:
         print('stopping & destroying tracing session')
-        if is_runtime_session:
-            session_name += '-runtime'
-        lttng.lttng_fini(session_name=session_name)
+        lttng.lttng_fini(
+            session_name=session_name + ('-runtime' if is_runtime_session else '')
+        )
 
     signals.execute_and_handle_sigint(_run, _fini)
 
