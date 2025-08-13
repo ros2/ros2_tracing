@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <lttng/lttng-error.h>
 #include <lttng/channel.h>
 #include <lttng/constant.h>
 #include <lttng/domain.h>
 #include <lttng/event.h>
 #include <lttng/handle.h>
-#include <lttng/lttng-error.h>
 
 #include <optional>
 #include <string>
