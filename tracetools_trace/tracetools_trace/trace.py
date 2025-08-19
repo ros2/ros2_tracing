@@ -157,8 +157,8 @@ def init(
             base_path=base_path,
         )
 
-        snapshot_session_name = session_name + '-snapshot'
-        runtime_session_name = session_name + '-runtime'
+        snapshot_session_name = session_name + path.SNAPSHOT_SESSION_SUFFIX
+        runtime_session_name = session_name + path.RUNTIME_SESSION_SUFFIX
 
         if interactive:
             input('press enter to start tracing...')
@@ -211,7 +211,7 @@ def fini(
     def _fini() -> None:
         print('stopping & destroying tracing session')
         lttng.lttng_fini(
-            session_name=session_name + ('-runtime' if is_runtime_session else '')
+            session_name=session_name + (path.RUNTIME_SESSION_SUFFIX if is_runtime_session else '')
         )
 
     signals.execute_and_handle_sigint(_run, _fini)
@@ -228,7 +228,7 @@ def cleanup(
     :param session_name: the name of the session
     """
     if is_runtime_session:
-        session_name += '-runtime'
+        session_name += path.RUNTIME_SESSION_SUFFIX
     lttng.lttng_fini(session_name=session_name, ignore_error=True)
 
 
@@ -341,7 +341,7 @@ def stop(args: argparse.Namespace) -> int:
     def work() -> int:
         session_name = args.session_name
         if args.is_runtime_session:
-            session_name += '-runtime'
+            session_name += path.RUNTIME_SESSION_SUFFIX
         lttng.lttng_fini(session_name=session_name)
         return 0
     return _do_work_and_report_error(work, args.session_name, do_cleanup=False)
@@ -360,7 +360,7 @@ def pause(args: argparse.Namespace) -> int:
     def work() -> int:
         session_name = args.session_name
         if args.is_runtime_session:
-            session_name += '-runtime'
+            session_name += path.RUNTIME_SESSION_SUFFIX
         lttng.lttng_stop(session_name=session_name)
         return 0
     return _do_work_and_report_error(work, args.session_name, do_cleanup=False)
@@ -379,9 +379,9 @@ def resume(args: argparse.Namespace) -> int:
     def work() -> int:
         session_name = args.session_name
         if args.is_runtime_session:
-            snapshot_session_name = session_name + '-snapshot'
+            snapshot_session_name = session_name + path.SNAPSHOT_SESSION_SUFFIX
             lttng.lttng_record_snapshot(session_name=snapshot_session_name)
-            session_name += '-runtime'
+            session_name += path.RUNTIME_SESSION_SUFFIX
         lttng.lttng_start(session_name=session_name)
         return 0
     return _do_work_and_report_error(work, args.session_name, do_cleanup=False)

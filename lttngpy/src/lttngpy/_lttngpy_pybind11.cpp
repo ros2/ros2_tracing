@@ -75,8 +75,8 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     py::arg("session_name"),
     py::arg("url"));
   m.def(
-    "lttng_add_snapshot_output",
-    &lttngpy::lttng_add_snapshot_output,
+    "add_snapshot_output",
+    &lttngpy::add_snapshot_output,
     "Add an output object to the snapshot session.",
     py::kw_only(),
     py::arg("session_name"),
@@ -108,8 +108,8 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     py::kw_only(),
     py::arg("session_name"));
   m.def(
-    "lttng_record_snapshot",
-    &lttngpy::lttng_record_snapshot,
+    "record_snapshot",
+    &lttngpy::record_snapshot,
     "Record a snapshot session.",
     py::kw_only(),
     py::arg("session_name"));

@@ -457,7 +457,7 @@ def record_snapshot(
 
     :param session_name: the name of the session
     """
-    result = lttngpy.lttng_record_snapshot(session_name=session_name)
+    result = lttngpy.record_snapshot(session_name=session_name)
     if result < 0:
         error = lttngpy.lttng_strerror(result)
         raise RuntimeError(
@@ -549,8 +549,8 @@ def _create_session_snapshot(
         )
     if result < 0:
         error = lttngpy.lttng_strerror(result)
-        raise RuntimeError(f"failed to create tracing session '{session_name}': {error}")
-    result = lttngpy.lttng_add_snapshot_output(
+        raise RuntimeError(f"failed to create snapshot session '{session_name}': {error}")
+    result = lttngpy.add_snapshot_output(
         session_name=session_name,
         max_size=max_size,
         name=name,
@@ -558,7 +558,7 @@ def _create_session_snapshot(
     )
     if result < 0:
         error = lttngpy.lttng_strerror(result)
-        raise RuntimeError(f"failed to setup the tracing session '{session_name}': {error}")
+        raise RuntimeError(f"failed to add output for snapshot session '{session_name}': {error}")
 
 
 def _enable_channel(**kwargs) -> None:

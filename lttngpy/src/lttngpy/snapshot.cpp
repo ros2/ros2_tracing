@@ -22,7 +22,7 @@
 namespace lttngpy
 {
 
-int lttng_add_snapshot_output(
+int add_snapshot_output(
   const std::string & session_name,
   const uint64_t max_size,
   const std::string & name,
@@ -34,7 +34,7 @@ int lttng_add_snapshot_output(
   }
 
   int ret = 0;
-  auto try_or_cleanup = [&](int function_call) -> bool {
+  auto try_or_cleanup = [&ret, output](int function_call) -> bool {
       ret = function_call;
       if (0 != ret) {
         lttng_snapshot_output_destroy(output);
@@ -53,10 +53,9 @@ int lttng_add_snapshot_output(
   return ret;
 }
 
-int lttng_record_snapshot(const std::string & session_name)
+int record_snapshot(const std::string & session_name)
 {
-  int ret = lttng_snapshot_record(session_name.c_str(), NULL, 1);
-  return ret;
+  return lttng_snapshot_record(session_name.c_str(), NULL, 1);  // The last parameter is unused
 }
 
 }  // namespace lttngpy

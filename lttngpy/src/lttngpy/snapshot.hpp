@@ -27,8 +27,9 @@ namespace lttngpy
  * \param max_size the maximum size of the snapshot output in bytes
  * \param name the name of the snapshot output
  * \param url the destination URL for the snapshot output
+ * \return 0 on success, else a negative LTTng error code
  */
-int lttng_add_snapshot_output(
+int add_snapshot_output(
   const std::string & session_name,
   const uint64_t max_size,
   const std::string & name,
@@ -38,8 +39,9 @@ int lttng_add_snapshot_output(
  * Record a snapshot session.
  *
  * \param session_name the session name
+ * \return 0 on success, else a negative LTTng error code
  */
-int lttng_record_snapshot(const std::string & session_name);
+int record_snapshot(const std::string & session_name);
 
 }  // namespace lttngpy
 
