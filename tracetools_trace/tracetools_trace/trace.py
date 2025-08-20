@@ -110,7 +110,7 @@ def _display_snapshot_session_path(
 def init(
     *,
     session_name: str,
-    is_runtime_session: bool,
+    dual_session: bool,
     base_path: Optional[str],
     append_trace: bool,
     ros_events: List[str],
@@ -129,7 +129,7 @@ def init(
     Raises RuntimeError on failure, in which case the tracing session might still exist.
 
     :param session_name: the name of the session
-    :param is_runtime_session: whether this is a runtime session
+    :param dual_session: whether this is part of a dual session
     :param base_path: the path to the directory in which to create the tracing session directory,
         or `None` for default
     :param append_trace: whether to append to the trace directory if it already exists, otherwise
@@ -150,7 +150,7 @@ def init(
         display_list=display_list,
     )
 
-    if is_runtime_session:
+    if dual_session:
         _display_snapshot_session_path(session_name=session_name, base_path=base_path)
         base_path, full_runtime_session_path = _resolve_runtime_session_path(
             session_name=session_name,
@@ -178,7 +178,7 @@ def init(
 
     trace_directory = lttng.lttng_init(
         session_name=session_name,
-        is_runtime_session=is_runtime_session,
+        dual_session=dual_session,
         base_path=base_path,
         append_trace=append_trace,
         ros_events=ros_events,
@@ -196,7 +196,7 @@ def init(
 def fini(
     *,
     session_name: str,
-    is_runtime_session: bool = False,
+    dual_session: bool = False,
 ) -> None:
     """
     Stop and finalize tracing.
@@ -211,7 +211,7 @@ def fini(
     def _fini() -> None:
         print('stopping & destroying tracing session')
         lttng.lttng_fini(
-            session_name=session_name + (path.RUNTIME_SESSION_SUFFIX if is_runtime_session else '')
+            session_name=session_name + (path.RUNTIME_SESSION_SUFFIX if dual_session else '')
         )
 
     signals.execute_and_handle_sigint(_run, _fini)
@@ -220,14 +220,14 @@ def fini(
 def cleanup(
     *,
     session_name: str,
-    is_runtime_session: bool = False,
+    dual_session: bool = False,
 ) -> None:
     """
     Clean up and remove tracing session if it exists.
 
     :param session_name: the name of the session
     """
-    if is_runtime_session:
+    if dual_session:
         session_name += path.RUNTIME_SESSION_SUFFIX
     lttng.lttng_fini(session_name=session_name, ignore_error=True)
 
@@ -235,7 +235,7 @@ def cleanup(
 def _do_work_and_report_error(
     work: Callable[[], int],
     session_name: str,
-    is_runtime_session: bool = False,
+    dual_session: bool = False,
     *,
     do_cleanup: bool,
 ) -> int:
@@ -256,7 +256,7 @@ def _do_work_and_report_error(
     except RuntimeError as e:
         print(f'error: {str(e)}', file=sys.stderr)
         if do_cleanup:
-            cleanup(session_name=session_name, is_runtime_session=is_runtime_session)
+            cleanup(session_name=session_name, dual_session=dual_session)
         return 1
 
 
@@ -274,7 +274,7 @@ def trace(args: argparse.Namespace) -> int:
     def work() -> int:
         if not init(
             session_name=args.session_name,
-            is_runtime_session=args.is_runtime_session,
+            dual_session=args.dual_session,
             base_path=args.path,
             append_trace=args.append_trace,
             ros_events=args.events_ust,
@@ -285,12 +285,12 @@ def trace(args: argparse.Namespace) -> int:
             interactive=True,
         ):
             return 1
-        fini(session_name=args.session_name, is_runtime_session=args.is_runtime_session)
+        fini(session_name=args.session_name, dual_session=args.dual_session)
         return 0
     return _do_work_and_report_error(
         work,
         args.session_name,
-        args.is_runtime_session,
+        args.dual_session,
         do_cleanup=True,
     )
 
@@ -309,7 +309,7 @@ def start(args: argparse.Namespace) -> int:
         return int(
             not init(
                 session_name=args.session_name,
-                is_runtime_session=args.is_runtime_session,
+                dual_session=args.dual_session,
                 base_path=args.path,
                 append_trace=args.append_trace,
                 ros_events=args.events_ust,
@@ -323,7 +323,7 @@ def start(args: argparse.Namespace) -> int:
     return _do_work_and_report_error(
         work,
         args.session_name,
-        args.is_runtime_session,
+        args.dual_session,
         do_cleanup=True
     )
 
@@ -340,7 +340,7 @@ def stop(args: argparse.Namespace) -> int:
     """
     def work() -> int:
         session_name = args.session_name
-        if args.is_runtime_session:
+        if args.dual_session:
             session_name += path.RUNTIME_SESSION_SUFFIX
         lttng.lttng_fini(session_name=session_name)
         return 0
@@ -359,7 +359,7 @@ def pause(args: argparse.Namespace) -> int:
     """
     def work() -> int:
         session_name = args.session_name
-        if args.is_runtime_session:
+        if args.dual_session:
             session_name += path.RUNTIME_SESSION_SUFFIX
         lttng.lttng_stop(session_name=session_name)
         return 0
@@ -378,7 +378,7 @@ def resume(args: argparse.Namespace) -> int:
     """
     def work() -> int:
         session_name = args.session_name
-        if args.is_runtime_session:
+        if args.dual_session:
             snapshot_session_name = session_name + path.SNAPSHOT_SESSION_SUFFIX
             lttng.lttng_record_snapshot(session_name=snapshot_session_name)
             session_name += path.RUNTIME_SESSION_SUFFIX

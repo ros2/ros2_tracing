@@ -113,7 +113,7 @@ class Trace(Action):
         self,
         *,
         session_name: SomeSubstitutionsType,
-        is_snapshot_session: Union[bool, SomeSubstitutionsType] = False,
+        dual_session: Union[bool, SomeSubstitutionsType] = False,
         append_timestamp: Union[bool, SomeSubstitutionsType] = False,
         base_path: Optional[SomeSubstitutionsType] = None,
         append_trace: Union[bool, SomeSubstitutionsType] = False,
@@ -140,7 +140,7 @@ class Trace(Action):
         an empty string (through launch frontends).
 
         :param session_name: the name of the tracing session
-        :param is_snapshot_session: whether the session is a snapshot session
+        :param dual_session: whether to pre-configure a dual session
         :param append_timestamp: whether to append timestamp to the session name
         :param base_path: the path to the base directory in which to create the session directory,
             or `None` for default
@@ -174,7 +174,7 @@ class Trace(Action):
                 session_name
             )
         ]
-        self._is_snapshot_session = normalize_typed_substitution(is_snapshot_session, bool)
+        self._dual_session = normalize_typed_substitution(dual_session, bool)
         self._base_path: List[Substitution] = [
             IfElseSubstitution(
                 str(base_path is not None),
@@ -185,7 +185,7 @@ class Trace(Action):
         self._append_trace = normalize_typed_substitution(append_trace, bool)
         self._trace_directory: Optional[str] = None
         if events_ust is None:
-            events_ust = names.DEFAULT_EVENTS_ROS if not self._is_snapshot_session \
+            events_ust = names.DEFAULT_EVENTS_ROS if not self._dual_session \
                 else names.DEFAULT_INIT_EVENTS_ROS
         self._events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
         self._events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
@@ -209,8 +209,8 @@ class Trace(Action):
         return self._session_name
 
     @property
-    def is_snapshot_session(self) -> NormalizedValueType:
-        return self._is_snapshot_session
+    def dual_session(self) -> NormalizedValueType:
+        return self._dual_session
 
     @property
     def base_path(self) -> List[Substitution]:
@@ -319,11 +319,11 @@ class Trace(Action):
         session_name = entity.get_attr('session-name')
         if session_name is not None:
             kwargs['session_name'] = parser.parse_substitution(session_name)
-        is_snapshot_session = entity.get_attr('is-snapshot-session', data_type=bool, optional=True)
-        if is_snapshot_session is not None:
-            kwargs['is_snapshot_session'] = is_snapshot_session \
-                if isinstance(is_snapshot_session, bool) \
-                else parser.parse_substitution(cast(str, is_snapshot_session))
+        dual_session = entity.get_attr('dual-session', data_type=bool, optional=True)
+        if dual_session is not None:
+            kwargs['dual_session'] = dual_session \
+                if isinstance(dual_session, bool) \
+                else parser.parse_substitution(cast(str, dual_session))
         append_timestamp = entity.get_attr('append-timestamp', data_type=bool, optional=True)
         if append_timestamp is not None:
             kwargs['append_timestamp'] = append_timestamp \
@@ -426,7 +426,7 @@ class Trace(Action):
 
     def execute(self, context: LaunchContext) -> List[Action]:
         session_name = perform_substitutions(context, self._session_name)
-        is_snapshot_session = perform_typed_substitution(context, self._is_snapshot_session, bool)
+        dual_session = perform_typed_substitution(context, self._dual_session, bool)
         base_path = perform_substitutions(context, self._base_path)
         append_trace = perform_typed_substitution(context, self._append_trace, bool)
         events_ust = [perform_substitutions(context, x) for x in self._events_ust]
@@ -448,15 +448,16 @@ class Trace(Action):
         )
         self._ld_preload_actions = self._get_ld_preload_actions(events_ust)
 
-        # Append '-snapshot' to the session name if it is a snapshot session
-        if is_snapshot_session:
+        # Append '-snapshot' to the session name if pre-configuring a dual session
+        if dual_session:
             session_name += '-snapshot'
 
         def setup() -> bool:
             try:
                 self._trace_directory = lttng.lttng_init(
                     session_name=session_name,
-                    is_snapshot_session=is_snapshot_session,
+                    snapshot_session=dual_session,
+                    dual_session=dual_session,
                     base_path=base_path,
                     append_trace=append_trace,
                     ros_events=events_ust,
@@ -468,7 +469,7 @@ class Trace(Action):
                 )
                 if self._trace_directory is None:
                     return False
-                if not is_snapshot_session:
+                if not dual_session:
                     self._logger.info(f'Writing tracing session to: {self._trace_directory}')
                 self._logger.debug(f'UST events: {events_ust}')
                 self._logger.debug(f'Kernel events: {events_kernel}')
@@ -524,7 +525,7 @@ class Trace(Action):
         return (
             'Trace('
             f'session_name={self._session_name}, '
-            f'is_snapshot_session={self._is_snapshot_session}, '
+            f'dual_session={self._dual_session}, '
             f'base_path={self._base_path}, '
             f'append_trace={self._append_trace}, '
             f'trace_directory={self._trace_directory}, '

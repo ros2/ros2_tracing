@@ -92,7 +92,7 @@ def _add_arguments_default_session_name(parser: argparse.ArgumentParser) -> None
 def _add_arguments_session_type(parser: argparse.ArgumentParser) -> None:
     """Add session type argument to parser."""
     parser.add_argument(
-        '-r', '--runtime', dest='is_runtime_session', action='store_true',
+        '-d', '--dual-session', dest='dual_session', action='store_true',
         help='record snapshot of the pre-configured snapshot session '
              'with the same name and start normal tracing session (default: %(default)s)')
 
@@ -106,8 +106,8 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
 
 def add_arguments_noninteractive_configure(parser: argparse.ArgumentParser) -> None:
     """Add arguments to parser for non-interactive tracing session configuration."""
-    add_arguments_noninteractive_control(parser)
     _add_arguments_configure(parser)
+    add_arguments_noninteractive_control(parser)
 
 
 def add_arguments_noninteractive_control(parser: argparse.ArgumentParser) -> None:
