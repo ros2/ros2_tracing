@@ -140,7 +140,10 @@ class Trace(Action):
         an empty string (through launch frontends).
 
         :param session_name: the name of the tracing session
-        :param dual_session: whether to pre-configure a dual session
+        :param dual_session: whether to pre-configure a dual session: a snapshot session
+            is configured here, with a normal tracing session to be configured later, while the
+            application is running, e.g., through `ros2 trace --dual-session` with the same session
+            name
         :param append_timestamp: whether to append timestamp to the session name
         :param base_path: the path to the base directory in which to create the session directory,
             or `None` for default
@@ -148,7 +151,8 @@ class Trace(Action):
             otherwise an error is reported
         :param events_ust: the list of ROS UST events to enable; if it's `None`, the default ROS
             events are used for a normal session, and the default ROS initialization events are
-            used for a snapshot session; if it's an empty list, no UST events are enabled
+            used for the snapshot session in case of a dual session; if it's an empty list, no UST
+            events are enabled
         :param events_kernel: the list of kernel events to enable
         :param syscalls: the list of syscalls to enable
         :param context_fields: the names of context fields to enable
@@ -450,7 +454,7 @@ class Trace(Action):
 
         # Append '-snapshot' to the session name if pre-configuring a dual session
         if dual_session:
-            session_name += '-snapshot'
+            session_name += path.SNAPSHOT_SESSION_SUFFIX
 
         def setup() -> bool:
             try:
@@ -471,6 +475,10 @@ class Trace(Action):
                     return False
                 if not dual_session:
                     self._logger.info(f'Writing tracing session to: {self._trace_directory}')
+                else:
+                    self._logger.info(
+                        'Snapshot tracing session will be written to: '
+                        f'{self._trace_directory}')
                 self._logger.debug(f'UST events: {events_ust}')
                 self._logger.debug(f'Kernel events: {events_kernel}')
                 self._logger.debug(f'Syscalls: {syscalls}')

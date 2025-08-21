@@ -324,7 +324,7 @@ def start(args: argparse.Namespace) -> int:
         work,
         args.session_name,
         args.dual_session,
-        do_cleanup=True
+        do_cleanup=True,
     )
 
 
@@ -379,6 +379,7 @@ def resume(args: argparse.Namespace) -> int:
     def work() -> int:
         session_name = args.session_name
         if args.dual_session:
+            # Trigger snapshot to record any init events missed while paused
             snapshot_session_name = session_name + path.SNAPSHOT_SESSION_SUFFIX
             lttng.lttng_record_snapshot(session_name=snapshot_session_name)
             session_name += path.RUNTIME_SESSION_SUFFIX

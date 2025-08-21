@@ -30,6 +30,9 @@ from typing import Union
 from lttngpy import impl as lttngpy
 from packaging.version import Version
 
+from tracetools_trace.tools.path import RUNTIME_SESSION_SUFFIX
+from tracetools_trace.tools.path import SNAPSHOT_SESSION_SUFFIX
+
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_ROS
 from .names import DOMAIN_TYPE_KERNEL
@@ -247,9 +250,17 @@ def setup(
         raise RuntimeError('empty session name')
     # Resolve full tracing directory path
     if snapshot_session and dual_session:
-        full_path = os.path.join(base_path, session_name.removesuffix('-snapshot'), 'snapshot')
+        full_path = os.path.join(
+            base_path,
+            session_name.removesuffix(SNAPSHOT_SESSION_SUFFIX),
+            'snapshot',
+        )
     elif dual_session:
-        full_path = os.path.join(base_path, session_name.removesuffix('-runtime'), 'runtime')
+        full_path = os.path.join(
+            base_path,
+            session_name.removesuffix(RUNTIME_SESSION_SUFFIX),
+            'runtime',
+        )
     else:
         full_path = os.path.join(base_path, session_name)
     if os.path.isdir(full_path) and not append_trace:
@@ -447,7 +458,7 @@ def stop(
 def record_snapshot(
     *,
     session_name: str,
-    **kwargs
+    **kwargs,
 ) -> None:
     """
     Record a snapshot, and check for errors.
