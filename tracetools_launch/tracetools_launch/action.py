@@ -473,12 +473,7 @@ class Trace(Action):
                 )
                 if self._trace_directory is None:
                     return False
-                if not dual_session:
-                    self._logger.info(f'Writing tracing session to: {self._trace_directory}')
-                else:
-                    self._logger.info(
-                        'Snapshot tracing session will be written to: '
-                        f'{self._trace_directory}')
+                self._logger.info(f'Writing tracing session to: {self._trace_directory}')
                 self._logger.debug(f'UST events: {events_ust}')
                 self._logger.debug(f'Kernel events: {events_kernel}')
                 self._logger.debug(f'Syscalls: {syscalls}')
