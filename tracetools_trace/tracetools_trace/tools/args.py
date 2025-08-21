@@ -92,6 +92,10 @@ def _add_arguments_default_session_name(parser: argparse.ArgumentParser) -> None
 def _add_arguments_session_type(parser: argparse.ArgumentParser) -> None:
     """Add session type argument to parser."""
     parser.add_argument(
+        '--snapshot-session', dest='snapshot_session', action='store_true',
+        help='use this to create tracing session in snapshot mode in interactive mode or with '
+             'the start verb in non-interactive mode (default: %(default)s)')
+    parser.add_argument(
         '-d', '--dual-session', dest='dual_session', action='store_true',
         help='use this in non-interactive mode to record snapshot of the pre-configured snapshot '
              'session with the same name and start normal runtime tracing session; use this in '

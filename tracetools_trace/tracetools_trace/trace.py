@@ -110,6 +110,7 @@ def _display_snapshot_session_path(
 def init(
     *,
     session_name: str,
+    snapshot_session: bool,
     dual_session: bool,
     base_path: Optional[str],
     append_trace: bool,
@@ -129,6 +130,7 @@ def init(
     Raises RuntimeError on failure, in which case the tracing session might still exist.
 
     :param session_name: the name of the session
+    :param snapshot_session: whether this is a snapshot session
     :param dual_session: whether this is part of a dual session
     :param base_path: the path to the directory in which to create the tracing session directory,
         or `None` for default
@@ -178,6 +180,7 @@ def init(
 
     trace_directory = lttng.lttng_init(
         session_name=session_name,
+        snapshot_session=snapshot_session,
         dual_session=dual_session,
         base_path=base_path,
         append_trace=append_trace,
@@ -274,6 +277,7 @@ def trace(args: argparse.Namespace) -> int:
     def work() -> int:
         if not init(
             session_name=args.session_name,
+            snapshot_session=args.snapshot_session,
             dual_session=args.dual_session,
             base_path=args.path,
             append_trace=args.append_trace,
@@ -309,6 +313,7 @@ def start(args: argparse.Namespace) -> int:
         return int(
             not init(
                 session_name=args.session_name,
+                snapshot_session=args.snapshot_session,
                 dual_session=args.dual_session,
                 base_path=args.path,
                 append_trace=args.append_trace,
