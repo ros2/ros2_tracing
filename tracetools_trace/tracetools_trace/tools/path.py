@@ -16,6 +16,9 @@
 import os
 import time
 
+RUNTIME_SESSION_SUFFIX = '-runtime'
+SNAPSHOT_SESSION_SUFFIX = '-snapshot'
+
 
 def append_timestamp(
     session_name_base: str,

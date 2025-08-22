@@ -94,6 +94,17 @@ def lttng_stop(**kwargs) -> None:
     _lttng.stop(**kwargs)
 
 
+def lttng_record_snapshot(**kwargs) -> None:
+    """
+    Record a snapshot.
+
+    Raises RuntimeError on failure.
+
+    :param session_name: the name of the session
+    """
+    _lttng.record_snapshot(**kwargs)
+
+
 def is_lttng_installed(
     *,
     minimum_version: Optional[str] = None,

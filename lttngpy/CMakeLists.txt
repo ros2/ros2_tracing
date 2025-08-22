@@ -87,6 +87,7 @@ if(NOT LTTNGPY_DISABLED)
     src/lttngpy/event.cpp
     src/lttngpy/lttng.cpp
     src/lttngpy/session.cpp
+    src/lttngpy/snapshot.cpp
   )
 endif()
 

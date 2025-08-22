@@ -25,6 +25,7 @@
 #  include "lttngpy/event.hpp"
 #  include "lttngpy/lttng.hpp"
 #  include "lttngpy/session.hpp"
+#  include "lttngpy/snapshot.hpp"
 #endif  // LTTNGPY_DISABLED
 #include "lttngpy/status.hpp"
 
@@ -67,6 +68,22 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     py::arg("session_name"),
     py::arg("url"));
   m.def(
+    "lttng_create_session_snapshot",
+    &lttng_create_session_snapshot,
+    "Create snapshot session.",
+    py::kw_only(),
+    py::arg("session_name"),
+    py::arg("url"));
+  m.def(
+    "add_snapshot_output",
+    &lttngpy::add_snapshot_output,
+    "Add an output object to the snapshot session.",
+    py::kw_only(),
+    py::arg("session_name"),
+    py::arg("max_size"),
+    py::arg("name"),
+    py::arg("url"));
+  m.def(
     "lttng_destroy_session",
     &lttng_destroy_session,
     "Destroy session.",
@@ -88,6 +105,12 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     "lttng_stop_tracing",
     &lttng_stop_tracing,
     "Stop tracing.",
+    py::kw_only(),
+    py::arg("session_name"));
+  m.def(
+    "record_snapshot",
+    &lttngpy::record_snapshot,
+    "Record a snapshot session.",
     py::kw_only(),
     py::arg("session_name"));
 

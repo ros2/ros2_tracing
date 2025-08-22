@@ -30,6 +30,9 @@ from typing import Union
 from lttngpy import impl as lttngpy
 from packaging.version import Version
 
+from tracetools_trace.tools.path import RUNTIME_SESSION_SUFFIX
+from tracetools_trace.tools.path import SNAPSHOT_SESSION_SUFFIX
+
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_ROS
 from .names import DOMAIN_TYPE_KERNEL
@@ -194,6 +197,8 @@ def spawn_session_daemon() -> None:
 def setup(
     *,
     session_name: str,
+    snapshot_session: bool = False,
+    dual_session: bool = False,
     base_path: str,
     append_trace: bool = False,
     ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
@@ -217,6 +222,8 @@ def setup(
     Raises RuntimeError on failure, in which case the tracing session might still exist.
 
     :param session_name: the name of the session
+    :param snapshot_session: whether this is a snapshot session
+    :param dual_session: whether this is part of a dual session
     :param base_path: the path to the directory in which to create the tracing session directory,
         which will be created if needed
     :param append_trace: whether to append to the trace directory if it already exists, otherwise
@@ -242,7 +249,20 @@ def setup(
     if not session_name:
         raise RuntimeError('empty session name')
     # Resolve full tracing directory path
-    full_path = os.path.join(base_path, session_name)
+    if snapshot_session and dual_session:
+        full_path = os.path.join(
+            base_path,
+            session_name.removesuffix(SNAPSHOT_SESSION_SUFFIX),
+            'snapshot',
+        )
+    elif dual_session:
+        full_path = os.path.join(
+            base_path,
+            session_name.removesuffix(RUNTIME_SESSION_SUFFIX),
+            'runtime',
+        )
+    else:
+        full_path = os.path.join(base_path, session_name)
     if os.path.isdir(full_path) and not append_trace:
         raise RuntimeError(
             f'trace directory already exists, use the append option to append to it: {full_path}')
@@ -298,10 +318,18 @@ def setup(
 
     # Create session
     # LTTng will create the parent directories if needed
-    _create_session(
-        session_name=session_name,
-        full_path=full_path,
-    )
+    if not snapshot_session:
+        _create_session(
+            session_name=session_name,
+            full_path=full_path,
+        )
+    else:
+        _create_session_snapshot(
+            session_name=session_name,
+            max_size=10 * subbuffer_size_ust,
+            name='snapshot',
+            full_path=full_path,
+        )
 
     # Enable channel, events, and contexts for each domain
     if ust_enabled:
@@ -427,6 +455,27 @@ def stop(
         raise RuntimeError(f"failed to stop tracing session '{session_name}': {error}")
 
 
+def record_snapshot(
+    *,
+    session_name: str,
+    **kwargs,
+) -> None:
+    """
+    Record a snapshot, and check for errors.
+
+    This must not be called if `lttngpy.is_available()` is `False`.
+    Raises RuntimeError on failure.
+
+    :param session_name: the name of the session
+    """
+    result = lttngpy.record_snapshot(session_name=session_name)
+    if result < 0:
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(
+            f"failed to record snapshot of the tracing session '{session_name}': {error}"
+        )
+
+
 def destroy(
     *,
     session_name: str,
@@ -477,6 +526,50 @@ def _create_session(
     if result < 0:
         error = lttngpy.lttng_strerror(result)
         raise RuntimeError(f"failed to create tracing session '{session_name}': {error}")
+
+
+def _create_session_snapshot(
+    *,
+    session_name: str,
+    max_size: int,
+    name: str,
+    full_path: str,
+) -> None:
+    """
+    Create snapshot session from name and full directory path, and check for errors.
+
+    This must not be called if `lttngpy.is_available()` is `False`.
+    Raises RuntimeError on failure.
+
+    :param session_name: the name of the session
+    :param max_size: the maximum size of the snapshot output in bytes
+    :param name: the name of the snapshot output
+    :param full_path: the full path to the main directory to write trace data to
+    """
+    result = lttngpy.lttng_create_session_snapshot(
+        session_name=session_name,
+        url=None,
+    )
+    if -lttngpy.LTTNG_ERR_EXIST_SESS.value == result:
+        # Sessions may persist if there was an error previously, so if it already exists, just
+        # destroy it and try again
+        destroy(session_name=session_name)
+        result = lttngpy.lttng_create_session_snapshot(
+            session_name=session_name,
+            url=None,
+        )
+    if result < 0:
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to create snapshot session '{session_name}': {error}")
+    result = lttngpy.add_snapshot_output(
+        session_name=session_name,
+        max_size=max_size,
+        name=name,
+        url=full_path,
+    )
+    if result < 0:
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to add output for snapshot session '{session_name}': {error}")
 
 
 def _enable_channel(**kwargs) -> None:
