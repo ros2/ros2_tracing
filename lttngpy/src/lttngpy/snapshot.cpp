@@ -46,7 +46,9 @@ int add_snapshot_output(
   // Set snapshot output attributes.
   if (!try_or_cleanup(lttng_snapshot_output_set_size(max_size, output))) {return ret;}
   if (!try_or_cleanup(lttng_snapshot_output_set_name(name.c_str(), output))) {return ret;}
-  if (!try_or_cleanup(lttng_snapshot_output_set_local_path(url.c_str(), output))) {return ret;}
+  if (!try_or_cleanup(lttng_snapshot_output_set_ctrl_url(("file://" + url).c_str(), output))) {
+    return ret;
+  }
 
   // Add output object to the session.
   ret = lttng_snapshot_add_output(session_name.c_str(), output);
