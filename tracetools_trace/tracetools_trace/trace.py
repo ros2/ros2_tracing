@@ -306,7 +306,7 @@ def start(args: argparse.Namespace) -> int:
     On failure, the tracing session will not exist.
 
     :param args: the arguments parsed using
-        `tracetools_trace.tools.args.add_arguments_noninteractive`
+        `tracetools_trace.tools.args.add_arguments_noninteractive_configure`
     :return: the return code (0 if successful, 1 otherwise)
     """
     def work() -> int:
@@ -340,7 +340,7 @@ def stop(args: argparse.Namespace) -> int:
     On failure, the tracing session might still exist.
 
     :param args: the arguments parsed using
-        `tracetools_trace.tools.args.add_arguments_session_name`
+        `tracetools_trace.tools.args.add_arguments_noninteractive_control`
     :return: the return code (0 if successful, 1 otherwise)
     """
     def work() -> int:
@@ -359,7 +359,7 @@ def pause(args: argparse.Namespace) -> int:
     On failure, the tracing session might still exist.
 
     :param args: the arguments parsed using
-        `tracetools_trace.tools.args.add_arguments_session_name`
+        `tracetools_trace.tools.args.add_arguments_noninteractive_control`
     :return: the return code (0 if successful, 1 otherwise)
     """
     def work() -> int:
@@ -378,7 +378,7 @@ def resume(args: argparse.Namespace) -> int:
     On failure, the tracing session might still exist.
 
     :param args: the arguments parsed using
-        `tracetools_trace.tools.args.add_arguments_session_name`
+        `tracetools_trace.tools.args.add_arguments_noninteractive_control`
     :return: the return code (0 if successful, 1 otherwise)
     """
     def work() -> int:
