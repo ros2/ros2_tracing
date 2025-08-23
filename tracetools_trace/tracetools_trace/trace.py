@@ -393,5 +393,24 @@ def resume(args: argparse.Namespace) -> int:
     return _do_work_and_report_error(work, args.session_name, do_cleanup=False)
 
 
+def record_snapshot(args: argparse.Namespace) -> int:
+    """
+    Record snapshot of a tracing session (created in snapshot mode).
+
+    On failure, the tracing session might still exist.
+
+    :param args: the arguments parsed using
+        `tracetools_trace.tools.args.add_arguments_noninteractive_control`
+    :return: the return code (0 if successful, 1 otherwise)
+    """
+    def work() -> int:
+        session_name = args.session_name
+        if args.dual_session:
+            session_name += path.RUNTIME_SESSION_SUFFIX
+        lttng.lttng_record_snapshot(session_name=session_name)
+        return 0
+    return _do_work_and_report_error(work, args.session_name, do_cleanup=False)
+
+
 def main() -> int:
     return trace(args.parse_args())
