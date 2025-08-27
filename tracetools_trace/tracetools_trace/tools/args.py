@@ -110,6 +110,7 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     """Add arguments to parser for interactive tracing session configuration."""
     _add_arguments_default_session_name(parser)
     _add_arguments_session_mode(parser)
+    _add_arguments_dual_session(parser)
     _add_arguments_configure(parser)
 
 
