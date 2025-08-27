@@ -113,7 +113,7 @@ class Trace(Action):
         self,
         *,
         session_name: SomeSubstitutionsType,
-        snapshot_session: Union[bool, SomeSubstitutionsType] = False,
+        snapshot_mode: Union[bool, SomeSubstitutionsType] = False,
         dual_session: Union[bool, SomeSubstitutionsType] = False,
         append_timestamp: Union[bool, SomeSubstitutionsType] = False,
         base_path: Optional[SomeSubstitutionsType] = None,
@@ -141,7 +141,7 @@ class Trace(Action):
         an empty string (through launch frontends).
 
         :param session_name: the name of the tracing session
-        :param snapshot_session: whether it is a snapshot session
+        :param snapshot_mode: whether it is a snapshot session
         :param dual_session: whether to pre-configure a dual session: a snapshot session
             is configured here, with a normal tracing session to be configured later, while the
             application is running, e.g., through `ros2 trace --dual-session` with the same session
@@ -180,7 +180,7 @@ class Trace(Action):
                 session_name
             )
         ]
-        self._snapshot_session = normalize_typed_substitution(snapshot_session, bool)
+        self._snapshot_mode = normalize_typed_substitution(snapshot_mode, bool)
         self._dual_session = normalize_typed_substitution(dual_session, bool)
         self._base_path: List[Substitution] = [
             IfElseSubstitution(
@@ -216,8 +216,8 @@ class Trace(Action):
         return self._session_name
 
     @property
-    def snapshot_session(self) -> NormalizedValueType:
-        return self._snapshot_session
+    def snapshot_mode(self) -> NormalizedValueType:
+        return self._snapshot_mode
 
     @property
     def dual_session(self) -> NormalizedValueType:
@@ -330,11 +330,11 @@ class Trace(Action):
         session_name = entity.get_attr('session-name')
         if session_name is not None:
             kwargs['session_name'] = parser.parse_substitution(session_name)
-        snapshot_session = entity.get_attr('snapshot-session', data_type=bool, optional=True)
-        if snapshot_session is not None:
-            kwargs['snapshot_session'] = snapshot_session \
-                if isinstance(snapshot_session, bool) \
-                else parser.parse_substitution(cast(str, snapshot_session))
+        snapshot_mode = entity.get_attr('snapshot-mode', data_type=bool, optional=True)
+        if snapshot_mode is not None:
+            kwargs['snapshot_mode'] = snapshot_mode \
+                if isinstance(snapshot_mode, bool) \
+                else parser.parse_substitution(cast(str, snapshot_mode))
         dual_session = entity.get_attr('dual-session', data_type=bool, optional=True)
         if dual_session is not None:
             kwargs['dual_session'] = dual_session \
@@ -442,7 +442,7 @@ class Trace(Action):
 
     def execute(self, context: LaunchContext) -> List[Action]:
         session_name = perform_substitutions(context, self._session_name)
-        snapshot_session = perform_typed_substitution(context, self._snapshot_session, bool)
+        snapshot_mode = perform_typed_substitution(context, self._snapshot_mode, bool)
         dual_session = perform_typed_substitution(context, self._dual_session, bool)
         base_path = perform_substitutions(context, self._base_path)
         append_trace = perform_typed_substitution(context, self._append_trace, bool)
@@ -473,7 +473,7 @@ class Trace(Action):
             try:
                 self._trace_directory = lttng.lttng_init(
                     session_name=session_name,
-                    snapshot_session=dual_session or snapshot_session,
+                    snapshot_mode=dual_session or snapshot_mode,
                     dual_session=dual_session,
                     base_path=base_path,
                     append_trace=append_trace,
@@ -541,7 +541,7 @@ class Trace(Action):
         return (
             'Trace('
             f'session_name={self._session_name}, '
-            f'snapshot_session={self._snapshot_session}, '
+            f'snapshot_mode={self._snapshot_mode}, '
             f'dual_session={self._dual_session}, '
             f'base_path={self._base_path}, '
             f'append_trace={self._append_trace}, '
