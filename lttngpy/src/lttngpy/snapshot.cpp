@@ -78,8 +78,10 @@ int record_snapshot(const std::string & session_name)
     return ret;
   }
 
+  lttng_error_code result;
+  ret = lttng_clear_handle_get_result(handle, &result);
   lttng_clear_handle_destroy(handle);
-  return 0;
+  return ret;
 }
 
 }  // namespace lttngpy
