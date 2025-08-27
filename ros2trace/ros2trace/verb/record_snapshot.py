@@ -18,10 +18,10 @@ from tracetools_trace.trace import record_snapshot
 
 
 class RecordSnapshotVerb(VerbExtension):
-    """Record a snapshot of the current tracing session."""
+    """Take a snapshot of a snapshot session."""
 
-    def add_arguments(self, parser, cli_name):
+    def add_arguments(self, parser, cli_name) -> None:
         args.add_arguments_noninteractive_control(parser)
 
-    def main(self, *, args):
+    def main(self, *, args) -> int:
         return record_snapshot(args)
