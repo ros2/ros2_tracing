@@ -406,7 +406,7 @@ def record_snapshot(args: argparse.Namespace) -> int:
     def work() -> int:
         session_name = args.session_name
         if args.dual_session:
-            session_name += path.RUNTIME_SESSION_SUFFIX
+            session_name += path.SNAPSHOT_SESSION_SUFFIX
         lttng.lttng_record_snapshot(session_name=session_name)
         return 0
     return _do_work_and_report_error(work, args.session_name, do_cleanup=False)
