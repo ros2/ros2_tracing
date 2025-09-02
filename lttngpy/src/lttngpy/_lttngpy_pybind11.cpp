@@ -119,6 +119,10 @@ PYBIND11_MODULE(_lttngpy_pybind11, m) {
     "get_session_names",
     &lttngpy::get_session_names,
     "Get the currently-existing session names.");
+  m.def(
+    "get_snapshot_session_names",
+    &lttngpy::get_snapshot_session_names,
+    "Get the currently-existing snapshot session names.");
 
   // Domain
   py::enum_<lttng_domain_type>(m, "lttng_domain_type")
