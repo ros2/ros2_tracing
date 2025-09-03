@@ -89,7 +89,10 @@ class TestSession(unittest.TestCase):
         self.assertEqual(0, lttngpy.lttng_destroy_session(session_name=session_name))
         self.assertSetEqual(set(), lttngpy.get_session_names(snapshot_mode=True))
 
-        self.assertEqual(0, lttngpy.lttng_create_session(session_name=session_name, url=tmpdir))
+        self.assertEqual(
+            0,
+            lttngpy.lttng_create_session_snapshot(session_name=session_name, url=tmpdir),
+        )
         self.assertEqual(0, lttngpy.destroy_all_sessions())
         self.assertSetEqual(set(), lttngpy.get_session_names(snapshot_mode=True))
 
