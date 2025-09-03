@@ -24,7 +24,7 @@
 namespace lttngpy
 {
 
-std::variant<int, std::set<std::string>> get_session_names()
+std::variant<int, std::set<std::string>> get_session_names(bool snapshot_mode)
 {
   struct lttng_session * sessions = nullptr;
   int ret = lttng_list_sessions(&sessions);
@@ -36,30 +36,13 @@ std::variant<int, std::set<std::string>> get_session_names()
   std::set<std::string> session_names = {};
   const int num_sessions = ret;
   for (int i = 0; i < num_sessions; i++) {
+    if (snapshot_mode && !sessions[i].snapshot_mode) {
+      continue;
+    }
     session_names.insert(sessions[i].name);
   }
   std::free(sessions);
   return session_names;
-}
-
-std::variant<int, std::set<std::string>> get_snapshot_session_names()
-{
-  struct lttng_session * sessions = nullptr;
-  int ret = lttng_list_sessions(&sessions);
-  if (0 > ret) {
-    std::free(sessions);
-    return ret;
-  }
-
-  std::set<std::string> snapshot_session_names = {};
-  const int num_sessions = ret;
-  for (int i = 0; i < num_sessions; i++) {
-    if (sessions[i].snapshot_mode) {
-      snapshot_session_names.insert(sessions[i].name);
-    }
-  }
-  std::free(sessions);
-  return snapshot_session_names;
 }
 
 int destroy_all_sessions()
