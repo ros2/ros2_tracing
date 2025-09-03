@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <lttng/snapshot.h>
+#include <lttng/clear.h>
+#include <lttng/clear-handle.h>
 #include <lttng/lttng-error.h>
+#include <lttng/snapshot.h>
 
 #include <string>
 
@@ -57,7 +59,29 @@ int add_snapshot_output(
 
 int record_snapshot(const std::string & session_name)
 {
-  return lttng_snapshot_record(session_name.c_str(), NULL, 1);  // The last parameter is unused
+  int ret = lttng_snapshot_record(session_name.c_str(), NULL, 1);  // The last parameter is unused
+  if (0 != ret) {
+    return ret;
+  }
+
+  // Clear the session after recording the snapshot
+  lttng_clear_handle *handle;
+  ret = lttng_clear_session(session_name.c_str(), &handle);
+  if (0 > ret) {
+    lttng_clear_handle_destroy(handle);
+    return ret;
+  }
+
+  ret = lttng_clear_handle_wait_for_completion(handle, -1);  // Wait indefinitely
+  if (LTTNG_CLEAR_HANDLE_STATUS_COMPLETED != ret) {
+    lttng_clear_handle_destroy(handle);
+    return ret;
+  }
+
+  lttng_error_code result;
+  ret = lttng_clear_handle_get_result(handle, &result);
+  lttng_clear_handle_destroy(handle);
+  return ret;
 }
 
 }  // namespace lttngpy

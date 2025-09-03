@@ -25,9 +25,10 @@ namespace lttngpy
 /**
  * Get the currently-existing session names.
  *
+ * \param snapshot_mode If true, only snapshot session names are returned
  * \return the set of session names, else a negative LTTng error code
  */
-std::variant<int, std::set<std::string>> get_session_names();
+std::variant<int, std::set<std::string>> get_session_names(bool snapshot_mode = false);
 
 /**
  * Destroy all sessions.

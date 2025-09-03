@@ -59,6 +59,45 @@ class TestSession(unittest.TestCase):
 
         shutil.rmtree(tmpdir)
 
+    def test_snapshot_session_list_create_start_stop_destroy(self):
+        session_name = 'test_snapshot_session_list_create_start_stop_destroy'
+        tmpdir = self.create_test_tmpdir(session_name)
+
+        self.assertSetEqual(set(), lttngpy.get_session_names(snapshot_mode=True))
+        self.assertEqual(
+            0,
+            lttngpy.lttng_create_session_snapshot(session_name=session_name, url=tmpdir),
+        )
+        self.assertSetEqual({session_name}, lttngpy.get_session_names(snapshot_mode=True))
+        self.assertEqual(
+            0,
+            lttngpy.enable_channel(
+                session_name=session_name,
+                domain_type=lttngpy.LTTNG_DOMAIN_UST,
+                buffer_type=lttngpy.LTTNG_BUFFER_PER_UID,
+                channel_name='dummy_channel',
+                overwrite=None,
+                subbuf_size=None,
+                num_subbuf=None,
+                switch_timer_interval=None,
+                read_timer_interval=None,
+                output=None,
+            ),
+        )
+        self.assertEqual(0, lttngpy.lttng_start_tracing(session_name=session_name))
+        self.assertEqual(0, lttngpy.lttng_stop_tracing(session_name=session_name))
+        self.assertEqual(0, lttngpy.lttng_destroy_session(session_name=session_name))
+        self.assertSetEqual(set(), lttngpy.get_session_names(snapshot_mode=True))
+
+        self.assertEqual(
+            0,
+            lttngpy.lttng_create_session_snapshot(session_name=session_name, url=tmpdir),
+        )
+        self.assertEqual(0, lttngpy.destroy_all_sessions())
+        self.assertSetEqual(set(), lttngpy.get_session_names(snapshot_mode=True))
+
+        shutil.rmtree(tmpdir)
+
     def test_error(self):
         session_name = 'test_error'
         self.assertSetEqual(set(), lttngpy.get_session_names())

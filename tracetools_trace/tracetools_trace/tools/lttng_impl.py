@@ -197,7 +197,7 @@ def spawn_session_daemon() -> None:
 def setup(
     *,
     session_name: str,
-    snapshot_session: bool = False,
+    snapshot_mode: bool = False,
     dual_session: bool = False,
     base_path: str,
     append_trace: bool = False,
@@ -222,7 +222,7 @@ def setup(
     Raises RuntimeError on failure, in which case the tracing session might still exist.
 
     :param session_name: the name of the session
-    :param snapshot_session: whether this is a snapshot session
+    :param snapshot_mode: whether this is a snapshot session
     :param dual_session: whether this is part of a dual session
     :param base_path: the path to the directory in which to create the tracing session directory,
         which will be created if needed
@@ -249,7 +249,7 @@ def setup(
     if not session_name:
         raise RuntimeError('empty session name')
     # Resolve full tracing directory path
-    if snapshot_session and dual_session:
+    if snapshot_mode and dual_session:
         full_path = os.path.join(
             base_path,
             session_name.removesuffix(SNAPSHOT_SESSION_SUFFIX),
@@ -318,7 +318,7 @@ def setup(
 
     # Create session
     # LTTng will create the parent directories if needed
-    if not snapshot_session:
+    if not snapshot_mode:
         _create_session(
             session_name=session_name,
             full_path=full_path,

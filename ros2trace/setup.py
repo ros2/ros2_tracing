@@ -47,6 +47,7 @@ setup(
         ],
         f'{package_name}.verb': [
             f'pause = {package_name}.verb.pause:PauseVerb',
+            f'record_snapshot = {package_name}.verb.record_snapshot:RecordSnapshotVerb',
             f'resume = {package_name}.verb.resume:ResumeVerb',
             f'start = {package_name}.verb.start:StartVerb',
             f'stop = {package_name}.verb.stop:StopVerb',

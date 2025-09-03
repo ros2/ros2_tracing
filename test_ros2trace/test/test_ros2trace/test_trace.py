@@ -87,23 +87,23 @@ class TestROS2TraceCLI(unittest.TestCase):
     def tearDown(self) -> None:
         del self.trace_test_id
 
-    def assertTracingSessionExist(self, session_name: str) -> None:
+    def assertTracingSessionExist(self, session_name: str, snapshot_mode: bool = False) -> None:
         self.assertTrue(
             lttngpy.is_lttng_session_daemon_alive(),
             f"tracing session '{session_name}' does not exist because there is no daemon",
         )
-        session_names = lttngpy.get_session_names()
+        session_names = lttngpy.get_session_names(snapshot_mode=snapshot_mode)
         self.assertIn(
             session_name,
             session_names,
             f"tracing session '{session_name}' does not exist",
         )
 
-    def assertTracingSessionNotExist(self, session_name: str) -> None:
+    def assertTracingSessionNotExist(self, session_name: str, snapshot_mode: bool = False) -> None:
         # If there is no session daemon, then there are no tracing sessions
         if not lttngpy.is_lttng_session_daemon_alive():
             return
-        session_names = lttngpy.get_session_names()
+        session_names = lttngpy.get_session_names(snapshot_mode=snapshot_mode)
         self.assertNotIn(session_name, session_names, f"tracing session '{session_name}' exists")
 
     def assertTraceExist(self, trace_dir: str) -> None:
@@ -659,6 +659,80 @@ class TestROS2TraceCLI(unittest.TestCase):
         ret = self.run_trace_subcommand(['stop', session_name])
         self.assertEqual(1, ret)
         self.assertTracingSessionNotExist(session_name)
+
+        shutil.rmtree(tmpdir)
+
+    @unittest.skipIf(not are_tracepoints_included(), 'tracepoints are required')
+    def test_snapshot_start_pause_resume_stop(self) -> None:
+        tmpdir = self.create_test_tmpdir('test_snapshot_start_pause_resume_stop')
+        session_name = 'test_snapshot_start_pause_resume_stop'
+
+        # Start tracing and run nodes
+        ret = self.run_trace_subcommand(
+            [
+                'start', session_name,
+                '--ust', tracepoints.rcl_subscription_init, TRACE_TEST_ID_TP_NAME,
+                '--path', tmpdir,
+                '--snapshot-mode',
+            ]
+        )
+        self.assertEqual(0, ret)
+        self.assertTracingSessionExist(session_name, snapshot_mode=True)
+        self.run_nodes()
+
+        # Pause tracing, record snapshot and check trace
+        ret = self.run_trace_subcommand(['pause', session_name])
+        self.assertEqual(0, ret)
+        ret = self.run_trace_subcommand(['record_snapshot', session_name])
+        self.assertEqual(0, ret)
+        trace_dir = os.path.join(tmpdir, session_name)
+        self.assertTraceExist(trace_dir)
+        self.assertTracingSessionExist(session_name, snapshot_mode=True)
+        expected_trace_data = [
+            ('topic_name', '/ping'),
+            ('topic_name', '/pong'),
+        ]
+        num_events = self.assertTraceContains(trace_dir, expected_field_value=expected_trace_data)
+
+        # Pausing again should give an error
+        ret = self.run_trace_subcommand(['pause', session_name])
+        self.assertEqual(1, ret)
+
+        # Subbuffers should be cleared after the last record_snapshot
+        ret = self.run_trace_subcommand(['record_snapshot', session_name])
+        self.assertEqual(0, ret)
+        self.assertTracingSessionExist(session_name, snapshot_mode=True)
+        expected_trace_data = []
+        new_num_events = self.assertTraceContains(
+            trace_dir,
+            expected_field_value=expected_trace_data
+        )
+        self.assertEqual(num_events, new_num_events, 'subbuffers were not cleared')
+
+        # Resume tracing and run nodes again
+        ret = self.run_trace_subcommand(['resume', session_name])
+        self.assertEqual(0, ret)
+        self.assertTracingSessionExist(session_name, snapshot_mode=True)
+        self.run_nodes()
+
+        # Resuming tracing again should give an error
+        ret = self.run_trace_subcommand(['resume', session_name])
+        self.assertEqual(1, ret)
+        self.assertTracingSessionExist(session_name, snapshot_mode=True)
+
+        # Stop tracing and check that session does not exist
+        ret = self.run_trace_subcommand(['stop', session_name])
+        self.assertEqual(0, ret)
+        self.assertTracingSessionNotExist(session_name, snapshot_mode=True)
+
+        # Taking a snapshot after stopping should give an error
+        ret = self.run_trace_subcommand(['record_snapshot', session_name])
+        self.assertEqual(1, ret)
+
+        # Stopping tracing again should give an error
+        ret = self.run_trace_subcommand(['stop', session_name])
+        self.assertEqual(1, ret)
+        self.assertTracingSessionNotExist(session_name, snapshot_mode=True)
 
         shutil.rmtree(tmpdir)
 
