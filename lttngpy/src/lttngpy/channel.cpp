@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Include lttng-error.h before channel.h, otherwise lttng_error_code isn't known
+// TODO: order it alphabetically once liblttng-ctl 2.14+ is fixed:
+// https://review.lttng.org/c/lttng-tools/+/15165
 #include <lttng/lttng-error.h>
 #include <lttng/channel.h>
 #include <lttng/constant.h>
