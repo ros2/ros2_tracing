@@ -27,5 +27,9 @@ setup(
     keywords=[],
     description='Utilities for tracing-related tests.',
     license='Apache 2.0',
-    tests_require=['pytest'],
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
 )
