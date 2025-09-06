@@ -95,6 +95,7 @@ class TestTraceAction(unittest.TestCase):
         *,
         session_name: Optional[str] = 'my-session-name',
         snapshot_mode: bool = False,
+        dual_session: bool = False,
         append_trace: bool = False,
         events_ust: List[str] = ['ros2:*', '*'],
         subbuffer_size_ust: int = 524288,
@@ -110,6 +111,10 @@ class TestTraceAction(unittest.TestCase):
         self.assertEqual(
             snapshot_mode,
             perform_typed_substitution(context, action.snapshot_mode, bool)
+        )
+        self.assertEqual(
+            dual_session,
+            perform_typed_substitution(context, action.dual_session, bool)
         )
         self.assertEqual(
             append_trace,
@@ -169,6 +174,27 @@ class TestTraceAction(unittest.TestCase):
 
         shutil.rmtree(tmpdir)
 
+    def test_action_dual_session(self) -> None:
+        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_dual_session')
+
+        action = Trace(
+            session_name='my-session-name',
+            dual_session=True,
+            base_path=tmpdir,
+            events_kernel=[],
+            syscalls=[],
+            events_ust=[
+                'ros2:*',
+                '*',
+            ],
+            subbuffer_size_ust=524288,
+            subbuffer_size_kernel=1048576,
+        )
+        context = self._assert_launch_no_errors([action])
+        self._check_trace_action(action, context, tmpdir, dual_session=True)
+
+        shutil.rmtree(tmpdir)
+
     def test_action_frontend_xml(self) -> None:
         tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_frontend_xml')
 
@@ -178,6 +204,7 @@ class TestTraceAction(unittest.TestCase):
                 <trace
                     session-name="my-session-name"
                     snapshot-mode="false"
+                    dual-session="false"
                     append-timestamp="false"
                     base-path="{}"
                     append-trace="true"
@@ -208,6 +235,7 @@ class TestTraceAction(unittest.TestCase):
             - trace:
                 session-name: my-session-name
                 snapshot-mode: false
+                dual-session: false
                 append-timestamp: false
                 base-path: {}
                 append-trace: true
@@ -300,6 +328,11 @@ class TestTraceAction(unittest.TestCase):
             default_value='False',
             description='whether to take a snapshot of the session',
         )
+        dual_session_arg = DeclareLaunchArgument(
+            'dual-session',
+            default_value='False',
+            description='whether to pre-configure a dual session',
+        )
         append_timestamp_arg = DeclareLaunchArgument(
             'append-timestamp',
             default_value='False',
@@ -323,6 +356,7 @@ class TestTraceAction(unittest.TestCase):
         action = Trace(
             session_name=LaunchConfiguration(session_name_arg.name),
             snapshot_mode=LaunchConfiguration(snapshot_mode_arg.name),
+            dual_session=LaunchConfiguration(dual_session_arg.name),
             append_timestamp=LaunchConfiguration(append_timestamp_arg.name),
             base_path=TextSubstitution(text=tmpdir),
             append_trace=LaunchConfiguration(append_trace_arg.name),
@@ -345,6 +379,7 @@ class TestTraceAction(unittest.TestCase):
         context = self._assert_launch_no_errors([
             session_name_arg,
             snapshot_mode_arg,
+            dual_session_arg,
             append_timestamp_arg,
             append_trace_arg,
             subbuffer_size_ust_arg,
@@ -378,6 +413,7 @@ class TestTraceAction(unittest.TestCase):
             <launch>
                 <arg name="session-name" default="my-session-name" />
                 <arg name="snapshot-mode" default="false" />
+                <arg name="dual-session" default="false" />
                 <arg name="append-timestamp" default="false" />
                 <arg name="base-path" default="{}" />
                 <arg name="append-trace" default="true" />
@@ -420,6 +456,9 @@ class TestTraceAction(unittest.TestCase):
                 default: my-session-name
             - arg:
                 name: snapshot-mode
+                default: "false"
+            - arg:
+                name: dual-session
                 default: "false"
             - arg:
                 name: append-timestamp
