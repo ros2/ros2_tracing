@@ -162,8 +162,8 @@ The packages in this repo provide two options: a [command](#trace-command) and a
 > The [launch file action](#launch-file-trace-action) is designed to automatically start tracing before the application launches.
 
 > [!TIP]
-> Configuring a tracing session in [snapshot mode](#tracing-in-snapshot-mode) or [dual session mode](#dual-session-tracing) stores trace data in the memory without writing to disk until demanded.
-> This can be leveraged to start recording traces after application launch without losing initialization data, eliminating the need to record trace data before application launch and preventing accumulation of unwanted trace files when not actively analyzing.
+> Configuring a tracing session in [snapshot mode](#tracing-in-snapshot-mode) or [dual session mode](#dual-session-tracing) stores trace data in memory without writing to disk until demanded.
+> This can be leveraged to start recording traces as needed after application launch without losing initialization data, eliminating the need to start recording all trace data before application launch and preventing accumulation of unwanted trace files when not actively analyzing.
 
 The tracing directory can be configured using command/launch action parameters, or through environment variables with the following logic:
 
@@ -226,7 +226,7 @@ If you have installed the kernel tracer, use kernel tracing, and still encounter
 By default, tracing sessions write trace data continuously to disk.
 Tracing sessions in [snapshot mode](https://lttng.org/docs/v2.13/#doc-tracing-session-mode) store trace data in memory and only write to disk when a [snapshot is taken](https://lttng.org/docs/v2.13/#doc-taking-a-snapshot).
 When memory buffers fill up, the oldest data is discarded, maintaining a rolling history whose size can be controlled by configuring sub-buffer size.
-This is useful for capturing trace data only when something interesting occurs, avoiding continuous disk writes and thus lowering the runtime performance impact even more.
+This "flight recorder" mode is useful for capturing trace data only when something interesting occurs, avoiding continuous disk writes and thus lowering the runtime performance impact even more.
 
 ### Trace command
 
@@ -276,7 +276,7 @@ Use `record_snapshot` to take a snapshot and write the trace data to disk, as st
 ## Dual session tracing
 
 Dual session mode solves the problem of losing initialization trace data by using two separate tracing sessions: one for initialization events in [snapshot mode](https://lttng.org/docs/v2.13/#doc-tracing-session-mode), and another normal tracing session for runtime events.
-This allows starting to record trace data at any point without losing initialization data.
+This allows starting to actively record trace data at any point without losing initialization data.
 
 Use the `Trace` action to start the initialization session in snapshot mode:
 
