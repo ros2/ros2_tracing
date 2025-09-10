@@ -161,6 +161,10 @@ The packages in this repo provide two options: a [command](#trace-command) and a
 > For more information, refer to the [design document](./doc/design_ros_2.md#general-guidelines).
 > The [launch file action](#launch-file-trace-action) is designed to automatically start tracing before the application launches.
 
+> [!TIP]
+> Configuring a tracing session in [snapshot mode](#tracing-in-snapshot-mode) or [dual session mode](#dual-session-tracing) stores trace data in memory without writing to disk until demanded.
+> This can be leveraged to start recording traces as needed after application launch without losing initialization data, eliminating the need to start recording all trace data before application launch and preventing accumulation of unwanted trace files when not actively analyzing.
+
 The tracing directory can be configured using command/launch action parameters, or through environment variables with the following logic:
 
 * Use `$ROS_TRACE_DIR` if `ROS_TRACE_DIR` is set and not empty.
@@ -216,6 +220,97 @@ For more information, see [this example launch file](./tracetools_launch/launch/
 
 You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) events (`events_kernel` in Python, `events-kernel` in XML or YAML) or syscalls (`syscalls` in Python, XML, or YAML).
 If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
+
+## Tracing in snapshot mode
+
+By default, tracing sessions write trace data continuously to disk.
+Tracing sessions in [snapshot mode](https://lttng.org/docs/v2.13/#doc-tracing-session-mode) store trace data in memory and only write to disk when a [snapshot is taken](https://lttng.org/docs/v2.13/#doc-taking-a-snapshot).
+When memory buffers fill up, the oldest data is discarded, maintaining a rolling history whose size can be controlled by configuring sub-buffer size.
+This "flight recorder" mode is useful for capturing trace data only when something interesting occurs, avoiding continuous disk writes and thus lowering the runtime performance impact even more.
+
+### Trace command
+
+Use the `--snapshot-mode` option while starting a tracing session to configure it in snapshot mode:
+
+```
+$ ros2 trace --snapshot-mode  # requires user interaction
+```
+
+```
+$ ros2 trace start session_name --snapshot-mode
+```
+
+By default all ROS 2 tracepoints are enabled.
+Run the commands with `-h` for more information.
+
+Use `record_snapshot` to take a snapshot and write the trace data to disk:
+
+```
+$ ros2 trace record_snapshot session_name
+```
+
+All other session control commands work as usual:
+
+```
+$ ros2 trace pause session_name
+$ ros2 trace resume session_name
+$ ros2 trace stop session_name
+```
+
+### Launch file trace action
+
+Set `snapshot_mode=True` in the `Trace` action to configure the tracing session in snapshot mode using launch files.
+The session starts when launching the launch file and ends when it exits or when terminated.
+
+```
+$ ros2 launch tracetools_launch example_snapshot_mode.launch.py
+```
+
+Use `record_snapshot` to take a snapshot and write the trace data to disk, as stated earlier.
+
+> [!NOTE]
+> In snapshot mode, high-frequency runtime events may overwrite initialization trace data in memory before a snapshot is taken, potentially making the trace data unusable.
+> This is more likely to occur if sub-buffer sizes are too small.
+> Support for configuring separate channels for initialization and runtime tracepoints is planned to address this limitation (see [#199](https://github.com/ros2/ros2_tracing/issues/199)).
+
+## Dual session tracing
+
+Dual session mode solves the problem of losing initialization trace data by using two separate tracing sessions: one for initialization events in [snapshot mode](https://lttng.org/docs/v2.13/#doc-tracing-session-mode), and another normal tracing session for runtime events.
+This allows starting to actively record trace data at any point without losing initialization data.
+
+Use the `Trace` action to start the initialization session in snapshot mode:
+
+```
+$ ros2 launch tracetools_launch example_dual_session.launch.py
+```
+
+Then use the trace commands with `--dual-session` option to start and control the sessions.
+
+To take a snapshot of the initialization session and start the runtime session:
+
+```
+$ ros2 trace -s session_name --dual-session  # requires user interaction
+```
+
+```
+$ ros2 trace start session_name --dual-session
+```
+
+By default tracepoints corresponding to initialization ROS 2 events are enabled for the initialization (snapshot) session and all ROS 2 tracepoints are enabled for the runtime session.
+The snapshot trace will be written to `~/.ros/tracing/session_name/snapshot` and the runtime trace will be written to `~/.ros/tracing/session_name/runtime`.
+Run the commands with `-h` for more information.
+
+Other session control commands work as follows:
+
+```
+$ ros2 trace pause session_name --dual-session   # Pause runtime session after starting
+$ ros2 trace resume session_name --dual-session  # Take a snapshot of initialization session
+                                                   and resume runtime session after pausing
+$ ros2 trace stop session_name --dual-session    # Stop runtime session
+```
+
+> [!NOTE]
+> In dual session mode, the session name used in both the `Trace` action and the trace commands must be the same.
 
 ## Design
 
