@@ -343,11 +343,12 @@ def setup(
             buffer_type=lttngpy.LTTNG_BUFFER_PER_UID,
             channel_name=channel_name,
             # Overwrite if snapshot mode, otherwise discard
-            overwrite=snapshot_mode,
+            overwrite=int(snapshot_mode),
             # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
             # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
             # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
             # written, because when all sub-buffers are full the oldest one is discarded entirely.
+            # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
             subbuf_size=subbuffer_size_ust,
             num_subbuf=4 if snapshot_mode else 2,
             # Ignore switch timer interval and use read timer instead
@@ -380,11 +381,12 @@ def setup(
             buffer_type=lttngpy.LTTNG_BUFFER_GLOBAL,
             channel_name=channel_name,
             # Overwrite if snapshot mode, otherwise discard
-            overwrite=snapshot_mode,
+            overwrite=int(snapshot_mode),
             # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
             # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
             # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
             # written, because when all sub-buffers are full the oldest one is discarded entirely.
+            # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
             subbuf_size=subbuffer_size_kernel,
             num_subbuf=4 if snapshot_mode else 2,
             # Ignore switch timer interval and use read timer instead
