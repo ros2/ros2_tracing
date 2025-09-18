@@ -18,7 +18,9 @@ import os
 import shutil
 import subprocess
 import tempfile
+import threading
 import time
+from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -30,6 +32,12 @@ from launch import LaunchService
 from launch_ros.actions import Node
 from lttngpy import impl as lttngpy
 import osrf_pycommon.process_utils
+import rclpy
+from rclpy.clock import Clock, ClockType
+from rclpy.duration import Duration
+from rclpy.executors import SingleThreadedExecutor
+from rclpy.qos import QoSProfile
+from std_msgs.msg import String
 from tracetools_launch.action import Trace
 from tracetools_read import get_event_name
 from tracetools_test.mark_process import get_corresponding_trace_test_events
@@ -272,6 +280,19 @@ class TestROS2TraceCLI(unittest.TestCase):
         process = self.run_command(['ros2', 'trace', *args], env=env)
         return self.wait_and_print_command_output(process)
 
+    def wait_for(
+        condition: Callable[[], bool],
+        timeout: Duration,
+        sleep_time: float = 0.1,
+    ):
+        clock = Clock(clock_type=ClockType.STEADY_TIME)
+        start = clock.now()
+        while not condition():
+            if clock.now() - start > timeout:
+                return False
+            time.sleep(sleep_time)
+        return True
+
     def run_nodes(self, env: Optional[Mapping[str, str]] = None) -> None:
         # Set trace test ID env var for spawned processes
         additional_env: Dict[str, str] = {}
@@ -339,9 +360,6 @@ class TestROS2TraceCLI(unittest.TestCase):
 
         loop = osrf_pycommon.process_utils.get_loop()
         launch_task = loop.create_task(ls.run_async())
-
-        # Give the launch service time to start actions
-        loop.run_until_complete(asyncio.sleep(1.0))
 
         return ls, launch_task
 
@@ -790,10 +808,32 @@ class TestROS2TraceCLI(unittest.TestCase):
     def test_dual_session_start_pause_resume_stop(self) -> None:
         tmpdir = self.create_test_tmpdir('test_dual_session_start_pause_resume_stop')
         session_name = 'test_dual_session_start_pause_resume_stop'
+        snapshot_session_name = session_name + '-snapshot'
+        runtime_session_name = session_name + '-runtime'
 
-        # Pre-configure dual session, start nodes and check that the snapshot session exists
+        # Pre-configure dual session and start nodes
         ls, launch_task = self.pre_configure_dual_session_and_run_nodes(tmpdir, session_name)
-        self.assertTracingSessionExist(session_name+'-snapshot', snapshot_mode=True)
+
+        # Wait until the nodes are running
+        ctx = rclpy.Context()
+        ctx.init()
+        node = rclpy.create_node('test_dual_session_sub', context=ctx)
+        ping_sub = node.create_subscription(
+            String, '/ping', lambda msg: None, QoSProfile(depth=15))
+        pong_sub = node.create_subscription(
+            String, '/pong', lambda msg: None, QoSProfile(depth=15))
+        executor = SingleThreadedExecutor(context=ctx)
+        executor.add_node(node)
+        executor_thread = threading.Thread(target=executor.spin, daemon=True)
+        executor_thread.start()
+
+        assert self.wait_for(
+            lambda: ping_sub.get_publisher_count() >= 1 and pong_sub.get_publisher_count() >= 1,
+            Duration(seconds=10),
+        ), 'timed out waiting for nodes to be running'
+
+        # Check that the snapshot session exists
+        self.assertTracingSessionExist(snapshot_session_name, snapshot_mode=True)
 
         # Start tracing
         ret = self.run_trace_subcommand(
@@ -810,14 +850,14 @@ class TestROS2TraceCLI(unittest.TestCase):
         runtime_trace_dir = os.path.join(tmpdir, session_name, 'runtime')
         self.assertTraceExist(snapshot_trace_dir)
         self.assertTraceExist(runtime_trace_dir)
-        self.assertTracingSessionExist(session_name+'-snapshot', snapshot_mode=True)
-        self.assertTracingSessionExist(session_name+'-runtime')
+        self.assertTracingSessionExist(snapshot_session_name, snapshot_mode=True)
+        self.assertTracingSessionExist(runtime_session_name)
 
         # Pause tracing and check trace
         ret = self.run_trace_subcommand(['pause', session_name, '--dual-session'])
         self.assertEqual(0, ret)
-        self.assertTracingSessionExist(session_name+'-snapshot', snapshot_mode=True)
-        self.assertTracingSessionExist(session_name+'-runtime')
+        self.assertTracingSessionExist(snapshot_session_name, snapshot_mode=True)
+        self.assertTracingSessionExist(runtime_session_name)
         expected_trace_data = [
             ('topic_name', '/ping'),
             ('topic_name', '/pong'),
@@ -827,8 +867,8 @@ class TestROS2TraceCLI(unittest.TestCase):
         # Pausing again should give an error but not affect anything
         ret = self.run_trace_subcommand(['pause', session_name, '--dual-session'])
         self.assertEqual(1, ret)
-        self.assertTracingSessionExist(session_name+'-snapshot', snapshot_mode=True)
-        self.assertTracingSessionExist(session_name+'-runtime')
+        self.assertTracingSessionExist(snapshot_session_name, snapshot_mode=True)
+        self.assertTracingSessionExist(runtime_session_name)
         new_num_events = self.assertTraceContains(
             trace_dir=tmpdir,
             expected_field_value=expected_trace_data,
@@ -838,21 +878,21 @@ class TestROS2TraceCLI(unittest.TestCase):
         # Resume tracing
         ret = self.run_trace_subcommand(['resume', session_name, '--dual-session'])
         self.assertEqual(0, ret)
-        self.assertTracingSessionExist(session_name+'-snapshot', snapshot_mode=True)
-        self.assertTracingSessionExist(session_name+'-runtime')
+        self.assertTracingSessionExist(snapshot_session_name, snapshot_mode=True)
+        self.assertTracingSessionExist(runtime_session_name)
 
         # Resuming tracing again should give an error but not affect anything
         ret = self.run_trace_subcommand(['resume', session_name, '--dual-session'])
         self.assertEqual(1, ret)
-        self.assertTracingSessionExist(session_name+'-snapshot', snapshot_mode=True)
-        self.assertTracingSessionExist(session_name+'-runtime')
+        self.assertTracingSessionExist(snapshot_session_name, snapshot_mode=True)
+        self.assertTracingSessionExist(runtime_session_name)
 
         # Stop tracing and check that trace changed
         ret = self.run_trace_subcommand(['stop', session_name, '--dual-session'])
         self.assertEqual(0, ret)
         # Snapshot session should still exist
-        self.assertTracingSessionExist(session_name+'-snapshot', snapshot_mode=True)
-        self.assertTracingSessionNotExist(session_name+'-runtime')
+        self.assertTracingSessionExist(snapshot_session_name, snapshot_mode=True)
+        self.assertTracingSessionNotExist(runtime_session_name)
         new_num_events = self.assertTraceContains(
             trace_dir,
             expected_field_value=expected_trace_data,
@@ -862,8 +902,8 @@ class TestROS2TraceCLI(unittest.TestCase):
         # Stopping tracing again should give an error but not affect anything
         ret = self.run_trace_subcommand(['stop', session_name, '--dual-session'])
         self.assertEqual(1, ret)
-        self.assertTracingSessionExist(session_name+'-snapshot', snapshot_mode=True)
-        self.assertTracingSessionNotExist(session_name+'-runtime')
+        self.assertTracingSessionExist(snapshot_session_name, snapshot_mode=True)
+        self.assertTracingSessionNotExist(runtime_session_name)
 
         # Shutdown launch service
         loop = osrf_pycommon.process_utils.get_loop()
@@ -873,8 +913,15 @@ class TestROS2TraceCLI(unittest.TestCase):
         assert 0 == launch_task.result()
 
         # Shutting down the launch service should destroy the snapshot session
-        self.assertTracingSessionNotExist(session_name+'-snapshot', snapshot_mode=True)
+        self.assertTracingSessionNotExist(snapshot_session_name, snapshot_mode=True)
 
+        executor.shutdown()
+        executor_thread.join(3)
+        assert not executor_thread.is_alive()
+        ping_sub.destroy()
+        pong_sub.destroy()
+        node.destroy_node()
+        ctx.shutdown()
         shutil.rmtree(tmpdir)
 
     @unittest.skipIf(not are_tracepoints_included(), 'tracepoints are required')

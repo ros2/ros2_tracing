@@ -20,6 +20,7 @@
   <test_depend>launch_ros</test_depend>
   <test_depend>lttngpy</test_depend>
   <test_depend>python3-pytest</test_depend>
+  <test_depend>rclpy</test_depend>
   <test_depend>ros2run</test_depend>
   <test_depend>ros2trace</test_depend>
   <test_depend>test_tracetools</test_depend>

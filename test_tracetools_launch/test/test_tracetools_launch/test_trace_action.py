@@ -423,6 +423,8 @@ class TestTraceAction(unittest.TestCase):
                 <arg name="subbuffer-size-kernel" default="1048576" />
                 <trace
                     session-name="$(var session-name)"
+                    snapshot-mode="$(var snapshot-mode)"
+                    dual-session="$(var dual-session)"
                     append-timestamp="$(var append-timestamp)"
                     base-path="$(var base-path)"
                     append-trace="$(var append-trace)"
@@ -483,6 +485,8 @@ class TestTraceAction(unittest.TestCase):
                 default: "1048576"
             - trace:
                 session-name: "$(var session-name)"
+                snapshot-mode: "$(var snapshot-mode)"
+                dual-session: "$(var dual-session)"
                 append-timestamp: "$(var append-timestamp)"
                 base-path: "$(var base-path)"
                 append-trace: "$(var append-trace)"
