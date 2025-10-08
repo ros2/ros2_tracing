@@ -2,6 +2,13 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update trace command's doc-string (`#213 <https://github.com/ros2/ros2_tracing/issues/213>`_)
+* Allow creating snapshot sessions (`#195 <https://github.com/ros2/ros2_tracing/issues/195>`_)
+* Add support for starting tracing at runtime (`#191 <https://github.com/ros2/ros2_tracing/issues/191>`_)
+* Contributors: Shravan Deva
+
 8.8.1 (2025-07-29)
 ------------------
 * fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_)

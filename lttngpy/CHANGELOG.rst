@@ -2,6 +2,14 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Allow creating snapshot sessions (`#195 <https://github.com/ros2/ros2_tracing/issues/195>`_)
+* [Fix] compile fail (`#194 <https://github.com/ros2/ros2_tracing/issues/194>`_)
+* Use pybind11 from deb or pixi (`#197 <https://github.com/ros2/ros2_tracing/issues/197>`_)
+* Add support for starting tracing at runtime (`#191 <https://github.com/ros2/ros2_tracing/issues/191>`_)
+* Contributors: Alejandro Hernández Cordero, Shravan Deva, mosfet80
+
 8.8.1 (2025-07-29)
 ------------------
 

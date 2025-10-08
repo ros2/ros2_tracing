@@ -2,6 +2,14 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add example launch files for snapshot mode (`#206 <https://github.com/ros2/ros2_tracing/issues/206>`_)
+* Allow creating snapshot sessions (`#195 <https://github.com/ros2/ros2_tracing/issues/195>`_)
+* Add launch files with preconfigured dual session (`#196 <https://github.com/ros2/ros2_tracing/issues/196>`_)
+* Add support for starting tracing at runtime (`#191 <https://github.com/ros2/ros2_tracing/issues/191>`_)
+* Contributors: Shravan Deva
+
 8.8.1 (2025-07-29)
 ------------------
 * fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_)

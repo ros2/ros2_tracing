@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Only check test process events in test_runtime_disable (`#193 <https://github.com/ros2/ros2_tracing/issues/193>`_)
+* Contributors: Christophe Bedard
+
 8.8.1 (2025-07-29)
 ------------------
 * fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_)

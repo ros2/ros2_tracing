@@ -2,6 +2,11 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add runtime tracing opt-out mechanism (`#185 <https://github.com/ros2/ros2_tracing/issues/185>`_)
+* Contributors: Michel Hidalgo
+
 8.8.1 (2025-07-29)
 ------------------
 
