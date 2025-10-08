@@ -2,8 +2,8 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.9.0 (2025-10-08)
+------------------
 * Add example launch files for snapshot mode (`#206 <https://github.com/ros2/ros2_tracing/issues/206>`_)
 * Allow creating snapshot sessions (`#195 <https://github.com/ros2/ros2_tracing/issues/195>`_)
 * Add launch files with preconfigured dual session (`#196 <https://github.com/ros2/ros2_tracing/issues/196>`_)

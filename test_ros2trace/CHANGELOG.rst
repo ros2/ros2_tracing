@@ -2,8 +2,8 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.9.0 (2025-10-08)
+------------------
 * Allow creating snapshot sessions (`#195 <https://github.com/ros2/ros2_tracing/issues/195>`_)
 * Only check test process events in test_runtime_disable (`#193 <https://github.com/ros2/ros2_tracing/issues/193>`_)
 * Add runtime tracing opt-out mechanism (`#185 <https://github.com/ros2/ros2_tracing/issues/185>`_)

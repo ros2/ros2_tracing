@@ -2,8 +2,8 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.9.0 (2025-10-08)
+------------------
 * Allow creating snapshot sessions (`#195 <https://github.com/ros2/ros2_tracing/issues/195>`_)
 * [Fix] compile fail (`#194 <https://github.com/ros2/ros2_tracing/issues/194>`_)
 * Use pybind11 from deb or pixi (`#197 <https://github.com/ros2/ros2_tracing/issues/197>`_)
