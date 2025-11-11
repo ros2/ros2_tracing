@@ -73,6 +73,7 @@ def skip_if_no_kernel_tracing(func):
     return wrapper
 
 
+@unittest.skip('FIXME(christophebedard): sometimes hangs in CI (#166)')
 @unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
 class TestROS2TraceCLI(unittest.TestCase):
 
