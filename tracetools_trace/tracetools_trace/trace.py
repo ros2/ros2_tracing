@@ -217,7 +217,7 @@ def fini(
             session_name=session_name + (path.RUNTIME_SESSION_SUFFIX if dual_session else '')
         )
 
-    signals.execute_and_handle_sigint(_run, _fini)
+    signals.execute_and_handle_signals(_run, _fini)
 
 
 def cleanup(

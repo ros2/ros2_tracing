@@ -114,3 +114,30 @@ def execute_and_handle_sigint(
             run_function()
         except SignalHandledException:
             pass
+
+
+def execute_and_handle_signals(
+    run_function: Callable[[], None],
+    fini_function: Optional[Callable[[], None]] = None,
+    signals: List[int] = [signal.SIGINT, signal.SIGTERM],
+) -> None:
+    """
+    Execute a task and handle the given signals to always finalize cleanly.
+
+    The main task function is interrupted on the given signals.
+    The finalization function (if provided) is always executed, either
+    after the main task function is done or after it is interrupted.
+
+    :param run_function: the task function, which may be interrupted
+    :param fini_function: the optional finalization/cleanup function
+    :param signals: the list of signals to handle
+    """
+    with SignalHandlerUtil(
+        release_callback=fini_function,
+        raise_after_signal=True,
+        signals=signals,
+    ):
+        try:
+            run_function()
+        except SignalHandledException:
+            pass
