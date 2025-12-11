@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <lttng/clear.h>
-#include <lttng/clear-handle.h>
-#include <lttng/lttng-error.h>
-#include <lttng/snapshot.h>
+#include <lttng/lttng.h>
 
 #include <string>
 
