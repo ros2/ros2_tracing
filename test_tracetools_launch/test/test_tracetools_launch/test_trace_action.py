@@ -23,6 +23,7 @@ from typing import List
 from typing import Optional
 from typing import TextIO
 from typing import Tuple
+from typing import Union
 import unittest
 
 from launch import Action
@@ -96,10 +97,12 @@ class TestTraceAction(unittest.TestCase):
         session_name: Optional[str] = 'my-session-name',
         snapshot_mode: bool = False,
         append_trace: bool = False,
-        events_ust: List[str] = ['ros2:*', '*'],
+        events_ust: Union[List[str], dict[str, List[str]]] = ['ros2:*', '*'],
         subbuffer_size_ust: int = 524288,
         subbuffer_size_kernel: int = 1048576,
     ) -> None:
+        if not isinstance(events_ust, dict):
+            events_ust = {'': events_ust} if bool(events_ust) else {}
         if session_name is not None:
             self.assertEqual(session_name, perform_substitutions(context, action.session_name))
         if tmpdir is not None:
@@ -117,7 +120,10 @@ class TestTraceAction(unittest.TestCase):
         )
         self.assertEqual(0, len(action.events_kernel))
         self.assertEqual(
-            events_ust, [perform_substitutions(context, x) for x in action.events_ust])
+            events_ust,
+            {channel_name: [perform_substitutions(context, x) for x in channel_events]
+             for channel_name, channel_events in action.events_ust.items()}
+        )
         self.assertEqual(
             subbuffer_size_ust,
             perform_typed_substitution(context, action.subbuffer_size_ust, int)
@@ -166,6 +172,34 @@ class TestTraceAction(unittest.TestCase):
         )
         context = self._assert_launch_no_errors([action])
         self._check_trace_action(action, context, tmpdir, snapshot_mode=True)
+
+        shutil.rmtree(tmpdir)
+
+    def test_action_multiple_channels(self) -> None:
+        tmpdir = tempfile.mkdtemp(prefix='TestTraceAction__test_action_multiple_channels')
+
+        action = Trace(
+            session_name='my-session-name',
+            base_path=tmpdir,
+            events_kernel=[],
+            syscalls=[],
+            events_ust={
+                'channel1': ['ros2:*'],
+                'channel2': ['*'],
+            },
+            subbuffer_size_ust=524288,
+            subbuffer_size_kernel=1048576,
+        )
+        context = self._assert_launch_no_errors([action])
+        self._check_trace_action(
+            action,
+            context,
+            tmpdir,
+            events_ust={
+                'channel1': ['ros2:*'],
+                'channel2': ['*'],
+            },
+        )
 
         shutil.rmtree(tmpdir)
 
