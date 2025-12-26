@@ -23,6 +23,7 @@ from typing import Callable
 from typing import List
 from typing import Optional
 from typing import Tuple
+from typing import Union
 
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng
@@ -38,24 +39,38 @@ def _assert_lttng_installed() -> None:
 
 def _display_info(
     *,
-    ros_events: List[str],
-    kernel_events: List[str],
+    ros_events: dict[str, List[str]],
+    kernel_events: dict[str, List[str]],
     syscalls: List[str],
     context_fields: List[str],
     display_list: bool,
 ) -> None:
     if ros_events:
-        event_str = 'events' if len(ros_events) > 1 else 'event'
-        print(f'userspace tracing enabled ({len(ros_events)} {event_str})')
-        if display_list:
-            print_names_list(ros_events)
+        channel_str = 'channels' if len(ros_events) > 1 else 'channel'
+        print(f'userspace tracing enabled ({len(ros_events)} {channel_str})')
+        for channel_name, channel_events in ros_events.items():
+            if len(ros_events) == 1:
+                channel_name = 'ros2'
+            else:
+                channel_name = f'(ros2){channel_name}'
+            event_str = 'events' if len(channel_events) > 1 else 'event'
+            print(f'\tchannel "{channel_name}": {len(channel_events)} {event_str}')
+            if display_list:
+                print_names_list(channel_events, prefix='\t\t')
     else:
         print('userspace tracing disabled')
     if kernel_events:
-        event_str = 'events' if len(kernel_events) > 1 else 'event'
-        print(f'kernel tracing enabled ({len(kernel_events)} {event_str})')
-        if display_list:
-            print_names_list(kernel_events)
+        channel_str = 'channels' if len(kernel_events) > 1 else 'channel'
+        print(f'kernel tracing enabled ({len(kernel_events)} {channel_str})')
+        for channel_name, channel_events in kernel_events.items():
+            if len(kernel_events) == 1:
+                channel_name = 'kchan'
+            else:
+                channel_name = f'(kchan){channel_name}'
+            event_str = 'events' if len(channel_events) > 1 else 'event'
+            print(f'\tchannel "{channel_name}": {len(channel_events)} {event_str}')
+            if display_list:
+                print_names_list(channel_events, prefix='\t\t')
     else:
         print('kernel tracing disabled')
     if syscalls:
@@ -144,6 +159,9 @@ def init(
     :param interactive: whether to require user interaction to start tracing
     :return: True if successful, False otherwise
     """
+    # convert events lists to dicts
+    ros_events = {'': ros_events} if ros_events else {}
+    kernel_events = {'': kernel_events} if kernel_events else {}
     _display_info(
         ros_events=ros_events,
         kernel_events=kernel_events,

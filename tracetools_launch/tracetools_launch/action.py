@@ -24,6 +24,7 @@ from typing import List
 from typing import Mapping
 from typing import Optional
 from typing import Text
+from typing import TypedDict
 from typing import Union
 
 from launch import logging
@@ -118,8 +119,15 @@ class Trace(Action):
         append_timestamp: Union[bool, SomeSubstitutionsType] = False,
         base_path: Optional[SomeSubstitutionsType] = None,
         append_trace: Union[bool, SomeSubstitutionsType] = False,
-        events_ust: Optional[Iterable[SomeSubstitutionsType]] = None,
-        events_kernel: Iterable[SomeSubstitutionsType] = [],
+        events_ust: Union[
+            Iterable[SomeSubstitutionsType],
+            dict[str, Iterable[SomeSubstitutionsType]],
+            None
+        ] = None,
+        events_kernel: Union[
+            Iterable[SomeSubstitutionsType],
+            dict[str, Iterable[SomeSubstitutionsType]]
+        ] = [],
         syscalls: Iterable[SomeSubstitutionsType] = [],
         context_fields:
             Union[Iterable[SomeSubstitutionsType], Mapping[str, Iterable[SomeSubstitutionsType]]]
@@ -151,11 +159,11 @@ class Trace(Action):
             or `None` for default
         :param append_trace: whether to append to the trace directory if it already exists,
             otherwise an error is reported
-        :param events_ust: the list of ROS UST events to enable; if it's `None`, the default ROS
+        :param events_ust: [TODO: change this accordingly] the list of ROS UST events to enable; if it's `None`, the default ROS
             events are used for a normal session, and the default ROS initialization events are
             used for the snapshot session in case of a dual session; if it's an empty list, no UST
             events are enabled
-        :param events_kernel: the list of kernel events to enable
+        :param events_kernel: [TODO: change this accordingly] the list of kernel events to enable
         :param syscalls: the list of syscalls to enable
         :param context_fields: the names of context fields to enable
             if it's a list or a set, the context fields are enabled for both kernel and userspace;
@@ -192,10 +200,22 @@ class Trace(Action):
         self._append_trace = normalize_typed_substitution(append_trace, bool)
         self._trace_directory: Optional[str] = None
         if events_ust is None:
-            events_ust = names.DEFAULT_EVENTS_ROS if not self._dual_session \
-                else names.DEFAULT_INIT_EVENTS_ROS
-        self._events_ust = [normalize_to_list_of_substitutions(x) for x in events_ust]
-        self._events_kernel = [normalize_to_list_of_substitutions(x) for x in events_kernel]
+            events_ust = {'': names.DEFAULT_EVENTS_ROS} if not self._dual_session \
+                else {'': names.DEFAULT_INIT_EVENTS_ROS}
+        # convert to dictionary if a single list is provided
+        if not isinstance(events_ust, dict):
+            events_ust = {'': events_ust} if bool(events_ust) else {}
+        self._events_ust = {
+            channel_name: [normalize_to_list_of_substitutions(x) for x in channel_events]
+            for channel_name, channel_events in events_ust.items()
+        }
+        # convert to dictionary if a single list is provided
+        if not isinstance(events_kernel, dict):
+            events_kernel = {'': events_kernel} if bool(events_kernel) else {}
+        self._events_kernel = {
+            channel_name: [normalize_to_list_of_substitutions(x) for x in channel_events]
+            for channel_name, channel_events in events_kernel.items()
+        }
         self._syscalls = [normalize_to_list_of_substitutions(x) for x in syscalls]
         self._context_fields: Union[
             Mapping[str, List[List[Substitution]]], List[List[Substitution]]
@@ -236,11 +256,11 @@ class Trace(Action):
         return self._trace_directory
 
     @property
-    def events_ust(self) -> List[List[Substitution]]:
+    def events_ust(self) -> dict[str, List[List[Substitution]]]:
         return self._events_ust
 
     @property
-    def events_kernel(self) -> List[List[Substitution]]:
+    def events_kernel(self) -> dict[str, List[List[Substitution]]]:
         return self._events_kernel
 
     @property
@@ -446,8 +466,14 @@ class Trace(Action):
         dual_session = perform_typed_substitution(context, self._dual_session, bool)
         base_path = perform_substitutions(context, self._base_path)
         append_trace = perform_typed_substitution(context, self._append_trace, bool)
-        events_ust = [perform_substitutions(context, x) for x in self._events_ust]
-        events_kernel = [perform_substitutions(context, x) for x in self._events_kernel]
+        events_ust = {
+            channel_name: [perform_substitutions(context, x) for x in channel_events]
+            for channel_name, channel_events in self._events_ust.items()
+        }
+        events_kernel = {
+            channel_name: [perform_substitutions(context, x) for x in channel_events]
+            for channel_name, channel_events in self._events_kernel.items()
+        }
         syscalls = [perform_substitutions(context, x) for x in self._syscalls]
         context_fields = (
             {
@@ -516,18 +542,22 @@ class Trace(Action):
         context.register_event_handler(OnShutdown(on_shutdown=destroy))
         return self._ld_preload_actions
 
-    def _get_ld_preload_actions(self, events_ust: List[str]) -> List[Action]:
+    def _get_ld_preload_actions(self, events_ust: dict[str, List[str]]) -> List[Action]:
         ld_preload_actions: List[Action] = []
+        # Flatten the events from all channels
+        all_events_ust = [
+            event for channel_events in events_ust.values() for event in channel_events
+        ]
         # Add LD_PRELOAD actions if corresponding events are enabled
-        if self.has_libc_wrapper_events(events_ust):
+        if self.has_libc_wrapper_events(all_events_ust):
             ld_preload_actions.append(LdPreload(self.LIB_LIBC_WRAPPER))
-        if self.has_pthread_wrapper_events(events_ust):
+        if self.has_pthread_wrapper_events(all_events_ust):
             ld_preload_actions.append(LdPreload(self.LIB_PTHREAD_WRAPPER))
-        if self.has_dl_events(events_ust):
+        if self.has_dl_events(all_events_ust):
             ld_preload_actions.append(LdPreload(self.LIB_DL))
         # Warn if events match both normal AND fast profiling libs
-        has_fast_profiling_events = self.has_profiling_events(events_ust, True)
-        has_normal_profiling_events = self.has_profiling_events(events_ust, False)
+        has_fast_profiling_events = self.has_profiling_events(all_events_ust, True)
+        has_normal_profiling_events = self.has_profiling_events(all_events_ust, False)
         # In practice, the first lib in the LD_PRELOAD list will be used, so the fast one here
         if has_fast_profiling_events:
             ld_preload_actions.append(LdPreload(self.LIB_PROFILE_FAST))

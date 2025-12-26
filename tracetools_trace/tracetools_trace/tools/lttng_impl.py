@@ -201,12 +201,12 @@ def setup(
     dual_session: bool = False,
     base_path: str,
     append_trace: bool = False,
-    ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
-    kernel_events: Union[List[str], Set[str]] = [],
+    ros_events: dict[str, Union[List[str], Set[str]]] = {'': DEFAULT_EVENTS_ROS},
+    kernel_events: dict[str, Union[List[str], Set[str]]] = {},
     syscalls: Union[List[str], Set[str]] = [],
     context_fields: Union[List[str], Set[str], Dict[str, List[str]]] = DEFAULT_CONTEXT,
-    channel_name_ust: str = 'ros2',
-    channel_name_kernel: str = 'kchan',
+    default_channel_name_ust: str = 'ros2',
+    default_channel_name_kernel: str = 'kchan',
     subbuffer_size_ust: int = 8 * 4096,
     subbuffer_size_kernel: int = 32 * 4096,
 ) -> Optional[str]:
@@ -228,17 +228,17 @@ def setup(
         which will be created if needed
     :param append_trace: whether to append to the trace directory if it already exists, otherwise
         an error is reported
-    :param ros_events: list of ROS events to enable
+    :param ros_events: [TODO: change this accordingly] list of ROS events to enable
     :param kernel_events: list of kernel events to enable
-    :param syscalls: list of syscalls to enable
+    :param syscalls: [TODO: change this accordingly] list of syscalls to enable
         these will be part of the kernel channel
     :param context_fields: the names of context fields to enable
         if it's a list or a set, the context fields are enabled for both kernel and userspace;
         if it's a dictionary: { domain type string -> context fields list }
             with the domain type string being either `names.DOMAIN_TYPE_KERNEL` or
             `names.DOMAIN_TYPE_USERSPACE`
-    :param channel_name_ust: the UST channel name
-    :param channel_name_kernel: the kernel channel name
+    :param channel_name_ust_prefix:[TODO: change this accordingly] the UST channel name
+    :param channel_name_kernel_prefix:[TODO: change this accordingly] the kernel channel name
     :param subbuffer_size_ust: the size of the subbuffers for userspace events (defaults to 8 times
         the usual page size)
     :param subbuffer_size_kernel: the size of the subbuffers for kernel events (defaults to 32
@@ -295,10 +295,22 @@ def setup(
         )
 
     # Convert lists to sets
-    if not isinstance(ros_events, set):
-        ros_events = set(ros_events)
-    if not isinstance(kernel_events, set):
-        kernel_events = set(kernel_events)
+    ros_events = {
+        channel_name: (
+            channel_events
+            if isinstance(channel_events, set)
+            else set(channel_events)
+        )
+        for channel_name, channel_events in ros_events.items()
+    }
+    kernel_events = {
+        channel_name: (
+            channel_events
+            if isinstance(channel_events, set)
+            else set(channel_events)
+        )
+        for channel_name, channel_events in kernel_events.items()
+    }
     if not isinstance(syscalls, set):
         syscalls = set(syscalls)
     if isinstance(context_fields, list):
@@ -335,88 +347,96 @@ def setup(
     if ust_enabled:
         domain = DOMAIN_TYPE_USERSPACE
         domain_type = lttngpy.LTTNG_DOMAIN_UST
-        channel_name = channel_name_ust
-        _enable_channel(
-            session_name=session_name,
-            domain_type=domain_type,
-            # Per-user buffer
-            buffer_type=lttngpy.LTTNG_BUFFER_PER_UID,
-            channel_name=channel_name,
-            # Overwrite if snapshot mode, otherwise discard
-            overwrite=int(snapshot_mode),
-            # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
-            # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
-            # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
-            # written, because when all sub-buffers are full the oldest one is discarded entirely.
-            # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
-            subbuf_size=subbuffer_size_ust,
-            num_subbuf=4 if snapshot_mode else 2,
-            # Ignore switch timer interval and use read timer instead
-            switch_timer_interval=0,
-            read_timer_interval=200,
-            # mmap channel output (only option for UST)
-            output=lttngpy.LTTNG_EVENT_MMAP,
-        )
-        _enable_events(
-            session_name=session_name,
-            domain_type=domain_type,
-            event_type=lttngpy.LTTNG_EVENT_TRACEPOINT,
-            channel_name=channel_name,
-            events=ros_events,
-        )
-        _add_contexts(
-            session_name=session_name,
-            domain_type=domain_type,
-            channel_name=channel_name,
-            context_fields=contexts_dict.get(domain),
-        )
-    if kernel_enabled:
-        domain = DOMAIN_TYPE_KERNEL
-        domain_type = lttngpy.LTTNG_DOMAIN_KERNEL
-        channel_name = channel_name_kernel
-        _enable_channel(
-            session_name=session_name,
-            domain_type=domain_type,
-            # Global buffer (only option for kernel domain)
-            buffer_type=lttngpy.LTTNG_BUFFER_GLOBAL,
-            channel_name=channel_name,
-            # Overwrite if snapshot mode, otherwise discard
-            overwrite=int(snapshot_mode),
-            # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
-            # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
-            # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
-            # written, because when all sub-buffers are full the oldest one is discarded entirely.
-            # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
-            subbuf_size=subbuffer_size_kernel,
-            num_subbuf=4 if snapshot_mode else 2,
-            # Ignore switch timer interval and use read timer instead
-            switch_timer_interval=0,
-            read_timer_interval=200,
-            # mmap channel output instead of splice
-            output=lttngpy.LTTNG_EVENT_MMAP,
-        )
-        if kernel_events:
+        for channel_name, channel_events in ros_events.items():
+            if len(ros_events) == 1:
+                channel_name = default_channel_name_ust
+            else:
+                channel_name = f'({default_channel_name_ust}){channel_name}'
+            _enable_channel(
+                session_name=session_name,
+                domain_type=domain_type,
+                # Per-user buffer
+                buffer_type=lttngpy.LTTNG_BUFFER_PER_UID,
+                channel_name=channel_name,
+                # Overwrite if snapshot mode, otherwise discard
+                overwrite=int(snapshot_mode),
+                # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
+                # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
+                # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
+                # written, because when all sub-buffers are full the oldest one is discarded entirely.
+                # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
+                subbuf_size=subbuffer_size_ust,
+                num_subbuf=4 if snapshot_mode else 2,
+                # Ignore switch timer interval and use read timer instead
+                switch_timer_interval=0,
+                read_timer_interval=200,
+                # mmap channel output (only option for UST)
+                output=lttngpy.LTTNG_EVENT_MMAP,
+            )
             _enable_events(
                 session_name=session_name,
                 domain_type=domain_type,
                 event_type=lttngpy.LTTNG_EVENT_TRACEPOINT,
                 channel_name=channel_name,
-                events=kernel_events,
+                events=channel_events,
             )
-        if syscalls:
-            _enable_events(
+            _add_contexts(
                 session_name=session_name,
                 domain_type=domain_type,
-                event_type=lttngpy.LTTNG_EVENT_SYSCALL,
                 channel_name=channel_name,
-                events=syscalls,
+                context_fields=contexts_dict.get(domain),
             )
-        _add_contexts(
-            session_name=session_name,
-            domain_type=domain_type,
-            channel_name=channel_name,
-            context_fields=contexts_dict.get(domain),
-        )
+    if kernel_enabled:
+        domain = DOMAIN_TYPE_KERNEL
+        domain_type = lttngpy.LTTNG_DOMAIN_KERNEL
+        for channel_name, channel_events in kernel_events.items():
+            if len(kernel_events) == 1:
+                channel_name = default_channel_name_kernel
+            else:
+                channel_name = f'({default_channel_name_kernel}){channel_name}'
+            _enable_channel(
+                session_name=session_name,
+                domain_type=domain_type,
+                # Global buffer (only option for kernel domain)
+                buffer_type=lttngpy.LTTNG_BUFFER_GLOBAL,
+                channel_name=channel_name,
+                # Overwrite if snapshot mode, otherwise discard
+                overwrite=int(snapshot_mode),
+                # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
+                # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
+                # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
+                # written, because when all sub-buffers are full the oldest one is discarded entirely.
+                # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
+                subbuf_size=subbuffer_size_kernel,
+                num_subbuf=4 if snapshot_mode else 2,
+                # Ignore switch timer interval and use read timer instead
+                switch_timer_interval=0,
+                read_timer_interval=200,
+                # mmap channel output instead of splice
+                output=lttngpy.LTTNG_EVENT_MMAP,
+            )
+            if channel_events:
+                _enable_events(
+                    session_name=session_name,
+                    domain_type=domain_type,
+                    event_type=lttngpy.LTTNG_EVENT_TRACEPOINT,
+                    channel_name=channel_name,
+                    events=channel_events,
+                )
+            if syscalls:
+                _enable_events(
+                    session_name=session_name,
+                    domain_type=domain_type,
+                    event_type=lttngpy.LTTNG_EVENT_SYSCALL,
+                    channel_name=channel_name,
+                    events=syscalls,
+                )
+            _add_contexts(
+                session_name=session_name,
+                domain_type=domain_type,
+                channel_name=channel_name,
+                context_fields=contexts_dict.get(domain),
+            )
 
     return full_path
 
