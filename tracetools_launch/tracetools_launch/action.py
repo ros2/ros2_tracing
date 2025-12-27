@@ -24,7 +24,6 @@ from typing import List
 from typing import Mapping
 from typing import Optional
 from typing import Text
-from typing import TypedDict
 from typing import Union
 
 from launch import logging
@@ -159,11 +158,16 @@ class Trace(Action):
             or `None` for default
         :param append_trace: whether to append to the trace directory if it already exists,
             otherwise an error is reported
-        :param events_ust: [TODO: change this accordingly] the list of ROS UST events to enable; if it's `None`, the default ROS
-            events are used for a normal session, and the default ROS initialization events are
-            used for the snapshot session in case of a dual session; if it's an empty list, no UST
-            events are enabled
-        :param events_kernel: [TODO: change this accordingly] the list of kernel events to enable
+        :param events_ust: the ROS UST events to enable; if a single list of events is provided,
+            then a single channel will be configured; if a dict is provided, then multiple channels
+            are created with '(ros2){key}' as channel names and the corresponding list of events in
+            values enabled for each channel; if it's `None`, the default ROS events are used for a
+            normal session, and the default ROS initialization events are used for the snapshot
+            session in case of a dual session; if it's an empty list, no UST events are enabled
+        :param events_kernel: the kernel events to enable; if a single list of events is provided,
+            then a single channel will be configured; if a dict is provided, then multiple channels
+            are created with '(kchan){key}' as channel names and the corresponding list of events
+            in values enabled for each channel
         :param syscalls: the list of syscalls to enable
         :param context_fields: the names of context fields to enable
             if it's a list or a set, the context fields are enabled for both kernel and userspace;

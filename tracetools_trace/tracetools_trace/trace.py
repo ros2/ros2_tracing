@@ -23,7 +23,6 @@ from typing import Callable
 from typing import List
 from typing import Optional
 from typing import Tuple
-from typing import Union
 
 from tracetools_trace.tools import args
 from tracetools_trace.tools import lttng

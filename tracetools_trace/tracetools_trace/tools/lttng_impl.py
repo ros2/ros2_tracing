@@ -228,17 +228,27 @@ def setup(
         which will be created if needed
     :param append_trace: whether to append to the trace directory if it already exists, otherwise
         an error is reported
-    :param ros_events: [TODO: change this accordingly] list of ROS events to enable
-    :param kernel_events: list of kernel events to enable
-    :param syscalls: [TODO: change this accordingly] list of syscalls to enable
+    :param ros_events: ROS UST events to enable; if a single list of events is provided,
+        then a single channel will be configured; if a dict is provided, then multiple channels
+        are created with '(ros2){key}' as channel names and the corresponding list of events in
+        values enabled for each channel
+    :param kernel_events: kernel events to enable; if a single list of events is provided,
+        then a single channel will be configured; if a dict is provided, then multiple channels
+        are created with '(kchan){key}' as channel names and the corresponding list of events in
+        values enabled for each channel
+    :param syscalls: list of syscalls to enable
         these will be part of the kernel channel
     :param context_fields: the names of context fields to enable
         if it's a list or a set, the context fields are enabled for both kernel and userspace;
         if it's a dictionary: { domain type string -> context fields list }
             with the domain type string being either `names.DOMAIN_TYPE_KERNEL` or
             `names.DOMAIN_TYPE_USERSPACE`
-    :param channel_name_ust_prefix:[TODO: change this accordingly] the UST channel name
-    :param channel_name_kernel_prefix:[TODO: change this accordingly] the kernel channel name
+    :param default_channel_name_ust: the UST channel name that will be used if ros_events is a list
+        or if a dict contains an entry with an empty string as key; this is also used as a prefix
+        for channel names when ros_events is a dict
+    :param default_channel_name_kernel: the kernel channel name that will be used if kernel_events
+        is a list or if a dict contains an entry with an empty string as key; this is also used as
+        a prefix for channel names when kernel_events is a dict
     :param subbuffer_size_ust: the size of the subbuffers for userspace events (defaults to 8 times
         the usual page size)
     :param subbuffer_size_kernel: the size of the subbuffers for kernel events (defaults to 32
@@ -360,10 +370,11 @@ def setup(
                 channel_name=channel_name,
                 # Overwrite if snapshot mode, otherwise discard
                 overwrite=int(snapshot_mode),
-                # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
-                # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
-                # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
-                # written, because when all sub-buffers are full the oldest one is discarded entirely.
+                # We use 2 sub-buffers in normal mode because the number of sub-buffers is
+                # pointless in discard mode, and switching between sub-buffers introduces
+                # noticeable CPU overhead. In snapshot mode, we use 4 sub-buffers to lose less data
+                # when sub-buffers are over-written, because when all sub-buffers are full the
+                # oldest one is discarded entirely.
                 # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
                 subbuf_size=subbuffer_size_ust,
                 num_subbuf=4 if snapshot_mode else 2,
@@ -402,10 +413,11 @@ def setup(
                 channel_name=channel_name,
                 # Overwrite if snapshot mode, otherwise discard
                 overwrite=int(snapshot_mode),
-                # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
-                # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
-                # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
-                # written, because when all sub-buffers are full the oldest one is discarded entirely.
+                # We use 2 sub-buffers in normal mode because the number of sub-buffers is
+                # pointless in discard mode, and switching between sub-buffers introduces
+                # noticeable CPU overhead. In snapshot mode, we use 4 sub-buffers to lose less data
+                # when sub-buffers are over-written, because when all sub-buffers are full the
+                # oldest one is discarded entirely.
                 # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
                 subbuf_size=subbuffer_size_kernel,
                 num_subbuf=4 if snapshot_mode else 2,
