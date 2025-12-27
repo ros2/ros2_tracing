@@ -348,7 +348,7 @@ def setup(
         domain = DOMAIN_TYPE_USERSPACE
         domain_type = lttngpy.LTTNG_DOMAIN_UST
         for channel_name, channel_events in ros_events.items():
-            if len(ros_events) == 1:
+            if channel_name == '':
                 channel_name = default_channel_name_ust
             else:
                 channel_name = f'({default_channel_name_ust}){channel_name}'
@@ -390,7 +390,7 @@ def setup(
         domain = DOMAIN_TYPE_KERNEL
         domain_type = lttngpy.LTTNG_DOMAIN_KERNEL
         for channel_name, channel_events in kernel_events.items():
-            if len(kernel_events) == 1:
+            if channel_name == '':
                 channel_name = default_channel_name_kernel
             else:
                 channel_name = f'({default_channel_name_kernel}){channel_name}'
