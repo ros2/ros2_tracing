@@ -14,6 +14,8 @@
 
 #include <string.h>
 
+#include <lttng/lttng.h>
+
 #include <map>
 #include <optional>
 #include <set>

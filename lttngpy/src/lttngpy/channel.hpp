@@ -16,6 +16,7 @@
 #define LTTNGPY__CHANNEL_HPP_
 
 #include <lttng/lttng.h>
+
 #include <optional>
 #include <string>
 

@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "lttngpy/channel.hpp"
+#include <lttng/lttng.h>
 
 #include <optional>
 #include <string>
+
+#include "lttngpy/channel.hpp"
 
 namespace lttngpy
 {
