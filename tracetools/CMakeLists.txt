@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 project(tracetools)
 
 # Default to C++17
@@ -13,10 +13,11 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   add_compile_options(/W4)
 endif()
 
+find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_gen_version_h REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 
-if(WIN32 OR APPLE OR ANDROID)
+if(WIN32 OR APPLE OR ANDROID OR BSD)
   set(DISABLED_DEFAULT ON)
   set(STATUS_CHECKING_TOOL_DEFAULT OFF)
 else()
@@ -50,16 +51,18 @@ set(SOURCES
 set(HEADERS
   include/${PROJECT_NAME}/tracetools.h
   include/${PROJECT_NAME}/utils.hpp
-  include/${PROJECT_NAME}/visibility_control.hpp
+  include/${PROJECT_NAME}/visibility_control.h
 )
 if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
   # We only need these if we're using LTTng
   list(APPEND SOURCES
-    src/tp_call.c
+    src/tp_define.c
   )
-  list(APPEND HEADERS
-    include/${PROJECT_NAME}/tp_call.h
+  add_library(${PROJECT_NAME}_provider src/tp.c)
+  target_include_directories(${PROJECT_NAME}_provider PRIVATE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   )
+  set_target_properties(${PROJECT_NAME}_provider PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 endif()
 
 if(NOT TRACETOOLS_DISABLED)
@@ -69,7 +72,8 @@ else()
   add_library(${PROJECT_NAME} INTERFACE)
 endif()
 if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
-  target_link_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
+  target_compile_definitions(${PROJECT_NAME} PRIVATE TRACETOOLS_PROVIDER_SONAME="$<TARGET_FILE_NAME:${PROJECT_NAME}_provider>")
+  target_link_libraries(${PROJECT_NAME}_provider ${PROJECT_NAME} ${LTTNG_LIBRARIES})
 endif()
 if(NOT TRACETOOLS_DISABLED)
   # Export -rdynamic for downtream packages to use when calling
@@ -91,6 +95,9 @@ if(NOT TRACETOOLS_DISABLED)
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
     "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
   )
+  target_include_directories(${PROJECT_NAME} PRIVATE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  ) # to find tp_call.h
 else()
   target_include_directories(${PROJECT_NAME} INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
@@ -156,17 +163,22 @@ install(
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
 )
-
+if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
+  install(
+    TARGETS ${PROJECT_NAME}_provider
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+  )
+endif()
 # Export old-style CMake variables
 ament_export_include_directories("include/${PROJECT_NAME}")
 
-if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
-  ament_export_libraries(${PROJECT_NAME} ${LTTNG_LIBRARIES})
+if(NOT TRACETOOLS_DISABLED)
   # Export -rdynamic for downstream packages using classic CMake variables
   if(NOT TRACETOOLS_NO_RDYNAMIC)
     ament_export_link_flags("-rdynamic")
   endif()
-elseif(NOT TRACETOOLS_DISABLED)
   ament_export_libraries(${PROJECT_NAME})
 endif()
 

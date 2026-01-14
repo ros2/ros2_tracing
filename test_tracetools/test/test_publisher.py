@@ -47,7 +47,7 @@ class TestPublisher(TraceTestCase):
         rmw_pub_init_events = self.get_events_with_name(tp.rmw_publisher_init)
         for event in rmw_pub_init_events:
             self.assertValidHandle(event, ['rmw_publisher_handle'])
-            self.assertValidStaticArray(event, 'gid', int, 24)
+            self.assertValidStaticArray(event, 'gid', int, 16)
         pub_init_events = self.get_events_with_name(tp.rcl_publisher_init)
         for event in pub_init_events:
             self.assertValidHandle(

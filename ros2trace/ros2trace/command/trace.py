@@ -21,9 +21,9 @@ from tracetools_trace.trace import trace
 
 
 class TraceCommand(CommandExtension):
-    """Trace ROS 2 nodes to get information on their execution. The main 'trace' command requires user interaction; to trace non-interactively, use the 'start'/'stop'/'pause'/'resume' sub-commands."""  # noqa: E501
+    """Various tracing related sub-commands."""
 
-    def add_arguments(self, parser, cli_name) -> None:
+    def add_arguments(self, parser, cli_name, *, argv=None) -> None:
         self._subparser = parser
         args.add_arguments(parser)
 

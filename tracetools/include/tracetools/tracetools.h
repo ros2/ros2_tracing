@@ -32,7 +32,7 @@
 #include <stdbool.h>
 
 #include "tracetools/config.h"
-#include "tracetools/visibility_control.hpp"
+#include "tracetools/visibility_control.h"
 
 #ifndef TRACETOOLS_DISABLED
 /**
@@ -45,22 +45,28 @@
 #  define _GET_MACRO(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, NAME, ...) NAME
 
 // *INDENT-OFF*
+#  define _FUNC_TRACEPOINT(event_name) \
+  (ros_trace_ ## event_name)
+#  define _FUNC_TRACEPOINT_ENABLED(event_name) \
+  (ros_trace_enabled_ ## event_name)
+#  define _FUNC_DO_TRACEPOINT(event_name) \
+  (ros_trace_do_ ## event_name)
 #  define _TRACEPOINT_NOARGS(event_name) \
-  (ros_trace_ ## event_name)()
+  _FUNC_TRACEPOINT(event_name)()
 #  define _TRACEPOINT_ARGS(event_name, ...) \
-  (ros_trace_ ## event_name)(__VA_ARGS__)
+  _FUNC_TRACEPOINT(event_name)(__VA_ARGS__)
 #  define _DO_TRACEPOINT_NOARGS(event_name) \
-  (ros_trace_do_ ## event_name)()
+  _FUNC_DO_TRACEPOINT(event_name)()
 #  define _DO_TRACEPOINT_ARGS(event_name, ...) \
-  (ros_trace_do_ ## event_name)(__VA_ARGS__)
+  _FUNC_DO_TRACEPOINT(event_name)(__VA_ARGS__)
 #  define _DECLARE_TRACEPOINT_NOARGS(event_name) \
-  TRACETOOLS_PUBLIC void ros_trace_ ## event_name(); \
-  TRACETOOLS_PUBLIC bool ros_trace_enabled_ ## event_name(); \
-  TRACETOOLS_PUBLIC void ros_trace_do_ ## event_name();
+  TRACETOOLS_PUBLIC void _FUNC_TRACEPOINT(event_name)(void); \
+  TRACETOOLS_PUBLIC bool _FUNC_TRACEPOINT_ENABLED(event_name)(void); \
+  TRACETOOLS_PUBLIC void _FUNC_DO_TRACEPOINT(event_name)(void);
 #  define _DECLARE_TRACEPOINT_ARGS(event_name, ...) \
-  TRACETOOLS_PUBLIC void ros_trace_ ## event_name(__VA_ARGS__); \
-  TRACETOOLS_PUBLIC bool ros_trace_enabled_ ## event_name(); \
-  TRACETOOLS_PUBLIC void ros_trace_do_ ## event_name(__VA_ARGS__);
+  TRACETOOLS_PUBLIC void _FUNC_TRACEPOINT(event_name)(__VA_ARGS__); \
+  TRACETOOLS_PUBLIC bool _FUNC_TRACEPOINT_ENABLED(event_name)(void); \
+  TRACETOOLS_PUBLIC void _FUNC_DO_TRACEPOINT(event_name)(__VA_ARGS__);
 
 #  define _GET_MACRO_TRACEPOINT(...) \
   _GET_MACRO( \
@@ -103,7 +109,7 @@
  * This is the preferred method over calling the underlying function directly.
  */
 #  define TRACETOOLS_TRACEPOINT_ENABLED(event_name) \
-  ros_trace_enabled_ ## event_name()
+  _FUNC_TRACEPOINT_ENABLED(event_name)()
 /// Call a tracepoint, without checking if it is enabled.
 /**
  * Combine this with `TRACEPOINT_ENABLED()` to check if a tracepoint is enabled before triggering
@@ -123,36 +129,6 @@
 #  define TRACETOOLS_DO_TRACEPOINT(...) ((void) (0))
 #  define _DECLARE_TRACEPOINT(...)
 #endif  // TRACETOOLS_DISABLED
-
-// TODO(christophebedard) remove in Rolling after J-turtle release
-#ifndef DOXYGEN_ONLY
-#  ifndef _WIN32
-#   define _DEPRECATED_WITH_MSG(msg) __attribute__((deprecated(msg)))
-#  else
-#   define _DEPRECATED_WITH_MSG(msg) __declspec(deprecated(msg))
-#  endif
-#else
-#  define _DEPRECATED_WITH_MSG(msg)
-#endif
-#define _DEPRECATED_MACRO_FUNCTION_DEFINITION(macro_name) \
-  static inline void \
-  _DEPRECATED_WITH_MSG("use TRACETOOLS_" #macro_name "() instead") \
-  _deprecated_macro_ ## macro_name(void) \
-  { \
-  }
-
-_DEPRECATED_MACRO_FUNCTION_DEFINITION(TRACEPOINT)
-#define TRACEPOINT(...) \
-  _deprecated_macro_TRACEPOINT(); \
-  TRACETOOLS_TRACEPOINT(__VA_ARGS__)
-_DEPRECATED_MACRO_FUNCTION_DEFINITION(TRACEPOINT_ENABLED)
-#define TRACEPOINT_ENABLED(...) \
-  _deprecated_macro_TRACEPOINT_ENABLED(); \
-  TRACETOOLS_TRACEPOINT_ENABLED(__VA_ARGS__)
-_DEPRECATED_MACRO_FUNCTION_DEFINITION(DO_TRACEPOINT)
-#define DO_TRACEPOINT(...) \
-  _deprecated_macro_DO_TRACEPOINT(); \
-  TRACETOOLS_DO_TRACEPOINT(__VA_ARGS__)
 // *INDENT-ON*
 
 #ifdef __cplusplus
@@ -164,7 +140,13 @@ extern "C"
 /**
  * \return `true` if tracing is enabled, `false` otherwise
  */
-TRACETOOLS_PUBLIC bool ros_trace_compile_status();
+TRACETOOLS_PUBLIC bool ros_trace_compile_status(void);
+
+/// Get tracing runtime status.
+/**
+ * \return `true` if tracing is enabled, `false` otherwise
+ */
+TRACETOOLS_PUBLIC bool ros_trace_runtime_status(void);
 
 /// `rcl_init`
 /**
@@ -256,8 +238,7 @@ _DECLARE_TRACEPOINT(
 /// `rcl_publish`
 /**
  * Message publication.
- * Links a `rcl_publisher_t` handle to a pointer to
- * a message being published at the `rcl` level.
+ * Links a `rcl_publisher_t` handle to a pointer to a message being published at the `rcl` level.
  *
  * \param[in] publisher_handle pointer to the publisher's `rcl_publisher_t` handle
  * \param[in] message pointer to the message being published
@@ -271,6 +252,7 @@ _DECLARE_TRACEPOINT(
 /**
  * Message publication.
  * Notes the pointer to the message being published at the `rmw` level.
+ * Also notes the source timestamp of the message.
  *
  * \param[in] rmw_publisher_handle pointer to the publisher's `rmw_publisher_t` handle
  * \param[in] message pointer to the message being published
@@ -347,12 +329,12 @@ _DECLARE_TRACEPOINT(
 /// `rmw_take`
 /**
  * Message taking.
- * Links a `rmw_subscription_t` handle to a pointer
- * to a message being taken at the `rmw` level.
+ * Links a `rmw_subscription_t` handle to a pointer to a message being taken at the `rmw` level.
+ * Notes the source timestamp of the message.
  *
  * \param[in] rmw_subscription_handle pointer to the subscription's `rmw_subscription_t` handle
  * \param[in] message pointer to the message being taken
- * \param[in] source_timestamp the source timestamp of the received message,
+ * \param[in] source_timestamp the source timestamp of the message,
  *  or 0 (if no message or no info)
  * \param[in] taken whether a message was taken
  */
@@ -416,6 +398,64 @@ _DECLARE_TRACEPOINT(
   const void * service_handle,
   const void * callback)
 
+/// `rmw_take_request`
+/**
+ * Request taking.
+ * Links a `rmw_service_t` handle to a pointer to a request being taken at the `rmw` level.
+ * Also notes the sequence number of the request and the GID of the requesting client.
+ *
+ * \param[in] rmw_service_handle pointer to the service's `rmw_service_t` handle
+ * \param[in] request pointer to the request being taken
+ * \param[in] client_gid the GID of the requesting client
+ * \param[in] sequence_number the sequence number of the received request,
+ *  or 0 (if no request or no info)
+ * \param[in] taken whether a request was taken
+ */
+_DECLARE_TRACEPOINT(
+  rmw_take_request,
+  const void * rmw_service_handle,
+  const void * request,
+  const uint8_t * client_gid,
+  int64_t sequence_number,
+  const bool taken)
+
+/// `rmw_send_response`
+/**
+ * Response publication.
+ * Notes the pointer to the response being sent at the `rmw` level.
+ * Also notes the sequence number of the request that this response is for and the GID of the
+ * requesting client, and notes the source timestamp of the response.
+ *
+ * \param[in] rmw_service_handle pointer to the service's `rmw_service_t` handle
+ * \param[in] response pointer to the request being sent
+ * \param[in] client_gid the GID of the requesting client
+ * \param[in] sequence_number the sequence number of the request this response is for
+ * \param[in] timestamp the source timestamp of the response
+ */
+_DECLARE_TRACEPOINT(
+  rmw_send_response,
+  const void * rmw_service_handle,
+  const void * response,
+  const uint8_t * client_gid,
+  int64_t sequence_number,
+  int64_t timestamp)
+
+/// `rmw_client_init`
+/**
+ * RMW client initialisation.
+ * Links a `rmw_client_t` handle to its DDS/rmw GID.
+ * This GID should be the same client GID that is collected by the `rmw_take_request` and
+ * `rmw_send_response` tracepoints for requests made by this client and responses to requests made
+ * by this client.
+ *
+ * \param[in] rmw_client_handle pointer to the client's `rmw_client_t` handle
+ * \param[in] gid pointer to the client's DDS/rmw GID
+ */
+_DECLARE_TRACEPOINT(
+  rmw_client_init,
+  const void * rmw_client_handle,
+  const uint8_t * gid)
+
 /// `rcl_client_init`
 /**
  * Client initialisation.
@@ -433,6 +473,46 @@ _DECLARE_TRACEPOINT(
   const void * node_handle,
   const void * rmw_client_handle,
   const char * service_name)
+
+/// `rmw_send_request`
+/**
+ * Request publication.
+ * Notes the pointer to the request being sent at the `rmw` level.
+ * Also notes the sequence number of the request.
+ *
+ * \param[in] rmw_client_handle pointer to the client's `rmw_client_t` handle
+ * \param[in] request pointer to the request being sent
+ * \param[in] sequence_number the sequence number of the request
+ */
+_DECLARE_TRACEPOINT(
+  rmw_send_request,
+  const void * rmw_client_handle,
+  const void * request,
+  int64_t sequence_number)
+
+/// `rmw_take_response`
+/**
+ * Response taking.
+ * Links a `rmw_client_t` handle to a pointer to a response being taken at the `rmw` level.
+ * Notes the source timestamp of the response. Also notes the sequence number of the request this
+ * response is for. It does not note the request's client GID, since it is assumed that the matching
+ * of the response to the original client is performed before this tracepoint.
+ *
+ * \param[in] rmw_client_handle pointer to the client's `rmw_client_t` handle
+ * \param[in] response pointer to the response being taken
+ * \param[in] sequence_number the sequence number of the request this response is for,
+ *  or 0 (if no response or no info)
+ * \param[in] source_timestamp the source timestamp of the response,
+ *  or 0 (if no response or no info)
+ * \param[in] taken whether a response was taken
+ */
+_DECLARE_TRACEPOINT(
+  rmw_take_response,
+  const void * rmw_client_handle,
+  const void * response,
+  int64_t sequence_number,
+  int64_t source_timestamp,
+  const bool taken)
 
 /// `rcl_timer_init`
 /**

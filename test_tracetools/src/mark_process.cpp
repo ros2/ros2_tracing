@@ -42,13 +42,13 @@ void mark_trace_test_process()
 {
 #ifndef TRACETOOLS_DISABLED
   // See tracetools_test.mark_process for more details
-  const std::string env_var{trace_test_id_env_var};
-  const auto test_id = rcpputils::get_env_var(env_var.c_str());
+  const std::string test_id_env_var{trace_test_id_env_var};
+  const auto test_id = rcpputils::get_env_var(test_id_env_var.c_str());
   if (!test_id.empty()) {
 #if LTTNG_UST_MINOR_VERSION <= 12
-    tracef("%s=%s", env_var.c_str(), test_id.c_str());
+    tracef("%s=%s", test_id_env_var.c_str(), test_id.c_str());
 #else
-    lttng_ust_tracef("%s=%s", env_var.c_str(), test_id.c_str());
+    lttng_ust_tracef("%s=%s", test_id_env_var.c_str(), test_id.c_str());
 #endif
   }
 #endif  // TRACETOOLS_DISABLED

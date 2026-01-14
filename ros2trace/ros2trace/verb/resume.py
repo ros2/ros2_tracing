@@ -21,7 +21,7 @@ class ResumeVerb(VerbExtension):
     """Resume tracing after pausing."""
 
     def add_arguments(self, parser, cli_name) -> None:
-        args.add_arguments_session_name(parser)
+        args.add_arguments_noninteractive_control(parser)
 
     def main(self, *, args) -> int:
         return resume(args)

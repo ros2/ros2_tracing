@@ -9,11 +9,13 @@ Tracing tools for ROS 2.
 
 `ros2_tracing` provides [tracing instrumentation](#tracetools) for the core ROS 2 packages.
 It also provides [tools to configure tracing](#tracing) through [a launch action](#launch-file-trace-action) and a [`ros2` CLI command](#trace-command).
+For more information about tracing, see the [*What is tracing?*](#what-is-tracing) section.
 
 `ros2_tracing` currently only supports the [LTTng](https://lttng.org/) tracer.
 Consequently, it currently only supports Linux.
 
-**Note**: make sure to use the right branch, depending on the ROS 2 distro: [use `rolling` for Rolling, `galactic` for Galactic, etc.](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Developer-Guide.html#branches)
+> [!NOTE]
+> Make sure to use the right branch, depending on the ROS 2 distro: [use `rolling` for Rolling, `galactic` for Galactic, etc.](https://docs.ros.org/en/rolling/The-ROS2-Project/Contributing/Developer-Guide.html#branches)
 
 ## Publications & presentations
 
@@ -69,8 +71,15 @@ Finally, check out the following presentations:
 
 ## Building
 
-As of Iron, the LTTng tracer is a ROS 2 dependency.
+Starting from ROS 2 Iron Irwini, the LTTng tracer is a ROS 2 dependency.
 Therefore, ROS 2 can be traced out-of-the-box on Linux; this package does not need to be re-built.
+The following `rmw` implementations are supported:
+
+* `rmw_connextdds`
+* `rmw_cyclonedds_cpp`
+* `rmw_fastrtps_cpp`
+* `rmw_fastrtps_dynamic_cpp`
+* `rmw_zenoh_cpp`
 
 To make sure that the instrumentation and tracepoints are available:
 
@@ -90,6 +99,16 @@ $ sudo apt-get install lttng-modules-dkms
 ```
 
 For more information about LTTng, [refer to its documentation](https://lttng.org/docs/v2.13/).
+
+### Disabling the tracer at runtime
+
+To avoid loading the tracer at runtime (and therefore disable all instrumentation), set the `TRACETOOLS_RUNTIME_DISABLE` environment variable to `1`:
+
+```
+$ export TRACETOOLS_RUNTIME_DISABLE=1
+$ ros2 run tracetools status
+Tracing disabled
+```
 
 ### Removing the instrumentation
 
@@ -114,17 +133,37 @@ This will keep the instrumentation but remove all tracepoints.
 This also means that LTTng is not required at build-time or at runtime.
 This option can be useful, since tracepoints can be added back in or removed by simply replacing/re-building the shared library provided by the [`tracetools` package](#tracetools).
 
+## What is tracing?
+
+Software *tracing* is a method of collecting low-level runtime data to understand a system's execution.
+This is achieved by *instrumenting* the code using *tracepoints*, for example in ROS 2, the Linux kernel, or any other application.
+When a tracepoint is executed, it generates information that is collected by a *tracer* into a *trace*.
+Tracers are usually low-overhead to avoid affecting the execution.
+Traces can then be analyzed to help understand the execution, fix bugs, improve performance, etc.
+While *logs* are typically high-level enough for a user to read and understand, trace data is low-level & high-rate and therefore usually needs to be processed to be useful.
+
+For more information, see the following introductions on tracing:
+
+* [LTTng tracer documentation](https://lttng.org/docs/v2.13/#doc-what-is-tracing)
+* [Tracing tutorial](https://github.com/tuxology/tracevizlab/tree/master/labs/001-what-is-tracing#what-is-tracing)
+* [Eclipse Trace Compass (trace analysis tool) documentation](https://archive.eclipse.org/tracecompass/doc/stable/org.eclipse.tracecompass.doc.user/Overview.html#About_Tracing)
+
 ## Tracing
 
 By default, trace data will not be generated, and thus these packages will have virtually no impact on execution.
 LTTng has to be configured for tracing.
 The packages in this repo provide two options: a [command](#trace-command) and a [launch file action](#launch-file-trace-action).
 
-**Note**: tracing must be started before the application is launched.
-Metadata is recorded during the initialization phase of the application.
-This metadata is needed to understand the rest of the trace data, so if tracing is started after the application started executing, then the trace data might be unusable.
-For more information, refer to the [design document](./doc/design_ros_2.md#general-guidelines).
-The [launch file action](#launch-file-trace-action) is designed to automatically start tracing before the application launches.
+> [!NOTE]
+> Tracing must be started before the application is launched.
+> Metadata is recorded during the initialization phase of the application.
+> This metadata is needed to understand the rest of the trace data, so if tracing is started after the application started executing, then the trace data might be unusable.
+> For more information, refer to the [design document](./doc/design_ros_2.md#general-guidelines).
+> The [launch file action](#launch-file-trace-action) is designed to automatically start tracing before the application launches.
+
+> [!TIP]
+> Configuring a tracing session in [snapshot mode](#tracing-in-snapshot-mode) or [dual session mode](#dual-session-tracing) stores trace data in memory without writing to disk until demanded.
+> This can be leveraged to start recording traces as needed after application launch without losing initialization data, eliminating the need to start recording all trace data before application launch and preventing accumulation of unwanted trace files when not actively analyzing.
 
 The tracing directory can be configured using command/launch action parameters, or through environment variables with the following logic:
 
@@ -164,7 +203,7 @@ $ ros2 trace stop session_name    # Stop tracing after starting or resuming
 
 Run each command with `-h` for more information.
 
-You must [install the kernel tracer](#building) if you want to enable kernel events (using the `-k`/`--kernel-events` option).
+You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) events (using the `-k`/`--kernel-events` option) or syscalls (using the `--syscalls` option).
 If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ### Launch file trace action
@@ -179,8 +218,99 @@ $ ros2 launch tracetools_launch example.launch.py
 The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/v2.13/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
 For more information, see [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py).
 
-You must [install the kernel tracer](#building) if you want to enable kernel events (`events_kernel` in Python, `events-kernel` in XML or YAML).
+You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) events (`events_kernel` in Python, `events-kernel` in XML or YAML) or syscalls (`syscalls` in Python, XML, or YAML).
 If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
+
+## Tracing in snapshot mode
+
+By default, tracing sessions write trace data continuously to disk.
+Tracing sessions in [snapshot mode](https://lttng.org/docs/v2.13/#doc-tracing-session-mode) store trace data in memory and only write to disk when a [snapshot is taken](https://lttng.org/docs/v2.13/#doc-taking-a-snapshot).
+When memory buffers fill up, the oldest data is discarded, maintaining a rolling history whose size can be controlled by configuring sub-buffer size.
+This "flight recorder" mode is useful for capturing trace data only when something interesting occurs, avoiding continuous disk writes and thus lowering the runtime performance impact even more.
+
+### Trace command
+
+Use the `--snapshot-mode` option while starting a tracing session to configure it in snapshot mode:
+
+```
+$ ros2 trace --snapshot-mode  # requires user interaction
+```
+
+```
+$ ros2 trace start session_name --snapshot-mode
+```
+
+By default all ROS 2 tracepoints are enabled.
+Run the commands with `-h` for more information.
+
+Use `record_snapshot` to take a snapshot and write the trace data to disk:
+
+```
+$ ros2 trace record_snapshot session_name
+```
+
+All other session control commands work as usual:
+
+```
+$ ros2 trace pause session_name
+$ ros2 trace resume session_name
+$ ros2 trace stop session_name
+```
+
+### Launch file trace action
+
+Set `snapshot_mode=True` in the `Trace` action to configure the tracing session in snapshot mode using launch files.
+The session starts when launching the launch file and ends when it exits or when terminated.
+
+```
+$ ros2 launch tracetools_launch example_snapshot_mode.launch.py
+```
+
+Use `record_snapshot` to take a snapshot and write the trace data to disk, as stated earlier.
+
+> [!NOTE]
+> In snapshot mode, high-frequency runtime events may overwrite initialization trace data in memory before a snapshot is taken, potentially making the trace data unusable.
+> This is more likely to occur if sub-buffer sizes are too small.
+> Support for configuring separate channels for initialization and runtime tracepoints is planned to address this limitation (see [#199](https://github.com/ros2/ros2_tracing/issues/199)).
+
+## Dual session tracing
+
+Dual session mode solves the problem of losing initialization trace data by using two separate tracing sessions: one for initialization events in [snapshot mode](https://lttng.org/docs/v2.13/#doc-tracing-session-mode), and another normal tracing session for runtime events.
+This allows starting to actively record trace data at any point without losing initialization data.
+
+Use the `Trace` action to start the initialization session in snapshot mode:
+
+```
+$ ros2 launch tracetools_launch example_dual_session.launch.py
+```
+
+Then use the trace commands with `--dual-session` option to start and control the sessions.
+
+To take a snapshot of the initialization session and start the runtime session:
+
+```
+$ ros2 trace -s session_name --dual-session  # requires user interaction
+```
+
+```
+$ ros2 trace start session_name --dual-session
+```
+
+By default tracepoints corresponding to initialization ROS 2 events are enabled for the initialization (snapshot) session and all ROS 2 tracepoints are enabled for the runtime session.
+The snapshot trace will be written to `~/.ros/tracing/session_name/snapshot` and the runtime trace will be written to `~/.ros/tracing/session_name/runtime`.
+Run the commands with `-h` for more information.
+
+Other session control commands work as follows:
+
+```
+$ ros2 trace pause session_name --dual-session   # Pause runtime session after starting
+$ ros2 trace resume session_name --dual-session  # Take a snapshot of initialization session
+                                                   and resume runtime session after pausing
+$ ros2 trace stop session_name --dual-session    # Stop runtime session
+```
+
+> [!NOTE]
+> In dual session mode, the session name used in both the `Trace` action and the trace commands must be the same.
 
 ## Design
 

@@ -56,7 +56,7 @@ def run_and_trace(
     session_name = append_timestamp(session_name_prefix)
     full_path = os.path.join(base_path, session_name)
 
-    launch_actions = []
+    launch_actions: List[Action] = []
     # Add trace action
     launch_actions.append(
         Trace(

@@ -45,7 +45,7 @@ public:
   : PongNode(options, true) {}
 
 private:
-  void callback(std::shared_ptr<rclcpp::SerializedMessage> msg)
+  void callback(std::shared_ptr<const rclcpp::SerializedMessage> msg)
   {
     std_msgs::msg::String deserialized_msg;
     serializer_->deserialize_message(msg.get(), &deserialized_msg);

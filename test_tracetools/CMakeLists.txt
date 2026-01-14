@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 project(test_tracetools)
 
 # Default to C++17
@@ -13,7 +13,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
-if(WIN32 OR APPLE OR ANDROID)
+if(WIN32 OR APPLE OR ANDROID OR BSD)
   set(DISABLED_DEFAULT ON)
 else()
   set(DISABLED_DEFAULT OFF)
@@ -213,7 +213,7 @@ if(BUILD_TESTING)
     )
     foreach(_test_path ${_test_tracetools_pytest_tests})
       get_filename_component(_test_name ${_test_path} NAME_WE)
-      ament_add_pytest_test(${_test_name} ${_test_path}
+      ament_add_ros_isolated_pytest_test(${_test_name} ${_test_path}
         APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
         TIMEOUT 60
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -222,23 +222,28 @@ if(BUILD_TESTING)
 
     # Tests to run with all instrumented/supported rmw implementations
     set(_test_tracetools_pytest_tests_multi_rmw
+      test/test_client.py
       test/test_generic_pub_sub.py
       test/test_generic_subscription.py
       test/test_pub_sub.py
       test/test_publisher.py
+      test/test_service.py
+      test/test_service_req_resp.py
       test/test_subscription.py
     )
     set(_test_tracetools_rmw_implementations
       rmw_connextdds
       rmw_cyclonedds_cpp
       rmw_fastrtps_cpp
+      rmw_fastrtps_dynamic_cpp
+      rmw_zenoh_cpp
     )
     get_available_rmw_implementations(rmw_implementations)
     foreach(_test_path ${_test_tracetools_pytest_tests_multi_rmw})
       get_filename_component(_test_name ${_test_path} NAME_WE)
       foreach(rmw_implementation ${_test_tracetools_rmw_implementations})
         if(rmw_implementation IN_LIST rmw_implementations)
-          ament_add_pytest_test(${_test_name}__${rmw_implementation} ${_test_path}
+          ament_add_ros_isolated_pytest_test(${_test_name}__${rmw_implementation} ${_test_path}
             ENV RMW_IMPLEMENTATION=${rmw_implementation}
             APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
             TIMEOUT 60

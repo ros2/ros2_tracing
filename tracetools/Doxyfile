@@ -36,12 +36,9 @@ EXCLUDE_SYMBOLS        = \
     "_GET_MACRO_DO_TRACEPOINT" \
     "_GET_MACRO_DECLARE_TRACEPOINT" \
     "_DECLARE_TRACEPOINT" \
-    "TRACEPOINT" \
-    "TRACEPOINT_ENABLED" \
-    "DO_TRACEPOINT" \
-    "_deprecated_macro_TRACEPOINT" \
-    "_deprecated_macro_TRACEPOINT_ENABLED" \
-    "_deprecated_macro_DO_TRACEPOINT" \
+    "TRACETOOLS_TRACEPOINT" \
+    "TRACETOOLS_TRACEPOINT_ENABLED" \
+    "TRACETOOLS_DO_TRACEPOINT" \
     "tracetools::detail*"
 
 # Tag files that do not exist will produce a warning and cross-project linking will not work.

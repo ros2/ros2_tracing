@@ -66,7 +66,7 @@ class TestGenericSubscription(TraceTestCase):
 
         for event in rmw_sub_init_events:
             self.assertValidHandle(event, ['rmw_subscription_handle'])
-            self.assertValidStaticArray(event, 'gid', int, 24)
+            self.assertValidStaticArray(event, 'gid', int, 16)
         for event in rcl_sub_init_events:
             self.assertValidHandle(
                 event,

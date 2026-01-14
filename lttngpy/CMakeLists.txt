@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.20)
 
 project(lttngpy)
 
@@ -15,18 +15,9 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Figure out Python3 debug/release before anything else can find_package it
-if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-  find_package(python_cmake_module REQUIRED)
-  find_package(PythonExtra REQUIRED)
-
-  # Force FindPython3 to use the debug interpreter where ROS 2 expects it
-  set(Python3_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
-endif()
-
 find_package(ament_cmake REQUIRED)
 
-if(WIN32 OR APPLE OR ANDROID)
+if(WIN32 OR APPLE OR ANDROID OR BSD)
   set(DISABLED_DEFAULT ON)
 else()
   set(DISABLED_DEFAULT OFF)
@@ -36,10 +27,24 @@ option(
   "Explicitly disable support, don't link against liblttng-ctl"
   ${DISABLED_DEFAULT})
 
+# By default, without the settings below, find_package(Python3) will attempt
+# to find the newest python version it can, and additionally will find the
+# most specific version.  For instance, on a system that has
+# /usr/bin/python3.10, /usr/bin/python3.11, and /usr/bin/python3, it will find
+# /usr/bin/python3.11, even if /usr/bin/python3 points to /usr/bin/python3.10.
+# The behavior we want is to prefer the "system" installed version unless the
+# user specifically tells us othewise through the Python3_EXECUTABLE hint.
+# Setting CMP0094 to NEW means that the search will stop after the first
+# python version is found.  Setting Python3_FIND_UNVERSIONED_NAMES means that
+# the search will prefer /usr/bin/python3 over /usr/bin/python3.11.  And that
+# latter functionality is only available in CMake 3.20 or later, so we need
+# at least that version.
+cmake_policy(SET CMP0094 NEW)
+set(Python3_FIND_UNVERSIONED_NAMES FIRST)
+
 # Find python before pybind11
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
-find_package(pybind11_vendor REQUIRED)
 find_package(pybind11 REQUIRED)
 
 if(NOT LTTNGPY_DISABLED)
@@ -81,12 +86,13 @@ if(NOT LTTNGPY_DISABLED)
     src/lttngpy/event.cpp
     src/lttngpy/lttng.cpp
     src/lttngpy/session.cpp
+    src/lttngpy/snapshot.cpp
   )
 endif()
 
-pybind11_add_module(_lttngpy_pybind11 SHARED ${SOURCES})
+pybind11_add_module(_lttngpy_pybind11 ${SOURCES})
 
-if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE)
+if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE AND NOT BSD)
   target_link_libraries(_lttngpy_pybind11 PRIVATE atomic)
 endif()
 

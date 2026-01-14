@@ -151,6 +151,11 @@ The following table summarizes the instrumentation and links to the correspondin
 |          | `rmw_subscription_init`              | [*Subscription creation*](#subscription-creation) |
 |          | `rmw_publish`                        | [*Message publishing*](#message-publishing) |
 |          | `rmw_take`                           | [*Subscription callbacks*](#subscription-callbacks) |
+|          | `rmw_client_init`                    | [*Client creation*](#client-creation) |
+|          | `rmw_take_request`                   | [*Service callbacks*](#service-callbacks) |
+|          | `rmw_send_response`                  | [*Service callbacks*](#service-callbacks) |
+|          | `rmw_send_request`                   | [*Client request/response*](#client-requestresponse) |
+|          | `rmw_take_response`                  | [*Client request/response*](#client-requestresponse) |
 
 ### General guidelines
 
@@ -438,6 +443,8 @@ For simple messages without loaning, it simply gets deallocated.
 * Link to handle(s) of subscription being executed
 * Message being taken
 * Source timestamp of message being taken
+    * To link message being taken to the same message being published
+    * Note: there could be collisions if multiple publishers publish a message on the same topic at the exact same time (depending on clock resolution), but it's unlikely
 * Link to callback object being dispatched, with start/end timestamps
 * Whether the callback dispatching is for intra-process or not
 
@@ -575,7 +582,7 @@ The node calls `rclcpp::create_service()` which ends up creating a `rclcpp::Serv
 In its constructor, it allocates a `rcl_service_t` handle, and then calls `rcl_service_init()`.
 This processes the handle and validates the service name.
 It calls `rmw_create_service()` to get the corresponding `rmw_service_t` handle.
-`rclcpp::Service` creates an `rclcpp::AnySubscriptionCallback` object and associates it with itself.
+`rclcpp::Service` creates an `rclcpp::AnyServiceCallback` object and associates it with itself.
 
 **Important information**:
 * Link between `rcl_service_t` and `rmw_service_t` handles
@@ -616,16 +623,17 @@ It then calls `rclcpp::Service::take_type_erased_request()`, which calls `rcl_ta
 
 If those are successful and a new request is taken, then the `rclcpp::Executor` calls `rclcpp::Service::handle_request()` with the request.
 This casts the request to its actual type, allocates a response object, and calls `rclcpp::AnyServiceCallback::dispatch()`, which calls the actual `std::function` with the right signature.
+Depending on the service callback signature, a response object could be provided to the callback to be populated, a reference to the service could be used to send a response from inside the callback, or a response could be sent later.
 
 If there is a service response for the request, `rclcpp::Service::send_response()` is called, which calls `rcl_send_response()` & `rmw_send_response()`.
 
 **Important information**:
+* Link to handle(s) of service being executed
 * Request being taken
 * Link to callback object being dispatched, with start/end timestamps
-* TODO
-    * Link to handle(s) of service being executed
-    * Source timestamp of request being taken
-    * Link between request and response
+* Sequence number and client GID of request being taken
+* Sequence number and client GID of request that a response is for
+* Source timestamp of response being sent
 
 ```mermaid
 sequenceDiagram
@@ -644,17 +652,19 @@ sequenceDiagram
     Executor->>Service: take_type_erased_request(out request *, out request_id): bool
     Service->>rcl: rcl_take_request(rcl_service *, out request_header *, out request *)
     rcl->>rmw: rmw_take_request(rmw_service_t *, out request_header *, out request *, out taken)
+    rmw-->>tracetools: TP(rmw_take_request, rmw_service_t *, request *, client_gid, sequence_number, taken)
     opt taken
         Executor->>Service: handle_request(request_header *, request *)
         Note over Service: casts request to its actual type
         Note over Service: allocates a response object
-        Service->>AnyServiceCallback: dispatch(request_header, typed_request): response
+        Service->>AnyServiceCallback: dispatch(service, request_header, request): response
         AnyServiceCallback-->>tracetools: TP(callback_start, rclcpp::AnyServiceCallback *)
         Note over AnyServiceCallback: std::function(...)
         AnyServiceCallback-->>tracetools: TP(callback_end, rclcpp::AnyServiceCallback *)
         opt response
             Service->>rcl: rcl_send_response(rcl_service_t *, request_header *, response *)
             rcl->>rmw: rmw_send_response(rmw_service_t *, request_header *, response *)
+            rmw-->>tracetools: TP(rmw_send_response, rmw_service_t *, response *, client_gid, sequence_number, timestamp)
         end
     end
 ```
@@ -666,10 +676,12 @@ The node calls `rclcpp::create_client()` which ends up creating a `rclcpp::Clien
 In its constructor, it allocates a `rcl_client_t` handle, and then calls `rcl_client_init()`.
 This validates and processes the handle.
 It also calls `rmw_create_client()` which creates the `rmw_client_t` handle.
+`rmw` creates or associates the `rmw_client_t` handle with *a* GID, since client `rmw` implementations use multiple DDS objects that have GIDs (e.g., request publisher, response subscription).
 
 **Important information**:
 * Link between `rcl_client_t` and `rmw_client_t` handles
 * Link to corresponding node handle
+* Link to corresponding client GID
 * Service name
 
 ```mermaid
@@ -689,6 +701,7 @@ sequenceDiagram
     Note over rcl: validates and processes rcl_client_t handle
     rcl->>rmw: rmw_create_client(rmw_node_t *, service_name, qos_options): rmw_client_t
     Note over rmw: creates rmw_client_t handle
+    rmw-->>tracetools: TP(rmw_client_init, rmw_client_t *, gid)
     rcl-->>tracetools: TP(rcl_client_init, rcl_client_t *, rcl_node_t *, rmw_client_t *, service_name)
 ```
 
@@ -708,13 +721,12 @@ This waits until the future object is ready, or until timeout, and returns.
 If this last call was successful, then the node can get the result (i.e., response) and do something with it.
 
 **Important information**:
-* TODO
-    * Link to handle(s) of client
-    * Request being sent, with timestamp
-    * Link to callback object being used, with start/end timestamps
-    * Response being taken
-    * Source timestamp of response being taken
-    * Link to response
+* Link to handle(s) of client
+* Sequence number of request being sent
+* Sequence number of request that a response being taken is for
+* Source timestamp of response being taken
+    * To link response being taken to the same response being sent
+    * Note: there could be collisions if multiple services replied to the same request at the exact same time (depending on clock resolution), but it's unlikely
 
 ```mermaid
 sequenceDiagram
@@ -730,11 +742,11 @@ sequenceDiagram
 
     Note over node: creates request
     node->>Client: async_send_request(request[, callback]): result_future
-    Client->>rcl: rcl_send_request(rcl_client_t, request, out sequence_number): int64_t
+    Client->>rcl: rcl_send_request(rcl_client_t, request *, out sequence_number): int64_t
     Note over rcl: assigns sequence_number
     %% rcl-->>tracetools: TP(rcl_send_request, rcl_client_t *, sequence_number)
-    rcl->>rmw: rmw_send_request(rmw_client_t, request, sequence_number)
-    %% rmw-->>tracetools: TP(rmw_send_request, sequence_number)
+    rcl->>rmw: rmw_send_request(rmw_client_t, request *, sequence_number)
+    rmw-->>tracetools: TP(rmw_send_request, rmw_client_t *, request *, sequence_number)
     Note over Client: puts sequence_number in a 'pending requests' map with promise+callback+future
 
     alt without callback
@@ -753,7 +765,7 @@ sequenceDiagram
         Executor->>Client: take_type_erased_response(response *, header *): bool
         Client->>rcl: rcl_take_response*(rcl_client_t *, out request_header *, out response *)
         rcl->>rmw: rmw_take_response(rmw_client_t *, out request_header *, out response *, out taken)
-        %% rmw-->>tracetools: TP(rmw_take_response)
+        rmw-->>tracetools: TP(rmw_take_response, rmw_client_t *, response *, sequence_number, source_timestamp, taken)
         %% rcl-->>tracetools: TP(rcl_take_response)
         opt taken
             Executor->>Client: handle_response(request_header *, response *)

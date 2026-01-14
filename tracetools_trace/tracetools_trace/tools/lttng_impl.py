@@ -15,17 +15,23 @@
 
 """Implementation of the interface for tracing with LTTng."""
 
+import itertools
 import os
+from pathlib import Path
 import shlex
 import subprocess
 from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Set
+from typing import Tuple
 from typing import Union
 
 from lttngpy import impl as lttngpy
 from packaging.version import Version
+
+from tracetools_trace.tools.path import RUNTIME_SESSION_SUFFIX
+from tracetools_trace.tools.path import SNAPSHOT_SESSION_SUFFIX
 
 from .names import DEFAULT_CONTEXT
 from .names import DEFAULT_EVENTS_ROS
@@ -53,6 +59,50 @@ def is_kernel_tracer_available() -> bool:
     :return: `True` if available or `False` if not
     """
     return not isinstance(lttngpy.get_tracepoints(domain_type=lttngpy.LTTNG_DOMAIN_KERNEL), int)
+
+
+def is_kernel_paranoid_perf_event(context_fields: Set[str]) -> Tuple[bool, Optional[str]]:
+    """
+    Check if the kernel is paranoid about perf events, if any.
+
+    The current kernel may not allow perf events (exposed by LTTng as context fields) to be used
+    depending on the perf_event_paranoid value (/proc/sys/kernel/perf_event_paranoid), see:
+    https://www.kernel.org/doc/Documentation/sysctl/kernel.txt. In that case, the resulting trace
+    will be unexpectedly empty.
+
+    Note: the CAP_SYS_ADMIN capability may still allow perf events to be used even if the kernel is
+    paranoid. However, we are not checking for that here.
+
+    :param: context_fields: the names of requested context fields
+    :return: a (is_paranoid, message) tuple, where:
+        is_paranoid: `True` if kernel is paranoid about given context fields, otherwise `False`
+        message: a message explaining the paranoia (only applicable if `is_paranoid` is `True`)
+    """
+    # For now, just check for 'perf:thread:*' perf events
+    has_perf_thread_context_fields = any(
+        # Wildcards (*) are not supported for context fields
+        context_field.startswith('perf:thread:')
+        for context_field in context_fields
+    )
+    if not has_perf_thread_context_fields:
+        return False, None
+    path_perf_event_paranoid = Path('/proc/sys/kernel/perf_event_paranoid')
+    # If it's not a file or if the file doesn't exist, assume it's OK
+    if not path_perf_event_paranoid.is_file():
+        return False, None
+    paranoid_value_str = path_perf_event_paranoid.read_text().strip()
+    if not paranoid_value_str.isdigit():
+        return False, None
+    paranoid_value = int(paranoid_value_str)
+    # Events such as 'perf:thread:task-clock' are part of "kernel profiling," see:
+    # https://man7.org/linux/man-pages/man2/perf_event_open.2.html
+    # That corresponds to a paranoid value of >=2
+    return (
+        paranoid_value >= 2,
+        'kernel likely too paranoid for desired context fields: resulting trace may be '
+        f'unexpectedly empty\ncheck value in {path_perf_event_paranoid} and refer to: '
+        'https://www.kernel.org/doc/Documentation/sysctl/kernel.txt'
+    )
 
 
 def get_lttng_home() -> Optional[str]:
@@ -147,10 +197,13 @@ def spawn_session_daemon() -> None:
 def setup(
     *,
     session_name: str,
+    snapshot_mode: bool = False,
+    dual_session: bool = False,
     base_path: str,
     append_trace: bool = False,
     ros_events: Union[List[str], Set[str]] = DEFAULT_EVENTS_ROS,
     kernel_events: Union[List[str], Set[str]] = [],
+    syscalls: Union[List[str], Set[str]] = [],
     context_fields: Union[List[str], Set[str], Dict[str, List[str]]] = DEFAULT_CONTEXT,
     channel_name_ust: str = 'ros2',
     channel_name_kernel: str = 'kchan',
@@ -169,12 +222,16 @@ def setup(
     Raises RuntimeError on failure, in which case the tracing session might still exist.
 
     :param session_name: the name of the session
+    :param snapshot_mode: whether this is a snapshot session
+    :param dual_session: whether this is part of a dual session
     :param base_path: the path to the directory in which to create the tracing session directory,
         which will be created if needed
     :param append_trace: whether to append to the trace directory if it already exists, otherwise
         an error is reported
     :param ros_events: list of ROS events to enable
     :param kernel_events: list of kernel events to enable
+    :param syscalls: list of syscalls to enable
+        these will be part of the kernel channel
     :param context_fields: the names of context fields to enable
         if it's a list or a set, the context fields are enabled for both kernel and userspace;
         if it's a dictionary: { domain type string -> context fields list }
@@ -192,7 +249,20 @@ def setup(
     if not session_name:
         raise RuntimeError('empty session name')
     # Resolve full tracing directory path
-    full_path = os.path.join(base_path, session_name)
+    if snapshot_mode and dual_session:
+        full_path = os.path.join(
+            base_path,
+            session_name.removesuffix(SNAPSHOT_SESSION_SUFFIX),
+            'snapshot',
+        )
+    elif dual_session:
+        full_path = os.path.join(
+            base_path,
+            session_name.removesuffix(RUNTIME_SESSION_SUFFIX),
+            'runtime',
+        )
+    else:
+        full_path = os.path.join(base_path, session_name)
     if os.path.isdir(full_path) and not append_trace:
         raise RuntimeError(
             f'trace directory already exists, use the append option to append to it: {full_path}')
@@ -212,14 +282,14 @@ def setup(
     if is_session_daemon_not_alive():
         raise RuntimeError('failed to start lttng session daemon')
 
-    # Make sure the kernel tracer is available if there are kernel events
+    # Make sure the kernel tracer is available if there are kernel events, including syscalls
     # Do this after spawning a session daemon, otherwise we can't detect the kernel tracer
-    if 0 < len(kernel_events) and not is_kernel_tracer_available():
+    if 0 < (len(kernel_events) + len(syscalls)) and not is_kernel_tracer_available():
         raise RuntimeError(
             'kernel tracer is not available:\n'
-            '  cannot use kernel events:\n'
-            "    'ros2 trace' command: cannot use '-k' option\n"
-            "    'Trace' action: cannot set 'events_kernel'/'events-kernel' list\n"
+            '  cannot use kernel events or syscalls:\n'
+            "    'ros2 trace' command: cannot use '-k' or '--syscall' options\n"
+            "    'Trace' action: cannot set 'events_kernel'/'events-kernel' or 'syscalls' lists\n"
             '  install the kernel tracer, e.g., on Ubuntu, install lttng-modules-dkms\n'
             '  see: https://github.com/ros2/ros2_tracing#building'
         )
@@ -229,23 +299,39 @@ def setup(
         ros_events = set(ros_events)
     if not isinstance(kernel_events, set):
         kernel_events = set(kernel_events)
+    if not isinstance(syscalls, set):
+        syscalls = set(syscalls)
     if isinstance(context_fields, list):
         context_fields = set(context_fields)
 
-    ust_enabled = ros_events is not None and len(ros_events) > 0
-    kernel_enabled = kernel_events is not None and len(kernel_events) > 0
+    ust_enabled = bool(ros_events)
+    kernel_enabled = bool(kernel_events) or bool(syscalls)
     if not (ust_enabled or kernel_enabled):
         raise RuntimeError('no events enabled')
 
+    # Warn if the kernel is paranoid about perf events enabled through context fields
+    contexts_dict = _normalize_contexts_dict(context_fields)
+    context_fields_values = set(itertools.chain.from_iterable(contexts_dict.values()))
+    is_kernel_paranoid, paranoid_message = is_kernel_paranoid_perf_event(context_fields_values)
+    if is_kernel_paranoid:
+        print(f'warning: {paranoid_message}')
+
     # Create session
     # LTTng will create the parent directories if needed
-    _create_session(
-        session_name=session_name,
-        full_path=full_path,
-    )
+    if not snapshot_mode:
+        _create_session(
+            session_name=session_name,
+            full_path=full_path,
+        )
+    else:
+        _create_session_snapshot(
+            session_name=session_name,
+            max_size=10 * subbuffer_size_ust,
+            name='snapshot',
+            full_path=full_path,
+        )
 
     # Enable channel, events, and contexts for each domain
-    contexts_dict = _normalize_contexts_dict(context_fields)
     if ust_enabled:
         domain = DOMAIN_TYPE_USERSPACE
         domain_type = lttngpy.LTTNG_DOMAIN_UST
@@ -256,12 +342,15 @@ def setup(
             # Per-user buffer
             buffer_type=lttngpy.LTTNG_BUFFER_PER_UID,
             channel_name=channel_name,
-            # Discard, do not overwrite
-            overwrite=0,
-            # We use 2 sub-buffers because the number of sub-buffers is pointless in discard mode,
-            # and switching between sub-buffers introduces noticeable CPU overhead
+            # Overwrite if snapshot mode, otherwise discard
+            overwrite=int(snapshot_mode),
+            # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
+            # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
+            # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
+            # written, because when all sub-buffers are full the oldest one is discarded entirely.
+            # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
             subbuf_size=subbuffer_size_ust,
-            num_subbuf=2,
+            num_subbuf=4 if snapshot_mode else 2,
             # Ignore switch timer interval and use read timer instead
             switch_timer_interval=0,
             read_timer_interval=200,
@@ -271,6 +360,7 @@ def setup(
         _enable_events(
             session_name=session_name,
             domain_type=domain_type,
+            event_type=lttngpy.LTTNG_EVENT_TRACEPOINT,
             channel_name=channel_name,
             events=ros_events,
         )
@@ -290,24 +380,37 @@ def setup(
             # Global buffer (only option for kernel domain)
             buffer_type=lttngpy.LTTNG_BUFFER_GLOBAL,
             channel_name=channel_name,
-            # Discard, do not overwrite
-            overwrite=0,
-            # We use 2 sub-buffers because the number of sub-buffers is pointless in discard mode,
-            # and switching between sub-buffers introduces noticeable CPU overhead
+            # Overwrite if snapshot mode, otherwise discard
+            overwrite=int(snapshot_mode),
+            # We use 2 sub-buffers in normal mode because the number of sub-buffers is pointless in
+            # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
+            # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
+            # written, because when all sub-buffers are full the oldest one is discarded entirely.
+            # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
             subbuf_size=subbuffer_size_kernel,
-            num_subbuf=2,
+            num_subbuf=4 if snapshot_mode else 2,
             # Ignore switch timer interval and use read timer instead
             switch_timer_interval=0,
             read_timer_interval=200,
             # mmap channel output instead of splice
             output=lttngpy.LTTNG_EVENT_MMAP,
         )
-        _enable_events(
-            session_name=session_name,
-            domain_type=domain_type,
-            channel_name=channel_name,
-            events=kernel_events,
-        )
+        if kernel_events:
+            _enable_events(
+                session_name=session_name,
+                domain_type=domain_type,
+                event_type=lttngpy.LTTNG_EVENT_TRACEPOINT,
+                channel_name=channel_name,
+                events=kernel_events,
+            )
+        if syscalls:
+            _enable_events(
+                session_name=session_name,
+                domain_type=domain_type,
+                event_type=lttngpy.LTTNG_EVENT_SYSCALL,
+                channel_name=channel_name,
+                events=syscalls,
+            )
         _add_contexts(
             session_name=session_name,
             domain_type=domain_type,
@@ -356,6 +459,27 @@ def stop(
     if result < 0 and not ignore_error:
         error = lttngpy.lttng_strerror(result)
         raise RuntimeError(f"failed to stop tracing session '{session_name}': {error}")
+
+
+def record_snapshot(
+    *,
+    session_name: str,
+    **kwargs,
+) -> None:
+    """
+    Record a snapshot, and check for errors.
+
+    This must not be called if `lttngpy.is_available()` is `False`.
+    Raises RuntimeError on failure.
+
+    :param session_name: the name of the session
+    """
+    result = lttngpy.record_snapshot(session_name=session_name)
+    if result < 0:
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(
+            f"failed to record snapshot of the tracing session '{session_name}': {error}"
+        )
 
 
 def destroy(
@@ -410,6 +534,50 @@ def _create_session(
         raise RuntimeError(f"failed to create tracing session '{session_name}': {error}")
 
 
+def _create_session_snapshot(
+    *,
+    session_name: str,
+    max_size: int,
+    name: str,
+    full_path: str,
+) -> None:
+    """
+    Create snapshot session from name and full directory path, and check for errors.
+
+    This must not be called if `lttngpy.is_available()` is `False`.
+    Raises RuntimeError on failure.
+
+    :param session_name: the name of the session
+    :param max_size: the maximum size of the snapshot output in bytes
+    :param name: the name of the snapshot output
+    :param full_path: the full path to the main directory to write trace data to
+    """
+    result = lttngpy.lttng_create_session_snapshot(
+        session_name=session_name,
+        url=None,
+    )
+    if -lttngpy.LTTNG_ERR_EXIST_SESS.value == result:
+        # Sessions may persist if there was an error previously, so if it already exists, just
+        # destroy it and try again
+        destroy(session_name=session_name)
+        result = lttngpy.lttng_create_session_snapshot(
+            session_name=session_name,
+            url=None,
+        )
+    if result < 0:
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to create snapshot session '{session_name}': {error}")
+    result = lttngpy.add_snapshot_output(
+        session_name=session_name,
+        max_size=max_size,
+        name=name,
+        url=full_path,
+    )
+    if result < 0:
+        error = lttngpy.lttng_strerror(result)
+        raise RuntimeError(f"failed to add output for snapshot session '{session_name}': {error}")
+
+
 def _enable_channel(**kwargs) -> None:
     """
     Enable channel, and check for errors.
@@ -443,9 +611,10 @@ def _enable_events(**kwargs) -> None:
     if result < 0:
         session_name = kwargs['session_name']
         channel_name = kwargs['channel_name']
+        events = kwargs['events']
         error = lttngpy.lttng_strerror(result)
         raise RuntimeError(
-            f"failed to enable event for channel '{channel_name}' "
+            f"failed to enable event(s) {events} for channel '{channel_name}' "
             f"in tracing session '{session_name}': {error}"
         )
 

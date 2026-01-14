@@ -52,7 +52,7 @@ public:
   : PingNode(options, true) {}
 
 private:
-  void callback(std::shared_ptr<rclcpp::SerializedMessage> serialized_msg)
+  void callback(std::shared_ptr<const rclcpp::SerializedMessage> serialized_msg)
   {
     std_msgs::msg::String deserialized_msg;
     serializer_->deserialize_message(serialized_msg.get(), &deserialized_msg);

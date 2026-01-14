@@ -13,6 +13,4 @@
 // limitations under the License.
 
 #define TRACEPOINT_CREATE_PROBES
-
-#define TRACEPOINT_DEFINE
 #include "tracetools/tp_call.h"

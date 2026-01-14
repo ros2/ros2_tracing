@@ -15,6 +15,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
     ],
+    package_data={'': ['py.typed']},
     install_requires=['setuptools'],
     maintainer=(
         'Christophe Bedard, '

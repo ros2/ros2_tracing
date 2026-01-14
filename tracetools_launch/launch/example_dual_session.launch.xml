@@ -1,0 +1,5 @@
+<launch>
+  <trace session-name="my-dual-session" dual-session="true" />
+  <node pkg="test_tracetools" exec="test_ping" output="screen" />
+  <node pkg="test_tracetools" exec="test_pong" output="screen" />
+</launch>

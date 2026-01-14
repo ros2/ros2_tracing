@@ -21,10 +21,10 @@ jobs:
         distro:
           - jazzy
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         path: ws/src/ros2/ros2_tracing
-    - uses: ros-tooling/setup-ros@master
+    - uses: ros-tooling/setup-ros@main
       with:
         required-ros-distributions: ${{ matrix.distro }}
         use-ros2-testing: true
@@ -66,17 +66,17 @@ jobs:
         distro:
           - jazzy
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         path: ws/src/ros2/ros2_tracing
-    - uses: ros-tooling/setup-ros@master
+    - uses: ros-tooling/setup-ros@main
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/ws
         vcs import src/ --input https://raw.githubusercontent.com/ros2/ros2/${{ matrix.distro }}/ros2.repos --skip-existing
         vcs log -l1 src/
         rosdep update
-        rosdep install -r --from-paths src --ignore-src -y --rosdistro ${{ matrix.distro }} --skip-keys "fastcdr rti-connext-dds-6.0.1 urdfdom_headers"
+        rosdep install -r --from-paths src --ignore-src -y --rosdistro ${{ matrix.distro }} --skip-keys "fastcdr rti-connext-dds-7.3.0 urdfdom_headers"
         colcon build --packages-up-to tracetools ros2run ros2launch demo_nodes_cpp tracetools_launch test_tracetools
     - name: Make sure that tracing instrumentation is available
       run: |
