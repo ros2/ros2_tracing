@@ -503,7 +503,7 @@ static bool get_boolean_env(const char *name)
   return value != NULL && strcmp(value, "1") == 0;
 }
 
-void __attribute__((constructor)) tracetools_init()
+void __attribute__((constructor)) tracetools_init(void)
 {
   const bool verbose = get_boolean_env("TRACETOOLS_VERBOSE");
   if (get_boolean_env("TRACETOOLS_RUNTIME_DISABLE")) {
@@ -521,7 +521,7 @@ void __attribute__((constructor)) tracetools_init()
   }
 }
 
-void __attribute__((destructor)) tracetools_fini()
+void __attribute__((destructor)) tracetools_fini(void)
 {
   if (tracetools_provider_handle != NULL) {
     if (dlclose(tracetools_provider_handle) != 0) {
