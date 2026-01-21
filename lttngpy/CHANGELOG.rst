@@ -2,6 +2,13 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [Fix] compile fail (`#194 <https://github.com/ros2/ros2_tracing/issues/194>`_) (`#215 <https://github.com/ros2/ros2_tracing/issues/215>`_)
+  (cherry picked from commit e175cde407a2da7fab2a75890cdb9d0e626cc73b)
+  Co-authored-by: mosfet80 <10235105+mosfet80@users.noreply.github.com>
+* Contributors: mergify[bot]
+
 8.2.4 (2025-08-05)
 ------------------
 

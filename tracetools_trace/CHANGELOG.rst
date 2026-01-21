@@ -2,6 +2,17 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add exec_depend on procps to tracetools_trace for ps command (`#227 <https://github.com/ros2/ros2_tracing/issues/227>`_) (`#229 <https://github.com/ros2/ros2_tracing/issues/229>`_)
+  (cherry picked from commit 0852cd777d247e7c18fb768968d8b041b673d1a8)
+  Co-authored-by: Christophe Bedard <bedard.christophe@gmail.com>
+* fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#203 <https://github.com/ros2/ros2_tracing/issues/203>`_)
+  (cherry picked from commit 526967c1a0ad3208fe6c28e0cf16f2b045ed5241)
+  Co-authored-by: mosfet80 <10235105+mosfet80@users.noreply.github.com>
+  Co-authored-by: Christophe Bedard <bedard.christophe@gmail.com>
+* Contributors: mergify[bot]
+
 8.2.4 (2025-08-05)
 ------------------
 

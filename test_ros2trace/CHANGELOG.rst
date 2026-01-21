@@ -2,6 +2,14 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#203 <https://github.com/ros2/ros2_tracing/issues/203>`_)
+  (cherry picked from commit 526967c1a0ad3208fe6c28e0cf16f2b045ed5241)
+  Co-authored-by: mosfet80 <10235105+mosfet80@users.noreply.github.com>
+  Co-authored-by: Christophe Bedard <bedard.christophe@gmail.com>
+* Contributors: mergify[bot]
+
 8.2.4 (2025-08-05)
 ------------------
 

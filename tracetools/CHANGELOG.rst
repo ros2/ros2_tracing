@@ -2,6 +2,9 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.2.4 (2025-08-05)
 ------------------
 * Removed clang warning (`#168 <https://github.com/ros2/ros2_tracing/issues/168>`_) (`#172 <https://github.com/ros2/ros2_tracing/issues/172>`_)
