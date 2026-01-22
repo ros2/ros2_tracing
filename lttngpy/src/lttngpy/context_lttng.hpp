@@ -15,7 +15,7 @@
 #ifndef LTTNGPY__CONTEXT_LTTNG_HPP_
 #define LTTNGPY__CONTEXT_LTTNG_HPP_
 
-#include <lttng/event.h>
+#include <lttng/lttng.h>
 
 #include <optional>
 #include <string>

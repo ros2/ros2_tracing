@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <lttng/clear.h>
-#include <lttng/clear-handle.h>
-#include <lttng/lttng-error.h>
-#include <lttng/snapshot.h>
+#include <lttng/lttng.h>
 
 #include <string>
 
@@ -65,7 +62,7 @@ int record_snapshot(const std::string & session_name)
   }
 
   // Clear the session after recording the snapshot
-  lttng_clear_handle *handle;
+  lttng_clear_handle * handle;
   ret = lttng_clear_session(session_name.c_str(), &handle);
   if (0 > ret) {
     lttng_clear_handle_destroy(handle);
