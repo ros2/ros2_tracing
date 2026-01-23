@@ -15,8 +15,9 @@
 #ifndef LTTNGPY__CHANNEL_HPP_
 #define LTTNGPY__CHANNEL_HPP_
 
-#include <lttng/domain.h>
+#include <lttng/lttng.h>
 
+#include <optional>
 #include <string>
 
 namespace lttngpy
