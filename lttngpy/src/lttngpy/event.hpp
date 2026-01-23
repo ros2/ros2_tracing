@@ -15,8 +15,7 @@
 #ifndef LTTNGPY__EVENT_HPP_
 #define LTTNGPY__EVENT_HPP_
 
-#include <lttng/domain.h>
-#include <lttng/event.h>
+#include <lttng/lttng.h>
 
 #include <set>
 #include <string>
