@@ -49,10 +49,11 @@ public:
     link_subs.push_back(static_cast<const void *>(sub2_->get_subscription_handle().get()));
     std::vector<const void *> link_pubs;
     link_pubs.push_back(static_cast<const void *>(
-      pub_->get_publisher_handle().get()
+        pub_->get_publisher_handle().get()
     ));
     TRACETOOLS_TRACEPOINT(
-      message_link_partial_sync, link_subs.data(), link_subs.size(), link_pubs.data(), link_pubs.size()
+      message_link_partial_sync, link_subs.data(), link_subs.size(), link_pubs.data(),
+      link_pubs.size()
     );
   }
 
