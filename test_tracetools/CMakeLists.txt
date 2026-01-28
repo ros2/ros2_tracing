@@ -39,6 +39,18 @@ if(BUILD_TESTING)
   find_package(rcpputils REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(std_srvs REQUIRED)
+  
+  # Utils do not exist if TRACETOOLS_DISABLED
+  if(NOT TRACETOOLS_DISABLED)
+    find_package(tracetools REQUIRED)
+    find_package(ament_cmake_gtest REQUIRED)
+    ament_add_gtest(test_utils test/test_utils.cpp)
+    if(TARGET test_utils)
+      target_link_libraries(test_utils
+        tracetools::tracetools
+      )
+    endif()
+  endif()
 
   # The utility lib is needed even if TRACETOOLS_DISABLED; it's just empty
   add_library(${PROJECT_NAME}_mark_process src/mark_process.cpp)
@@ -121,6 +133,18 @@ if(BUILD_TESTING)
     ${std_msgs_TARGETS}
   )
 
+  if(NOT TRACETOOLS_DISABLED)
+    add_executable(test_pong_message_link
+      src/test_pong_message_link.cpp
+    )
+    target_link_libraries(test_pong_message_link PRIVATE
+      ${PROJECT_NAME}_mark_process
+      rclcpp::rclcpp
+      tracetools::tracetools
+      ${std_msgs_TARGETS}
+    )
+  endif()
+
   add_executable(test_generic_ping
     src/test_generic_ping.cpp
   )
@@ -180,20 +204,15 @@ if(BUILD_TESTING)
     DESTINATION lib/${PROJECT_NAME}
   )
 
+  if(NOT TRACETOOLS_DISABLED)
+    install(TARGETS
+      test_pong_message_link
+      DESTINATION lib/${PROJECT_NAME}
+    )
+  endif()
+
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
-
-  # Utils do not exist if TRACETOOLS_DISABLED
-  if(NOT TRACETOOLS_DISABLED)
-    find_package(tracetools REQUIRED)
-    find_package(ament_cmake_gtest REQUIRED)
-    ament_add_gtest(test_utils test/test_utils.cpp)
-    if(TARGET test_utils)
-      target_link_libraries(test_utils
-        tracetools::tracetools
-      )
-    endif()
-  endif()
 
   # Only run tracing tests if instrumentation and tracepoints are included
   if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
