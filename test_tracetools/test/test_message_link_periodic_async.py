@@ -27,8 +27,18 @@ class TestPubSub(TraceTestCase):
             *args,
             session_name_prefix='session-test-message-link-periodic-async',
             events_ros=[
+                tp.rmw_publisher_init,
                 tp.rcl_publisher_init,
+                tp.rmw_publish,
+                tp.rcl_publish,
+                tp.rclcpp_publish,
+                tp.rmw_subscription_init,
                 tp.rcl_subscription_init,
+                tp.rclcpp_subscription_init,
+                tp.rclcpp_subscription_callback_added,
+                tp.rmw_take,
+                tp.callback_start,
+                tp.callback_end,
                 tp.message_link_periodic_async,
             ],
             package='test_tracetools',
@@ -44,32 +54,42 @@ class TestPubSub(TraceTestCase):
         # both subscriptions and the publisher with message_link_periodic_async.
 
         # Get subscription handles of input topics and publisher handle of output topic
-        rcl_subscription_init_events = self.get_events_with_name(tp.rcl_subscription_init)
+        rcl_subscription_init_events = self.get_events_with_name(
+            tp.rcl_subscription_init
+        )
         ping_rcl_subscription_init_event = self.get_event_with_field_value_and_assert(
             'topic_name',
             '/ping',
             rcl_subscription_init_events,
             allow_multiple=False,
         )
-        ping_sub_handle = self.get_field(ping_rcl_subscription_init_event, 'subscription_handle')
-        the_topic_rcl_subscription_init_event = self.get_event_with_field_value_and_assert(
-            'topic_name',
-            '/the_topic',
-            rcl_subscription_init_events,
-            allow_multiple=False,
+        ping_sub_handle = self.get_field(
+            ping_rcl_subscription_init_event, 'subscription_handle'
+        )
+        the_topic_rcl_subscription_init_event = (
+            self.get_event_with_field_value_and_assert(
+                'topic_name',
+                '/the_topic',
+                rcl_subscription_init_events,
+                allow_multiple=False,
+            )
         )
         the_topic_sub_handle = self.get_field(
             the_topic_rcl_subscription_init_event,
             'subscription_handle',
         )
         publisher_init_events = self.get_events_with_name(tp.rcl_publisher_init)
-        message_link_periodic_async_publisher_init_event = self.get_event_with_field_value_and_assert(
-            'topic_name',
-            '/pong',
-            publisher_init_events,
-            allow_multiple=False,
+        message_link_periodic_async_publisher_init_event = (
+            self.get_event_with_field_value_and_assert(
+                'topic_name',
+                '/pong',
+                publisher_init_events,
+                allow_multiple=False,
+            )
         )
-        pub_handle = self.get_field(message_link_periodic_async_publisher_init_event, 'publisher_handle')
+        pub_handle = self.get_field(
+            message_link_periodic_async_publisher_init_event, 'publisher_handle'
+        )
 
         # Get the message_link_periodic_async event
         message_link_events = self.get_events_with_name(tp.message_link_periodic_async)
