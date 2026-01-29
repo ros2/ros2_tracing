@@ -632,6 +632,7 @@ TRACEPOINT_EVENT(
 #ifdef __clang__
 # pragma clang diagnostic pop
 #endif
+
 #endif  // _TRACETOOLS__TP_CALL_H_
 
 #include <lttng/tracepoint-event.h>
