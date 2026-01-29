@@ -245,6 +245,7 @@ if(BUILD_TESTING)
       test/test_generic_pub_sub.py
       test/test_generic_subscription.py
       test/test_pub_sub.py
+      test/test_pub_sub_message_link.py
       test/test_publisher.py
       test/test_service.py
       test/test_service_req_resp.py

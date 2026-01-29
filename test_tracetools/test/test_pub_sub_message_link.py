@@ -72,7 +72,7 @@ class TestPubSub(TraceTestCase):
             allow_multiple=False,
         )
         pong_pub_handle = self.get_field(pong_publisher_init_event, 'publisher_handle')
-        
+
         # Get the message_link_partial_sync event
         message_link_events = self.get_events_with_name(tp.message_link_partial_sync)
         self.assertEqual(
@@ -81,12 +81,12 @@ class TestPubSub(TraceTestCase):
             'Expected exactly one message_link_partial_sync event',
         )
         message_link_event = message_link_events[0]
-        
+
         # Verify the event contains the correct subscription handles
         # The event should have both subscriptions linked to the pong publisher
         link_subs = self.get_field(message_link_event, 'subscription_handles')
         link_pubs = self.get_field(message_link_event, 'publisher_handles')
-        
+
         # Check that both subscription handles are present
         self.assertEqual(len(link_subs), 2, 'Expected 2 subscription handles')
         self.assertIn(
@@ -99,7 +99,7 @@ class TestPubSub(TraceTestCase):
             link_subs,
             'Expected /the_topic subscription handle in message link',
         )
-        
+
         # Check that the pong publisher handle is present
         self.assertEqual(len(link_pubs), 1, 'Expected 1 publisher handle')
         self.assertIn(
@@ -107,6 +107,7 @@ class TestPubSub(TraceTestCase):
             link_pubs,
             'Expected /pong publisher handle in message link',
         )
+
 
 if __name__ == '__main__':
     unittest.main()
