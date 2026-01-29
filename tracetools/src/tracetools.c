@@ -492,7 +492,6 @@ DEFINE_TRACEPOINT(
     const void ** pubs,
     const size_t num_pubs),
   TRACEPOINT_ARGS(
-    message_link_periodic_async,
     subs,
     num_subs,
     pubs,
@@ -506,7 +505,6 @@ DEFINE_TRACEPOINT(
     const void ** pubs,
     const size_t num_pubs),
   TRACEPOINT_ARGS(
-    message_link_partial_sync,
     subs,
     num_subs,
     pubs,

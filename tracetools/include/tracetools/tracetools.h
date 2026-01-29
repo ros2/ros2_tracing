@@ -740,7 +740,7 @@ _DECLARE_TRACEPOINT(
  * \param[in] pubs pointers to the `rcl` handles of the publishers in the link
  * \param[in] num_pubs the number of publishers in the link
  */
-DECLARE_TRACEPOINT(
+_DECLARE_TRACEPOINT(
   message_link_periodic_async,
   const void ** subs,
   const size_t num_subs,
@@ -750,13 +750,13 @@ DECLARE_TRACEPOINT(
 /// `message_link_partial_sync`
 /**
  * Message link annotation for 2-to-M link.
- *
+ * 
  * \param[in] subs pointers to the `rcl` handles of the subscriptions in the link
  * \param[in] num_subs the number of subscriptions in the link
  * \param[in] pubs pointers to the `rcl` handles of the publishers in the link
  * \param[in] num_pubs the number of publishers in the link
  */
-DECLARE_TRACEPOINT(
+_DECLARE_TRACEPOINT(
   message_link_partial_sync,
   const void ** subs,
   const size_t num_subs,
