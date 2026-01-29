@@ -103,6 +103,28 @@ if(BUILD_TESTING)
     rclcpp::rclcpp
   )
 
+  if(NOT TRACETOOLS_DISABLED)
+    add_executable(test_message_link_partial_sync
+      src/test_message_link_partial_sync.cpp
+    )
+    target_link_libraries(test_message_link_partial_sync PRIVATE
+      ${PROJECT_NAME}_mark_process
+      rclcpp::rclcpp
+      tracetools::tracetools
+      ${std_msgs_TARGETS}
+    )
+
+    add_executable(test_message_link_periodic_async
+      src/test_message_link_periodic_async.cpp
+    )
+    target_link_libraries(test_message_link_periodic_async PRIVATE
+      ${PROJECT_NAME}_mark_process
+      rclcpp::rclcpp
+      tracetools::tracetools
+      ${std_msgs_TARGETS}
+    )
+  endif()
+
   add_executable(test_ping
     src/test_ping.cpp
   )
@@ -180,6 +202,14 @@ if(BUILD_TESTING)
     DESTINATION lib/${PROJECT_NAME}
   )
 
+  if(NOT TRACETOOLS_DISABLED)
+    install(TARGETS
+      test_message_link_partial_sync
+      test_message_link_periodic_async
+      DESTINATION lib/${PROJECT_NAME}
+    )
+  endif()
+
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
@@ -224,6 +254,8 @@ if(BUILD_TESTING)
     set(_test_tracetools_pytest_tests_multi_rmw
       test/test_generic_pub_sub.py
       test/test_generic_subscription.py
+      test/test_message_link_partial_sync.py
+      test/test_message_link_periodic_async.py
       test/test_pub_sub.py
       test/test_publisher.py
       test/test_subscription.py
