@@ -45,10 +45,10 @@ public:
     // Manually link sub1_ as additional input to pub_ for tracing. sub2_ is
     // directly traced via publication during callback function.
     std::vector<const void *> link_subs = {
-        static_cast<const void *>(sub1_->get_subscription_handle().get())
+      static_cast<const void *>(sub1_->get_subscription_handle().get())
     };
     std::vector<const void *> link_pubs = {
-        static_cast<const void *>(pub_->get_publisher_handle().get())
+      static_cast<const void *>(pub_->get_publisher_handle().get())
     };
     TRACETOOLS_TRACEPOINT(
       message_link_partial_sync, link_subs.data(), link_subs.size(), link_pubs.data(),

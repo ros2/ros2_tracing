@@ -45,13 +45,13 @@ public:
 
     // Manually link both subscribers to periodically publishing publisher
     std::vector<const void *> link_subs = {
-        static_cast<const void *>(sub1_->get_subscription_handle().get()),
-        static_cast<const void *>(sub2_->get_subscription_handle().get())
+      static_cast<const void *>(sub1_->get_subscription_handle().get()),
+      static_cast<const void *>(sub2_->get_subscription_handle().get())
     };
     std::vector<const void *> link_pubs = {
-        static_cast<const void *>(
-            pub_->get_publisher_handle().get()
-        )
+      static_cast<const void *>(
+        pub_->get_publisher_handle().get()
+      )
     };
     TRACETOOLS_TRACEPOINT(
       message_link_periodic_async, link_subs.data(), link_subs.size(), link_pubs.data(),
