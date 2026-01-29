@@ -134,10 +134,10 @@ if(BUILD_TESTING)
   )
 
   if(NOT TRACETOOLS_DISABLED)
-    add_executable(test_pong_message_link
-      src/test_pong_message_link.cpp
+    add_executable(test_message_link_partial_sync
+      src/test_message_link_partial_sync.cpp
     )
-    target_link_libraries(test_pong_message_link PRIVATE
+    target_link_libraries(test_message_link_partial_sync PRIVATE
       ${PROJECT_NAME}_mark_process
       rclcpp::rclcpp
       tracetools::tracetools
@@ -206,7 +206,7 @@ if(BUILD_TESTING)
 
   if(NOT TRACETOOLS_DISABLED)
     install(TARGETS
-      test_pong_message_link
+      test_message_link_partial_sync
       DESTINATION lib/${PROJECT_NAME}
     )
   endif()
@@ -244,8 +244,8 @@ if(BUILD_TESTING)
       test/test_client.py
       test/test_generic_pub_sub.py
       test/test_generic_subscription.py
+      test/test_message_link_partial_sync.py
       test/test_pub_sub.py
-      test/test_pub_sub_message_link.py
       test/test_publisher.py
       test/test_service.py
       test/test_service_req_resp.py

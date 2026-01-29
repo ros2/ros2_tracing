@@ -25,24 +25,23 @@ class TestPubSub(TraceTestCase):
     def __init__(self, *args) -> None:
         super().__init__(
             *args,
-            session_name_prefix='session-test-pub-sub-message-link',
+            session_name_prefix='session-test-message-link-partial-sync',
             events_ros=[
                 tp.rcl_subscription_init,
                 tp.message_link_partial_sync,
             ],
             package='test_tracetools',
-            nodes=['test_ping', 'test_publisher', 'test_pong_message_link'],
+            nodes=['test_ping', 'test_publisher', 'test_message_link_partial_sync'],
         )
 
     def test_all(self):
         # Check events as set
         self.assertEventsSet(self._events_ros)
 
-        # Test message_link_partial_sync tracepoint
-        # The test_pong_message_link node subscribes to /ping and /the_topic,
+        # The test_message_link_partial_sync node subscribes to /ping and /the_topic,
         # and publishes to /pong. It annotates this relationship with message_link_partial_sync.
 
-        # Get subscription init events & subscription handles of test topics
+        # Get subscription handles of input topics and publisher handle of output topic
         rcl_subscription_init_events = self.get_events_with_name(tp.rcl_subscription_init)
         ping_rcl_subscription_init_event = self.get_event_with_field_value_and_assert(
             'topic_name',
@@ -51,8 +50,6 @@ class TestPubSub(TraceTestCase):
             allow_multiple=False,
         )
         ping_sub_handle = self.get_field(ping_rcl_subscription_init_event, 'subscription_handle')
-
-        # Get subscription handles for the pong node's two subscriptions
         the_topic_rcl_subscription_init_event = self.get_event_with_field_value_and_assert(
             'topic_name',
             '/the_topic',
@@ -63,15 +60,14 @@ class TestPubSub(TraceTestCase):
             the_topic_rcl_subscription_init_event,
             'subscription_handle',
         )
-
         publisher_init_events = self.get_events_with_name(tp.rcl_publisher_init)
-        pong_publisher_init_event = self.get_event_with_field_value_and_assert(
+        message_link_partial_sync_publisher_init_event = self.get_event_with_field_value_and_assert(
             'topic_name',
             '/pong',
             publisher_init_events,
             allow_multiple=False,
         )
-        pong_pub_handle = self.get_field(pong_publisher_init_event, 'publisher_handle')
+        pub_handle = self.get_field(message_link_partial_sync_publisher_init_event, 'publisher_handle')
 
         # Get the message_link_partial_sync event
         message_link_events = self.get_events_with_name(tp.message_link_partial_sync)
@@ -82,12 +78,11 @@ class TestPubSub(TraceTestCase):
         )
         message_link_event = message_link_events[0]
 
-        # Verify the event contains the correct subscription handles
+        # Verify the event contains the correct subscription and publisher handles
         # The event should have both subscriptions linked to the pong publisher
         link_subs = self.get_field(message_link_event, 'subscription_handles')
         link_pubs = self.get_field(message_link_event, 'publisher_handles')
 
-        # Check that both subscription handles are present
         self.assertEqual(len(link_subs), 2, 'Expected 2 subscription handles')
         self.assertIn(
             ping_sub_handle,
@@ -99,11 +94,9 @@ class TestPubSub(TraceTestCase):
             link_subs,
             'Expected /the_topic subscription handle in message link',
         )
-
-        # Check that the pong publisher handle is present
         self.assertEqual(len(link_pubs), 1, 'Expected 1 publisher handle')
         self.assertIn(
-            pong_pub_handle,
+            pub_handle,
             link_pubs,
             'Expected /pong publisher handle in message link',
         )

@@ -19,25 +19,25 @@
 #include "test_tracetools/mark_process.hpp"
 #include "tracetools/tracetools.h"
 
-#define NODE_NAME "test_pong_message_link"
+#define NODE_NAME "test_message_link_partial_sync"
 #define SUB_TOPIC_NAME_1 "ping"
 #define SUB_TOPIC_NAME_2 "the_topic"
 #define PUB_TOPIC_NAME "pong"
 
-class PongNode : public rclcpp::Node
+class MessageLinkPartialNode : public rclcpp::Node
 {
 public:
-  PongNode(rclcpp::NodeOptions options, bool do_only_one)
+  MessageLinkPartialNode(rclcpp::NodeOptions options, bool do_only_one)
   : Node(NODE_NAME, options), do_only_one_(do_only_one)
   {
     sub1_ = this->create_subscription<std_msgs::msg::String>(
       SUB_TOPIC_NAME_1,
       rclcpp::QoS(10).transient_local(),
-      std::bind(&PongNode::callback1, this, std::placeholders::_1));
+      std::bind(&MessageLinkPartialNode::callback1, this, std::placeholders::_1));
     sub2_ = this->create_subscription<std_msgs::msg::String>(
       SUB_TOPIC_NAME_2,
       rclcpp::QoS(10).transient_local(),
-      std::bind(&PongNode::callback2, this, std::placeholders::_1));
+      std::bind(&MessageLinkPartialNode::callback2, this, std::placeholders::_1));
     pub_ = this->create_publisher<std_msgs::msg::String>(
       PUB_TOPIC_NAME,
       rclcpp::QoS(10));
@@ -57,8 +57,8 @@ public:
     );
   }
 
-  explicit PongNode(rclcpp::NodeOptions options)
-  : PongNode(options, true) {}
+  explicit MessageLinkPartialNode(rclcpp::NodeOptions options)
+  : MessageLinkPartialNode(options, true) {}
 
 private:
   void callback1(const std_msgs::msg::String::ConstSharedPtr msg)
@@ -105,7 +105,7 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;
-  auto pong_node = std::make_shared<PongNode>(rclcpp::NodeOptions(), do_only_one);
+  auto pong_node = std::make_shared<MessageLinkPartialNode>(rclcpp::NodeOptions(), do_only_one);
   exec.add_node(pong_node);
 
   printf("spinning\n");
