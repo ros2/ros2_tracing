@@ -27,6 +27,7 @@ class TestPubSub(TraceTestCase):
             *args,
             session_name_prefix='session-test-message-link-partial-sync',
             events_ros=[
+                tp.rcl_publisher_init,
                 tp.rcl_subscription_init,
                 tp.message_link_partial_sync,
             ],
