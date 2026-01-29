@@ -143,6 +143,16 @@ if(BUILD_TESTING)
       tracetools::tracetools
       ${std_msgs_TARGETS}
     )
+
+    add_executable(test_message_link_periodic_async
+      src/test_message_link_periodic_async.cpp
+    )
+    target_link_libraries(test_message_link_periodic_async PRIVATE
+      ${PROJECT_NAME}_mark_process
+      rclcpp::rclcpp
+      tracetools::tracetools
+      ${std_msgs_TARGETS}
+    )
   endif()
 
   add_executable(test_generic_ping
@@ -207,6 +217,7 @@ if(BUILD_TESTING)
   if(NOT TRACETOOLS_DISABLED)
     install(TARGETS
       test_message_link_partial_sync
+      test_message_link_periodic_async
       DESTINATION lib/${PROJECT_NAME}
     )
   endif()
@@ -245,6 +256,7 @@ if(BUILD_TESTING)
       test/test_generic_pub_sub.py
       test/test_generic_subscription.py
       test/test_message_link_partial_sync.py
+      test/test_message_link_periodic_async.py
       test/test_pub_sub.py
       test/test_publisher.py
       test/test_service.py
