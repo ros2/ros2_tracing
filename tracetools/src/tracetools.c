@@ -571,6 +571,7 @@ bool ros_trace_runtime_status(void)
 #ifdef __clang__
 # pragma clang diagnostic pop
 #endif
+
 #ifndef _WIN32
 # pragma GCC diagnostic pop
 #else
