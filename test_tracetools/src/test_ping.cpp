@@ -29,8 +29,8 @@ using namespace std::chrono_literals;
 class PingNode : public rclcpp::Node
 {
 public:
-  PingNode(rclcpp::NodeOptions options, bool do_only_one)
-  : Node(NODE_NAME, options), do_only_one_(do_only_one)
+  PingNode(rclcpp::NodeOptions options, rclcpp::Executor & exec, bool do_only_one = true)
+  : Node(NODE_NAME, options), exec_(exec), do_only_one_(do_only_one)
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
       SUB_TOPIC_NAME,
@@ -44,15 +44,12 @@ public:
       std::bind(&PingNode::timer_callback, this));
   }
 
-  explicit PingNode(rclcpp::NodeOptions options)
-  : PingNode(options, true) {}
-
 private:
   void callback(const std_msgs::msg::String::ConstSharedPtr msg)
   {
     RCLCPP_INFO(this->get_logger(), "[output] %s", msg->data.c_str());
     if (do_only_one_) {
-      rclcpp::shutdown();
+      exec_.cancel();
     }
   }
 
@@ -67,6 +64,7 @@ private:
     }
   }
 
+  rclcpp::Executor & exec_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
@@ -87,13 +85,12 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;
-  auto ping_node = std::make_shared<PingNode>(rclcpp::NodeOptions(), do_only_one);
+  auto ping_node = std::make_shared<PingNode>(rclcpp::NodeOptions(), exec, do_only_one);
   exec.add_node(ping_node);
 
-  printf("spinning\n");
+  std::printf("spinning\n");
   exec.spin();
 
-  // Will actually be called inside the node's callback
   rclcpp::shutdown();
   return 0;
 }

@@ -26,8 +26,8 @@
 class PongNode : public rclcpp::Node
 {
 public:
-  PongNode(rclcpp::NodeOptions options, bool do_only_one)
-  : Node(NODE_NAME, options), do_only_one_(do_only_one)
+  PongNode(rclcpp::NodeOptions options, rclcpp::Executor & exec, bool do_only_one = true)
+  : Node(NODE_NAME, options), exec_(exec), do_only_one_(do_only_one)
   {
     sub_ = this->create_generic_subscription(
       SUB_TOPIC_NAME,
@@ -40,9 +40,6 @@ public:
       rclcpp::QoS(10));
     serializer_ = std::make_shared<rclcpp::Serialization<std_msgs::msg::String>>();
   }
-
-  explicit PongNode(rclcpp::NodeOptions options)
-  : PongNode(options, true) {}
 
 private:
   void callback(std::shared_ptr<const rclcpp::SerializedMessage> msg)
@@ -58,10 +55,11 @@ private:
     RCLCPP_INFO(this->get_logger(), "pong");
     pub_->publish(serialized_msg);
     if (do_only_one_) {
-      rclcpp::shutdown();
+      exec_.cancel();
     }
   }
 
+  rclcpp::Executor & exec_;
   rclcpp::GenericSubscription::SharedPtr sub_;
   rclcpp::GenericPublisher::SharedPtr pub_;
   std::shared_ptr<rclcpp::Serialization<std_msgs::msg::String>> serializer_;
@@ -82,13 +80,12 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;
-  auto pong_node = std::make_shared<PongNode>(rclcpp::NodeOptions(), do_only_one);
+  auto pong_node = std::make_shared<PongNode>(rclcpp::NodeOptions(), exec, do_only_one);
   exec.add_node(pong_node);
 
   printf("spinning\n");
   exec.spin();
 
-  // Will actually be called inside the node's callback
   rclcpp::shutdown();
   return 0;
 }

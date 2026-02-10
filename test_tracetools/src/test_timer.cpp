@@ -26,8 +26,8 @@ using namespace std::chrono_literals;
 class TimerNode : public rclcpp::Node
 {
 public:
-  explicit TimerNode(rclcpp::NodeOptions options)
-  : Node(NODE_NAME, options)
+  explicit TimerNode(rclcpp::NodeOptions options, rclcpp::Executor & exec)
+  : Node(NODE_NAME, options), exec_(exec)
   {
     is_done_ = false;
     timer_ = this->create_wall_timer(
@@ -39,12 +39,13 @@ private:
   void timer_callback()
   {
     if (is_done_) {
-      rclcpp::shutdown();
+      exec_.cancel();
     } else {
       is_done_ = true;
     }
   }
 
+  rclcpp::Executor & exec_;
   rclcpp::TimerBase::SharedPtr timer_;
   bool is_done_;
 };
@@ -56,13 +57,12 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;
-  auto timer_node = std::make_shared<TimerNode>(rclcpp::NodeOptions());
+  auto timer_node = std::make_shared<TimerNode>(rclcpp::NodeOptions(), exec);
   exec.add_node(timer_node);
 
   printf("spinning\n");
   exec.spin();
 
-  // Will actually be called inside the timer's callback
   rclcpp::shutdown();
   return 0;
 }

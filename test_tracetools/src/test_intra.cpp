@@ -53,8 +53,8 @@ private:
 class SubIntraNode : public rclcpp::Node
 {
 public:
-  explicit SubIntraNode(rclcpp::NodeOptions options)
-  : Node(SUB_NODE_NAME, options)
+  explicit SubIntraNode(rclcpp::NodeOptions options, rclcpp::Executor & exec)
+  : Node(SUB_NODE_NAME, options), exec_(exec)
   {
     sub_ = this->create_subscription<std_msgs::msg::String>(
       "the_topic",
@@ -66,9 +66,10 @@ private:
   void callback(const std_msgs::msg::String::ConstSharedPtr msg)
   {
     RCLCPP_INFO(this->get_logger(), "[output] %s", msg->data.c_str());
-    rclcpp::shutdown();
+    exec_.cancel();
   }
 
+  rclcpp::Executor & exec_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
 };
 
@@ -82,14 +83,13 @@ int main(int argc, char * argv[])
   auto pub_intra_node = std::make_shared<PubIntraNode>(
     rclcpp::NodeOptions().use_intra_process_comms(true));
   auto sub_intra_node = std::make_shared<SubIntraNode>(
-    rclcpp::NodeOptions().use_intra_process_comms(true));
+    rclcpp::NodeOptions().use_intra_process_comms(true), exec);
   exec.add_node(pub_intra_node);
   exec.add_node(sub_intra_node);
 
   printf("spinning\n");
   exec.spin();
 
-  // Will actually be called inside the node's callback
   rclcpp::shutdown();
   return 0;
 }

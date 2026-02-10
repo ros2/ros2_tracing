@@ -30,8 +30,8 @@ using namespace std::chrono_literals;
 class PingNode : public rclcpp::Node
 {
 public:
-  PingNode(rclcpp::NodeOptions options, bool do_only_one)
-  : Node(NODE_NAME, options), do_only_one_(do_only_one)
+  PingNode(rclcpp::NodeOptions options, rclcpp::Executor & exec, bool do_only_one = true)
+  : Node(NODE_NAME, options), exec_(exec), do_only_one_(do_only_one)
   {
     sub_ = this->create_generic_subscription(
       SUB_TOPIC_NAME,
@@ -48,9 +48,6 @@ public:
     serializer_ = std::make_shared<rclcpp::Serialization<std_msgs::msg::String>>();
   }
 
-  explicit PingNode(rclcpp::NodeOptions options)
-  : PingNode(options, true) {}
-
 private:
   void callback(std::shared_ptr<const rclcpp::SerializedMessage> serialized_msg)
   {
@@ -58,7 +55,7 @@ private:
     serializer_->deserialize_message(serialized_msg.get(), &deserialized_msg);
     RCLCPP_INFO(this->get_logger(), "[output] %s", deserialized_msg.data.c_str());
     if (do_only_one_) {
-      rclcpp::shutdown();
+      exec_.cancel();
     }
   }
 
@@ -76,6 +73,7 @@ private:
     }
   }
 
+  rclcpp::Executor & exec_;
   rclcpp::GenericSubscription::SharedPtr sub_;
   rclcpp::GenericPublisher::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
@@ -97,13 +95,12 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;
-  auto ping_node = std::make_shared<PingNode>(rclcpp::NodeOptions(), do_only_one);
+  auto ping_node = std::make_shared<PingNode>(rclcpp::NodeOptions(), exec, do_only_one);
   exec.add_node(ping_node);
 
   printf("spinning\n");
   exec.spin();
 
-  // Will actually be called inside the node's callback
   rclcpp::shutdown();
   return 0;
 }
