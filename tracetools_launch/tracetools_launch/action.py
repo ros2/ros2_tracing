@@ -332,27 +332,19 @@ class Trace(Action):
             kwargs['session_name'] = parser.parse_substitution(session_name)
         snapshot_mode = entity.get_attr('snapshot-mode', data_type=bool, optional=True)
         if snapshot_mode is not None:
-            kwargs['snapshot_mode'] = snapshot_mode \
-                if isinstance(snapshot_mode, bool) \
-                else parser.parse_substitution(cast(str, snapshot_mode))
+            kwargs['snapshot_mode'] = parser.parse_if_substitutions(snapshot_mode)
         dual_session = entity.get_attr('dual-session', data_type=bool, optional=True)
         if dual_session is not None:
-            kwargs['dual_session'] = dual_session \
-                if isinstance(dual_session, bool) \
-                else parser.parse_substitution(cast(str, dual_session))
+            kwargs['dual_session'] = parser.parse_if_substitutions(dual_session)
         append_timestamp = entity.get_attr('append-timestamp', data_type=bool, optional=True)
         if append_timestamp is not None:
-            kwargs['append_timestamp'] = append_timestamp \
-                if isinstance(append_timestamp, bool) \
-                else parser.parse_substitution(cast(str, append_timestamp))
+            kwargs['append_timestamp'] = parser.parse_if_substitutions(append_timestamp)
         base_path = entity.get_attr('base-path', optional=True)
         if base_path:
             kwargs['base_path'] = parser.parse_substitution(base_path)
         append_trace = entity.get_attr('append-trace', data_type=bool, optional=True)
         if append_trace is not None:
-            kwargs['append_trace'] = append_trace \
-                if isinstance(append_trace, bool) \
-                else parser.parse_substitution(cast(str, append_trace))
+            kwargs['append_trace'] = parser.parse_if_substitutions(append_trace)
         # Make sure to handle empty strings and replace with empty lists,
         # otherwise an empty string enables all events
         events_ust = entity.get_attr('events-ust', optional=True)
@@ -373,15 +365,12 @@ class Trace(Action):
                 if context_fields else []
         subbuffer_size_ust = entity.get_attr('subbuffer-size-ust', data_type=int, optional=True)
         if subbuffer_size_ust is not None:
-            kwargs['subbuffer_size_ust'] = subbuffer_size_ust \
-                if isinstance(subbuffer_size_ust, int) \
-                else parser.parse_substitution(cast(str, subbuffer_size_ust))
+            kwargs['subbuffer_size_ust'] = parser.parse_if_substitutions(subbuffer_size_ust)
         subbuffer_size_kernel = entity.get_attr(
             'subbuffer-size-kernel', data_type=int, optional=True)
         if subbuffer_size_kernel is not None:
-            kwargs['subbuffer_size_kernel'] = subbuffer_size_kernel \
-                if isinstance(subbuffer_size_kernel, int) \
-                else parser.parse_substitution(cast(str, subbuffer_size_kernel))
+            kwargs['subbuffer_size_kernel'] = parser.parse_if_substitutions(
+                subbuffer_size_kernel)
         return cls, kwargs
 
     @staticmethod
