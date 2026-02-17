@@ -2,8 +2,8 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.1.2 (2026-02-16)
+------------------
 * fix setuptools deprecation (backport `#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#204 <https://github.com/ros2/ros2_tracing/issues/204>`_)
 * Contributors: mergify[bot]
 
