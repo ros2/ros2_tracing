@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecation (backport `#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#204 <https://github.com/ros2/ros2_tracing/issues/204>`_)
+* Contributors: mergify[bot]
+
 4.1.1 (2022-11-07)
 ------------------
 * Merge branch 'clalancette/release-4.1.0' into 'master'
