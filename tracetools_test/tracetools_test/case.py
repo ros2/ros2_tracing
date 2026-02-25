@@ -63,9 +63,9 @@ class TraceTestCase(unittest.TestCase):
     def __init__(
         self,
         *args,
-        session_name_prefix: str = "",
+        session_name_prefix: str = '',
         events_ros: List[str] = [],
-        package: str = "",
+        package: str = '',
         nodes: List[str] = [],
         base_path: Optional[str] = None,
         events_kernel: List[str] = [],
