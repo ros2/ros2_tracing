@@ -79,10 +79,10 @@ class TraceTestCase(unittest.TestCase):
         rmw_implementation = os.environ.get('RMW_IMPLEMENTATION', None)
         self._session_name_prefix = \
             session_name_prefix + ('__' + rmw_implementation if rmw_implementation else '')
-        self._events_ros = events_ros + [TRACE_TEST_ID_TP_NAME]
+        self._events_ros = (events_ros or []) + [TRACE_TEST_ID_TP_NAME]
         self._events_kernel = events_kernel
         self._package = package
-        self._nodes = nodes
+        self._nodes = nodes or []
         self._additional_actions = additional_actions or []
         self._namespace = namespace
 
