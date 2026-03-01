@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# flake8: noqa: A005
+
 """Entrypoint/script to setup and start an LTTng tracing session."""
 
 import argparse

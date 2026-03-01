@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# flake8: noqa: A005
+
 """Module for trace command extension implementation."""
 
 from ros2cli.command import add_subparsers_on_demand
