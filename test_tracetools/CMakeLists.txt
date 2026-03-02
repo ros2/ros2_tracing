@@ -229,6 +229,8 @@ if(BUILD_TESTING)
       test/test_intra.py
       test/test_intra_pub_sub.py
       test/test_lifecycle_node.py
+      test/test_message_link_partial_sync.py
+      test/test_message_link_periodic_async.py
       test/test_node.py
       test/test_timer.py
     )
@@ -246,8 +248,6 @@ if(BUILD_TESTING)
       test/test_client.py
       test/test_generic_pub_sub.py
       test/test_generic_subscription.py
-      test/test_message_link_partial_sync.py
-      test/test_message_link_periodic_async.py
       test/test_pub_sub.py
       test/test_publisher.py
       test/test_service.py
