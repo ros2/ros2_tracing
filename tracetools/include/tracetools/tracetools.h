@@ -733,7 +733,11 @@ _DECLARE_TRACEPOINT(
 
 /// `message_link_periodic_async`
 /**
- * Message link annotation for N-to-M link.
+ * Message link annotation for periodic asynchronous N-to-M link.
+ *
+ * This tracepoint is an initialization-phase annotation that can be used to build a graph of the
+ * flow of messages across a ROS 2 system. This corresponds to one of the two indirect causal
+ * message links described in Section IV-B.2 of https://arxiv.org/abs/2204.10208.
  *
  * \param[in] subs pointers to the `rcl` handles of the subscriptions in the link
  * \param[in] num_subs the number of subscriptions in the link
@@ -749,7 +753,11 @@ _DECLARE_TRACEPOINT(
 
 /// `message_link_partial_sync`
 /**
- * Message link annotation for 2-to-M link.
+ * Message link annotation for partial synchronous N-to-M link.
+ *
+ * This tracepoint is an initialization-phase annotation that can be used to build a graph of the
+ * flow of messages across a ROS 2 system. This corresponds to one of the two indirect causal
+ * message links described in Section IV-B.2 of https://arxiv.org/abs/2204.10208.
  *
  * \param[in] subs pointers to the `rcl` handles of the subscriptions in the link
  * \param[in] num_subs the number of subscriptions in the link
