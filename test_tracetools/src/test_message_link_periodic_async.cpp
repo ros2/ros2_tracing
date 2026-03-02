@@ -126,8 +126,8 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;
-  auto pong_node = std::make_shared<MessageLinkPeriodicNode>(rclcpp::NodeOptions(), do_only_one);
-  exec.add_node(pong_node);
+  auto periodic_node = std::make_shared<MessageLinkPeriodicNode>(rclcpp::NodeOptions(), do_only_one);
+  exec.add_node(periodic_node);
 
   printf("spinning\n");
   exec.spin();
