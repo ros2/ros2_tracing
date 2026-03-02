@@ -104,7 +104,8 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   rclcpp::executors::SingleThreadedExecutor exec;
-  auto partial_node = std::make_shared<MessageLinkPartialNode>(rclcpp::NodeOptions(), do_only_one);
+  auto partial_node =
+    std::make_shared<MessageLinkPartialNode>(rclcpp::NodeOptions(), do_only_one);
   exec.add_node(partial_node);
 
   printf("spinning\n");
