@@ -2,6 +2,14 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Support tracepoints for complex message flow annotation used by ROS 2 plugin of Eclipse Trace Compass (`#233 <https://github.com/ros2/ros2_tracing/issues/233>`_)
+* Ignore A0005 (`#237 <https://github.com/ros2/ros2_tracing/issues/237>`_)
+* Add exec_depend on procps to tracetools_trace for ps command (`#227 <https://github.com/ros2/ros2_tracing/issues/227>`_)
+* Handle SIGTERM and gracefully stop tracing in interactive tracing mode (`#219 <https://github.com/ros2/ros2_tracing/issues/219>`_)
+* Contributors: Christophe Bedard, Michael Carlstrom, Raphael van Kempen
+
 8.9.0 (2025-10-08)
 ------------------
 * Use overwrite mode for snapshot sessions (`#210 <https://github.com/ros2/ros2_tracing/issues/210>`_)

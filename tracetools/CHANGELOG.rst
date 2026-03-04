@@ -2,6 +2,12 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Support tracepoints for complex message flow annotation used by ROS 2 plugin of Eclipse Trace Compass (`#233 <https://github.com/ros2/ros2_tracing/issues/233>`_)
+* Removed warning (`#225 <https://github.com/ros2/ros2_tracing/issues/225>`_)
+* Contributors: Alejandro Hernández Cordero, Raphael van Kempen
+
 8.9.0 (2025-10-08)
 ------------------
 * Add runtime tracing opt-out mechanism (`#185 <https://github.com/ros2/ros2_tracing/issues/185>`_)

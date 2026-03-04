@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Ignore A0005 (`#237 <https://github.com/ros2/ros2_tracing/issues/237>`_)
+* Contributors: Michael Carlstrom
+
 8.9.0 (2025-10-08)
 ------------------
 * Update trace command's doc-string (`#213 <https://github.com/ros2/ros2_tracing/issues/213>`_)

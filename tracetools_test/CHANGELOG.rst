@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Set default values on TraceTestCase to avoid errors on >=8.2.0 pytest (`#236 <https://github.com/ros2/ros2_tracing/issues/236>`_)
+* Contributors: Clara Berendsen
+
 8.9.0 (2025-10-08)
 ------------------
 * Only check test process events in test_runtime_disable (`#193 <https://github.com/ros2/ros2_tracing/issues/193>`_)

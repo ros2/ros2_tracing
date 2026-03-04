@@ -2,6 +2,9 @@
 Changelog for package test_tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.9.0 (2025-10-08)
 ------------------
 * Allow creating snapshot sessions (`#195 <https://github.com/ros2/ros2_tracing/issues/195>`_)

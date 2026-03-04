@@ -2,6 +2,12 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Support tracepoints for complex message flow annotation used by ROS 2 plugin of Eclipse Trace Compass (`#233 <https://github.com/ros2/ros2_tracing/issues/233>`_)
+* Update subscription callback signatures (`#217 <https://github.com/ros2/ros2_tracing/issues/217>`_)
+* Contributors: Raphael van Kempen, mini-1235
+
 8.9.0 (2025-10-08)
 ------------------
 * Add runtime tracing opt-out mechanism (`#185 <https://github.com/ros2/ros2_tracing/issues/185>`_)
