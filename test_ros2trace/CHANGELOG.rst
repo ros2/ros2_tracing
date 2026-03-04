@@ -2,8 +2,8 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.10.0 (2026-03-04)
+-------------------
 * Skip test_ros2trace's tracing tests for now (`#218 <https://github.com/ros2/ros2_tracing/issues/218>`_)
 * Contributors: Christophe Bedard
 

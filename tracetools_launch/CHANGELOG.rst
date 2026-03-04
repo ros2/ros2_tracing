@@ -2,8 +2,8 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.10.0 (2026-03-04)
+-------------------
 * tracetools_launch: use parse_if_substitutions for non-string action params (`#234 <https://github.com/ros2/ros2_tracing/issues/234>`_)
 * Contributors: Sarthak Bagga
 

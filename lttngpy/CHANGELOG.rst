@@ -2,8 +2,8 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.10.0 (2026-03-04)
+-------------------
 * Use <lttng/lttng.h> in lttngpy and clean up includes (`#222 <https://github.com/ros2/ros2_tracing/issues/222>`_)
 * Contributors: RHolland
 

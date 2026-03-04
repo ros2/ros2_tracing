@@ -2,8 +2,8 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.10.0 (2026-03-04)
+-------------------
 * Ignore A0005 (`#237 <https://github.com/ros2/ros2_tracing/issues/237>`_)
 * Contributors: Michael Carlstrom
 

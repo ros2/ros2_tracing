@@ -2,8 +2,8 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.10.0 (2026-03-04)
+-------------------
 * Set default values on TraceTestCase to avoid errors on >=8.2.0 pytest (`#236 <https://github.com/ros2/ros2_tracing/issues/236>`_)
 * Contributors: Clara Berendsen
 
