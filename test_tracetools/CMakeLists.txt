@@ -103,6 +103,26 @@ if(BUILD_TESTING)
     rclcpp::rclcpp
   )
 
+  add_executable(test_message_link_partial_sync
+    src/test_message_link_partial_sync.cpp
+  )
+  target_link_libraries(test_message_link_partial_sync PRIVATE
+    ${PROJECT_NAME}_mark_process
+    rclcpp::rclcpp
+    tracetools::tracetools
+    ${std_msgs_TARGETS}
+  )
+
+  add_executable(test_message_link_periodic_async
+    src/test_message_link_periodic_async.cpp
+  )
+  target_link_libraries(test_message_link_periodic_async PRIVATE
+    ${PROJECT_NAME}_mark_process
+    rclcpp::rclcpp
+    tracetools::tracetools
+    ${std_msgs_TARGETS}
+  )
+
   add_executable(test_ping
     src/test_ping.cpp
   )
@@ -169,6 +189,8 @@ if(BUILD_TESTING)
     test_intra
     test_lifecycle_node
     test_lifecycle_client
+    test_message_link_partial_sync
+    test_message_link_periodic_async
     test_ping
     test_pong
     test_generic_ping
@@ -207,6 +229,8 @@ if(BUILD_TESTING)
       test/test_intra.py
       test/test_intra_pub_sub.py
       test/test_lifecycle_node.py
+      test/test_message_link_partial_sync.py
+      test/test_message_link_periodic_async.py
       test/test_node.py
       test/test_timer.py
     )

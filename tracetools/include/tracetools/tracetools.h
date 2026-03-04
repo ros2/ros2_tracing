@@ -731,6 +731,46 @@ _DECLARE_TRACEPOINT(
   rclcpp_ring_buffer_clear,
   const void * buffer)
 
+/// `message_link_periodic_async`
+/**
+ * Message link annotation for periodic asynchronous N-to-M link.
+ *
+ * This tracepoint is an initialization-phase annotation that can be used to build a graph of the
+ * flow of messages across a ROS 2 system. This corresponds to one of the two indirect causal
+ * message links described in Section IV-B.2 of https://arxiv.org/abs/2204.10208.
+ *
+ * \param[in] subs pointers to the `rcl` handles of the subscriptions in the link
+ * \param[in] num_subs the number of subscriptions in the link
+ * \param[in] pubs pointers to the `rcl` handles of the publishers in the link
+ * \param[in] num_pubs the number of publishers in the link
+ */
+_DECLARE_TRACEPOINT(
+  message_link_periodic_async,
+  const void ** subs,
+  const size_t num_subs,
+  const void ** pubs,
+  const size_t num_pubs)
+
+/// `message_link_partial_sync`
+/**
+ * Message link annotation for partial synchronous N-to-M link.
+ *
+ * This tracepoint is an initialization-phase annotation that can be used to build a graph of the
+ * flow of messages across a ROS 2 system. This corresponds to one of the two indirect causal
+ * message links described in Section IV-B.2 of https://arxiv.org/abs/2204.10208.
+ *
+ * \param[in] subs pointers to the `rcl` handles of the subscriptions in the link
+ * \param[in] num_subs the number of subscriptions in the link
+ * \param[in] pubs pointers to the `rcl` handles of the publishers in the link
+ * \param[in] num_pubs the number of publishers in the link
+ */
+_DECLARE_TRACEPOINT(
+  message_link_partial_sync,
+  const void ** subs,
+  const size_t num_subs,
+  const void ** pubs,
+  const size_t num_pubs)
+
 #ifdef __cplusplus
 }
 #endif

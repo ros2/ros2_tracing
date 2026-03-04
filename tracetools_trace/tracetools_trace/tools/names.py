@@ -101,7 +101,9 @@ DEFAULT_EVENTS_ROS = [
     tracepoints.rclcpp_construct_ring_buffer,
     tracepoints.rclcpp_ring_buffer_enqueue,
     tracepoints.rclcpp_ring_buffer_dequeue,
-    tracepoints.rclcpp_ring_buffer_clear
+    tracepoints.rclcpp_ring_buffer_clear,
+    tracepoints.message_link_periodic_async,
+    tracepoints.message_link_partial_sync
 ]
 
 DEFAULT_INIT_EVENTS_ROS = [
@@ -124,7 +126,9 @@ DEFAULT_INIT_EVENTS_ROS = [
     tracepoints.rcl_lifecycle_state_machine_init,
     tracepoints.rclcpp_ipb_to_subscription,
     tracepoints.rclcpp_buffer_to_ipb,
-    tracepoints.rclcpp_construct_ring_buffer
+    tracepoints.rclcpp_construct_ring_buffer,
+    tracepoints.message_link_periodic_async,
+    tracepoints.message_link_partial_sync
 ]
 
 DEFAULT_EVENTS_UST = DEFAULT_EVENTS_ROS
