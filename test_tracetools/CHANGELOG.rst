@@ -2,6 +2,11 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.10.1 (2026-03-24)
+-------------------
+* Use new ROSIDL aggregate CMake target (`#238 <https://github.com/ros2/ros2_tracing/issues/238>`_)
+* Contributors: Emerson Knapp
+
 8.10.0 (2026-03-04)
 -------------------
 * Support tracepoints for complex message flow annotation used by ROS 2 plugin of Eclipse Trace Compass (`#233 <https://github.com/ros2/ros2_tracing/issues/233>`_)

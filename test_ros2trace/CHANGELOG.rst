@@ -2,6 +2,9 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.10.1 (2026-03-24)
+-------------------
+
 8.10.0 (2026-03-04)
 -------------------
 * Skip test_ros2trace's tracing tests for now (`#218 <https://github.com/ros2/ros2_tracing/issues/218>`_)
