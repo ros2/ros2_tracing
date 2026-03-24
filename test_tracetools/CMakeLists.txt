@@ -73,7 +73,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_publisher PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   add_executable(test_intra
@@ -82,7 +82,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_intra PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   add_executable(test_lifecycle_node
@@ -99,7 +99,7 @@ if(BUILD_TESTING)
   )
   target_link_libraries(test_lifecycle_client PRIVATE
     ${PROJECT_NAME}_mark_process
-    ${lifecycle_msgs_TARGETS}
+    lifecycle_msgs::lifecycle_msgs
     rclcpp::rclcpp
   )
 
@@ -110,7 +110,7 @@ if(BUILD_TESTING)
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     tracetools::tracetools
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   add_executable(test_message_link_periodic_async
@@ -120,7 +120,7 @@ if(BUILD_TESTING)
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
     tracetools::tracetools
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   add_executable(test_ping
@@ -129,7 +129,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_ping PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   add_executable(test_pong
@@ -138,7 +138,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_pong PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   add_executable(test_generic_ping
@@ -147,7 +147,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_generic_ping PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   add_executable(test_generic_pong
@@ -156,7 +156,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_generic_pong PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
-    ${std_msgs_TARGETS}
+    std_msgs::std_msgs
   )
 
   add_executable(test_timer
@@ -173,7 +173,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_service_ping PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
-    ${std_srvs_TARGETS}
+    std_srvs::std_srvs
   )
 
   add_executable(test_service_pong
@@ -182,7 +182,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_service_pong PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
-    ${std_srvs_TARGETS}
+    std_srvs::std_srvs
   )
 
   install(TARGETS
