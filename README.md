@@ -336,7 +336,7 @@ However, some settings need to be tuned for it to be fully real-time safe and fo
     * usually done the first time a tracepoint is executed within a thread for URCU thread registration, but registration can be manually performed to force it to be done during your application's initialization
     * see [this LTTng mailing list message](https://lists.lttng.org/pipermail/lttng-dev/2019-November/029409.html)
 
-[^rt-1]: this setting cannot currently be set through the [`Trace` launch file action](#launch-file-trace-action) or the [`ros2 trace` command](#trace-command), see [#20](https://github.com/ros2/ros2_tracing/issues/20)
+[^rt-1]: sub-buffer sizes are configurable via the [`Trace` launch file action](#launch-file-trace-action) (`subbuffer_size_ust` and `subbuffer_size_kernel`). Other settings such as the read timer interval and explicit sub-buffer count are not currently exposed through the `Trace` action or the [`ros2 trace` command](#trace-command), see [#20](https://github.com/ros2/ros2_tracing/issues/20)
 
 For further reading:
 
