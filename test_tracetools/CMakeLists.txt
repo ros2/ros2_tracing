@@ -141,6 +141,24 @@ if(BUILD_TESTING)
     std_msgs::std_msgs
   )
 
+  add_executable(test_ping_loaned
+    src/test_ping_loaned.cpp
+  )
+  target_link_libraries(test_ping_loaned PRIVATE
+    ${PROJECT_NAME}_mark_process
+    rclcpp::rclcpp
+    std_msgs::std_msgs
+  )
+
+  add_executable(test_pong_loaned
+    src/test_pong_loaned.cpp
+  )
+  target_link_libraries(test_pong_loaned PRIVATE
+    ${PROJECT_NAME}_mark_process
+    rclcpp::rclcpp
+    std_msgs::std_msgs
+  )
+
   add_executable(test_generic_ping
     src/test_generic_ping.cpp
   )
@@ -193,6 +211,8 @@ if(BUILD_TESTING)
     test_message_link_periodic_async
     test_ping
     test_pong
+    test_ping_loaned
+    test_pong_loaned
     test_generic_ping
     test_generic_pong
     test_publisher
@@ -278,6 +298,32 @@ if(BUILD_TESTING)
         endif()
       endforeach()
     endforeach()
+
+    # # Message loaning + rmw_take_loaned_message trace coverage (cyclonedds / fastrtps only)
+    # set(_test_tracetools_pytest_message_loaning
+    #   test/test_pub_sub_with_message_loaning.py
+    # )
+    # set(_test_tracetools_message_loaning_rmw_implementations
+    #   rmw_cyclonedds_cpp
+    #   rmw_fastrtps_cpp
+    #   rmw_fastrtps_dynamic_cpp
+    # )
+    # foreach(_test_path ${_test_tracetools_pytest_message_loaning})
+    #   get_filename_component(_test_name ${_test_path} NAME_WE)
+    #   foreach(rmw_implementation ${_test_tracetools_message_loaning_rmw_implementations})
+    #     if(rmw_implementation IN_LIST rmw_implementations)
+    #       ament_add_ros_isolated_pytest_test(${_test_name}__${rmw_implementation} ${_test_path}
+    #         ENV RMW_IMPLEMENTATION=${rmw_implementation}
+    #         APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
+    #         TIMEOUT 60
+    #         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    #       )
+    #     else()
+    #       message(
+    #         "rmw implementation '${rmw_implementation}' not available for test '${_test_name}'")
+    #     endif()
+    #   endforeach()
+    # endforeach()
   endif()
 endif()
 
