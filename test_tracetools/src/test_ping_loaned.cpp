@@ -42,7 +42,7 @@ public:
     sub_ = this->create_subscription<Msg>(
       SUB_TOPIC_NAME,
       rclcpp::QoS(QUEUE_DEPTH),
-      [this](const Msg& msg) {
+      [this](const Msg & msg) {
         this->callback(msg);
       });
     pub_ = this->create_publisher<Msg>(
@@ -57,7 +57,7 @@ public:
   : PingLoanedNode(options, true) {}
 
 private:
-  void callback(const Msg& msg)
+  void callback(const Msg & msg)
   {
     RCLCPP_INFO(this->get_logger(), "[output] %u", msg.data);
     if (do_only_one_) {
@@ -73,7 +73,7 @@ private:
     pub_->publish(std::move(out));
     if (do_only_one_) {
       timer_->cancel();
-    }  
+    }
   }
 
   rclcpp::Subscription<Msg>::SharedPtr sub_;
