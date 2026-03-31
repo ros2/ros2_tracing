@@ -13,9 +13,9 @@
 # limitations under the License.
 
 import os
+from pathlib import Path
 import tempfile
 import unittest
-from pathlib import Path
 
 from tracetools_test.case import TraceTestCase
 from tracetools_trace.tools import tracepoints as tp
@@ -25,7 +25,9 @@ from tracetools_trace.tools.lttng import is_lttng_installed
 # Enables Iceoryx shared memory in Cyclone DDS so dds_is_loan_available() can be true and
 # rmw_take_loaned_message is used (see rmw_cyclonedds/shared_memory_support.md).
 _CYCLO_DDS_SHM_XML = """<?xml version="1.0" encoding="UTF-8" ?>
-<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/iceoryx/etc/cyclonedds.xsd">
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://cdds.io/config
+    https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/iceoryx/etc/cyclonedds.xsd">
     <Domain id="any">
         <SharedMemory>
             <Enable>true</Enable>
@@ -259,20 +261,16 @@ class TestPubSubWithMessageLoaning(TraceTestCase):
 
         # Loaned receive path must emit rmw_take with taken=1 (see ros2_tracing#240)
         rmw_take_events = self.get_events_with_name(tp.rmw_take)
-        rmw_take_taken_events = [
-            e for e in rmw_take_events
-            if self.get_field(e, 'taken') == 1
-        ]
         pong_rmw_take_event = self.get_event_with_field_value_and_assert(
             'rmw_subscription_handle',
             pong_rmw_sub_handle,
-            rmw_take_taken_events,
+            rmw_take_events,
             allow_multiple=False,
         )
         ping_rmw_take_event = self.get_event_with_field_value_and_assert(
             'rmw_subscription_handle',
             ping_rmw_sub_handle,
-            rmw_take_taken_events,
+            rmw_take_events,
             allow_multiple=False,
         )
         self.assertFieldEquals(ping_rmw_take_event, 'taken', 1, 'ping subscription rmw_take')
