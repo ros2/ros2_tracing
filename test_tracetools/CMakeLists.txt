@@ -304,7 +304,7 @@ if(BUILD_TESTING)
       test/test_pub_sub_with_message_loaning.py
     )
     set(_test_tracetools_message_loaning_rmw_implementations
-      # rmw_cyclonedds_cpp
+      rmw_cyclonedds_cpp
       rmw_fastrtps_cpp
       rmw_fastrtps_dynamic_cpp
     )

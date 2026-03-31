@@ -14,7 +14,10 @@
 
 import os
 from pathlib import Path
+import shutil
+import subprocess
 import tempfile
+import time
 import unittest
 
 from tracetools_test.case import TraceTestCase
@@ -60,8 +63,9 @@ class TestPubSubWithMessageLoaning(TraceTestCase):
     subscription loaning (ros2_tracing#240).
 
     For rmw_cyclonedds_cpp, shared memory must be enabled (CYCLONEDDS_URI) so that
-    subscription loaning and rmw_take_loaned_message are available; Iceoryx RouDi
-    (``iox-roudi``) should be running when SHM is enabled.
+    subscription loaning and rmw_take_loaned_message are available. Iceoryx RouDi
+    (``iox-roudi``) is started automatically for that RMW so CI does not need a
+    pre-started daemon.
     """
 
     def __init__(self, *args) -> None:
@@ -90,6 +94,49 @@ class TestPubSubWithMessageLoaning(TraceTestCase):
         # and the test becomes unable to validate rmw_take trace coverage for loaned-take paths.
         os.environ['ROS_DISABLE_LOANED_MESSAGES'] = '0'
         _ensure_cyclonedds_shared_memory_enabled_for_loaning()
+
+    def setUp(self) -> None:
+        self._roudi_process = None
+        if os.environ.get('RMW_IMPLEMENTATION') == 'rmw_cyclonedds_cpp':
+            roudi = shutil.which('iox-roudi')
+            if not roudi:
+                self.fail(
+                    'iox-roudi not found on PATH; required when RMW_IMPLEMENTATION is '
+                    'rmw_cyclonedds_cpp with shared memory (install Iceoryx / iceoryx_posh)',
+                )
+            self._roudi_process = subprocess.Popen(
+                [roudi],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+            time.sleep(0.5)
+            if self._roudi_process.poll() is not None:
+                self.fail(
+                    f'iox-roudi exited immediately with code {self._roudi_process.returncode}',
+                )
+        try:
+            super().setUp()
+        except Exception:
+            self._stop_roudi()
+            raise
+
+    def tearDown(self) -> None:
+        try:
+            super().tearDown()
+        finally:
+            self._stop_roudi()
+
+    def _stop_roudi(self) -> None:
+        p = getattr(self, '_roudi_process', None)
+        if p is None:
+            return
+        self._roudi_process = None
+        p.terminate()
+        try:
+            p.wait(timeout=10.0)
+        except subprocess.TimeoutExpired:
+            p.kill()
 
     def test_all(self):
         # Check events as set
