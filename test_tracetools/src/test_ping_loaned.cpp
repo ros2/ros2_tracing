@@ -48,11 +48,11 @@ public:
       });
     pub_ = this->create_publisher<Msg>(
       PUB_TOPIC_NAME,
-      rclcpp::QoS(QUEUE_DEPTH).transient_local());
+      rclcpp::QoS(QUEUE_DEPTH));
 
-    if (!sub_->can_loan_messages() || !pub_->can_loan_messages()) {
+    if (!sub_->can_loan_messages()) {
       throw std::runtime_error(
-              "message loaning is not available (publisher/subscription cannot loan messages)");
+              "message loaning is not available (subscription cannot loan messages)");
     }
 
     timer_ = this->create_wall_timer(
@@ -74,13 +74,15 @@ private:
 
   void timer_callback()
   {
+    // If ping publishes before pong exists, the first message can be dropped and both nodes
+    // can wait forever. Only publish once a subscriber is matched.
+    if (pub_->get_subscription_count() == 0) {
+      return;
+    }
     auto out = pub_->borrow_loaned_message();
     out.get().data = 1;
     RCLCPP_INFO(this->get_logger(), "ping");
     pub_->publish(std::move(out));
-    if (do_only_one_) {
-      timer_->cancel();
-    }
   }
 
   rclcpp::Subscription<Msg>::SharedPtr sub_;

@@ -12,11 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import tempfile
 import unittest
+from pathlib import Path
 
 from tracetools_test.case import TraceTestCase
 from tracetools_trace.tools import tracepoints as tp
 from tracetools_trace.tools.lttng import is_lttng_installed
+
+
+# Enables Iceoryx shared memory in Cyclone DDS so dds_is_loan_available() can be true and
+# rmw_take_loaned_message is used (see rmw_cyclonedds/shared_memory_support.md).
+_CYCLO_DDS_SHM_XML = """<?xml version="1.0" encoding="UTF-8" ?>
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/iceoryx/etc/cyclonedds.xsd">
+    <Domain id="any">
+        <SharedMemory>
+            <Enable>true</Enable>
+            <LogLevel>warn</LogLevel>
+        </SharedMemory>
+    </Domain>
+</CycloneDDS>
+"""
+
+
+def _ensure_cyclonedds_shared_memory_enabled_for_loaning() -> None:
+    """If unset, point CYCLONEDDS_URI at a minimal config with SharedMemory enabled."""
+    if os.environ.get('RMW_IMPLEMENTATION') != 'rmw_cyclonedds_cpp':
+        return
+    if os.environ.get('CYCLONEDDS_URI'):
+        return
+    fd, path = tempfile.mkstemp(prefix='tracetools_pub_sub_loaning_', suffix='.xml')
+    with os.fdopen(fd, 'w') as f:
+        f.write(_CYCLO_DDS_SHM_XML)
+    os.environ['CYCLONEDDS_URI'] = Path(path).as_uri()
 
 
 @unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
@@ -27,6 +56,10 @@ class TestPubSubWithMessageLoaning(TraceTestCase):
     Registered in CMake only for rmw_cyclonedds_cpp, rmw_fastrtps_cpp, and
     rmw_fastrtps_dynamic_cpp. Uses std_msgs/msg/UInt32 so middleware can enable
     subscription loaning (ros2_tracing#240).
+
+    For rmw_cyclonedds_cpp, shared memory must be enabled (CYCLONEDDS_URI) so that
+    subscription loaning and rmw_take_loaned_message are available; Iceoryx RouDi
+    (``iox-roudi``) should be running when SHM is enabled.
     """
 
     def __init__(self, *args) -> None:
@@ -50,6 +83,11 @@ class TestPubSubWithMessageLoaning(TraceTestCase):
             package='test_tracetools',
             nodes=['test_ping_loaned', 'test_pong_loaned'],
         )
+        # Loaned message take on subscriptions is disabled by default in Rolling.
+        # This test must explicitly enable it, otherwise the executor falls back to non-loaned take
+        # and the test becomes unable to validate rmw_take trace coverage for loaned-take paths.
+        os.environ['ROS_DISABLE_LOANED_MESSAGES'] = '0'
+        _ensure_cyclonedds_shared_memory_enabled_for_loaning()
 
     def test_all(self):
         # Check events as set

@@ -38,7 +38,7 @@ public:
   {
     sub_ = this->create_subscription<Msg>(
       SUB_TOPIC_NAME,
-      rclcpp::QoS(10).transient_local(),
+      rclcpp::QoS(10),
       [this](const Msg & msg) {
         this->callback(msg);
       });
@@ -46,9 +46,9 @@ public:
       PUB_TOPIC_NAME,
       rclcpp::QoS(10));
 
-    if (!sub_->can_loan_messages() || !pub_->can_loan_messages()) {
+    if (!sub_->can_loan_messages()) {
       throw std::runtime_error(
-              "message loaning is not available (publisher/subscription cannot loan messages)");
+              "message loaning is not available (subscription cannot loan messages)");
     }
   }
 
@@ -58,6 +58,7 @@ public:
 private:
   void callback(const Msg & msg)
   {
+    (void)msg;
     RCLCPP_INFO(this->get_logger(), "[output] pong");
     auto out = pub_->borrow_loaned_message();
     out.get().data = 2;

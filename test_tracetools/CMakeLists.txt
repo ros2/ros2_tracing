@@ -299,31 +299,31 @@ if(BUILD_TESTING)
       endforeach()
     endforeach()
 
-    # # Message loaning + rmw_take_loaned_message trace coverage (cyclonedds / fastrtps only)
-    # set(_test_tracetools_pytest_message_loaning
-    #   test/test_pub_sub_with_message_loaning.py
-    # )
-    # set(_test_tracetools_message_loaning_rmw_implementations
-    #   rmw_cyclonedds_cpp
-    #   rmw_fastrtps_cpp
-    #   rmw_fastrtps_dynamic_cpp
-    # )
-    # foreach(_test_path ${_test_tracetools_pytest_message_loaning})
-    #   get_filename_component(_test_name ${_test_path} NAME_WE)
-    #   foreach(rmw_implementation ${_test_tracetools_message_loaning_rmw_implementations})
-    #     if(rmw_implementation IN_LIST rmw_implementations)
-    #       ament_add_ros_isolated_pytest_test(${_test_name}__${rmw_implementation} ${_test_path}
-    #         ENV RMW_IMPLEMENTATION=${rmw_implementation}
-    #         APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
-    #         TIMEOUT 60
-    #         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    #       )
-    #     else()
-    #       message(
-    #         "rmw implementation '${rmw_implementation}' not available for test '${_test_name}'")
-    #     endif()
-    #   endforeach()
-    # endforeach()
+    # Message loaning + rmw_take_loaned_message trace coverage (cyclonedds / fastrtps only)
+    set(_test_tracetools_pytest_message_loaning
+      test/test_pub_sub_with_message_loaning.py
+    )
+    set(_test_tracetools_message_loaning_rmw_implementations
+      # rmw_cyclonedds_cpp
+      rmw_fastrtps_cpp
+      rmw_fastrtps_dynamic_cpp
+    )
+    foreach(_test_path ${_test_tracetools_pytest_message_loaning})
+      get_filename_component(_test_name ${_test_path} NAME_WE)
+      foreach(rmw_implementation ${_test_tracetools_message_loaning_rmw_implementations})
+        if(rmw_implementation IN_LIST rmw_implementations)
+          ament_add_ros_isolated_pytest_test(${_test_name}__${rmw_implementation} ${_test_path}
+            ENV RMW_IMPLEMENTATION=${rmw_implementation}
+            APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
+            TIMEOUT 60
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+          )
+        else()
+          message(
+            "rmw implementation '${rmw_implementation}' not available for test '${_test_name}'")
+        endif()
+      endforeach()
+    endforeach()
   endif()
 endif()
 
