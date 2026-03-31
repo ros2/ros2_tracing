@@ -15,6 +15,7 @@
 
 #include <cstring>
 #include <memory>
+#include <stdexcept>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/u_int32.hpp"
@@ -44,6 +45,11 @@ public:
     pub_ = this->create_publisher<Msg>(
       PUB_TOPIC_NAME,
       rclcpp::QoS(10));
+
+    if (!sub_->can_loan_messages() || !pub_->can_loan_messages()) {
+      throw std::runtime_error(
+              "message loaning is not available (publisher/subscription cannot loan messages)");
+    }
   }
 
   explicit PongLoanedNode(rclcpp::NodeOptions options)

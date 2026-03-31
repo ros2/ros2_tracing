@@ -16,6 +16,7 @@
 #include <chrono>
 #include <cstring>
 #include <memory>
+#include <stdexcept>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/u_int32.hpp"
@@ -48,6 +49,12 @@ public:
     pub_ = this->create_publisher<Msg>(
       PUB_TOPIC_NAME,
       rclcpp::QoS(QUEUE_DEPTH).transient_local());
+
+    if (!sub_->can_loan_messages() || !pub_->can_loan_messages()) {
+      throw std::runtime_error(
+              "message loaning is not available (publisher/subscription cannot loan messages)");
+    }
+
     timer_ = this->create_wall_timer(
       500ms,
       std::bind(&PingLoanedNode::timer_callback, this));
