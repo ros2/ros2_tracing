@@ -43,12 +43,10 @@ public:
     sub_ = this->create_subscription<Msg>(
       SUB_TOPIC_NAME,
       rclcpp::QoS(QUEUE_DEPTH),
-      [this](const Msg & msg) {
-        this->callback(msg);
-      });
+      std::bind(&PingLoanedNode::callback, this, std::placeholders::_1));
     pub_ = this->create_publisher<Msg>(
       PUB_TOPIC_NAME,
-      rclcpp::QoS(QUEUE_DEPTH));
+      rclcpp::QoS(QUEUE_DEPTH).transient_local());
 
     if (!sub_->can_loan_messages()) {
       throw std::runtime_error(
@@ -64,9 +62,9 @@ public:
   : PingLoanedNode(options, true) {}
 
 private:
-  void callback(const Msg & msg)
+  void callback(const Msg::ConstSharedPtr msg)
   {
-    RCLCPP_INFO(this->get_logger(), "[output] %u", msg.data);
+    RCLCPP_INFO(this->get_logger(), "[output] %u", msg->data);
     if (do_only_one_) {
       rclcpp::shutdown();
     }

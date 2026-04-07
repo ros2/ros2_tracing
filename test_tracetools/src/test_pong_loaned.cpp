@@ -38,10 +38,8 @@ public:
   {
     sub_ = this->create_subscription<Msg>(
       SUB_TOPIC_NAME,
-      rclcpp::QoS(10),
-      [this](const Msg & msg) {
-        this->callback(msg);
-      });
+      rclcpp::QoS(10).transient_local(),
+      std::bind(&PongLoanedNode::callback, this, std::placeholders::_1));
     pub_ = this->create_publisher<Msg>(
       PUB_TOPIC_NAME,
       rclcpp::QoS(10));
@@ -56,10 +54,9 @@ public:
   : PongLoanedNode(options, true) {}
 
 private:
-  void callback(const Msg & msg)
+  void callback(const Msg::ConstSharedPtr msg)
   {
-    (void)msg;
-    RCLCPP_INFO(this->get_logger(), "[output] pong");
+    RCLCPP_INFO(this->get_logger(), "[output] %u", msg->data);
     auto out = pub_->borrow_loaned_message();
     out.get().data = 2;
     RCLCPP_INFO(this->get_logger(), "pong");
