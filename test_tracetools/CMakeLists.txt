@@ -41,7 +41,7 @@ if(BUILD_TESTING)
   find_package(std_srvs REQUIRED)
 
   # The utility lib is needed even if TRACETOOLS_DISABLED; it's just empty
-  add_library(${PROJECT_NAME}_mark_process src/mark_process.cpp)
+  add_library(${PROJECT_NAME}_mark_process STATIC src/mark_process.cpp)
   if(NOT TRACETOOLS_DISABLED)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(LTTNG REQUIRED lttng-ust)
