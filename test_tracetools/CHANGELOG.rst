@@ -2,8 +2,8 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.10.2 (2026-04-30)
+-------------------
 * fix: Fixed compiation on MSVC 2022 (`#243 <https://github.com/ros2/ros2_tracing/issues/243>`_)
 * Contributors: Janosch Machowinski
 
