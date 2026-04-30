@@ -2,6 +2,11 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix: Fixed compiation on MSVC 2022 (`#243 <https://github.com/ros2/ros2_tracing/issues/243>`_)
+* Contributors: Janosch Machowinski
+
 8.10.1 (2026-03-24)
 -------------------
 * Use new ROSIDL aggregate CMake target (`#238 <https://github.com/ros2/ros2_tracing/issues/238>`_)

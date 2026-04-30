@@ -2,6 +2,11 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Work around segfault when reading trace with babeltrace1 Python API (`#246 <https://github.com/ros2/ros2_tracing/issues/246>`_)
+* Contributors: Christophe Bedard
+
 8.10.1 (2026-03-24)
 -------------------
 
