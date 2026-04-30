@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import platform
 import shutil
 import tempfile
 from typing import Any
@@ -22,7 +23,8 @@ from typing import Tuple
 from typing import TypeAlias
 import unittest
 
-import babeltrace
+if 'Linux' != platform.system():
+    raise unittest.SkipTest('Linux-specific test')
 
 from tracetools_read import get_event_name
 from tracetools_read import get_event_pid
@@ -89,6 +91,8 @@ class TestRead(unittest.TestCase):
         :param events: The events to write.
         :return: The path to the trace directory.
         """
+        import babeltrace
+
         trace_dir = tempfile.mkdtemp(prefix='tracetools_read__test_trace_')
 
         writer = babeltrace.CTFWriter.Writer(trace_dir)
