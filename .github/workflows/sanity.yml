@@ -76,7 +76,7 @@ jobs:
         vcs import src/ --input https://raw.githubusercontent.com/ros2/ros2/${{ matrix.distro }}/ros2.repos --skip-existing
         vcs log -l1 src/
         rosdep update
-        rosdep install -r --from-paths src --ignore-src -y --rosdistro ${{ matrix.distro }} --skip-keys "fastcdr rti-connext-dds-7.3.0 urdfdom_headers"
+        rosdep install -r --from-paths src --ignore-src -y --rosdistro ${{ matrix.distro }} --skip-keys "fastcdr rti-connext-dds-7.7.0 urdfdom_headers"
         colcon build --packages-up-to tracetools ros2run ros2launch demo_nodes_cpp tracetools_launch test_tracetools
     - name: Make sure that tracing instrumentation is available
       run: |
