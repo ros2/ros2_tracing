@@ -18,6 +18,42 @@ from typing import Any
 from typing import Dict
 from typing import List
 
+# Workaround for a long-standing bug in babeltrace1's Python bindings
+# (python3-babeltrace 1.5.11) that causes a segfault on Python 3.14, see
+# https://github.com/ros2/ros2_tracing/issues/245.
+# `_bt_python_field_listcaller` in python-complements.c does not initialize
+# its `*len` OUTPUT parameter when `bt_ctf_get_field_list` returns an error
+# (e.g. when an event has no fields in a given CTF scope, like EVENT_CONTEXT).
+# SWIG then returns [NULL, garbage], and the upstream wrapper iterates
+# `range(garbage)` and dereferences NULL. On Python 3.12 the stack slot
+# happened to be zero; on 3.14 it isn't, so we crash.
+# Skipped on platforms without babeltrace (e.g., Windows): the rest of this
+# module works without it; only `tracetools_read.trace` actually needs it.
+# TODO(christophebedard): remove once fixed or once we migrate to bt2
+try:
+    import babeltrace.babeltrace as _bt_impl
+except ImportError:
+    pass
+else:
+    def _safe_field_list_with_scope(self, scope: int) -> list:
+        fields: list = []
+        scope_ptr = _bt_impl._bt_ctf_get_top_level_scope(self._e, scope)
+        if scope_ptr is None:
+            return fields  # avoid the buggy C error path entirely
+        ret = _bt_impl._bt_python_field_listcaller(self._e, scope_ptr)
+        if not isinstance(ret, list):
+            return fields
+        list_ptr, count = ret
+        if list_ptr is None:
+            return fields
+        for i in range(count):
+            definition_ptr = _bt_impl._bt_python_field_one_from_list(list_ptr, i)
+            if definition_ptr is not None:
+                fields.append(_bt_impl._Definition(definition_ptr, scope))
+        return fields
+
+    _bt_impl.Event._field_list_with_scope = _safe_field_list_with_scope
+
 
 DictEvent = Dict[str, Any]
 
