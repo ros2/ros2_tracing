@@ -51,6 +51,21 @@ jobs:
       with:
         required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
         use-ros2-testing: true
+    # Pin Fast-DDS to a known-good commit to work around a GCC 15 -Werror=maybe-uninitialized
+    # build failure introduced by https://github.com/eProsima/Fast-DDS/pull/6370 on the 3.6.x branch.
+    - name: Pin Fast-DDS commit
+      if: matrix.build-type == 'source'
+      run: |
+        curl -sL "${ROS2_REPOS_FILE_URL}" -o ros2.repos.upstream
+        python3 - <<'PY'
+        import yaml
+        with open('ros2.repos.upstream') as f:
+            data = yaml.safe_load(f)
+        data['repositories']['eProsima/Fast-DDS']['version'] = '621f6d8267708d6ca311af880ad3f6820271e6a4'
+        with open('ros2.repos.pinned', 'w') as f:
+            yaml.safe_dump(data, f)
+        PY
+        echo "ROS2_REPOS_FILE_URL=${GITHUB_WORKSPACE}/ros2.repos.pinned" >> "${GITHUB_ENV}"
     - uses: ros-tooling/action-ros-ci@main
       with:
         package-name: >
