@@ -46,7 +46,7 @@ jobs:
     env:
       ROS2_REPOS_FILE_URL: 'https://raw.githubusercontent.com/ros2/ros2/${{ matrix.distro }}/ros2.repos'
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: ros-tooling/setup-ros@main
       with:
         required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
