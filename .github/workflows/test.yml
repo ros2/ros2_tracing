@@ -20,25 +20,25 @@ jobs:
       matrix:
         include:
           # Normal build (binary)
-          - os: ubuntu:24.04
+          - os: ubuntu:26.04
             distro: rolling
             build-type: binary
             instrumentation: instr-enabled
             tracepoints: tp-included
           # Normal build (source)
-          - os: ubuntu:24.04
+          - os: ubuntu:26.04
             distro: rolling
             build-type: source
             instrumentation: instr-enabled
             tracepoints: tp-included
           # Build with instrumentation disabled
-          - os: ubuntu:24.04
+          - os: ubuntu:26.04
             distro: rolling
             build-type: source
             instrumentation: instr-disabled
             tracepoints: tp-included
           # Normal build with tracepoints excluded
-          - os: ubuntu:24.04
+          - os: ubuntu:26.04
             distro: rolling
             build-type: source
             instrumentation: instr-enabled
@@ -46,7 +46,7 @@ jobs:
     env:
       ROS2_REPOS_FILE_URL: 'https://raw.githubusercontent.com/ros2/ros2/${{ matrix.distro }}/ros2.repos'
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: ros-tooling/setup-ros@main
       with:
         required-ros-distributions: ${{ matrix.build-type == 'binary' && matrix.distro || '' }}
