@@ -13,7 +13,7 @@ jobs:
   binary:
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:24.04
+      image: ubuntu:26.04
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -21,7 +21,7 @@ jobs:
         distro:
           - rolling
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         path: ws/src/ros2/ros2_tracing
     - uses: ros-tooling/setup-ros@main
@@ -30,8 +30,8 @@ jobs:
         use-ros2-testing: true
     - name: Install other dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y -q ros-${{ matrix.distro }}-*tracetools* babeltrace
+        sudo apt update
+        sudo apt install -y -q ros-${{ matrix.distro }}-*tracetools* babeltrace
     - name: Make sure that tracing instrumentation is available
       run: |
         source /opt/ros/${{ matrix.distro }}/setup.bash
@@ -58,7 +58,7 @@ jobs:
   source:
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:24.04
+      image: ubuntu:26.04
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -66,7 +66,7 @@ jobs:
         distro:
           - rolling
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         path: ws/src/ros2/ros2_tracing
     - uses: ros-tooling/setup-ros@main
@@ -77,6 +77,7 @@ jobs:
         vcs log -l1 src/
         rosdep update
         rosdep install -r --from-paths src --ignore-src -y --rosdistro ${{ matrix.distro }} --skip-keys "fastcdr rti-connext-dds-7.7.0 urdfdom_headers"
+        sudo apt install -y -q babeltrace
         colcon build --packages-up-to tracetools ros2run ros2launch demo_nodes_cpp tracetools_launch test_tracetools
     - name: Make sure that tracing instrumentation is available
       run: |
@@ -100,7 +101,7 @@ jobs:
         (! ros2 run tracetools status)
     - name: Remove LTTng-UST
       run: |
-        sudo apt-get purge -y liblttng-ust-dev
+        sudo apt purge -y liblttng-ust-dev
     - name: Make sure building tracetools without LTTng fails
       run: |
         cd $GITHUB_WORKSPACE/ws
