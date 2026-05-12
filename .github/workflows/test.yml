@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
     branches:
-      - rolling
+      - lyrical
   schedule:
     - cron: "0 5 * * *"
 defaults:
@@ -21,25 +21,25 @@ jobs:
         include:
           # Normal build (binary)
           - os: ubuntu:26.04
-            distro: rolling
+            distro: lyrical
             build-type: binary
             instrumentation: instr-enabled
             tracepoints: tp-included
           # Normal build (source)
           - os: ubuntu:26.04
-            distro: rolling
+            distro: lyrical
             build-type: source
             instrumentation: instr-enabled
             tracepoints: tp-included
           # Build with instrumentation disabled
           - os: ubuntu:26.04
-            distro: rolling
+            distro: lyrical
             build-type: source
             instrumentation: instr-disabled
             tracepoints: tp-included
           # Normal build with tracepoints excluded
           - os: ubuntu:26.04
-            distro: rolling
+            distro: lyrical
             build-type: source
             instrumentation: instr-enabled
             tracepoints: tp-excluded
