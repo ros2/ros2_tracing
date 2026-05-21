@@ -27,6 +27,7 @@ import unittest
 from launch import LaunchDescription
 from launch import LaunchService
 from launch_ros.actions import Node
+from launch_testing_ros.actions import EnableRmwIsolation
 from lttngpy import impl as lttngpy
 from tracetools_read import get_event_name
 from tracetools_test.mark_process import get_corresponding_trace_test_events
@@ -290,7 +291,8 @@ class TestROS2TraceCLI(unittest.TestCase):
                 additional_env=additional_env,
             ),
         ]
-        ld = LaunchDescription(nodes)
+        # Explicitly order EnableRmwIsolation first so it executes before nodes
+        ld = LaunchDescription([EnableRmwIsolation(), *nodes])
         ls = LaunchService()
         ls.include_launch_description(ld)
         exit_code = ls.run()

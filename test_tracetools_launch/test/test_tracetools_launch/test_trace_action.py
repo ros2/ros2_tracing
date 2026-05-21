@@ -38,6 +38,7 @@ from launch.substitutions import TextSubstitution
 from launch.utilities import perform_substitutions
 from launch.utilities.type_utils import perform_typed_substitution
 from launch_ros.actions import Node
+from launch_testing_ros.actions import EnableRmwIsolation
 
 from tracetools_launch.action import Trace
 from tracetools_trace.tools.lttng import is_lttng_installed
@@ -59,7 +60,8 @@ class TestTraceAction(unittest.TestCase):
             del os.environ['LD_PRELOAD']
 
     def _assert_launch(self, actions: List[Action]) -> Tuple[int, LaunchContext]:
-        ld = LaunchDescription(actions)
+        # Explicitly order EnableRmwIsolation first so it executes before nodes, if any
+        ld = LaunchDescription([EnableRmwIsolation(), *actions])
         ls = LaunchService(debug=True)
         ls.include_launch_description(ld)
         return ls.run(), ls.context
@@ -78,7 +80,9 @@ class TestTraceAction(unittest.TestCase):
         root_entity, parser = Parser.load(file)
         ld = parser.parse_description(root_entity)
         ls = LaunchService()
-        ls.include_launch_description(ld)
+        # Explicitly order EnableRmwIsolation first so it executes before nodes, if any
+        ls.include_launch_description(
+            LaunchDescription([EnableRmwIsolation(), *ld.entities]))
         self.assertEqual(0, ls.run(), 'expected no errors')
         trace_action = next(
             (action for action in ld.entities if isinstance(action, Trace)),
