@@ -2,6 +2,9 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.2.5 (2026-01-21)
 ------------------
 * fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#203 <https://github.com/ros2/ros2_tracing/issues/203>`_)

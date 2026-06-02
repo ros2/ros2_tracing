@@ -2,6 +2,14 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use <lttng/lttng.h> in lttngpy and clean up includes (backport `#222 <https://github.com/ros2/ros2_tracing/issues/222>`_) (`#232 <https://github.com/ros2/ros2_tracing/issues/232>`_)
+  (cherry picked from commit 91ff6165773e1177a5fd41431d1b1dc274ac4ee1)
+  Co-authored-by: RHolland <17493785+reeceholland@users.noreply.github.com>
+  Co-authored-by: Christophe Bedard <bedard.christophe@gmail.com>
+* Contributors: mergify[bot]
+
 8.2.5 (2026-01-21)
 ------------------
 * [Fix] compile fail (`#194 <https://github.com/ros2/ros2_tracing/issues/194>`_) (`#215 <https://github.com/ros2/ros2_tracing/issues/215>`_)

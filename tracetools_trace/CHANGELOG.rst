@@ -2,6 +2,9 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 8.2.5 (2026-01-21)
 ------------------
 * Add exec_depend on procps to tracetools_trace for ps command (`#227 <https://github.com/ros2/ros2_tracing/issues/227>`_) (`#229 <https://github.com/ros2/ros2_tracing/issues/229>`_)
