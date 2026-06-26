@@ -264,6 +264,59 @@ _DECLARE_TRACEPOINT(
   const void * message,
   int64_t timestamp)
 
+
+/// `rmw_buffer_publish_route`
+/**
+ * Buffer-aware publish route decision.
+ *
+ * \param[in] rmw_publisher_handle pointer to the publisher's `rmw_publisher_t` handle
+ * \param[in] message pointer to the ROS message being published
+ * \param[in] topic_name topic name
+ * \param[in] total_matched total matched subscriber count
+ * \param[in] buffer_aware_count matched subscribers known as buffer-aware
+ * \param[in] cpu_subscriber_count matched CPU-only buffer subscribers
+ * \param[in] accel_endpoint_count matched accelerated buffer endpoints
+ * \param[in] selected_route selected route (`buffer` or `legacy_fallback`)
+ * \param[in] reason route reason
+ */
+_DECLARE_TRACEPOINT(
+  rmw_buffer_publish_route,
+  const void * rmw_publisher_handle,
+  const void * message,
+  const char * topic_name,
+  const size_t total_matched,
+  const size_t buffer_aware_count,
+  const size_t cpu_subscriber_count,
+  const size_t accel_endpoint_count,
+  const char * selected_route,
+  const char * reason)
+
+/// `rmw_buffer_publish`
+/**
+ * Buffer-aware publish write outcome.
+ *
+ * \param[in] rmw_publisher_handle pointer to the publisher's `rmw_publisher_t` handle
+ * \param[in] message pointer to the ROS message being published
+ * \param[in] topic_name topic name
+ * \param[in] target_gid target subscriber GID, or zeroed if shared/unknown
+ * \param[in] selected_backend backend selected at this layer, when known
+ * \param[in] wire_format wire format used for this write
+ * \param[in] descriptor_size descriptor/CDR size when available
+ * \param[in] success whether the write or preparation succeeded
+ * \param[in] reason outcome reason
+ */
+_DECLARE_TRACEPOINT(
+  rmw_buffer_publish,
+  const void * rmw_publisher_handle,
+  const void * message,
+  const char * topic_name,
+  const uint8_t * target_gid,
+  const char * selected_backend,
+  const char * wire_format,
+  const size_t descriptor_size,
+  const bool success,
+  const char * reason)
+
 /// `rmw_subscription_init`
 /**
  * RMW subscription initialisation.
@@ -344,6 +397,85 @@ _DECLARE_TRACEPOINT(
   const void * message,
   int64_t source_timestamp,
   const bool taken)
+
+
+/// `rmw_buffer_take`
+/**
+ * Buffer-aware take outcome.
+ *
+ * \param[in] rmw_subscription_handle pointer to the subscription's `rmw_subscription_t` handle
+ * \param[in] message pointer to the message being taken
+ * \param[in] topic_name topic name
+ * \param[in] publisher_gid publisher GID, or zeroed if unknown
+ * \param[in] selected_backend backend selected at this layer, when known
+ * \param[in] wire_format wire format consumed
+ * \param[in] descriptor_size descriptor/CDR size when available
+ * \param[in] taken whether a message was taken
+ * \param[in] reason outcome reason
+ */
+_DECLARE_TRACEPOINT(
+  rmw_buffer_take,
+  const void * rmw_subscription_handle,
+  const void * message,
+  const char * topic_name,
+  const uint8_t * publisher_gid,
+  const char * selected_backend,
+  const char * wire_format,
+  const size_t descriptor_size,
+  const bool taken,
+  const char * reason)
+
+/// `rmw_buffer_endpoint_init`
+/**
+ * Buffer-aware endpoint initialization metadata.
+ *
+ * \param[in] endpoint_handle pointer to the publisher/subscription RMW handle
+ * \param[in] endpoint_gid endpoint GID
+ * \param[in] topic_name topic name
+ * \param[in] message_type message type name
+ * \param[in] endpoint_type `publisher` or `subscription`
+ * \param[in] endpoint_mode buffer endpoint mode
+ * \param[in] backend_count number of advertised/accepted backends
+ * \param[in] backend_names comma-separated backend names
+ * \param[in] result initialization result
+ */
+_DECLARE_TRACEPOINT(
+  rmw_buffer_endpoint_init,
+  const void * endpoint_handle,
+  const uint8_t * endpoint_gid,
+  const char * topic_name,
+  const char * message_type,
+  const char * endpoint_type,
+  const char * endpoint_mode,
+  const size_t backend_count,
+  const char * backend_names,
+  const char * result)
+
+/// `rmw_buffer_endpoint_discovered`
+/**
+ * Buffer-aware remote endpoint discovery decision.
+ *
+ * \param[in] local_endpoint_handle pointer to the local publisher/subscription RMW handle
+ * \param[in] remote_gid discovered endpoint GID
+ * \param[in] topic_name topic name
+ * \param[in] remote_endpoint_type discovered endpoint type
+ * \param[in] endpoint_mode local or selected buffer endpoint mode
+ * \param[in] backend_count number of discovered backend metadata entries
+ * \param[in] backend_names comma-separated discovered backend names
+ * \param[in] decision discovery decision
+ * \param[in] reason decision reason
+ */
+_DECLARE_TRACEPOINT(
+  rmw_buffer_endpoint_discovered,
+  const void * local_endpoint_handle,
+  const uint8_t * remote_gid,
+  const char * topic_name,
+  const char * remote_endpoint_type,
+  const char * endpoint_mode,
+  const size_t backend_count,
+  const char * backend_names,
+  const char * decision,
+  const char * reason)
 
 /// `rcl_take`
 /**
@@ -730,6 +862,85 @@ _DECLARE_TRACEPOINT(
 _DECLARE_TRACEPOINT(
   rclcpp_ring_buffer_clear,
   const void * buffer)
+
+
+/// `rosidl_buffer_serialize`
+/**
+ * rosidl buffer field serialization outcome.
+ *
+ * \param[in] buffer pointer to the rosidl buffer object
+ * \param[in] message_type message type name when generated code provides it
+ * \param[in] field_path field path when generated code provides it
+ * \param[in] source_backend original buffer backend
+ * \param[in] selected_backend backend selected for the wire representation
+ * \param[in] wire_format wire format used
+ * \param[in] descriptor_size descriptor/CDR size when available
+ * \param[in] success whether serialization succeeded
+ * \param[in] reason outcome reason
+ */
+_DECLARE_TRACEPOINT(
+  rosidl_buffer_serialize,
+  const void * buffer,
+  const char * message_type,
+  const char * field_path,
+  const char * source_backend,
+  const char * selected_backend,
+  const char * wire_format,
+  const size_t descriptor_size,
+  const bool success,
+  const char * reason)
+
+/// `rosidl_buffer_deserialize`
+/**
+ * rosidl buffer field deserialization outcome.
+ *
+ * \param[in] buffer pointer to the rosidl buffer object
+ * \param[in] message_type message type name when generated code provides it
+ * \param[in] field_path field path when generated code provides it
+ * \param[in] source_backend backend encoded on the wire when known
+ * \param[in] selected_backend backend selected locally
+ * \param[in] wire_format wire format consumed
+ * \param[in] descriptor_size descriptor/CDR size when available
+ * \param[in] success whether deserialization succeeded
+ * \param[in] reason outcome reason
+ */
+_DECLARE_TRACEPOINT(
+  rosidl_buffer_deserialize,
+  const void * buffer,
+  const char * message_type,
+  const char * field_path,
+  const char * source_backend,
+  const char * selected_backend,
+  const char * wire_format,
+  const size_t descriptor_size,
+  const bool success,
+  const char * reason)
+
+/// `rosidl_buffer_backend_op`
+/**
+ * rosidl buffer backend operation outcome.
+ *
+ * \param[in] buffer pointer to the rosidl buffer object
+ * \param[in] message_type message type name when generated code provides it
+ * \param[in] field_path field path when generated code provides it
+ * \param[in] backend backend involved in the operation
+ * \param[in] operation backend operation name
+ * \param[in] wire_format wire format associated with the operation
+ * \param[in] descriptor_size descriptor/CDR size when available
+ * \param[in] success whether the operation succeeded
+ * \param[in] reason outcome reason
+ */
+_DECLARE_TRACEPOINT(
+  rosidl_buffer_backend_op,
+  const void * buffer,
+  const char * message_type,
+  const char * field_path,
+  const char * backend,
+  const char * operation,
+  const char * wire_format,
+  const size_t descriptor_size,
+  const bool success,
+  const char * reason)
 
 /// `message_link_periodic_async`
 /**
