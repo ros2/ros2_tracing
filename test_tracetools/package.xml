@@ -13,6 +13,7 @@
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros_core</buildtool_depend>
   <buildtool_depend>pkg-config</buildtool_depend>
 
   <!-- This is a test package, but some of the utilities from this package are
