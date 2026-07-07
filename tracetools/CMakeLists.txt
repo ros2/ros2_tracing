@@ -1,12 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(tracetools)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
@@ -87,6 +81,8 @@ if(NOT TRACETOOLS_DISABLED)
   endif()
   # Explicitly linking against dl for dladdr() seems to be required for RHEL
   target_link_libraries(${PROJECT_NAME} "${CMAKE_LINK_LIBRARY_FLAG}dl")
+  # Set the C++/C standard (C++20/C17) via ament_cmake_ros_core
+  target_link_libraries(${PROJECT_NAME} ament_cmake_ros_core::ament_ros_defaults)
 endif()
 
 if(NOT TRACETOOLS_DISABLED)

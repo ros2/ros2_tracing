@@ -1,17 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 project(test_tracetools)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 
 if(WIN32 OR APPLE OR ANDROID OR BSD)
   set(DISABLED_DEFAULT ON)
@@ -52,6 +47,11 @@ if(BUILD_TESTING)
   endif()
   target_include_directories(${PROJECT_NAME}_mark_process PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  )
+  # Set the C++/C standard (C++20/C17) via ament_cmake_ros_core; this
+  # propagates to the executables that link against this library.
+  target_link_libraries(${PROJECT_NAME}_mark_process PUBLIC
+    ament_cmake_ros_core::ament_ros_defaults
   )
   if(TRACETOOLS_DISABLED)
     target_compile_definitions(${PROJECT_NAME}_mark_process PRIVATE TRACETOOLS_DISABLED)

@@ -2,20 +2,12 @@ cmake_minimum_required(VERSION 3.20)
 
 project(lttngpy)
 
-# Default to C++17
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
-# Default to C11
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 11)
-endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros_core REQUIRED)
 
 if(WIN32 OR APPLE OR ANDROID OR BSD)
   set(DISABLED_DEFAULT ON)
@@ -92,6 +84,9 @@ endif()
 
 pybind11_add_module(_lttngpy_pybind11 ${SOURCES})
 
+# Set the C++/C standard (C++20/C17) via ament_cmake_ros_core
+target_link_libraries(_lttngpy_pybind11 PRIVATE ament_cmake_ros_core::ament_ros_defaults)
+
 if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE AND NOT BSD)
   target_link_libraries(_lttngpy_pybind11 PRIVATE atomic)
 endif()
@@ -120,6 +115,7 @@ if(BUILD_TESTING)
     # Using source files, because I can't seem to be able to link against _lttngpy_pybind11
     ament_add_gtest(test_context_app test/test_context_app.cpp src/lttngpy/context_app.cpp)
     if(TARGET test_context_app)
+      target_link_libraries(test_context_app ament_cmake_ros_core::ament_ros_defaults)
       target_include_directories(test_context_app PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>"
@@ -128,7 +124,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_context_lttng test/test_context_lttng.cpp src/lttngpy/context_lttng.cpp)
     if(TARGET test_context_lttng)
-      target_link_libraries(test_context_lttng ${LTTNG_CTL_LIBRARIES})
+      target_link_libraries(test_context_lttng ${LTTNG_CTL_LIBRARIES} ament_cmake_ros_core::ament_ros_defaults)
       target_include_directories(test_context_lttng PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>"
@@ -137,7 +133,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_context_perf test/test_context_perf.cpp src/lttngpy/context_perf.cpp)
     if(TARGET test_context_perf)
-      target_link_libraries(test_context_perf ${LTTNG_CTL_LIBRARIES})
+      target_link_libraries(test_context_perf ${LTTNG_CTL_LIBRARIES} ament_cmake_ros_core::ament_ros_defaults)
       target_include_directories(test_context_perf PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>"
