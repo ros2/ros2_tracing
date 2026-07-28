@@ -65,8 +65,8 @@ Finally, check out the following presentations:
 ## Tutorials & demos
 
 * ROS 2 documentation:
-    * [Building ROS 2 with tracing](https://docs.ros.org/en/rolling/How-To-Guides/Building-ROS-2-with-Tracing.html)
-    * [How to use `ros2_tracing` to trace and analyze an application](https://docs.ros.org/en/rolling/Tutorials/Advanced/ROS2-Tracing-Trace-and-Analyze.html)
+    * [Building ROS 2 with tracing](https://docs.ros.org/en/rolling/Developer-Tools/Debugging/Building-ROS-2-with-Tracing.html)
+    * [How to use `ros2_tracing` to trace and analyze an application](https://docs.ros.org/en/rolling/Developer-Tools/Introspection-and-analysis/Tracing/ROS2-Tracing-Trace-and-Analyze.html)
 * ROS World 2021 demo: [github.com/christophebedard/ros-world-2021-demo](https://github.com/christophebedard/ros-world-2021-demo)
 
 ## Building
