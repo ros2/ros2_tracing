@@ -67,6 +67,7 @@ Finally, check out the following presentations:
 * ROS 2 documentation:
     * [Building ROS 2 with tracing](https://docs.ros.org/en/rolling/Developer-Tools/Debugging/Building-ROS-2-with-Tracing.html)
     * [How to use `ros2_tracing` to trace and analyze an application](https://docs.ros.org/en/rolling/Developer-Tools/Introspection-and-analysis/Tracing/ROS2-Tracing-Trace-and-Analyze.html)
+    * [Eclipse Trace Compass ROS 2 Plugin Documentation](https://archive.eclipse.org/tracecompass.incubator/doc/org.eclipse.tracecompass.incubator.ros2.doc.user/User-Guide.html) - Visualization and analysis tool for ROS 2 traces
 * ROS World 2021 demo: [github.com/christophebedard/ros-world-2021-demo](https://github.com/christophebedard/ros-world-2021-demo)
 
 ## Building
