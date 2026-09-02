@@ -16,6 +16,7 @@
 #define LTTNGPY__CONTEXT_APP_HPP_
 
 #include <string>
+#include <string_view>
 #include <variant>
 
 namespace lttngpy
