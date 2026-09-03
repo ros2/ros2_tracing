@@ -14,7 +14,12 @@
 
 #include <memory>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors/single_threaded_executor.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/service.hpp"
+#include "rclcpp/utilities.hpp"
+#include "rmw/types.h"
 #include "std_srvs/srv/empty.hpp"
 #include "test_tracetools/mark_process.hpp"
 

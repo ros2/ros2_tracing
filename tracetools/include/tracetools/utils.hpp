@@ -16,6 +16,7 @@
 #define TRACETOOLS__UTILS_HPP_
 
 #include <functional>
+#include <typeinfo>
 
 #include "tracetools/config.h"
 

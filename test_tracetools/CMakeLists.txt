@@ -32,6 +32,7 @@ if(BUILD_TESTING)
   find_package(rclcpp REQUIRED)
   find_package(rclcpp_lifecycle REQUIRED)
   find_package(rcpputils REQUIRED)
+  find_package(rmw REQUIRED)
   find_package(std_msgs REQUIRED)
   find_package(std_srvs REQUIRED)
 
@@ -182,6 +183,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_service_pong PRIVATE
     ${PROJECT_NAME}_mark_process
     rclcpp::rclcpp
+    rmw::rmw
     std_srvs::std_srvs
   )
 

@@ -16,15 +16,22 @@
 // https://github.com/ros2/demos/blob/fab4fc38d5ea589c019659d6a49da4ba9c20594b/lifecycle/src/lifecycle_service_client.cpp
 
 #include <chrono>
+#include <cstdint>
+#include <functional>
+#include <future>
 #include <memory>
-#include <thread>
 
 #include "lifecycle_msgs/msg/state.hpp"
 #include "lifecycle_msgs/msg/transition.hpp"
 #include "lifecycle_msgs/srv/change_state.hpp"
 #include "lifecycle_msgs/srv/get_state.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "rcutils/logging_macros.h"
+#include "rclcpp/client.hpp"
+#include "rclcpp/executors/single_threaded_executor.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/node_options.hpp"
+#include "rclcpp/rate.hpp"
+#include "rclcpp/utilities.hpp"
 #include "test_tracetools/mark_process.hpp"
 
 using namespace std::chrono_literals;

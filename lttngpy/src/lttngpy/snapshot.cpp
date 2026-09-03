@@ -14,6 +14,7 @@
 
 #include <lttng/lttng.h>
 
+#include <cstdint>
 #include <string>
 
 #include "lttngpy/snapshot.hpp"
