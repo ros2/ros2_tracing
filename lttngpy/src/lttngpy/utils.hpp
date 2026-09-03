@@ -15,6 +15,8 @@
 #ifndef LTTNGPY__UTILS_HPP_
 #define LTTNGPY__UTILS_HPP_
 
+#include <algorithm>
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <variant>

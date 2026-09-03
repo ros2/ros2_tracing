@@ -15,6 +15,7 @@
 #ifndef LTTNGPY__SNAPSHOT_HPP_
 #define LTTNGPY__SNAPSHOT_HPP_
 
+#include <cstdint>
 #include <string>
 
 namespace lttngpy

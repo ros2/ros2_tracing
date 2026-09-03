@@ -14,6 +14,8 @@
 
 #include <gtest/gtest.h>
 
+#include <cstdlib>
+#include <cstring>
 #include <functional>
 #include <memory>
 #include <string>

@@ -17,6 +17,7 @@
 
 #include <stddef.h>
 #include <functional>
+#include <typeinfo>
 
 #include "tracetools/config.h"
 

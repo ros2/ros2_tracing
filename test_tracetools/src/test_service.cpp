@@ -12,9 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdio>
+#include <functional>
 #include <memory>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors/single_threaded_executor.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/node_options.hpp"
+#include "rclcpp/service.hpp"
+#include "rclcpp/utilities.hpp"
+#include "rmw/types.h"
 #include "std_srvs/srv/empty.hpp"
 #include "test_tracetools/mark_process.hpp"
 
