@@ -34,7 +34,7 @@ setup(
         'This package provides a trace action to '
         'launch tracing through a launch file.'
     ),
-    license='Apache 2.0',
+    license='Apache-2.0',
     extras_require={
         'test': [
             'pytest',
