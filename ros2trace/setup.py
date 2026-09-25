@@ -32,7 +32,7 @@ setup(
         'The package provides the trace command '
         'for the ROS 2 command line tools.'
     ),
-    license='Apache 2.0',
+    license='Apache-2.0',
     extras_require={
         'test': [
             'pytest',

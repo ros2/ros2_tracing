@@ -36,7 +36,7 @@ setup(
             f'trace = {package_name}.trace:main',
         ],
     },
-    license='Apache 2.0',
+    license='Apache-2.0',
     extras_require={
         'test': [
             'pytest',

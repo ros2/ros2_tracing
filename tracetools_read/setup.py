@@ -27,7 +27,7 @@ setup(
     url='https://github.com/ros2/ros2_tracing',
     keywords=[],
     description='Tools for reading traces.',
-    license='Apache 2.0',
+    license='Apache-2.0',
     extras_require={
         'test': [
             'pytest',

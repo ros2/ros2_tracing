@@ -6,7 +6,7 @@
   <description>The trace command for ROS 2 command line tools.</description>
   <maintainer email="bedard.christophe@gmail.com">Christophe Bedard</maintainer>
   <maintainer email="ingo.luetkebohle@de.bosch.com">Ingo Lütkebohle</maintainer>
-  <license>Apache 2.0</license>
+  <license>Apache-2.0</license>
   <url type="website">https://docs.ros.org/en/rolling/p/ros2trace/</url>
   <url type="repository">https://github.com/ros2/ros2_tracing</url>
   <url type="bugtracker">https://github.com/ros2/ros2_tracing/issues</url>
