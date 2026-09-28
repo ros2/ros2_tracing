@@ -167,16 +167,6 @@ if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
     RUNTIME DESTINATION bin
   )
 endif()
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
-
-if(NOT TRACETOOLS_DISABLED)
-  # Export -rdynamic for downstream packages using classic CMake variables
-  if(NOT TRACETOOLS_NO_RDYNAMIC)
-    ament_export_link_flags("-rdynamic")
-  endif()
-  ament_export_libraries(${PROJECT_NAME})
-endif()
 
 if(BUILD_TESTING)
   set(ament_cmake_cppcheck_ADDITIONAL_INCLUDE_DIRS ${LTTNG_INCLUDE_DIRS})
