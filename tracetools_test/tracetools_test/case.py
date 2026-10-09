@@ -19,6 +19,7 @@ import os
 import tempfile
 import time
 from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Type
@@ -71,6 +72,8 @@ class TraceTestCase(unittest.TestCase):
         events_kernel: List[str] = [],
         additional_actions: Optional[List[Action]] = None,
         namespace: Optional[str] = None,
+        node_arguments: Optional[Dict[str, List[str]]] = None,
+        shutdown_on_exit: Optional[List[str]] = None,
     ) -> None:
         """Create a TraceTestCase."""
         super().__init__(methodName=args[0])
@@ -85,6 +88,8 @@ class TraceTestCase(unittest.TestCase):
         self._nodes = nodes or []
         self._additional_actions = additional_actions or []
         self._namespace = namespace
+        self._node_arguments = node_arguments
+        self._shutdown_on_exit = shutdown_on_exit
 
     def setUp(self) -> None:
         # Get timestamp before trace (ns)
@@ -102,6 +107,8 @@ class TraceTestCase(unittest.TestCase):
             self._nodes,
             self._namespace,
             self._additional_actions,
+            self._node_arguments,
+            self._shutdown_on_exit,
         )
 
         print(f'TRACE DIRECTORY: {self._full_path}')
