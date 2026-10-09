@@ -91,14 +91,14 @@ Tracing enabled
 ```
 
 A ROS 2 installation only includes the LTTng userspace tracer (LTTng-UST), which is all that is needed to trace ROS 2.
-To trace the Linux kernel, the [LTTng kernel tracer](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) must be installed separately:
+To trace the Linux kernel, the [LTTng kernel tracer](https://lttng.org/docs/v2.14/#doc-tracing-the-linux-kernel) must be installed separately:
 
 ```
 $ sudo apt-get update
 $ sudo apt-get install lttng-modules-dkms
 ```
 
-For more information about LTTng, [refer to its documentation](https://lttng.org/docs/v2.13/).
+For more information about LTTng, [refer to its documentation](https://lttng.org/docs/v2.14/).
 
 ### Disabling the tracer at runtime
 
@@ -144,7 +144,7 @@ While *logs* are typically high-level enough for a user to read and understand, 
 
 For more information, see the following introductions on tracing:
 
-* [LTTng tracer documentation](https://lttng.org/docs/v2.13/#doc-what-is-tracing)
+* [LTTng tracer documentation](https://lttng.org/docs/v2.14/#doc-what-is-tracing)
 * [Tracing tutorial](https://github.com/tuxology/tracevizlab/tree/master/labs/001-what-is-tracing#what-is-tracing)
 * [Eclipse Trace Compass (trace analysis tool) documentation](https://archive.eclipse.org/tracecompass/doc/stable/org.eclipse.tracecompass.doc.user/Overview.html#About_Tracing)
 
@@ -170,7 +170,7 @@ The tracing directory can be configured using command/launch action parameters, 
 * Use `$ROS_TRACE_DIR` if `ROS_TRACE_DIR` is set and not empty.
 * Otherwise, use `$ROS_HOME/tracing`, using `~/.ros` for `ROS_HOME` if not set or if empty.
 
-Additionally, **if you're using kernel tracing with a non-root user, make sure that the [`tracing` group exists and that your user is added to it](https://lttng.org/docs/v2.13/#doc-tracing-group)**.
+Additionally, **if you're using kernel tracing with a non-root user, make sure that the [`tracing` group exists and that your user is added to it](https://lttng.org/docs/v2.14/#doc-tracing-group)**.
 
 ```
 # Create group if it doesn't exist
@@ -203,7 +203,7 @@ $ ros2 trace stop session_name    # Stop tracing after starting or resuming
 
 Run each command with `-h` for more information.
 
-You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) events (using the `-k`/`--kernel-events` option) or syscalls (using the `--syscalls` option).
+You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.14/#doc-tracing-the-linux-kernel) events (using the `-k`/`--kernel-events` option) or syscalls (using the `--syscalls` option).
 If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ### Launch file trace action
@@ -215,16 +215,16 @@ This way, tracing automatically starts when launching the launch file and ends w
 $ ros2 launch tracetools_launch example.launch.py
 ```
 
-The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/v2.13/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
+The `Trace` action will also set the `LD_PRELOAD` environment to preload [LTTng's userspace tracing helper(s)](https://lttng.org/docs/v2.14/#doc-prebuilt-ust-helpers) if the corresponding event(s) are enabled.
 For more information, see [this example launch file](./tracetools_launch/launch/example.launch.py) and the [`Trace` action](./tracetools_launch/tracetools_launch/action.py).
 
-You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.13/#doc-tracing-the-linux-kernel) events (`events_kernel` in Python, `events-kernel` in XML or YAML) or syscalls (`syscalls` in Python, XML, or YAML).
+You must [install the kernel tracer](#building) if you want to enable [kernel](https://lttng.org/docs/v2.14/#doc-tracing-the-linux-kernel) events (`events_kernel` in Python, `events-kernel` in XML or YAML) or syscalls (`syscalls` in Python, XML, or YAML).
 If you have installed the kernel tracer, use kernel tracing, and still encounter an error here, make sure to [add your user to the `tracing` group](#tracing).
 
 ## Tracing in snapshot mode
 
 By default, tracing sessions write trace data continuously to disk.
-Tracing sessions in [snapshot mode](https://lttng.org/docs/v2.13/#doc-tracing-session-mode) store trace data in memory and only write to disk when a [snapshot is taken](https://lttng.org/docs/v2.13/#doc-taking-a-snapshot).
+Tracing sessions in [snapshot mode](https://lttng.org/docs/v2.14/#doc-tracing-session-mode) store trace data in memory and only write to disk when a [snapshot is taken](https://lttng.org/docs/v2.14/#doc-taking-a-snapshot).
 When memory buffers fill up, the oldest data is discarded, maintaining a rolling history whose size can be controlled by configuring sub-buffer size.
 This "flight recorder" mode is useful for capturing trace data only when something interesting occurs, avoiding continuous disk writes and thus lowering the runtime performance impact even more.
 
@@ -275,7 +275,7 @@ Use `record_snapshot` to take a snapshot and write the trace data to disk, as st
 
 ## Dual session tracing
 
-Dual session mode solves the problem of losing initialization trace data by using two separate tracing sessions: one for initialization events in [snapshot mode](https://lttng.org/docs/v2.13/#doc-tracing-session-mode), and another normal tracing session for runtime events.
+Dual session mode solves the problem of losing initialization trace data by using two separate tracing sessions: one for initialization events in [snapshot mode](https://lttng.org/docs/v2.14/#doc-tracing-session-mode), and another normal tracing session for runtime events.
 This allows starting to actively record trace data at any point without losing initialization data.
 
 Use the `Trace` action to start the initialization session in snapshot mode:
@@ -328,9 +328,9 @@ It is a low-overhead tracer with many important real-time compatible features:
 
 However, some settings need to be tuned for it to be fully real-time safe and for performance to be optimal for your use-case:
 
-* timers[^rt-1]: use [read timer](https://lttng.org/docs/v2.13/#doc-channel-read-timer) to avoid a write(2) call
+* timers[^rt-1]: use [read timer](https://lttng.org/docs/v2.14/#doc-channel-read-timer) to avoid a write(2) call
 * sub-buffer[^rt-1] count and size:
-    * see [documentation](https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count) for sub-buffer count and size tuning tips based on your use-case
+    * see [documentation](https://lttng.org/docs/v2.14/#doc-channel-subbuf-size-vs-subbuf-count) for sub-buffer count and size tuning tips based on your use-case
     * minimize sub-buffer count to minimize sub-buffer switching overhead
 * one-time memory allocation/lock/syscall per thread:
     * usually done the first time a tracepoint is executed within a thread for URCU thread registration, but registration can be manually performed to force it to be done during your application's initialization
@@ -340,7 +340,7 @@ However, some settings need to be tuned for it to be fully real-time safe and fo
 
 For further reading:
 
-* [LTTng documentation](https://lttng.org/docs/v2.13/)
+* [LTTng documentation](https://lttng.org/docs/v2.14/)
 * [Combined Tracing of the Kernel and Applications with LTTng](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.641.1965&rep=rep1&type=pdf#page=87): LTTng-UST architecture and design goals (section 3)
 * [Survey and Analysis of Kernel and Userspace Tracers on Linux: Design, Implementation, and Overhead](https://dl.acm.org/doi/abs/10.1145/3158644): LTTng-UST overhead and design compared to other kernel and userspace tracers (table 6: average latency overhead per tracepoint of 158 ns)
 

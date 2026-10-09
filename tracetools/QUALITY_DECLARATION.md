@@ -139,7 +139,7 @@ This package does not have any optional runtime ROS dependencies.
 
 ### Direct Runtime non-ROS Dependency [5.iii]
 
-`tracetools` has a run-time dependency on [LTTng](https://lttng.org/docs/v2.11/).
+`tracetools` has a run-time dependency on [LTTng](https://lttng.org/docs/v2.14/).
 LTTng provides tracing capabilities.
 
 It is **Quality Level 1**, see its [Quality Declaration document](../LTTng_QUALITY_DECLARATION.md).
