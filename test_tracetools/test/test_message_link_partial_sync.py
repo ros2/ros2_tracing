@@ -20,7 +20,7 @@ from tracetools_trace.tools.lttng import is_lttng_installed
 
 
 @unittest.skipIf(not is_lttng_installed(minimum_version='2.9.0'), 'LTTng is required')
-class TestPubSub(TraceTestCase):
+class TestMessageLinkPartialSync(TraceTestCase):
 
     def __init__(self, *args) -> None:
         super().__init__(
@@ -33,6 +33,11 @@ class TestPubSub(TraceTestCase):
             ],
             package='test_tracetools',
             nodes=['test_ping', 'test_pong', 'test_message_link_partial_sync'],
+            # The message link node only exits once it gets /pong after /ping, but a single
+            # ping-pong exchange can be missed or handled out of order, so keep test_ping and
+            # test_pong going until the message link node exits, then shut everything down.
+            node_arguments={'test_ping': ['do_more'], 'test_pong': ['do_more']},
+            shutdown_on_exit=['test_message_link_partial_sync'],
         )
 
     def test_all(self):

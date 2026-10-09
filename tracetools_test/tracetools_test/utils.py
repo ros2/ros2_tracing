@@ -16,6 +16,7 @@
 
 import os
 import shutil
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -23,6 +24,7 @@ from typing import Tuple
 from launch import Action
 from launch import LaunchDescription
 from launch import LaunchService
+from launch.actions import Shutdown
 from launch_ros.actions import Node
 from tracetools_launch.action import Trace
 from tracetools_read import DictEvent
@@ -39,6 +41,8 @@ def run_and_trace(
     node_names: List[str],
     namespace: Optional[str],
     additional_actions: List[Action],
+    node_arguments: Optional[Dict[str, List[str]]] = None,
+    shutdown_on_exit: Optional[List[str]] = None,
 ) -> Tuple[int, str]:
     """
     Run a node while tracing.
@@ -51,8 +55,12 @@ def run_and_trace(
     :param node_names: the names of the nodes to execute
     :param namespace: the ROS namespace for the node(s)
     :param additional_actions: the list of additional actions to append
+    :param node_arguments: the arguments to pass to the node(s), keyed by node name
+    :param shutdown_on_exit: the names of the nodes that shut everything down when they exit
     :return: exit code, full generated path
     """
+    node_arguments = node_arguments or {}
+    shutdown_on_exit = shutdown_on_exit or []
     session_name = append_timestamp(session_name_prefix)
     full_path = os.path.join(base_path, session_name)
 
@@ -73,9 +81,11 @@ def run_and_trace(
             package=package_name,
             executable=node_name,
             namespace=namespace,
+            arguments=node_arguments.get(node_name),
             output='screen',
             # Explicitly request to use the current environment
             env=None,
+            on_exit=[Shutdown()] if node_name in shutdown_on_exit else None,
         )
         launch_actions.append(n)
     launch_actions.extend(additional_actions)
