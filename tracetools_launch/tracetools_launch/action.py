@@ -60,15 +60,15 @@ class Trace(Action):
     It also automatically makes sure that instrumented shared libraries are LD_PRELOADed if the
     corresponding events are enabled:
         * liblttng-ust-libc-wrapper.so: 'lttng_ust_libc:*' events
-            * see https://lttng.org/docs/#doc-liblttng-ust-libc-pthread-wrapper
+            * see https://lttng.org/docs/v2.14/#doc-liblttng-ust-libc-pthread-wrapper
         * liblttng-ust-pthread-wrapper.so: 'lttng_ust_pthread:*' events
-            * see https://lttng.org/docs/#doc-liblttng-ust-libc-pthread-wrapper
+            * see https://lttng.org/docs/v2.14/#doc-liblttng-ust-libc-pthread-wrapper
         * liblttng-ust-cyg-profile-fast.so: lttng_ust_cyg_profile_fast:func_{entry,exit}' events
-            * see https://lttng.org/docs/#doc-liblttng-ust-cyg-profile
+            * see https://lttng.org/docs/v2.14/#doc-liblttng-ust-cyg-profile
         * liblttng-ust-cyg-profile.so: 'lttng_ust_cyg_profile:func_{entry,exit}' events
-            * see https://lttng.org/docs/#doc-liblttng-ust-cyg-profile
+            * see https://lttng.org/docs/v2.14/#doc-liblttng-ust-cyg-profile
         * liblttng-ust-dl.so: 'lttng_ust_dl:*' events
-            * see https://lttng.org/docs/#doc-liblttng-ust-dl
+            * see https://lttng.org/docs/v2.14/#doc-liblttng-ust-dl
     Note that, if the user provides events or patterns that match both the normal AND the fast
     profiling library, the fast profiling library will be used in practice.
     """
