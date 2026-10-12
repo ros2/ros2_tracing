@@ -918,9 +918,9 @@ The process for adding instrumentation to the ROS 2 core and supporting it in `r
 1. Add LTTng tracepoint definition to the [`tp_call.h`](../tracetools/include/tracetools/tp_call.h) file
     * tracepoint name, arguments, and fields
     * arguments and fields are usually the same
-    * refer to the [LTTng documentation](https://lttng.org/docs/#doc-defining-tracepoints)
+    * refer to the [LTTng documentation](https://lttng.org/docs/v2.14/#doc-defining-tracepoints)
 1. Add corresponding instrumentation function definition to the [`tracetools.c`](../tracetools/src/tracetools.c) file
-1. Add corresponding instrumentation function declaration to the [`racetools.h`](../tracetools/include/tracetools/tracetools.h) file
+1. Add corresponding instrumentation function declaration to the [`tracetools.h`](../tracetools/include/tracetools/tracetools.h) file
 1. Add/use instrumentation in ROS 2 core package(s)
     1. If the package does not already have instrumentation
         1. Add `<depend>tracetools</depend>` in the package's `package.xml`
