@@ -81,14 +81,14 @@ If they depend on features which are undocumented, it will be necessary for them
 
 ### Feature Documentation [3.i]
 
-Features are listed and well documented on the [LTTng website](https://lttng.org/docs/).
+Features are listed and well documented on the [LTTng website](https://lttng.org/docs/v2.14/).
 
 ### Public API Documentation [3.ii]
 
 LTTng packages have embedded API documentation.
 It can be viewed on their man pages:
 
-* [`lttng-ust`](https://lttng.org/man/3/lttng-ust/v2.13/)
+* [`lttng-ust`](https://lttng.org/man/3/lttng-ust/v2.14/)
 
 ### License [3.iii]
 

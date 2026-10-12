@@ -109,7 +109,7 @@ def get_lttng_home() -> Optional[str]:
     """
     Get the LTTng home value.
 
-    $LTTNG_HOME, or $HOME if unset: https://lttng.org/man/1/lttng/v2.13/#doc-_files
+    $LTTNG_HOME, or $HOME if unset: https://lttng.org/man/1/lttng/v2.14/#doc-_files
 
     :return: the LTTng home value
     """
@@ -213,7 +213,7 @@ def setup(
     """
     Set up LTTng session, with events and context.
 
-    See: https://lttng.org/docs/#doc-core-concepts
+    See: https://lttng.org/docs/v2.14/#doc-core-concepts
 
     Initialization will fail if the list of kernel events to be
     enabled is not empty and if the kernel tracer is not installed.
@@ -348,7 +348,7 @@ def setup(
             # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
             # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
             # written, because when all sub-buffers are full the oldest one is discarded entirely.
-            # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
+            # See: https://lttng.org/docs/v2.14/#doc-channel-subbuf-size-vs-subbuf-count
             subbuf_size=subbuffer_size_ust,
             num_subbuf=4 if snapshot_mode else 2,
             # Ignore switch timer interval and use read timer instead
@@ -386,7 +386,7 @@ def setup(
             # discard mode, and switching between sub-buffers introduces noticeable CPU overhead.
             # In snapshot mode, we use 4 sub-buffers to lose less data when sub-buffers are over-
             # written, because when all sub-buffers are full the oldest one is discarded entirely.
-            # See: https://lttng.org/docs/v2.13/#doc-channel-subbuf-size-vs-subbuf-count
+            # See: https://lttng.org/docs/v2.14/#doc-channel-subbuf-size-vs-subbuf-count
             subbuf_size=subbuffer_size_kernel,
             num_subbuf=4 if snapshot_mode else 2,
             # Ignore switch timer interval and use read timer instead
