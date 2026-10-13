@@ -155,6 +155,61 @@ TRACEPOINT_EVENT(
   )
 )
 
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rmw_buffer_publish_route,
+  TP_ARGS(
+    const void *, rmw_publisher_handle_arg,
+    const void *, message_arg,
+    const char *, topic_name_arg,
+    const size_t, total_matched_arg,
+    const size_t, buffer_aware_count_arg,
+    const size_t, cpu_subscriber_count_arg,
+    const size_t, accel_endpoint_count_arg,
+    const char *, selected_route_arg,
+    const char *, reason_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, rmw_publisher_handle, rmw_publisher_handle_arg)
+    ctf_integer_hex(const void *, message, message_arg)
+    ctf_string(topic_name, topic_name_arg)
+    ctf_integer(const size_t, total_matched, total_matched_arg)
+    ctf_integer(const size_t, buffer_aware_count, buffer_aware_count_arg)
+    ctf_integer(const size_t, cpu_subscriber_count, cpu_subscriber_count_arg)
+    ctf_integer(const size_t, accel_endpoint_count, accel_endpoint_count_arg)
+    ctf_string(selected_route, selected_route_arg)
+    ctf_string(reason, reason_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rmw_buffer_publish,
+  TP_ARGS(
+    const void *, rmw_publisher_handle_arg,
+    const void *, message_arg,
+    const char *, topic_name_arg,
+    const uint8_t *, target_gid_arg,
+    const char *, selected_backend_arg,
+    const char *, wire_format_arg,
+    const size_t, descriptor_size_arg,
+    const bool, success_arg,
+    const char *, reason_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, rmw_publisher_handle, rmw_publisher_handle_arg)
+    ctf_integer_hex(const void *, message, message_arg)
+    ctf_string(topic_name, topic_name_arg)
+    ctf_array(uint8_t, target_gid, target_gid_arg, TRACETOOLS_GID_STORAGE_SIZE)
+    ctf_string(selected_backend, selected_backend_arg)
+    ctf_string(wire_format, wire_format_arg)
+    ctf_integer(const size_t, descriptor_size, descriptor_size_arg)
+    ctf_integer(int, success, (success_arg ? 1 : 0))
+    ctf_string(reason, reason_arg)
+  )
+)
+
 TRACEPOINT_EVENT(
   TRACEPOINT_PROVIDER,
   rmw_subscription_init,
@@ -227,6 +282,88 @@ TRACEPOINT_EVENT(
     ctf_integer_hex(const void *, message, message_arg)
     ctf_integer(int64_t, source_timestamp, source_timestamp_arg)
     ctf_integer(int, taken, (taken_arg ? 1 : 0))
+  )
+)
+
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rmw_buffer_take,
+  TP_ARGS(
+    const void *, rmw_subscription_handle_arg,
+    const void *, message_arg,
+    const char *, topic_name_arg,
+    const uint8_t *, publisher_gid_arg,
+    const char *, selected_backend_arg,
+    const char *, wire_format_arg,
+    const size_t, descriptor_size_arg,
+    const bool, taken_arg,
+    const char *, reason_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, rmw_subscription_handle, rmw_subscription_handle_arg)
+    ctf_integer_hex(const void *, message, message_arg)
+    ctf_string(topic_name, topic_name_arg)
+    ctf_array(uint8_t, publisher_gid, publisher_gid_arg, TRACETOOLS_GID_STORAGE_SIZE)
+    ctf_string(selected_backend, selected_backend_arg)
+    ctf_string(wire_format, wire_format_arg)
+    ctf_integer(const size_t, descriptor_size, descriptor_size_arg)
+    ctf_integer(int, taken, (taken_arg ? 1 : 0))
+    ctf_string(reason, reason_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rmw_buffer_endpoint_init,
+  TP_ARGS(
+    const void *, endpoint_handle_arg,
+    const uint8_t *, endpoint_gid_arg,
+    const char *, topic_name_arg,
+    const char *, message_type_arg,
+    const char *, endpoint_type_arg,
+    const char *, endpoint_mode_arg,
+    const size_t, backend_count_arg,
+    const char *, backend_names_arg,
+    const char *, result_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, endpoint_handle, endpoint_handle_arg)
+    ctf_array(uint8_t, endpoint_gid, endpoint_gid_arg, TRACETOOLS_GID_STORAGE_SIZE)
+    ctf_string(topic_name, topic_name_arg)
+    ctf_string(message_type, message_type_arg)
+    ctf_string(endpoint_type, endpoint_type_arg)
+    ctf_string(endpoint_mode, endpoint_mode_arg)
+    ctf_integer(const size_t, backend_count, backend_count_arg)
+    ctf_string(backend_names, backend_names_arg)
+    ctf_string(result, result_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rmw_buffer_endpoint_discovered,
+  TP_ARGS(
+    const void *, local_endpoint_handle_arg,
+    const uint8_t *, remote_gid_arg,
+    const char *, topic_name_arg,
+    const char *, remote_endpoint_type_arg,
+    const char *, endpoint_mode_arg,
+    const size_t, backend_count_arg,
+    const char *, backend_names_arg,
+    const char *, decision_arg,
+    const char *, reason_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, local_endpoint_handle, local_endpoint_handle_arg)
+    ctf_array(uint8_t, remote_gid, remote_gid_arg, TRACETOOLS_GID_STORAGE_SIZE)
+    ctf_string(topic_name, topic_name_arg)
+    ctf_string(remote_endpoint_type, remote_endpoint_type_arg)
+    ctf_string(endpoint_mode, endpoint_mode_arg)
+    ctf_integer(const size_t, backend_count, backend_count_arg)
+    ctf_string(backend_names, backend_names_arg)
+    ctf_string(decision, decision_arg)
+    ctf_string(reason, reason_arg)
   )
 )
 
@@ -596,6 +733,88 @@ TRACEPOINT_EVENT(
   ),
   TP_FIELDS(
     ctf_integer_hex(const void *, buffer, buffer_arg)
+  )
+)
+
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rosidl_buffer_serialize,
+  TP_ARGS(
+    const void *, buffer_arg,
+    const char *, message_type_arg,
+    const char *, field_path_arg,
+    const char *, source_backend_arg,
+    const char *, selected_backend_arg,
+    const char *, wire_format_arg,
+    const size_t, descriptor_size_arg,
+    const bool, success_arg,
+    const char *, reason_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, buffer, buffer_arg)
+    ctf_string(message_type, message_type_arg)
+    ctf_string(field_path, field_path_arg)
+    ctf_string(source_backend, source_backend_arg)
+    ctf_string(selected_backend, selected_backend_arg)
+    ctf_string(wire_format, wire_format_arg)
+    ctf_integer(const size_t, descriptor_size, descriptor_size_arg)
+    ctf_integer(int, success, (success_arg ? 1 : 0))
+    ctf_string(reason, reason_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rosidl_buffer_deserialize,
+  TP_ARGS(
+    const void *, buffer_arg,
+    const char *, message_type_arg,
+    const char *, field_path_arg,
+    const char *, source_backend_arg,
+    const char *, selected_backend_arg,
+    const char *, wire_format_arg,
+    const size_t, descriptor_size_arg,
+    const bool, success_arg,
+    const char *, reason_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, buffer, buffer_arg)
+    ctf_string(message_type, message_type_arg)
+    ctf_string(field_path, field_path_arg)
+    ctf_string(source_backend, source_backend_arg)
+    ctf_string(selected_backend, selected_backend_arg)
+    ctf_string(wire_format, wire_format_arg)
+    ctf_integer(const size_t, descriptor_size, descriptor_size_arg)
+    ctf_integer(int, success, (success_arg ? 1 : 0))
+    ctf_string(reason, reason_arg)
+  )
+)
+
+TRACEPOINT_EVENT(
+  TRACEPOINT_PROVIDER,
+  rosidl_buffer_backend_op,
+  TP_ARGS(
+    const void *, buffer_arg,
+    const char *, message_type_arg,
+    const char *, field_path_arg,
+    const char *, backend_arg,
+    const char *, operation_arg,
+    const char *, wire_format_arg,
+    const size_t, descriptor_size_arg,
+    const bool, success_arg,
+    const char *, reason_arg
+  ),
+  TP_FIELDS(
+    ctf_integer_hex(const void *, buffer, buffer_arg)
+    ctf_string(message_type, message_type_arg)
+    ctf_string(field_path, field_path_arg)
+    ctf_string(backend, backend_arg)
+    ctf_string(operation, operation_arg)
+    ctf_string(wire_format, wire_format_arg)
+    ctf_integer(const size_t, descriptor_size, descriptor_size_arg)
+    ctf_integer(int, success, (success_arg ? 1 : 0))
+    ctf_string(reason, reason_arg)
   )
 )
 
