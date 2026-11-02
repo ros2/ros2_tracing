@@ -169,7 +169,6 @@ if(NOT TRACETOOLS_TRACEPOINTS_EXCLUDED)
 endif()
 
 if(BUILD_TESTING)
-  set(ament_cmake_cppcheck_ADDITIONAL_INCLUDE_DIRS ${LTTNG_INCLUDE_DIRS})
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
