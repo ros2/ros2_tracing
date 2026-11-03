@@ -2,6 +2,12 @@
 Changelog for package tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.0.1 (2026-11-03)
+------------------
+* Bump LTTng version to v2.14 in links (`#271 <https://github.com/ros2/ros2_tracing/issues/271>`_)
+* Use the SPDX identifier Apache-2.0 in license declarations (`#265 <https://github.com/ros2/ros2_tracing/issues/265>`_)
+* Contributors: Christophe Bedard, Michael Carroll
+
 9.0.0 (2026-05-05)
 ------------------
 

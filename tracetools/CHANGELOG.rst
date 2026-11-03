@@ -2,6 +2,17 @@
 Changelog for package tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.0.1 (2026-11-03)
+------------------
+* Remove custom ament_cppcheck usage. (`#273 <https://github.com/ros2/ros2_tracing/issues/273>`_)
+* Bump LTTng version to v2.14 in links (`#271 <https://github.com/ros2/ros2_tracing/issues/271>`_)
+* Remove old-style ament export calls from tracetools - fixes `#266 <https://github.com/ros2/ros2_tracing/issues/266>`_ (`#267 <https://github.com/ros2/ros2_tracing/issues/267>`_)
+* Use the SPDX identifier Apache-2.0 in license declarations (`#265 <https://github.com/ros2/ros2_tracing/issues/265>`_)
+* Granular rclcpp/rclcpp.hpp and include what yu use (`#263 <https://github.com/ros2/ros2_tracing/issues/263>`_)
+* Removed ununsed header (`#259 <https://github.com/ros2/ros2_tracing/issues/259>`_)
+* use C++ 20 in default. (`#257 <https://github.com/ros2/ros2_tracing/issues/257>`_)
+* Contributors: Alejandro Hernández Cordero, Chris Lalancette, Christophe Bedard, Ishaan Mavinkurve, Michael Carroll, Tomoya Fujita
+
 9.0.0 (2026-05-05)
 ------------------
 

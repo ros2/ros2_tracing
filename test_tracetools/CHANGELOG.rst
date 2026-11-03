@@ -2,6 +2,15 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.0.1 (2026-11-03)
+------------------
+* Fix flaky message link tests (`#268 <https://github.com/ros2/ros2_tracing/issues/268>`_)
+* Remove rmw_fastrtps_dynamic_cpp (`#269 <https://github.com/ros2/ros2_tracing/issues/269>`_)
+* Use the SPDX identifier Apache-2.0 in license declarations (`#265 <https://github.com/ros2/ros2_tracing/issues/265>`_)
+* Granular rclcpp/rclcpp.hpp and include what yu use (`#263 <https://github.com/ros2/ros2_tracing/issues/263>`_)
+* use C++ 20 in default. (`#257 <https://github.com/ros2/ros2_tracing/issues/257>`_)
+* Contributors: Alejandro Hernández Cordero, Christophe Bedard, Michael Carroll, Tomoya Fujita
+
 9.0.0 (2026-05-05)
 ------------------
 

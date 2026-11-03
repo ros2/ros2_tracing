@@ -2,6 +2,13 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.0.1 (2026-11-03)
+------------------
+* Use the SPDX identifier Apache-2.0 in license declarations (`#265 <https://github.com/ros2/ros2_tracing/issues/265>`_)
+* Granular rclcpp/rclcpp.hpp and include what yu use (`#263 <https://github.com/ros2/ros2_tracing/issues/263>`_)
+* use C++ 20 in default. (`#257 <https://github.com/ros2/ros2_tracing/issues/257>`_)
+* Contributors: Alejandro Hernández Cordero, Michael Carroll, Tomoya Fujita
+
 9.0.0 (2026-05-05)
 ------------------
 

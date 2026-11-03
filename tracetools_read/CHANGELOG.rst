@@ -2,6 +2,12 @@
 Changelog for package tracetools_read
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+9.0.1 (2026-11-03)
+------------------
+* Use the SPDX identifier Apache-2.0 in license declarations (`#265 <https://github.com/ros2/ros2_tracing/issues/265>`_)
+* Add simple trace-reading tests to tracetools_read (`#244 <https://github.com/ros2/ros2_tracing/issues/244>`_)
+* Contributors: Christophe Bedard, Michael Carroll
+
 9.0.0 (2026-05-05)
 ------------------
 
