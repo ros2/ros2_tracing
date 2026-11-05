@@ -168,6 +168,53 @@ DEFINE_TRACEPOINT(
     message,
     timestamp))
 
+
+DEFINE_TRACEPOINT(
+  rmw_buffer_publish_route,
+  TRACEPOINT_PARAMS(
+    const void * rmw_publisher_handle,
+    const void * message,
+    const char * topic_name,
+    const size_t total_matched,
+    const size_t buffer_aware_count,
+    const size_t cpu_subscriber_count,
+    const size_t accel_endpoint_count,
+    const char * selected_route,
+    const char * reason),
+  TRACEPOINT_ARGS(
+    rmw_publisher_handle,
+    message,
+    topic_name,
+    total_matched,
+    buffer_aware_count,
+    cpu_subscriber_count,
+    accel_endpoint_count,
+    selected_route,
+    reason))
+
+DEFINE_TRACEPOINT(
+  rmw_buffer_publish,
+  TRACEPOINT_PARAMS(
+    const void * rmw_publisher_handle,
+    const void * message,
+    const char * topic_name,
+    const uint8_t * target_gid,
+    const char * selected_backend,
+    const char * wire_format,
+    const size_t descriptor_size,
+    const bool success,
+    const char * reason),
+  TRACEPOINT_ARGS(
+    rmw_publisher_handle,
+    message,
+    topic_name,
+    target_gid,
+    selected_backend,
+    wire_format,
+    descriptor_size,
+    success,
+    reason))
+
 DEFINE_TRACEPOINT(
   rmw_subscription_init,
   TRACEPOINT_PARAMS(
@@ -222,6 +269,76 @@ DEFINE_TRACEPOINT(
     message,
     source_timestamp,
     taken))
+
+
+DEFINE_TRACEPOINT(
+  rmw_buffer_take,
+  TRACEPOINT_PARAMS(
+    const void * rmw_subscription_handle,
+    const void * message,
+    const char * topic_name,
+    const uint8_t * publisher_gid,
+    const char * selected_backend,
+    const char * wire_format,
+    const size_t descriptor_size,
+    const bool taken,
+    const char * reason),
+  TRACEPOINT_ARGS(
+    rmw_subscription_handle,
+    message,
+    topic_name,
+    publisher_gid,
+    selected_backend,
+    wire_format,
+    descriptor_size,
+    taken,
+    reason))
+
+DEFINE_TRACEPOINT(
+  rmw_buffer_endpoint_init,
+  TRACEPOINT_PARAMS(
+    const void * endpoint_handle,
+    const uint8_t * endpoint_gid,
+    const char * topic_name,
+    const char * message_type,
+    const char * endpoint_type,
+    const char * endpoint_mode,
+    const size_t backend_count,
+    const char * backend_names,
+    const char * result),
+  TRACEPOINT_ARGS(
+    endpoint_handle,
+    endpoint_gid,
+    topic_name,
+    message_type,
+    endpoint_type,
+    endpoint_mode,
+    backend_count,
+    backend_names,
+    result))
+
+DEFINE_TRACEPOINT(
+  rmw_buffer_endpoint_discovered,
+  TRACEPOINT_PARAMS(
+    const void * local_endpoint_handle,
+    const uint8_t * remote_gid,
+    const char * topic_name,
+    const char * remote_endpoint_type,
+    const char * endpoint_mode,
+    const size_t backend_count,
+    const char * backend_names,
+    const char * decision,
+    const char * reason),
+  TRACEPOINT_ARGS(
+    local_endpoint_handle,
+    remote_gid,
+    topic_name,
+    remote_endpoint_type,
+    endpoint_mode,
+    backend_count,
+    backend_names,
+    decision,
+    reason))
 
 DEFINE_TRACEPOINT(
   rcl_take,
@@ -483,6 +600,76 @@ DEFINE_TRACEPOINT(
     const void * buffer),
   TRACEPOINT_ARGS(
     buffer))
+
+
+DEFINE_TRACEPOINT(
+  rosidl_buffer_serialize,
+  TRACEPOINT_PARAMS(
+    const void * buffer,
+    const char * message_type,
+    const char * field_path,
+    const char * source_backend,
+    const char * selected_backend,
+    const char * wire_format,
+    const size_t descriptor_size,
+    const bool success,
+    const char * reason),
+  TRACEPOINT_ARGS(
+    buffer,
+    message_type,
+    field_path,
+    source_backend,
+    selected_backend,
+    wire_format,
+    descriptor_size,
+    success,
+    reason))
+
+DEFINE_TRACEPOINT(
+  rosidl_buffer_deserialize,
+  TRACEPOINT_PARAMS(
+    const void * buffer,
+    const char * message_type,
+    const char * field_path,
+    const char * source_backend,
+    const char * selected_backend,
+    const char * wire_format,
+    const size_t descriptor_size,
+    const bool success,
+    const char * reason),
+  TRACEPOINT_ARGS(
+    buffer,
+    message_type,
+    field_path,
+    source_backend,
+    selected_backend,
+    wire_format,
+    descriptor_size,
+    success,
+    reason))
+
+DEFINE_TRACEPOINT(
+  rosidl_buffer_backend_op,
+  TRACEPOINT_PARAMS(
+    const void * buffer,
+    const char * message_type,
+    const char * field_path,
+    const char * backend,
+    const char * operation,
+    const char * wire_format,
+    const size_t descriptor_size,
+    const bool success,
+    const char * reason),
+  TRACEPOINT_ARGS(
+    buffer,
+    message_type,
+    field_path,
+    backend,
+    operation,
+    wire_format,
+    descriptor_size,
+    success,
+    reason))
 
 DEFINE_TRACEPOINT(
   message_link_periodic_async,
