@@ -2,8 +2,8 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.2.7 (2026-11-12)
+------------------
 * Use CMake instead of pybind11 to enable LTO for lttngpy (backport `#275 <https://github.com/ros2/ros2_tracing/issues/275>`_) (`#276 <https://github.com/ros2/ros2_tracing/issues/276>`_)
 * Contributors: mergify[bot]
 
