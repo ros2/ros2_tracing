@@ -2,8 +2,8 @@
 Changelog for package test_tracetools_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.6.1 (2026-11-12)
+------------------
 * fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#202 <https://github.com/ros2/ros2_tracing/issues/202>`_)
 * Contributors: mergify[bot]
 

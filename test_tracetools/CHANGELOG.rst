@@ -2,8 +2,8 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+8.6.1 (2026-11-12)
+------------------
 * Update CMakeLists.txt (`#176 <https://github.com/ros2/ros2_tracing/issues/176>`_) (`#177 <https://github.com/ros2/ros2_tracing/issues/177>`_)
 * Contributors: mergify[bot]
 
