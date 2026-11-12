@@ -2,6 +2,13 @@
 Changelog for package lttngpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [kilted] Use CMake instead of pybind11 to enable LTO for lttngpy (`#275 <https://github.com/ros2/ros2_tracing/issues/275>`_)
+* Use <lttng/lttng.h> in lttngpy and clean up includes (backport `#222 <https://github.com/ros2/ros2_tracing/issues/222>`_) (`#231 <https://github.com/ros2/ros2_tracing/issues/231>`_)
+* [Fix] compile fail (`#194 <https://github.com/ros2/ros2_tracing/issues/194>`_) (`#214 <https://github.com/ros2/ros2_tracing/issues/214>`_)
+* Contributors: Christophe Bedard, mergify[bot]
+
 8.6.0 (2025-04-17)
 ------------------
 * Remove SHARED from pybind11_add_module (`#154 <https://github.com/ros2/ros2_tracing/issues/154>`_)

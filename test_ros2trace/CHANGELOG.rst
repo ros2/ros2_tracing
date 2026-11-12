@@ -2,6 +2,12 @@
 Changelog for package test_ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Skip test_ros2trace's tracing tests for now (`#218 <https://github.com/ros2/ros2_tracing/issues/218>`_) (`#223 <https://github.com/ros2/ros2_tracing/issues/223>`_)
+* fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#202 <https://github.com/ros2/ros2_tracing/issues/202>`_)
+* Contributors: mergify[bot]
+
 8.6.0 (2025-04-17)
 ------------------
 * Add timeout to test_ros2trace tests that wait on stdout (`#167 <https://github.com/ros2/ros2_tracing/issues/167>`_)

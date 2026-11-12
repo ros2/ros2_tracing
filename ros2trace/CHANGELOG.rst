@@ -2,6 +2,11 @@
 Changelog for package ros2trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#202 <https://github.com/ros2/ros2_tracing/issues/202>`_)
+* Contributors: mergify[bot]
+
 8.6.0 (2025-04-17)
 ------------------
 * Expose types for tracing tools (`#153 <https://github.com/ros2/ros2_tracing/issues/153>`_)

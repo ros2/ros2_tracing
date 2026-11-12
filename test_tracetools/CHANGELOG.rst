@@ -2,6 +2,11 @@
 Changelog for package test_tracetools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update CMakeLists.txt (`#176 <https://github.com/ros2/ros2_tracing/issues/176>`_) (`#177 <https://github.com/ros2/ros2_tracing/issues/177>`_)
+* Contributors: mergify[bot]
+
 8.6.0 (2025-04-17)
 ------------------
 * Run test_tracetools tests against rmw_zenoh_cpp (`#140 <https://github.com/ros2/ros2_tracing/issues/140>`_)

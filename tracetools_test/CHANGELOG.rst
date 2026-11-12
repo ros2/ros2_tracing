@@ -2,6 +2,11 @@
 Changelog for package tracetools_test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#202 <https://github.com/ros2/ros2_tracing/issues/202>`_)
+* Contributors: mergify[bot]
+
 8.6.0 (2025-04-17)
 ------------------
 * Fix or ignore new mypy issues (`#161 <https://github.com/ros2/ros2_tracing/issues/161>`_)

@@ -2,6 +2,12 @@
 Changelog for package tracetools_trace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add exec_depend on procps to tracetools_trace for ps command (`#227 <https://github.com/ros2/ros2_tracing/issues/227>`_) (`#228 <https://github.com/ros2/ros2_tracing/issues/228>`_)
+* fix setuptools deprecation (`#189 <https://github.com/ros2/ros2_tracing/issues/189>`_) (`#202 <https://github.com/ros2/ros2_tracing/issues/202>`_)
+* Contributors: mergify[bot]
+
 8.6.0 (2025-04-17)
 ------------------
 * Improve Python typing annotations (`#152 <https://github.com/ros2/ros2_tracing/issues/152>`_)
