@@ -23,6 +23,7 @@
   <test_depend>launch_xml</test_depend>
   <test_depend>launch_yaml</test_depend>
   <test_depend>python3-pytest</test_depend>
+  <test_depend>python3-pytest-timeout</test_depend>
   <test_depend>test_tracetools</test_depend>
   <test_depend>tracetools_launch</test_depend>
   <test_depend>tracetools_trace</test_depend>
