@@ -92,9 +92,6 @@ endif()
 
 pybind11_add_module(_lttngpy_pybind11 SHARED ${SOURCES})
 
-<<<<<<< HEAD
-if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE)
-=======
 if(_lttngpy_enable_ipo)
   include(CheckIPOSupported)
   check_ipo_supported(RESULT _lttngpy_ipo_supported LANGUAGES CXX)
@@ -106,8 +103,7 @@ if(_lttngpy_enable_ipo)
   endif()
 endif()
 
-if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE AND NOT BSD)
->>>>>>> 2f14f71 ([kilted] Use CMake instead of pybind11 to enable LTO for lttngpy (#275))
+if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE)
   target_link_libraries(_lttngpy_pybind11 PRIVATE atomic)
 endif()
 
