@@ -36,6 +36,8 @@ using namespace std::chrono_literals;
 #define SUB_TOPIC_NAME "pong"
 #define PUB_TOPIC_NAME "ping"
 #define QUEUE_DEPTH 10
+// In the default mode, give up and exit with an error if no pong is received by then
+#define EXCHANGE_TIMEOUT 30s
 
 class PingNode : public rclcpp::Node
 {
@@ -53,10 +55,21 @@ public:
     timer_ = this->create_wall_timer(
       500ms,
       std::bind(&PingNode::timer_callback, this));
+    if (do_only_one_) {
+      deadline_timer_ = this->create_wall_timer(
+        EXCHANGE_TIMEOUT,
+        [this]() {
+          RCLCPP_ERROR(this->get_logger(), "timed out waiting for a pong");
+          failed_ = true;
+          rclcpp::shutdown();
+        });
+    }
   }
 
   explicit PingNode(rclcpp::NodeOptions options)
   : PingNode(options, true) {}
+
+  bool failed() const {return failed_;}
 
 private:
   void callback(const std_msgs::msg::String::ConstSharedPtr msg)
@@ -81,7 +94,9 @@ private:
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::TimerBase::SharedPtr deadline_timer_;
   bool do_only_one_;
+  bool failed_ = false;
 };
 
 int main(int argc, char * argv[])
@@ -106,5 +121,5 @@ int main(int argc, char * argv[])
 
   // Will actually be called inside the node's callback
   rclcpp::shutdown();
-  return 0;
+  return ping_node->failed() ? 1 : 0;
 }
