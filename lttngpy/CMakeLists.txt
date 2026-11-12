@@ -39,6 +39,12 @@ option(
 # Find python before pybind11
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
+# Handle LTO using CMake instead of pybind11 (#264)
+if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF)
+  set(_lttngpy_enable_ipo TRUE)
+endif()
+
 find_package(pybind11_vendor REQUIRED)
 find_package(pybind11 REQUIRED)
 
@@ -85,6 +91,17 @@ if(NOT LTTNGPY_DISABLED)
 endif()
 
 pybind11_add_module(_lttngpy_pybind11 SHARED ${SOURCES})
+
+if(_lttngpy_enable_ipo)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT _lttngpy_ipo_supported LANGUAGES CXX)
+  if(_lttngpy_ipo_supported)
+    set_target_properties(_lttngpy_pybind11 PROPERTIES
+      INTERPROCEDURAL_OPTIMIZATION_RELEASE ON
+      INTERPROCEDURAL_OPTIMIZATION_MINSIZEREL ON
+    )
+  endif()
+endif()
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT APPLE)
   target_link_libraries(_lttngpy_pybind11 PRIVATE atomic)
