@@ -212,8 +212,13 @@ class TestPubSub(TraceTestCase):
         ping_callback_object = self.get_field(ping_rclcpp_subscription_callback_event, 'callback')
         pong_callback_object = self.get_field(pong_rclcpp_subscription_callback_event, 'callback')
 
-        # Get rmw_take events
-        rmw_take_events = self.get_events_with_name(tp.rmw_take)
+        # Get rmw_take events that actually took a message; depending on the middleware, there
+        # can also be takes that don't return anything, e.g., when the publisher goes away
+        rmw_take_events = self.get_events_with_field_value(
+            'taken',
+            1,
+            self.get_events_with_name(tp.rmw_take),
+        )
         pong_rmw_take_event = self.get_event_with_field_value_and_assert(
             'rmw_subscription_handle',
             pong_rmw_sub_handle,
