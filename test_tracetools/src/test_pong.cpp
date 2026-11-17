@@ -38,7 +38,8 @@ using namespace std::chrono_literals;
 #define PUB_TOPIC_NAME "pong"
 // In the default mode, give up and exit with an error if the exchange isn't done by then
 #define EXCHANGE_TIMEOUT 30s
-// Give up and exit with an error if test_ping's subscription isn't matched by then
+// In the default mode, give up and exit with an error if test_ping's subscription isn't matched
+// by then
 #define MATCH_TIMEOUT 10s
 
 class PongNode : public rclcpp::Node
@@ -84,15 +85,18 @@ private:
     RCLCPP_INFO(this->get_logger(), "[output] %s", msg->data.c_str());
     auto next_msg = std::make_shared<std_msgs::msg::String>();
     next_msg->data = "some random pong string";
-    // The pong publisher is volatile, so make sure test_ping's subscription is matched before
-    // replying; otherwise the reply could be lost and test_ping would wait forever
-    const auto match_deadline = std::chrono::steady_clock::now() + MATCH_TIMEOUT;
-    while (rclcpp::ok() && 0u == pub_->get_subscription_count()) {
-      if (std::chrono::steady_clock::now() >= match_deadline) {
-        fail("timed out waiting for test_ping's subscription to match");
-        return;
+    if (do_only_one_) {
+      // The pong publisher is volatile, so make sure test_ping's subscription is matched before
+      // replying; otherwise the reply could be lost and test_ping would wait forever. In do_more
+      // mode, a lost reply doesn't matter, since the next ping will trigger another one.
+      const auto match_deadline = std::chrono::steady_clock::now() + MATCH_TIMEOUT;
+      while (rclcpp::ok() && 0u == pub_->get_subscription_count()) {
+        if (std::chrono::steady_clock::now() >= match_deadline) {
+          fail("timed out waiting for test_ping's subscription to match");
+          return;
+        }
+        std::this_thread::sleep_for(10ms);
       }
-      std::this_thread::sleep_for(10ms);
     }
     RCLCPP_INFO(this->get_logger(), "pong");
     pub_->publish(*next_msg);
