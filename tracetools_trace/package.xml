@@ -12,7 +12,13 @@
   <url type="bugtracker">https://gitlab.com/ros-tracing/ros2_tracing/-/issues</url>
   <author email="fixed-term.christophe.bourquebedard@de.bosch.com">Christophe Bedard</author>
 
+<<<<<<< HEAD
   <exec_depend>python3-lttng</exec_depend>
+=======
+  <exec_depend>lttngpy</exec_depend>
+  <exec_depend>procps</exec_depend>
+  <exec_depend>python3-packaging</exec_depend>
+>>>>>>> bba6a68 (Add missing exec_depend on python3-packaging to tracetools_trace (#285))
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
