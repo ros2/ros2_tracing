@@ -29,12 +29,14 @@ from launch import LaunchService
 from launch_ros.actions import Node
 from launch_testing_ros.actions import EnableRmwIsolation
 from lttngpy import impl as lttngpy
+from packaging.specifiers import SpecifierSet
 from tracetools_read import get_event_name
 from tracetools_test.mark_process import get_corresponding_trace_test_events
 from tracetools_test.mark_process import get_trace_test_id
 from tracetools_test.mark_process import TRACE_TEST_ID_ENV_VAR
 from tracetools_test.mark_process import TRACE_TEST_ID_TP_NAME
 from tracetools_trace.tools import tracepoints
+from tracetools_trace.tools.lttng import get_lttng_version
 from tracetools_trace.tools.lttng import is_lttng_installed
 from tracetools_trace.tools.names import DEFAULT_EVENTS_ROS
 
@@ -701,15 +703,21 @@ class TestROS2TraceCLI(unittest.TestCase):
         self.assertEqual(1, ret)
 
         # Subbuffers should be cleared after the last record_snapshot
-        ret = self.run_trace_subcommand(['record_snapshot', session_name])
-        self.assertEqual(0, ret)
-        self.assertTracingSessionExist(session_name, snapshot_mode=True)
-        expected_trace_data = []
-        new_num_events = self.assertTraceContains(
-            trace_dir,
-            expected_field_value=expected_trace_data
-        )
-        self.assertEqual(num_events, new_num_events, 'subbuffers were not cleared')
+        # Some versions of lttng-tools have an issue with recording a snapshot failing after
+        # clearing a stopped snapshot session. In that case, just skip this check.
+        # TODO(christophebedard): remove when all supported platforms contain the fix
+        lttng_version = get_lttng_version()
+        assert lttng_version is not None
+        if lttng_version not in SpecifierSet('>=2.14.0,<2.14.3'):
+            ret = self.run_trace_subcommand(['record_snapshot', session_name])
+            self.assertEqual(0, ret)
+            self.assertTracingSessionExist(session_name, snapshot_mode=True)
+            expected_trace_data = []
+            new_num_events = self.assertTraceContains(
+                trace_dir,
+                expected_field_value=expected_trace_data
+            )
+            self.assertEqual(num_events, new_num_events, 'subbuffers were not cleared')
 
         # Resume tracing and run nodes again
         ret = self.run_trace_subcommand(['resume', session_name])
