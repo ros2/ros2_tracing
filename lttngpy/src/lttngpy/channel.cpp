@@ -14,6 +14,7 @@
 
 #include <lttng/lttng.h>
 
+#include <cstdint>
 #include <optional>
 #include <string>
 

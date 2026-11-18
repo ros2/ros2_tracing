@@ -14,6 +14,7 @@
 
 #include <lttng/lttng.h>
 
+#include <cstdlib>
 #include <set>
 #include <string>
 #include <variant>

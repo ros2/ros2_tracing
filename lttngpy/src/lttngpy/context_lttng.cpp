@@ -14,6 +14,7 @@
 
 #include <lttng/lttng.h>
 
+#include <iterator>
 #include <map>
 #include <optional>
 #include <string>

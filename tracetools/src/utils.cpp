@@ -16,8 +16,10 @@
 
 #ifndef TRACETOOLS_DISABLED
 
-#include <dlfcn.h>
 #include <cxxabi.h>
+#include <dlfcn.h>
+
+#include <cstddef>
 
 #include "tracetools/utils.hpp"
 
