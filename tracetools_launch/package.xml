@@ -14,6 +14,8 @@
 
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
+  <exec_depend>launch_xml</exec_depend>
+  <exec_depend>launch_yaml</exec_depend>
   <exec_depend>tracetools_trace</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
